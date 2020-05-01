@@ -90,7 +90,6 @@ class _MyAppState extends State<MyApp> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
                                 AnimatedContainer(
-
                                   height: buttonRadius,
                                   width: buttonRadius,
                                   child: ClayContainer(
