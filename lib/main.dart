@@ -120,8 +120,8 @@ class _MyAppState extends State<MyApp> {
                                   color: Color(0xFFF2F2F2),
                                   borderRadius: 50,
                                   curveType: CurveType.convex,
-                                  height: 100,
-                                  width: 100,
+                                  height: buttonRadius,
+                                  width: buttonRadius,
                                   child: Container(
                                     child: IconButton(
                                         icon: Icon(
