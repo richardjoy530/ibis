@@ -143,6 +143,7 @@ class _BlueToothScreenState extends State<BlueToothScreen> {
   }
 
   @override
+  //Testing
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
@@ -201,7 +202,7 @@ class _BlueToothScreenState extends State<BlueToothScreen> {
                   return SimpleDialogOption(
                     child: ListTile(
                         leading: Icon(
-                          Icons.label_outline,
+                          Icons.bluetooth,
                         ),
                         title: Text(devices[index].name,
                             style: TextStyle(
