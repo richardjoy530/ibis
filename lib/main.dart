@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -114,11 +116,22 @@ class _BlueToothScreenState extends State<BlueToothScreen> {
   BluetoothDevice device;
   List<BluetoothDevice> devices;
   bool isConnected = false;
-
+  TextEditingController textEditingController;
   @override
   void initState() {
+    textEditingController = TextEditingController();
     getPairedDevices();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    textEditingController.dispose();
+    if (isConnected) {
+      connection.dispose();
+      connection = null;
+    }
+    super.dispose();
   }
 
   getPairedDevices() async {
@@ -167,11 +180,27 @@ class _BlueToothScreenState extends State<BlueToothScreen> {
               ),
               ListTile(
                 onTap: () {
-                  showDeviceList(context);
+                  connect();
                 },
                 leading: Icon(Icons.bluetooth),
                 //subtitle: Text('Connection Status : '),
                 title: Text('Connect'),
+                subtitle: Text(
+                    'Connected to: ${isConnected == false ? 'None' : device.name}'),
+              ),
+              ListTile(
+                title: TextField(
+                  controller: textEditingController,
+                  decoration: InputDecoration(
+                      hintText: 'Type text to send',
+                      disabledBorder: InputBorder.none),
+                ),
+                trailing: IconButton(
+                  icon: Icon(Icons.send),
+                  onPressed: () {
+                    sendMessage(textEditingController.text);
+                  },
+                ),
               )
             ],
           ),
@@ -238,5 +267,10 @@ class _BlueToothScreenState extends State<BlueToothScreen> {
         });
       });
     }
+  }
+
+  void sendMessage(String data) async {
+    connection.output.add(utf8.encode(data));
+    await connection.output.allSent;
   }
 }
