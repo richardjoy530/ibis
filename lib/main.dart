@@ -60,7 +60,7 @@ class _MyAppState extends State<MyApp> {
                     },
                   ),
                   title: Text(
-                    'Ibis Analyser',
+                    'Ibis Sterilyzer',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -110,17 +110,16 @@ class SocketScreen extends StatefulWidget {
 class _SocketScreenState extends State<SocketScreen> {
   TextEditingController textEditingController;
   TextEditingController ipEditingController;
+  TextEditingController portEditingController;
   bool isConnected = false;
   Socket socket;
-  String serverIP = '192.168.18.5';
+  String serverIP = '192.168.18.10';
+  int port = 4041;
+
   void connect() async {
-    Socket.connect(serverIP, 80).then((sock) {
-      setState(() {
-        isConnected = true;
-      });
-      socket = sock;
-      sock.listen((onData) {
-        print(String.fromCharCodes(onData));
+    ServerSocket.bind(serverIP, port).then((serverSocket) {
+      serverSocket.listen((sock) {
+        socket = sock;
       });
     });
   }
@@ -128,6 +127,7 @@ class _SocketScreenState extends State<SocketScreen> {
   @override
   void initState() {
     textEditingController = TextEditingController();
+    portEditingController = TextEditingController();
     ipEditingController = TextEditingController();
     super.initState();
   }
@@ -137,6 +137,7 @@ class _SocketScreenState extends State<SocketScreen> {
     socket.close();
     textEditingController.dispose();
     ipEditingController.dispose();
+    portEditingController.dispose();
     super.dispose();
   }
 
@@ -201,13 +202,27 @@ class _SocketScreenState extends State<SocketScreen> {
                 keyboardType: TextInputType.number,
                 controller: ipEditingController,
                 decoration: InputDecoration(
-                    hintText: 'Server IP ....',
-                    disabledBorder: InputBorder.none),
+                    hintText: 'Server IP', disabledBorder: InputBorder.none),
+              ),
+//              trailing: IconButton(
+//                  icon: Icon(Icons.check),
+//                  onPressed: () {
+//                    serverIP = ipEditingController.text;
+//                    connect();
+//                    Navigator.pop(context);
+//                  }),
+            ),
+            ListTile(
+              title: TextField(
+                keyboardType: TextInputType.number,
+                controller: portEditingController,
+                decoration: InputDecoration(
+                    hintText: 'Port', disabledBorder: InputBorder.none),
               ),
               trailing: IconButton(
                   icon: Icon(Icons.check),
                   onPressed: () {
-                    serverIP = ipEditingController.text;
+                    port = int.parse(portEditingController.text);
                     connect();
                     Navigator.pop(context);
                   }),
