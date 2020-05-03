@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
 Socket socket;
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    socket.close();
     super.dispose();
   }
 
@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
                 ListTile(
                   contentPadding: EdgeInsets.all(8),
                   leading: IconButton(
-                    icon: Icon(Icons.wifi),
+                    icon: Icon(Icons.phonelink_off),
                     color: Color(0xff3d84a7),
                     onPressed: () {
                       Navigator.push(
@@ -73,7 +73,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   subtitle: Text(
-                    'Connected',
+                    'Not Connected',
                     style: TextStyle(color: Color(0xff47466d)),
                   ),
                   trailing: IconButton(
@@ -117,10 +117,11 @@ class _SocketScreenState extends State<SocketScreen> {
   TextEditingController textEditingController;
   TextEditingController ipEditingController;
   TextEditingController portEditingController;
-  bool isConnected = false;
   String serverIP = '192.168.18.10';
   int port = 4041;
   String incomingMessages = '';
+  bool isConnected = false;
+  bool fetching = false;
 
   @override
   void initState() {
@@ -134,6 +135,7 @@ class _SocketScreenState extends State<SocketScreen> {
 
   @override
   void dispose() {
+    socket.close();
     textEditingController.dispose();
     ipEditingController.dispose();
     portEditingController.dispose();
@@ -253,17 +255,16 @@ class _SocketScreenState extends State<SocketScreen> {
       });
       serverSocket.listen((sock) {
         socket = sock;
-        fetch();
+        //fetch();
+      }).onData((socket) {
+        socket.listen((onData) {
+          setState(() {
+            incomingMessages = incomingMessages + String.fromCharCodes(onData);
+          });
+        });
       });
     });
   }
 
-  void fetch() async {
-    socket.listen((onData) {
-      setState(() {
-        incomingMessages = incomingMessages + String.fromCharCodes(onData);
-      });
-    });
-    fetch();
-  }
+
 }
