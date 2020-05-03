@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:vector_math/vector_math_64.dart' as math;
 
 void main() => runApp(MyApp());
 Socket socket;
@@ -24,15 +25,31 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   bool power = false;
+  AnimationController _radialProgressAnimationController;
+  Animation<double> _progressAnimation;
+  final Duration fillDuration = Duration(seconds: 5);
+  double progressDegrees = 0;
+
   @override
   void initState() {
     super.initState();
+    _radialProgressAnimationController =
+        AnimationController(vsync: this, duration: fillDuration);
+    _progressAnimation = Tween(begin: 0.0, end: 360.0).animate(CurvedAnimation(
+        parent: _radialProgressAnimationController, curve: Curves.linear))
+      ..addListener(() {
+        setState(() {
+          progressDegrees = _progressAnimation.value;
+        });
+      });
   }
 
   @override
   void dispose() {
+    _radialProgressAnimationController.dispose();
     super.dispose();
   }
 
@@ -81,12 +98,58 @@ class _HomePageState extends State<HomePage> {
                           color: Color(0xff3d84a7)),
                       onPressed: null),
                 ),
+                Flexible(
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: <Widget>[
+                      FlareActor(
+                        'assets/breathing.flr',
+                        animation: 'breath',
+                      ),
+                      CustomPaint(
+                        child: Container(
+                          height: MediaQuery.of(context).size.width / 1.5,
+                          width: MediaQuery.of(context).size.width / 1.5,
+                          child: Center(
+                            child: Container(
+                              height:
+                                  (MediaQuery.of(context).size.width / 1.5) -
+                                      50,
+                              width: (MediaQuery.of(context).size.width / 1.5) -
+                                  50,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle, color: Colors.white),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    'Time Remaining',
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                  Text(
+                                    '05:${progressDegrees.toString().substring(0, 2)}',
+                                    style: TextStyle(fontSize: 60),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        painter: RadialPainter(progressDegrees),
+                      ),
+                    ],
+                  ),
+                ),
                 Padding(
-                  padding: const EdgeInsets.all(30.0),
+                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 50),
                   child: GestureDetector(
                     onTap: () {
                       setState(() {
-                        print('tap');
+                        if (power == false) {
+                          _radialProgressAnimationController.forward();
+                        } else {
+                          _radialProgressAnimationController.reverse();
+                        }
                         power = !power;
                       });
                     },
@@ -94,7 +157,6 @@ class _HomePageState extends State<HomePage> {
                       height: 100,
                       width: 100,
                       child: FlareActor('assets/powerButton.flr',
-                          //alignment: Alignment.center,
                           animation: power == true ? "on" : "off"),
                     ),
                   ),
@@ -105,6 +167,46 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+}
+
+class RadialPainter extends CustomPainter {
+  double progressInDegrees;
+
+  RadialPainter(this.progressInDegrees);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Offset center = Offset(size.width / 2, size.height / 2);
+    Paint paint = Paint()
+      ..shader = RadialGradient(
+              colors: [Color(0xff2eb8c9), Color(0xff95dcdb), Color(0xffd1e6ea)])
+          .createShader(Rect.fromCircle(center: center, radius: size.width / 2))
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 50.0;
+
+    canvas.drawCircle(center, size.width / 2, paint);
+
+    Paint progressPaint = Paint()
+      ..shader = SweepGradient(
+              colors: [Color(0xff2eb8c9), Color(0xff95dcdb), Color(0xffb9dfe6)])
+          .createShader(Rect.fromCircle(center: center, radius: size.width / 2))
+      ..strokeCap = StrokeCap.butt
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 50.0;
+
+    canvas.drawArc(
+        Rect.fromCircle(center: center, radius: size.width / 2),
+        math.radians(0),
+        math.radians(-progressInDegrees),
+        false,
+        progressPaint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return true;
   }
 }
 
@@ -265,6 +367,4 @@ class _SocketScreenState extends State<SocketScreen> {
       });
     });
   }
-
-
 }
