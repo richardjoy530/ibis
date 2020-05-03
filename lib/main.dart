@@ -119,6 +119,9 @@ class _SocketScreenState extends State<SocketScreen> {
         isConnected = true;
       });
       socket = sock;
+      sock.listen((onData) {
+        print(String.fromCharCodes(onData));
+      });
     });
   }
 
