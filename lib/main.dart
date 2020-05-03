@@ -1,6 +1,8 @@
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 void main() => runApp(Main());
 
@@ -107,10 +109,133 @@ class BlueToothScreen extends StatefulWidget {
 }
 
 class _BlueToothScreenState extends State<BlueToothScreen> {
+  FlutterBluetoothSerial bluetooth = FlutterBluetoothSerial.instance;
+  BluetoothConnection connection;
+  BluetoothDevice device;
+  List<BluetoothDevice> devices;
+  bool isConnected = false;
+
+  @override
+  void initState() {
+    getPairedDevices();
+    super.initState();
+  }
+
+  getPairedDevices() async {
+    List<BluetoothDevice> devicesList = [];
+
+    try {
+      devicesList = await bluetooth.getBondedDevices();
+    } on PlatformException {
+      print("Error");
+    }
+
+    // It is an error to call [setState] unless [mounted] is true.
+    if (!mounted) {
+      return;
+    }
+
+    // Store the [devices] list in the [_devicesList] for accessing
+    // the list outside this class
+    setState(() {
+      devices = devicesList;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(),
+      child: Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              ListTile(
+                onTap: getPairedDevices,
+                leading: Icon(Icons.refresh),
+                title: Text('Refresh List of Devices'),
+              ),
+              ListTile(
+                onTap: () {
+                  showDeviceList(context);
+                },
+                leading: Icon(Icons.developer_mode),
+                subtitle:
+                    Text('Selected : ${device == null ? 'None' : device.name}'),
+                title: Text('Select a device'),
+              ),
+              ListTile(
+                onTap: () {
+                  showDeviceList(context);
+                },
+                leading: Icon(Icons.bluetooth),
+                //subtitle: Text('Connection Status : '),
+                title: Text('Connect'),
+              )
+            ],
+          ),
+        ),
+      ),
     );
+  }
+
+  Future<void> showDeviceList(context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Text(
+            'Select a Device',
+            style:
+                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
+          ),
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: List.generate(
+                devices.length,
+                (index) {
+                  return SimpleDialogOption(
+                    child: ListTile(
+                        leading: Icon(
+                          Icons.label_outline,
+                        ),
+                        title: Text(devices[index].name,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold)),
+                        subtitle: Text(devices[index].address,
+                            style: TextStyle(
+                              color: Colors.black,
+                            ))),
+                    onPressed: () {
+                      setState(() {
+                        device = devices[index];
+                      });
+                      Navigator.pop(context);
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void connect() async {
+    if (!isConnected) {
+      await BluetoothConnection.toAddress(device.address).then((_connection) {
+        print('Connected to ${device.name}');
+        connection = _connection;
+        setState(() {
+          isConnected = true;
+        });
+      });
+    }
   }
 }
