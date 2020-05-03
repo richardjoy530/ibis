@@ -1,10 +1,8 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 void main() => runApp(Main());
 
@@ -52,13 +50,12 @@ class _MyAppState extends State<MyApp> {
                 ListTile(
                   contentPadding: EdgeInsets.all(8),
                   leading: IconButton(
-                    icon: Icon(Icons.bluetooth_connected),
+                    icon: Icon(Icons.wifi),
                     color: Color(0xff3d84a7),
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => BlueToothScreen()),
+                        MaterialPageRoute(builder: (context) => SocketScreen()),
                       );
                     },
                   ),
@@ -105,54 +102,39 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-class BlueToothScreen extends StatefulWidget {
+class SocketScreen extends StatefulWidget {
   @override
-  _BlueToothScreenState createState() => _BlueToothScreenState();
+  _SocketScreenState createState() => _SocketScreenState();
 }
 
-class _BlueToothScreenState extends State<BlueToothScreen> {
-  FlutterBluetoothSerial bluetooth = FlutterBluetoothSerial.instance;
-  BluetoothConnection connection;
-  BluetoothDevice device;
-  List<BluetoothDevice> devices;
-  bool isConnected = false;
+class _SocketScreenState extends State<SocketScreen> {
   TextEditingController textEditingController;
+  TextEditingController ipEditingController;
+  bool isConnected = false;
+  Socket socket;
+  String serverIP = '192.168.18.5';
+  void connect() async {
+    Socket.connect(serverIP, 80).then((sock) {
+      setState(() {
+        isConnected = true;
+      });
+      socket = sock;
+    });
+  }
+
   @override
   void initState() {
     textEditingController = TextEditingController();
-    getPairedDevices();
+    ipEditingController = TextEditingController();
     super.initState();
   }
 
   @override
   void dispose() {
+    socket.close();
     textEditingController.dispose();
-    if (isConnected) {
-      connection.dispose();
-      connection = null;
-    }
+    ipEditingController.dispose();
     super.dispose();
-  }
-
-  getPairedDevices() async {
-    List<BluetoothDevice> devicesList = [];
-
-    try {
-      devicesList = await bluetooth.getBondedDevices();
-    } on PlatformException {
-      print("Error");
-    }
-
-    // It is an error to call [setState] unless [mounted] is true.
-    if (!mounted) {
-      return;
-    }
-
-    // Store the [devices] list in the [_devicesList] for accessing
-    // the list outside this class
-    setState(() {
-      devices = devicesList;
-    });
   }
 
   @override
@@ -165,28 +147,13 @@ class _BlueToothScreenState extends State<BlueToothScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               ListTile(
-                onTap: getPairedDevices,
-                leading: Icon(Icons.refresh),
-                title: Text('Refresh List of Devices'),
-              ),
-              ListTile(
                 onTap: () {
-                  showDeviceList(context);
+                  setServerIP(context);
                 },
-                leading: Icon(Icons.developer_mode),
-                subtitle:
-                    Text('Selected : ${device == null ? 'None' : device.name}'),
-                title: Text('Select a device'),
-              ),
-              ListTile(
-                onTap: () {
-                  connect();
-                },
-                leading: Icon(Icons.bluetooth),
-                //subtitle: Text('Connection Status : '),
-                title: Text('Connect'),
+                leading: Icon(Icons.computer),
+                title: Text('Connect to a TCP server'),
                 subtitle: Text(
-                    'Connected to: ${isConnected == false ? 'None' : device.name}'),
+                    'Connected to : ${isConnected == false ? 'None' : serverIP}'),
               ),
               ListTile(
                 title: TextField(
@@ -198,7 +165,7 @@ class _BlueToothScreenState extends State<BlueToothScreen> {
                 trailing: IconButton(
                   icon: Icon(Icons.send),
                   onPressed: () {
-                    sendMessage(textEditingController.text);
+                    socket.write(textEditingController.text);
                   },
                 ),
               )
@@ -209,7 +176,7 @@ class _BlueToothScreenState extends State<BlueToothScreen> {
     );
   }
 
-  Future<void> showDeviceList(context) async {
+  Future<void> setServerIP(context) async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -218,59 +185,33 @@ class _BlueToothScreenState extends State<BlueToothScreen> {
             borderRadius: BorderRadius.circular(10),
           ),
           title: Text(
-            'Select a Device',
+            'Set your server IP',
             style:
                 TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
           ),
           children: <Widget>[
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: List.generate(
-                devices.length,
-                (index) {
-                  return SimpleDialogOption(
-                    child: ListTile(
-                        leading: Icon(
-                          Icons.bluetooth,
-                        ),
-                        title: Text(devices[index].name,
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold)),
-                        subtitle: Text(devices[index].address,
-                            style: TextStyle(
-                              color: Colors.black,
-                            ))),
-                    onPressed: () {
-                      setState(() {
-                        device = devices[index];
-                      });
-                      Navigator.pop(context);
-                    },
-                  );
-                },
+            ListTile(
+              leading: Icon(
+                Icons.computer,
               ),
-            ),
+              title: TextField(
+                keyboardType: TextInputType.number,
+                controller: ipEditingController,
+                decoration: InputDecoration(
+                    hintText: 'Server IP ....',
+                    disabledBorder: InputBorder.none),
+              ),
+              trailing: IconButton(
+                  icon: Icon(Icons.check),
+                  onPressed: () {
+                    serverIP = ipEditingController.text;
+                    connect();
+                    Navigator.pop(context);
+                  }),
+            )
           ],
         );
       },
     );
-  }
-
-  void connect() async {
-    if (!isConnected) {
-      await BluetoothConnection.toAddress(device.address).then((_connection) {
-        print('Connected to ${device.name}');
-        connection = _connection;
-        setState(() {
-          isConnected = true;
-        });
-      });
-    }
-  }
-
-  void sendMessage(String data) async {
-    connection.output.add(utf8.encode(data));
-    await connection.output.allSent;
   }
 }
