@@ -4,30 +4,36 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(Main());
-
-class Main extends StatelessWidget {
+void main() => runApp(MyApp());
+Socket socket;
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
         fontFamily: 'BalooTamma2',
       ),
-      home: MyApp(),
+      home: HomePage(),
     );
   }
 }
 
-class MyApp extends StatefulWidget {
+class HomePage extends StatefulWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _HomePageState extends State<HomePage> {
   bool power = false;
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    socket.close();
+    super.dispose();
   }
 
   @override
@@ -112,29 +118,22 @@ class _SocketScreenState extends State<SocketScreen> {
   TextEditingController ipEditingController;
   TextEditingController portEditingController;
   bool isConnected = false;
-  Socket socket;
   String serverIP = '192.168.18.10';
   int port = 4041;
-
-  void connect() async {
-    ServerSocket.bind(serverIP, port).then((serverSocket) {
-      serverSocket.listen((sock) {
-        socket = sock;
-      });
-    });
-  }
+  String incomingMessages = '';
 
   @override
   void initState() {
     textEditingController = TextEditingController();
-    portEditingController = TextEditingController();
     ipEditingController = TextEditingController();
+    ipEditingController.text = '192.168.18.10';
+    portEditingController = TextEditingController();
+    portEditingController.text = '4041';
     super.initState();
   }
 
   @override
   void dispose() {
-    socket.close();
     textEditingController.dispose();
     ipEditingController.dispose();
     portEditingController.dispose();
@@ -155,9 +154,9 @@ class _SocketScreenState extends State<SocketScreen> {
                   setServerIP(context);
                 },
                 leading: Icon(Icons.computer),
-                title: Text('Connect to a TCP server'),
+                title: Text('Create a TCP server'),
                 subtitle: Text(
-                    'Connected to : ${isConnected == false ? 'None' : serverIP}'),
+                    'Hosted TCP server on : ${isConnected == false ? 'None' : serverIP}'),
               ),
               ListTile(
                 title: TextField(
@@ -170,9 +169,23 @@ class _SocketScreenState extends State<SocketScreen> {
                   icon: Icon(Icons.send),
                   onPressed: () {
                     socket.write(textEditingController.text);
+                    textEditingController.text = '';
                   },
                 ),
-              )
+              ),
+              Container(
+                child: ListTile(
+                    trailing: IconButton(
+                      icon: Icon(Icons.clear_all),
+                      onPressed: () {
+                        setState(() {
+                          incomingMessages = '';
+                        });
+                      },
+                    ),
+                    title: Text('Recived data'),
+                    subtitle: Text(incomingMessages)),
+              ),
             ],
           ),
         ),
@@ -231,5 +244,26 @@ class _SocketScreenState extends State<SocketScreen> {
         );
       },
     );
+  }
+
+  void connect() async {
+    ServerSocket.bind(serverIP, port).then((serverSocket) {
+      setState(() {
+        isConnected = true;
+      });
+      serverSocket.listen((sock) {
+        socket = sock;
+        fetch();
+      });
+    });
+  }
+
+  void fetch() async {
+    socket.listen((onData) {
+      setState(() {
+        incomingMessages = incomingMessages + String.fromCharCodes(onData);
+      });
+    });
+    fetch();
   }
 }
