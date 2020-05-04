@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,39 +30,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool power = false;
   AnimationController _radialProgressAnimationController;
   Animation<double> _progressAnimation;
-  final Duration fillDuration = Duration(seconds: 5);
   double progressDegrees = 0;
-  double time = 0;
+  double time = 2;
+  String height = '20';
 
   @override
   void initState() {
     super.initState();
-  }
-
-  runAnimation(Duration time, {double begin = 0.0, double end = 360.0}) {
-    _radialProgressAnimationController =
-        AnimationController(vsync: this, duration: time);
-    _progressAnimation = Tween(begin: begin, end: end).animate(CurvedAnimation(
-        parent: _radialProgressAnimationController, curve: Curves.linear))
-      ..addListener(() {
-        setState(() {
-          progressDegrees = _progressAnimation.value;
-        });
-      });
-  }
-
-  destroyAnimation() {
-    _radialProgressAnimationController.dispose();
-  }
-
-  getSeconds(int seconds) {
-    var f = new NumberFormat("00", "en_US");
-    return f.format(seconds % 60);
-  }
-
-  getMinuets(int seconds) {
-    var f = new NumberFormat("00", "en_US");
-    return f.format((seconds / 60).floor());
   }
 
   @override
@@ -115,7 +90,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     width: 30,
                     child: FlareActor(
                       'assets/status.flr',
-                      animation: power == true ? 'Connected' : 'off',
+                      animation: power == true ? 'Connected' : 'Connected',
                     ),
                   ),
                 ),
@@ -152,7 +127,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   Text(
                                     '${getMinuets(((time * 60) - ((time * 60) / 360) * progressDegrees).round())}:${getSeconds(((time * 60) - ((time * 60) / 360) * progressDegrees).round())}',
                                     style: TextStyle(fontSize: 60),
-                                  )
+                                  ),
+//                                  Text(
+//                                    power == true ? 'ON' : 'OFF',
+//                                    style: TextStyle(fontSize: 15),
+//                                  ),
                                 ],
                               ),
                             ),
@@ -164,7 +143,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                   child: Container(
                     decoration: BoxDecoration(
                         color: Color(0xffdae6eb),
@@ -172,24 +151,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         boxShadow: [
                           BoxShadow(
                             color: Color(0xffdae6eb),
-                            //blurRadius: 5.0, // soften the shadow
                             spreadRadius: 10.0, //extend the shadow
-//                      offset: Offset(
-//                        15.0, // Move to right 10  horizontally
-//                        15.0, // Move to bottom 10 Vertically
-//                      ),
                           )
                         ]),
-                    width: MediaQuery.of(context).size.width / 1.5,
                     child: Slider(
                       onChanged: (double value) {
-                        print(time);
-                        setState(() {
-                          time = value;
-                        });
+                        if (power == false) {
+                          print(time);
+                          setState(() {
+                            time = value;
+                          });
+                        }
                       },
-                      divisions: 15,
+                      divisions: 29,
                       label: time.round().toString(),
+                      min: 1,
                       max: 30,
                       value: time,
                       activeColor: Color(0xff2eb8c9),
@@ -207,10 +183,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           runAnimation(Duration(minutes: time.round()));
                           _radialProgressAnimationController.forward();
                         } else {
-                          time = 0;
+                          //time = 2;
                           destroyAnimation();
                           //progressDegrees = 0;
-                          runAnimation(Duration(milliseconds: 1000),
+                          runAnimation(Duration(milliseconds: 500),
                               begin: progressDegrees, end: 0);
                           _radialProgressAnimationController.forward();
                         }
@@ -231,6 +207,73 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  Future<void> setHeight(context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Text(
+            'Set height of the Equipment',
+            style:
+                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
+          ),
+          children: <Widget>[
+            ListTile(
+              leading: Icon(
+                Icons.computer,
+              ),
+              title: TextField(
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                    hintText: 'Server IP', disabledBorder: InputBorder.none),
+                onSubmitted: (text) {
+                  setState(() {
+                    height = text;
+                  });
+                },
+              ),
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  runAnimation(Duration time, {double begin = 0.0, double end = 360.0}) {
+    _radialProgressAnimationController =
+        AnimationController(vsync: this, duration: time);
+    _progressAnimation = Tween(begin: begin, end: end).animate(CurvedAnimation(
+        parent: _radialProgressAnimationController, curve: Curves.linear))
+      ..addListener(() {
+        setState(() {
+          progressDegrees = _progressAnimation.value;
+          if (progressDegrees == 360) {
+            power = false;
+          }
+        });
+        if (progressDegrees == 360) {
+          progressDegrees = 0;
+        }
+      });
+  }
+
+  destroyAnimation() {
+    _radialProgressAnimationController.dispose();
+  }
+
+  getSeconds(int seconds) {
+    var f = new NumberFormat("00", "en_US");
+    return f.format(seconds % 60);
+  }
+
+  getMinuets(int seconds) {
+    var f = new NumberFormat("00", "en_US");
+    return f.format((seconds / 60).floor());
   }
 }
 
