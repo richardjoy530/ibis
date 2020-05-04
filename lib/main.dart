@@ -1,8 +1,8 @@
 import 'dart:io';
-
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:vector_math/vector_math_64.dart' as math;
 
 void main() => runApp(MyApp());
@@ -25,28 +25,43 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool power = false;
   AnimationController _radialProgressAnimationController;
   Animation<double> _progressAnimation;
   final Duration fillDuration = Duration(seconds: 5);
   double progressDegrees = 0;
-  double time = 270;
-  double val = 0.5;
+  double time = 0;
 
   @override
   void initState() {
     super.initState();
+  }
+
+  runAnimation(Duration time, {double begin = 0.0, double end = 360.0}) {
     _radialProgressAnimationController =
-        AnimationController(vsync: this, duration: fillDuration);
-    _progressAnimation = Tween(begin: 0.0, end: time).animate(CurvedAnimation(
+        AnimationController(vsync: this, duration: time);
+    _progressAnimation = Tween(begin: begin, end: end).animate(CurvedAnimation(
         parent: _radialProgressAnimationController, curve: Curves.linear))
-        ..addListener(() {
+      ..addListener(() {
         setState(() {
           progressDegrees = _progressAnimation.value;
         });
       });
+  }
+
+  destroyAnimation() {
+    _radialProgressAnimationController.dispose();
+  }
+
+  getSeconds(int seconds) {
+    var f = new NumberFormat("00", "en_US");
+    return f.format(seconds % 60);
+  }
+
+  getMinuets(int seconds) {
+    var f = new NumberFormat("00", "en_US");
+    return f.format((seconds / 60).floor());
   }
 
   @override
@@ -129,11 +144,13 @@ class _HomePageState extends State<HomePage>
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Text(
-                                    'Time Remaining',
+                                    power == true
+                                        ? 'Time Remaining'
+                                        : 'Sterilizer Idle',
                                     style: TextStyle(fontSize: 20),
                                   ),
                                   Text(
-                                    '05:${progressDegrees.toString().substring(0, 2)}',
+                                    '${getMinuets(((time * 60) - ((time * 60) / 360) * progressDegrees).round())}:${getSeconds(((time * 60) - ((time * 60) / 360) * progressDegrees).round())}',
                                     style: TextStyle(fontSize: 60),
                                   )
                                 ],
@@ -146,33 +163,38 @@ class _HomePageState extends State<HomePage>
                     ],
                   ),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                      color: Color(0xffdae6eb),
-                      borderRadius: BorderRadius.circular(50),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color(0xffdae6eb),
-                          //blurRadius: 5.0, // soften the shadow
-                          spreadRadius: 10.0, //extend the shadow
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xffdae6eb),
+                        borderRadius: BorderRadius.circular(50),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xffdae6eb),
+                            //blurRadius: 5.0, // soften the shadow
+                            spreadRadius: 10.0, //extend the shadow
 //                      offset: Offset(
 //                        15.0, // Move to right 10  horizontally
 //                        15.0, // Move to bottom 10 Vertically
 //                      ),
-                        )
-                      ]),
-                  width: MediaQuery.of(context).size.width / 1.5,
-                  child: Slider(
-                    onChanged: (double value) {
-                      print(time);
-                      setState(() {
-                        time = value;
-                      });
-                    },
-                    max: 360,
-                    value: time,
-                    activeColor: Color(0xff2eb8c9),
-                    inactiveColor: Color(0xffffffff),
+                          )
+                        ]),
+                    width: MediaQuery.of(context).size.width / 1.5,
+                    child: Slider(
+                      onChanged: (double value) {
+                        print(time);
+                        setState(() {
+                          time = value;
+                        });
+                      },
+                      divisions: 15,
+                      label: time.round().toString(),
+                      max: 30,
+                      value: time,
+                      activeColor: Color(0xff2eb8c9),
+                      inactiveColor: Color(0xffffffff),
+                    ),
                   ),
                 ),
                 Padding(
@@ -180,10 +202,17 @@ class _HomePageState extends State<HomePage>
                   child: GestureDetector(
                     onTap: () {
                       setState(() {
-                        if (power == false) {
+                        if (power == false && time != 0) {
+                          progressDegrees = 0;
+                          runAnimation(Duration(minutes: time.round()));
                           _radialProgressAnimationController.forward();
                         } else {
-                          _radialProgressAnimationController.reverse();
+                          time = 0;
+                          destroyAnimation();
+                          //progressDegrees = 0;
+                          runAnimation(Duration(milliseconds: 1000),
+                              begin: progressDegrees, end: 0);
+                          _radialProgressAnimationController.forward();
                         }
                         power = !power;
                       });
@@ -375,6 +404,7 @@ class _SocketScreenState extends State<SocketScreen> {
                   icon: Icon(Icons.check),
                   onPressed: () {
                     port = int.parse(portEditingController.text);
+                    serverIP = ipEditingController.text;
                     connect();
                     Navigator.pop(context);
                   }),
