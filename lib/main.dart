@@ -32,15 +32,17 @@ class _HomePageState extends State<HomePage>
   Animation<double> _progressAnimation;
   final Duration fillDuration = Duration(seconds: 5);
   double progressDegrees = 0;
+  double time = 270;
+  double val = 0.5;
 
   @override
   void initState() {
     super.initState();
     _radialProgressAnimationController =
         AnimationController(vsync: this, duration: fillDuration);
-    _progressAnimation = Tween(begin: 0.0, end: 360.0).animate(CurvedAnimation(
+    _progressAnimation = Tween(begin: 0.0, end: time).animate(CurvedAnimation(
         parent: _radialProgressAnimationController, curve: Curves.linear))
-      ..addListener(() {
+        ..addListener(() {
         setState(() {
           progressDegrees = _progressAnimation.value;
         });
@@ -142,6 +144,35 @@ class _HomePageState extends State<HomePage>
                         painter: RadialPainter(progressDegrees),
                       ),
                     ],
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                      color: Color(0xffdae6eb),
+                      borderRadius: BorderRadius.circular(50),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0xffdae6eb),
+                          //blurRadius: 5.0, // soften the shadow
+                          spreadRadius: 10.0, //extend the shadow
+//                      offset: Offset(
+//                        15.0, // Move to right 10  horizontally
+//                        15.0, // Move to bottom 10 Vertically
+//                      ),
+                        )
+                      ]),
+                  width: MediaQuery.of(context).size.width / 1.5,
+                  child: Slider(
+                    onChanged: (double value) {
+                      print(time);
+                      setState(() {
+                        time = value;
+                      });
+                    },
+                    max: 360,
+                    value: time,
+                    activeColor: Color(0xff2eb8c9),
+                    inactiveColor: Color(0xffffffff),
                   ),
                 ),
                 Padding(
@@ -360,10 +391,10 @@ class _SocketScreenState extends State<SocketScreen> {
         isConnected = true;
       });
       serverSocket.listen((sock) {
-        socket = sock;
         //fetch();
-      }).onData((socket) {
-        socket.listen((onData) {
+      }).onData((sock) {
+        socket = sock;
+        sock.listen((onData) {
           setState(() {
             incomingMessages = incomingMessages + String.fromCharCodes(onData);
           });
