@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage>
               children: <Widget>[
                 ListTile(
                   contentPadding: EdgeInsets.all(8),
-                  leading: IconButton(
+                  trailing: IconButton(
                     icon: Icon(Icons.phonelink_off),
                     color: Color(0xff3d84a7),
                     onPressed: () {
@@ -93,10 +93,14 @@ class _HomePageState extends State<HomePage>
                     'Not Connected',
                     style: TextStyle(color: Color(0xff47466d)),
                   ),
-                  trailing: IconButton(
-                      icon: Icon(Icons.center_focus_weak,
-                          color: Color(0xff3d84a7)),
-                      onPressed: null),
+                  leading: Container(
+                    height: 30,
+                    width: 30,
+                    child: FlareActor(
+                      'assets/status.flr',
+                      animation: power == true ? 'Connected' : 'off',
+                    ),
+                  ),
                 ),
                 Flexible(
                   child: Stack(
@@ -104,7 +108,7 @@ class _HomePageState extends State<HomePage>
                     children: <Widget>[
                       FlareActor(
                         'assets/breathing.flr',
-                        animation: 'breath',
+                        animation: power == true ? 'breath' : 'off',
                       ),
                       CustomPaint(
                         child: Container(
