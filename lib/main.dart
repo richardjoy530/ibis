@@ -1,478 +1,153 @@
-import 'dart:io';
-
-import 'package:flare_flutter/flare_actor.dart';
+import 'package:clay_containers/clay_containers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:vector_math/vector_math_64.dart' as math;
 
 void main() => runApp(MyApp());
-Socket socket;
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool power = false;
+  double buttonRadius = 100;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
         fontFamily: 'BalooTamma2',
       ),
-      home: HomePage(),
-    );
-  }
-}
-
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  bool power = false;
-  AnimationController _radialProgressAnimationController;
-  Animation<double> _progressAnimation;
-  double progressDegrees = 0;
-  double time = 2;
-  String height = '20';
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _radialProgressAnimationController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: FractionallySizedBox(
-        widthFactor: 1,
-        heightFactor: 1,
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xffb9dfe6), Color(0xffffffff)]),
-          ),
-          child: SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                ListTile(
-                  contentPadding: EdgeInsets.all(8),
-                  trailing: IconButton(
-                    icon: Icon(Icons.phonelink_off),
-                    color: Color(0xff3d84a7),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SocketScreen()),
-                      );
-                    },
-                  ),
-                  title: Text(
-                    'Ibis Sterilyzer',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: Text(
-                    'Not Connected',
-                    style: TextStyle(color: Color(0xff47466d)),
-                  ),
-                  leading: Container(
-                    height: 30,
-                    width: 30,
-                    child: FlareActor(
-                      'assets/status.flr',
-                      animation: power == true ? 'Connected' : 'Connected',
-                    ),
-                  ),
-                ),
-                Flexible(
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: <Widget>[
-                      FlareActor(
-                        'assets/breathing.flr',
-                        animation: power == true ? 'breath' : 'off',
+      home: Scaffold(
+        body: FractionallySizedBox(
+          widthFactor: 1,
+          heightFactor: 1,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0xffb9dfe6), Color(0xffffffff)]),
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  ListTile(
+                    contentPadding: EdgeInsets.all(8),
+                    leading: Icon(Icons.bluetooth_connected,
+                        color: Color(0xff3d84a7)),
+                    title: Text(
+                      'Ibis Analyser',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
                       ),
-                      CustomPaint(
-                        child: Container(
-                          height: MediaQuery.of(context).size.width / 1.5,
-                          width: MediaQuery.of(context).size.width / 1.5,
-                          child: Center(
+                    ),
+                    subtitle: Text(
+                      'Connected',
+                      style: TextStyle(color: Color(0xff47466d)),
+                    ),
+                    trailing: IconButton(
+                        icon: Icon(Icons.center_focus_weak,
+                            color: Color(0xff3d84a7)),
+                        onPressed: null),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Stack(
+                      children: <Widget>[
+                        Visibility(
+                          visible: !power,
+                          child: ClayContainer(
+                            spread: 5,
+                            surfaceColor: Color(0xFF4dc9cf),
+                            color: Color(0xffb9dfe6),
+                            borderRadius: 50,
+                            curveType: CurveType.convex,
+                            height: 100,
+                            width: 100,
                             child: Container(
-                              height:
-                                  (MediaQuery.of(context).size.width / 1.5) -
-                                      50,
-                              width: (MediaQuery.of(context).size.width / 1.5) -
-                                  50,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle, color: Colors.white),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    power == true
-                                        ? 'Time Remaining'
-                                        : 'Sterilizer Idle',
-                                    style: TextStyle(fontSize: 20),
+                              child: IconButton(
+                                  icon: Icon(
+                                    Icons.power_settings_new,
+                                    size: 30,
+                                    color: Colors.white,
                                   ),
-                                  Text(
-                                    '${getMinuets(((time * 60) - ((time * 60) / 360) * progressDegrees).round())}:${getSeconds(((time * 60) - ((time * 60) / 360) * progressDegrees).round())}',
-                                    style: TextStyle(fontSize: 60),
-                                  ),
-//                                  Text(
-//                                    power == true ? 'ON' : 'OFF',
-//                                    style: TextStyle(fontSize: 15),
-//                                  ),
-                                ],
-                              ),
+                                  onPressed: () {
+                                    setState(() {
+                                      power = !power;
+                                      print('Pressed Power');
+                                    });
+                                  }),
                             ),
                           ),
                         ),
-                        painter: RadialPainter(progressDegrees),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Color(0xffdae6eb),
-                        borderRadius: BorderRadius.circular(50),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0xffdae6eb),
-                            spreadRadius: 10.0, //extend the shadow
-                          )
-                        ]),
-                    child: Slider(
-                      onChanged: (double value) {
-                        if (power == false) {
-                          print(time);
-                          setState(() {
-                            time = value;
-                          });
-                        }
-                      },
-                      divisions: 29,
-                      label: time.round().toString(),
-                      min: 1,
-                      max: 30,
-                      value: time,
-                      activeColor: Color(0xff2eb8c9),
-                      inactiveColor: Color(0xffffffff),
+                        Visibility(
+                            visible: power,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                AnimatedContainer(
+                                  height: buttonRadius,
+                                  width: buttonRadius,
+                                  child: ClayContainer(
+                                    spread: 5,
+                                    surfaceColor: Color(0xFFffffff),
+                                    color: Color(0xFFF2F2F2),
+                                    borderRadius: 50,
+                                    curveType: CurveType.convex,
+                                    child: IconButton(
+                                        icon: Icon(
+                                          Icons.pause,
+                                          size: 30,
+                                          color: Colors.black,
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            power = !power;
+                                            print('Pressed Pause');
+                                          });
+                                        }),
+                                  ),
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.bounceOut,
+                                ),
+                                ClayContainer(
+                                  spread: 5,
+                                  surfaceColor: Color(0xFFffffff),
+                                  color: Color(0xFFF2F2F2),
+                                  borderRadius: 50,
+                                  curveType: CurveType.convex,
+                                  height: 100,
+                                  width: 100,
+                                  child: Container(
+                                    child: IconButton(
+                                        icon: Icon(
+                                          Icons.stop,
+                                          size: 30,
+                                          color: Colors.black,
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            power = !power;
+                                            print('Pressed Power');
+                                          });
+                                        }),
+                                  ),
+                                )
+                              ],
+                            ))
+                      ],
                     ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 50),
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (power == false && time != 0) {
-                          progressDegrees = 0;
-                          runAnimation(Duration(minutes: time.round()));
-                          _radialProgressAnimationController.forward();
-                        } else {
-                          //time = 2;
-                          destroyAnimation();
-                          //progressDegrees = 0;
-                          runAnimation(Duration(milliseconds: 500),
-                              begin: progressDegrees, end: 0);
-                          _radialProgressAnimationController.forward();
-                        }
-                        power = !power;
-                      });
-                    },
-                    child: Container(
-                      height: 100,
-                      width: 100,
-                      child: FlareActor('assets/powerButton.flr',
-                          animation: power == true ? "on" : "off"),
-                    ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
-  }
-
-  Future<void> setHeight(context) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          title: Text(
-            'Set height of the Equipment',
-            style:
-                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
-          ),
-          children: <Widget>[
-            ListTile(
-              leading: Icon(
-                Icons.computer,
-              ),
-              title: TextField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                    hintText: 'Server IP', disabledBorder: InputBorder.none),
-                onSubmitted: (text) {
-                  setState(() {
-                    height = text;
-                  });
-                },
-              ),
-            )
-          ],
-        );
-      },
-    );
-  }
-
-  runAnimation(Duration time, {double begin = 0.0, double end = 360.0}) {
-    _radialProgressAnimationController =
-        AnimationController(vsync: this, duration: time);
-    _progressAnimation = Tween(begin: begin, end: end).animate(CurvedAnimation(
-        parent: _radialProgressAnimationController, curve: Curves.linear))
-      ..addListener(() {
-        setState(() {
-          progressDegrees = _progressAnimation.value;
-          if (progressDegrees == 360) {
-            power = false;
-          }
-        });
-        if (progressDegrees == 360) {
-          progressDegrees = 0;
-        }
-      });
-  }
-
-  destroyAnimation() {
-    _radialProgressAnimationController.dispose();
-  }
-
-  getSeconds(int seconds) {
-    var f = new NumberFormat("00", "en_US");
-    return f.format(seconds % 60);
-  }
-
-  getMinuets(int seconds) {
-    var f = new NumberFormat("00", "en_US");
-    return f.format((seconds / 60).floor());
-  }
-}
-
-class RadialPainter extends CustomPainter {
-  double progressInDegrees;
-
-  RadialPainter(this.progressInDegrees);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    Offset center = Offset(size.width / 2, size.height / 2);
-    Paint paint = Paint()
-      ..shader = RadialGradient(
-              colors: [Color(0xff2eb8c9), Color(0xff95dcdb), Color(0xffd1e6ea)])
-          .createShader(Rect.fromCircle(center: center, radius: size.width / 2))
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 50.0;
-
-    canvas.drawCircle(center, size.width / 2, paint);
-
-    Paint progressPaint = Paint()
-      ..shader = SweepGradient(
-              colors: [Color(0xff2eb8c9), Color(0xff95dcdb), Color(0xffb9dfe6)])
-          .createShader(Rect.fromCircle(center: center, radius: size.width / 2))
-      ..strokeCap = StrokeCap.butt
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 50.0;
-
-    canvas.drawArc(
-        Rect.fromCircle(center: center, radius: size.width / 2),
-        math.radians(0),
-        math.radians(-progressInDegrees),
-        false,
-        progressPaint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
-  }
-}
-
-class SocketScreen extends StatefulWidget {
-  @override
-  _SocketScreenState createState() => _SocketScreenState();
-}
-
-class _SocketScreenState extends State<SocketScreen> {
-  TextEditingController textEditingController;
-  TextEditingController ipEditingController;
-  TextEditingController portEditingController;
-  String serverIP = '192.168.18.10';
-  int port = 4041;
-  String incomingMessages = '';
-  bool isConnected = false;
-  bool fetching = false;
-
-  @override
-  void initState() {
-    textEditingController = TextEditingController();
-    ipEditingController = TextEditingController();
-    ipEditingController.text = '192.168.18.10';
-    portEditingController = TextEditingController();
-    portEditingController.text = '4041';
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    socket.close();
-    textEditingController.dispose();
-    ipEditingController.dispose();
-    portEditingController.dispose();
-    super.dispose();
-  }
-
-  @override
-  //Testing
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              ListTile(
-                onTap: () {
-                  setServerIP(context);
-                },
-                leading: Icon(Icons.computer),
-                title: Text('Create a TCP server'),
-                subtitle: Text(
-                    'Hosted TCP server on : ${isConnected == false ? 'None' : serverIP}'),
-              ),
-              ListTile(
-                title: TextField(
-                  controller: textEditingController,
-                  decoration: InputDecoration(
-                      hintText: 'Type text to send',
-                      disabledBorder: InputBorder.none),
-                ),
-                trailing: IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: () {
-                    socket.write(textEditingController.text);
-                    textEditingController.text = '';
-                  },
-                ),
-              ),
-              Container(
-                child: ListTile(
-                    trailing: IconButton(
-                      icon: Icon(Icons.clear_all),
-                      onPressed: () {
-                        setState(() {
-                          incomingMessages = '';
-                        });
-                      },
-                    ),
-                    title: Text('Recived data'),
-                    subtitle: Text(incomingMessages)),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> setServerIP(context) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          title: Text(
-            'Set your server IP',
-            style:
-                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
-          ),
-          children: <Widget>[
-            ListTile(
-              leading: Icon(
-                Icons.computer,
-              ),
-              title: TextField(
-                keyboardType: TextInputType.number,
-                controller: ipEditingController,
-                decoration: InputDecoration(
-                    hintText: 'Server IP', disabledBorder: InputBorder.none),
-              ),
-//              trailing: IconButton(
-//                  icon: Icon(Icons.check),
-//                  onPressed: () {
-//                    serverIP = ipEditingController.text;
-//                    connect();
-//                    Navigator.pop(context);
-//                  }),
-            ),
-            ListTile(
-              title: TextField(
-                keyboardType: TextInputType.number,
-                controller: portEditingController,
-                decoration: InputDecoration(
-                    hintText: 'Port', disabledBorder: InputBorder.none),
-              ),
-              trailing: IconButton(
-                  icon: Icon(Icons.check),
-                  onPressed: () {
-                    port = int.parse(portEditingController.text);
-                    serverIP = ipEditingController.text;
-                    connect();
-                    Navigator.pop(context);
-                  }),
-            )
-          ],
-        );
-      },
-    );
-  }
-
-  void connect() async {
-    ServerSocket.bind(serverIP, port).then((serverSocket) {
-      setState(() {
-        isConnected = true;
-      });
-      serverSocket.listen((sock) {
-        //fetch();
-      }).onData((sock) {
-        socket = sock;
-        sock.listen((onData) {
-          setState(() {
-            incomingMessages = incomingMessages + String.fromCharCodes(onData);
-          });
-        });
-      });
-    });
   }
 }
