@@ -9,7 +9,7 @@ import 'package:vector_math/vector_math_64.dart' as math;
 
 void main() => runApp(MyApp());
 Socket socket;
-var clientip=[];
+List<String> clientip=[];
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -368,7 +368,7 @@ class _SocketScreenState extends State<SocketScreen> {
                 leading: Icon(Icons.wifi_tethering),                
               ),
               ListTile(
-                title: Text(clientip==null?'':clientip),
+                title: Text(clientip.length==0?'':'$clientip'),
               ),
 
               ListTile(
