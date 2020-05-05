@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +7,6 @@ import 'package:ibis/test_screen.dart';
 import 'package:intl/intl.dart';
 
 void main() => runApp(MyApp());
-Socket socket;
 
 class MyApp extends StatelessWidget {
   @override
@@ -79,6 +76,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           'Ibis Sterilyzer',
           style: TextStyle(
             fontSize: 24,
+            color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -95,7 +93,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           )
         ],
         bottom: TabBar(
-          isScrollable: true,
+          labelColor: Colors.black,
+          indicatorColor: Colors.blueGrey,
+          indicatorSize: TabBarIndicatorSize.label,
+          indicatorWeight: 2,
+          unselectedLabelColor: Colors.blueGrey,
           tabs: tabs,
           controller: tabController,
         ),

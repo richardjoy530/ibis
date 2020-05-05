@@ -2,7 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ibis/main.dart';
+
+Socket socket;
 
 class SocketScreen extends StatefulWidget {
   @override
