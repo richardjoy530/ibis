@@ -31,8 +31,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   AnimationController _radialProgressAnimationController;
   Animation<double> _progressAnimation;
   double progressDegrees = 0;
-  double time = 2;
-  String height = '20';
+  double time = 1;
+  String height = '';
 
   @override
   void initState() {
@@ -125,13 +125,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                     style: TextStyle(fontSize: 20),
                                   ),
                                   Text(
-                                    '${getMinuets(((time * 60) - ((time * 60) / 360) * progressDegrees).round())}:${getSeconds(((time * 60) - ((time * 60) / 360) * progressDegrees).round())}',
+                                    '${getMinuets(((mapValues(time) * 60) - ((mapValues(time) * 60) / 360) * progressDegrees).round())}:${getSeconds(((mapValues(time) * 60) - ((mapValues(time) * 60) / 360) * progressDegrees).round())}',
                                     style: TextStyle(fontSize: 60),
                                   ),
-//                                  Text(
-//                                    power == true ? 'ON' : 'OFF',
-//                                    style: TextStyle(fontSize: 15),
-//                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (power == false) {
+                                        setHeight(context);
+                                      }
+                                    },
+                                    child: Text(
+                                      height == ''
+                                          ? 'Height not set'
+                                          : 'Height: $height',
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -154,22 +163,42 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             spreadRadius: 10.0, //extend the shadow
                           )
                         ]),
-                    child: Slider(
-                      onChanged: (double value) {
-                        if (power == false) {
-                          print(time);
-                          setState(() {
-                            time = value;
-                          });
-                        }
-                      },
-                      divisions: 29,
-                      label: time.round().toString(),
-                      min: 1,
-                      max: 30,
-                      value: time,
-                      activeColor: Color(0xff2eb8c9),
-                      inactiveColor: Color(0xffffffff),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            '1 min',
+                            style: TextStyle(color: Colors.blueGrey),
+                          ),
+                        ),
+                        Expanded(
+                          child: Slider(
+                            onChanged: (double value) {
+                              if (power == false) {
+                                setState(() {
+                                  time = value;
+                                });
+                              }
+                            },
+                            divisions: 12,
+                            label: mapValues(time).round().toString(),
+                            min: 1,
+                            max: 13,
+                            value: time,
+                            activeColor: Color(0xff2eb8c9),
+                            inactiveColor: Color(0xffffffff),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Text(
+                            '30 mins',
+                            style: TextStyle(color: Colors.blueGrey),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -179,9 +208,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     onTap: () {
                       setState(() {
                         if (power == false && time != 0) {
-                          progressDegrees = 0;
-                          runAnimation(Duration(minutes: time.round()));
-                          _radialProgressAnimationController.forward();
+                          if (height == '') {
+                            setHeight(context);
+                          }
+                          if (height != '') {
+                            progressDegrees = 0;
+                            runAnimation(
+                                Duration(minutes: mapValues(time).round()));
+                            _radialProgressAnimationController.forward();
+                            power = !power;
+                          }
                         } else {
                           //time = 2;
                           destroyAnimation();
@@ -189,8 +225,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           runAnimation(Duration(milliseconds: 500),
                               begin: progressDegrees, end: 0);
                           _radialProgressAnimationController.forward();
+                          power = !power;
                         }
-                        power = !power;
                       });
                     },
                     child: Container(
@@ -209,6 +245,38 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
+  double mapValues(value) {
+    double temp;
+    if (value == 1) {
+      temp = 1;
+    } else if (value == 2) {
+      temp = 2;
+    } else if (value == 3) {
+      temp = 3;
+    } else if (value == 4) {
+      temp = 4;
+    } else if (value == 5) {
+      temp = 5;
+    } else if (value == 6) {
+      temp = 7;
+    } else if (value == 7) {
+      temp = 9;
+    } else if (value == 8) {
+      temp = 10;
+    } else if (value == 9) {
+      temp = 12;
+    } else if (value == 10) {
+      temp = 15;
+    } else if (value == 11) {
+      temp = 20;
+    } else if (value == 12) {
+      temp = 25;
+    } else if (value == 13) {
+      temp = 30;
+    }
+    return temp;
+  }
+
   Future<void> setHeight(context) async {
     await showDialog(
       context: context,
@@ -225,16 +293,26 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           children: <Widget>[
             ListTile(
               leading: Icon(
-                Icons.computer,
+                Icons.settings_input_composite,
               ),
               title: TextField(
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                    hintText: 'Server IP', disabledBorder: InputBorder.none),
+                    border: InputBorder.none,
+                    hintText: 'Height',
+                    disabledBorder: InputBorder.none),
+                onChanged: (text) {
+                  height = text;
+                },
                 onSubmitted: (text) {
-                  setState(() {
-                    height = text;
-                  });
+                  height = text;
+                  Navigator.pop(context);
+                },
+              ),
+              trailing: IconButton(
+                icon: Icon(Icons.check),
+                onPressed: () {
+                  Navigator.pop(context);
                 },
               ),
             )
@@ -326,17 +404,18 @@ class _SocketScreenState extends State<SocketScreen> {
   TextEditingController textEditingController;
   TextEditingController ipEditingController;
   TextEditingController portEditingController;
-  String serverIP = '192.168.18.10';
+  String serverIP = '0.0.0.0';
   int port = 4041;
   String incomingMessages = '';
   bool isConnected = false;
   bool fetching = false;
+  List<Socket> socketList = [];
 
   @override
   void initState() {
     textEditingController = TextEditingController();
     ipEditingController = TextEditingController();
-    ipEditingController.text = '192.168.18.10';
+    ipEditingController.text = serverIP;
     portEditingController = TextEditingController();
     portEditingController.text = '4041';
     super.initState();
@@ -344,7 +423,11 @@ class _SocketScreenState extends State<SocketScreen> {
 
   @override
   void dispose() {
-    socket.close();
+    for (var s in socketList) {
+      s.close();
+      s.destroy();
+    }
+    socketList = [];
     textEditingController.dispose();
     ipEditingController.dispose();
     portEditingController.dispose();
@@ -379,7 +462,9 @@ class _SocketScreenState extends State<SocketScreen> {
                 trailing: IconButton(
                   icon: Icon(Icons.send),
                   onPressed: () {
-                    socket.write(textEditingController.text);
+                    for (var s in socketList) {
+                      s.write(textEditingController.text);
+                    }
                     textEditingController.text = '';
                   },
                 ),
@@ -464,9 +549,12 @@ class _SocketScreenState extends State<SocketScreen> {
         isConnected = true;
       });
       serverSocket.listen((sock) {
+        // print([sock.address, sock.remoteAddress]);
         //fetch();
       }).onData((sock) {
         socket = sock;
+        socketList.add(socket);
+        print([sock.remoteAddress, sock.remotePort, socketList.length]);
         sock.listen((onData) {
           setState(() {
             incomingMessages = incomingMessages + String.fromCharCodes(onData);
