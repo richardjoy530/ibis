@@ -33,9 +33,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   double progressDegrees = 0;
   double time = 1;
   String height = '';
+  TabController tabController;
 
   @override
   void initState() {
+    tabController = TabController(length: 3, vsync: this);
     super.initState();
   }
 
@@ -203,7 +205,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 50),
+                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
                   child: GestureDetector(
                     onTap: () {
                       setState(() {
@@ -410,6 +412,8 @@ class _SocketScreenState extends State<SocketScreen> {
   bool isConnected = false;
   bool fetching = false;
   List<Socket> socketList = [];
+  bool tap = false;
+  bool _loopActive = false;
 
   @override
   void initState() {
@@ -469,6 +473,43 @@ class _SocketScreenState extends State<SocketScreen> {
                   },
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Listener(
+                      child: Icon(Icons.arrow_upward),
+                      onPointerDown: (data) {
+                        print('tap up');
+                        tap = true;
+                        heightOnTap(socket, '1');
+                      },
+                      onPointerUp: (data) {
+                        print('cancel');
+                        tap = false;
+                      },
+                    ),
+                    Listener(
+                      child: Icon(Icons.arrow_downward),
+                      onPointerDown: (data) {
+                        print('tap up');
+                        tap = true;
+                        heightOnTap(socket, '-1');
+                      },
+                      onPointerUp: (data) {
+                        print('cancel');
+                        tap = false;
+                      },
+                    ),
+                    IconButton(
+                        icon: Icon(Icons.check_circle),
+                        onPressed: () {
+                          socket.write('true');
+                        })
+                  ],
+                ),
+              ),
               Container(
                 child: ListTile(
                     trailing: IconButton(
@@ -487,6 +528,17 @@ class _SocketScreenState extends State<SocketScreen> {
         ),
       ),
     );
+  }
+
+  heightOnTap(Socket socket, String value) async {
+    if (_loopActive) return;
+
+    _loopActive = true;
+    while (tap == true) {
+      socket.write(value);
+      await Future.delayed(Duration(milliseconds: 500));
+    }
+    _loopActive = false;
   }
 
   Future<void> setServerIP(context) async {
@@ -513,13 +565,6 @@ class _SocketScreenState extends State<SocketScreen> {
                 decoration: InputDecoration(
                     hintText: 'Server IP', disabledBorder: InputBorder.none),
               ),
-//              trailing: IconButton(
-//                  icon: Icon(Icons.check),
-//                  onPressed: () {
-//                    serverIP = ipEditingController.text;
-//                    connect();
-//                    Navigator.pop(context);
-//                  }),
             ),
             ListTile(
               title: TextField(
