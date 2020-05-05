@@ -9,7 +9,7 @@ import 'package:vector_math/vector_math_64.dart' as math;
 
 void main() => runApp(MyApp());
 Socket socket;
-var clientip;
+var clientip=[];
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -415,17 +415,21 @@ class _SocketScreenState extends State<SocketScreen> {
         isConnected = true;
       });
       serverSocket.listen((sock) {
+
+
         //fetch();
       }).onData((sock) {
         socket = sock;
+        setState(() {
+          var data=socket.remoteAddress;
+          var port=socket.remotePort;
+          String ip=data.address;
+          clientip.add(ip);
+          print(clientip);
+          print(port);
+        });
         sock.listen((onData) {
           setState(() {
-            var data=socket.remoteAddress;
-            var port=socket.remotePort;
-            var ip=data.address;
-            clientip=ip;
-            print(clientip);
-            print(port);
             incomingMessages = incomingMessages + String.fromCharCodes(onData);
           });
         });
