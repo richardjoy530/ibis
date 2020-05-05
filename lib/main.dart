@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vector_math/vector_math_64.dart' as math;
 
-
 void main() => runApp(MyApp());
 Socket socket;
-var clientip=[];
+List<String> clientIp = [];
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -110,8 +110,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           child: Center(
                             child: Container(
                               height:
-                              (MediaQuery.of(context).size.width / 1.5) -
-                                  50,
+                                  (MediaQuery.of(context).size.width / 1.5) -
+                                      50,
                               width: (MediaQuery.of(context).size.width / 1.5) -
                                   50,
                               decoration: BoxDecoration(
@@ -221,7 +221,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           title: Text(
             'Set height of the Equipment',
             style:
-            TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
+                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
           ),
           children: <Widget>[
             ListTile(
@@ -288,7 +288,7 @@ class RadialPainter extends CustomPainter {
     Offset center = Offset(size.width / 2, size.height / 2);
     Paint paint = Paint()
       ..shader = RadialGradient(
-          colors: [Color(0xff2eb8c9), Color(0xff95dcdb), Color(0xffd1e6ea)])
+              colors: [Color(0xff2eb8c9), Color(0xff95dcdb), Color(0xffd1e6ea)])
           .createShader(Rect.fromCircle(center: center, radius: size.width / 2))
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke
@@ -298,7 +298,7 @@ class RadialPainter extends CustomPainter {
 
     Paint progressPaint = Paint()
       ..shader = SweepGradient(
-          colors: [Color(0xff2eb8c9), Color(0xff95dcdb), Color(0xffb9dfe6)])
+              colors: [Color(0xff2eb8c9), Color(0xff95dcdb), Color(0xffb9dfe6)])
           .createShader(Rect.fromCircle(center: center, radius: size.width / 2))
       ..strokeCap = StrokeCap.butt
       ..style = PaintingStyle.stroke
@@ -333,7 +333,6 @@ class _SocketScreenState extends State<SocketScreen> {
   bool isConnected = false;
   bool fetching = false;
 
-
   @override
   void initState() {
     connect();
@@ -365,12 +364,11 @@ class _SocketScreenState extends State<SocketScreen> {
             children: <Widget>[
               ListTile(
                 title: Text('Connected Devices'),
-                leading: Icon(Icons.wifi_tethering),                
+                leading: Icon(Icons.wifi_tethering),
               ),
               ListTile(
-                title: Text(clientip==null?'':clientip),
+                title: Text(clientIp == null ? '' : '$clientIp'),
               ),
-
               ListTile(
                 title: TextField(
                   controller: textEditingController,
@@ -406,26 +404,23 @@ class _SocketScreenState extends State<SocketScreen> {
     );
   }
 
-
   void connect() async {
-    var ip='0.0.0.0';
-    var port=4041;
+    var ip = '0.0.0.0';
+    var port = 4041;
     ServerSocket.bind(ip, port).then((serverSocket) {
       setState(() {
         isConnected = true;
       });
       serverSocket.listen((sock) {
-
-
         //fetch();
       }).onData((sock) {
         socket = sock;
         setState(() {
-          var data=socket.remoteAddress;
-          var port=socket.remotePort;
-          String ip=data.address;
-          clientip.add(ip);
-          print(clientip);
+          var data = socket.remoteAddress;
+          var port = socket.remotePort;
+          String ip = data.address;
+          clientIp.add(ip);
+          print(clientIp);
           print(port);
         });
         sock.listen((onData) {
