@@ -8,7 +8,7 @@ import 'package:vector_math/vector_math_64.dart' as math;
 
 void main() => runApp(MyApp());
 Socket socket;
-
+var clientip;
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -332,8 +332,10 @@ class _SocketScreenState extends State<SocketScreen> {
   bool isConnected = false;
   bool fetching = false;
 
+
   @override
   void initState() {
+    connect();
     textEditingController = TextEditingController();
     ipEditingController = TextEditingController();
     ipEditingController.text = '192.168.18.10';
@@ -361,14 +363,13 @@ class _SocketScreenState extends State<SocketScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               ListTile(
-                onTap: () {
-                  setServerIP(context);
-                },
-                leading: Icon(Icons.computer),
-                title: Text('Create a TCP server'),
-                subtitle: Text(
-                    'Hosted TCP server on : ${isConnected == false ? 'None' : serverIP}'),
+                title: Text('Connected Devices'),
+                leading: Icon(Icons.wifi_tethering),                
               ),
+              ListTile(
+                title: Text(clientip==null?'':clientip),
+              ),
+
               ListTile(
                 title: TextField(
                   controller: textEditingController,
@@ -404,62 +405,11 @@ class _SocketScreenState extends State<SocketScreen> {
     );
   }
 
-  Future<void> setServerIP(context) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          title: Text(
-            'Set your server IP',
-            style:
-            TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
-          ),
-          children: <Widget>[
-            ListTile(
-              leading: Icon(
-                Icons.computer,
-              ),
-              title: TextField(
-                keyboardType: TextInputType.number,
-                controller: ipEditingController,
-                decoration: InputDecoration(
-                    hintText: 'Server IP', disabledBorder: InputBorder.none),
-              ),
-//              trailing: IconButton(
-//                  icon: Icon(Icons.check),
-//                  onPressed: () {
-//                    serverIP = ipEditingController.text;
-//                    connect();
-//                    Navigator.pop(context);
-//                  }),
-            ),
-            ListTile(
-              title: TextField(
-                keyboardType: TextInputType.number,
-                controller: portEditingController,
-                decoration: InputDecoration(
-                    hintText: 'Port', disabledBorder: InputBorder.none),
-              ),
-              trailing: IconButton(
-                  icon: Icon(Icons.check),
-                  onPressed: () {
-                    port = int.parse(portEditingController.text);
-                    serverIP = ipEditingController.text;
-                    connect();
-                    Navigator.pop(context);
-                  }),
-            )
-          ],
-        );
-      },
-    );
-  }
 
   void connect() async {
-    ServerSocket.bind(serverIP, port).then((serverSocket) {
+    var ip='0.0.0.0';
+    var por=4041;
+    ServerSocket.bind(ip, port).then((serverSocket) {
       setState(() {
         isConnected = true;
       });
@@ -469,6 +419,10 @@ class _SocketScreenState extends State<SocketScreen> {
         socket = sock;
         sock.listen((onData) {
           setState(() {
+            var data=socket.remoteAddress;
+            var ip=data.address;
+            clientip=ip;
+            print(clientip);
             incomingMessages = incomingMessages + String.fromCharCodes(onData);
           });
         });
