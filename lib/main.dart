@@ -421,9 +421,11 @@ class _SocketScreenState extends State<SocketScreen> {
         sock.listen((onData) {
           setState(() {
             var data=socket.remoteAddress;
+            var port=socket.remotePort;
             var ip=data.address;
             clientip=ip;
             print(clientip);
+            print(port);
             incomingMessages = incomingMessages + String.fromCharCodes(onData);
           });
         });
