@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vector_math/vector_math_64.dart' as math;
 
+
 void main() => runApp(MyApp());
 Socket socket;
 var clientip;
@@ -408,7 +409,7 @@ class _SocketScreenState extends State<SocketScreen> {
 
   void connect() async {
     var ip='0.0.0.0';
-    var por=4041;
+    var port=4041;
     ServerSocket.bind(ip, port).then((serverSocket) {
       setState(() {
         isConnected = true;
