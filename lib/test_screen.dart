@@ -215,5 +215,4 @@ class _SocketScreenState extends State<SocketScreen> {
       });
     });
   }
-
 }
