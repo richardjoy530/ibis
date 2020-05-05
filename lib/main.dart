@@ -1,10 +1,11 @@
 import 'dart:io';
-
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ibis/data.dart';
+import 'package:ibis/radial_painter.dart';
+import 'package:ibis/test_screen.dart';
 import 'package:intl/intl.dart';
-import 'package:vector_math/vector_math_64.dart' as math;
 
 void main() => runApp(MyApp());
 Socket socket;
@@ -27,13 +28,26 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  List<DeviceObject> deviceObjectList = [];
+
   bool power = false;
   AnimationController _radialProgressAnimationController;
   Animation<double> _progressAnimation;
   double progressDegrees = 0;
   double time = 1;
-  String height = '';
+  bool isHeightSet = false;
   TabController tabController;
+  List<Tab> tabs = [
+    Tab(
+      text: 'Device 1',
+    ),
+    Tab(
+      text: 'Device 2',
+    ),
+    Tab(
+      text: 'Device 3',
+    )
+  ];
 
   @override
   void initState() {
@@ -43,59 +57,61 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    _radialProgressAnimationController.dispose();
+    //_radialProgressAnimationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FractionallySizedBox(
-        widthFactor: 1,
-        heightFactor: 1,
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xffb9dfe6), Color(0xffffffff)]),
+      appBar: AppBar(
+        backgroundColor: Color(0xffb9dfe6),
+        leading: Container(
+          height: 30,
+          width: 30,
+          child: FlareActor(
+            'assets/status.flr',
+            animation: power == true ? 'Connected' : 'Connected',
           ),
-          child: SafeArea(
-            child: Column(
+        ),
+        title: Text(
+          'Ibis Sterilyzer',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.phonelink_off),
+            color: Color(0xff3d84a7),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SocketScreen()),
+              );
+            },
+          )
+        ],
+        bottom: TabBar(
+          isScrollable: true,
+          tabs: tabs,
+          controller: tabController,
+        ),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xffb9dfe6), Color(0xffffffff)]),
+        ),
+        child: TabBarView(
+          controller: tabController,
+          children: <Widget>[
+            Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                ListTile(
-                  contentPadding: EdgeInsets.all(8),
-                  trailing: IconButton(
-                    icon: Icon(Icons.phonelink_off),
-                    color: Color(0xff3d84a7),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SocketScreen()),
-                      );
-                    },
-                  ),
-                  title: Text(
-                    'Ibis Sterilyzer',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: Text(
-                    'Not Connected',
-                    style: TextStyle(color: Color(0xff47466d)),
-                  ),
-                  leading: Container(
-                    height: 30,
-                    width: 30,
-                    child: FlareActor(
-                      'assets/status.flr',
-                      animation: power == true ? 'Connected' : 'Connected',
-                    ),
-                  ),
-                ),
                 Flexible(
                   child: Stack(
                     alignment: Alignment.center,
@@ -137,9 +153,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                       }
                                     },
                                     child: Text(
-                                      height == ''
-                                          ? 'Height not set'
-                                          : 'Height: $height',
+                                      isHeightSet == false
+                                          ? 'Tap to set Height'
+                                          : 'Height is set',
                                       style: TextStyle(fontSize: 20),
                                     ),
                                   ),
@@ -210,10 +226,159 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     onTap: () {
                       setState(() {
                         if (power == false && time != 0) {
-                          if (height == '') {
+                          if (isHeightSet == false) {
                             setHeight(context);
                           }
-                          if (height != '') {
+                          if (isHeightSet == true) {
+                            progressDegrees = 0;
+                            runAnimation(
+                                Duration(minutes: mapValues(time).round()));
+                            _radialProgressAnimationController.forward();
+                            power = !power;
+                          }
+                        } else {
+                          //time = 2;
+                          destroyAnimation();
+                          //progressDegrees = 0;
+                          runAnimation(Duration(milliseconds: 500),
+                              begin: progressDegrees, end: 0);
+                          _radialProgressAnimationController.forward();
+                          power = !power;
+                          isHeightSet = false;
+                        }
+                      });
+                    },
+                    child: Container(
+                      height: 100,
+                      width: 100,
+                      child: FlareActor('assets/powerButton.flr',
+                          animation: power == true ? "on" : "off"),
+                    ),
+                  ),
+                )
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Flexible(
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: <Widget>[
+                      FlareActor(
+                        'assets/breathing.flr',
+                        animation: power == true ? 'breath' : 'off',
+                      ),
+                      CustomPaint(
+                        child: Container(
+                          height: MediaQuery.of(context).size.width / 1.5,
+                          width: MediaQuery.of(context).size.width / 1.5,
+                          child: Center(
+                            child: Container(
+                              height:
+                                  (MediaQuery.of(context).size.width / 1.5) -
+                                      50,
+                              width: (MediaQuery.of(context).size.width / 1.5) -
+                                  50,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle, color: Colors.white),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    power == true
+                                        ? 'Time Remaining'
+                                        : 'Sterilizer Idle',
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                  Text(
+                                    '${getMinuets(((mapValues(time) * 60) - ((mapValues(time) * 60) / 360) * progressDegrees).round())}:${getSeconds(((mapValues(time) * 60) - ((mapValues(time) * 60) / 360) * progressDegrees).round())}',
+                                    style: TextStyle(fontSize: 60),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (power == false) {
+                                        setHeight(context);
+                                      }
+                                    },
+                                    child: Text(
+                                      isHeightSet == false
+                                          ? 'Tap to set Height'
+                                          : 'Height is set',
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        painter: RadialPainter(progressDegrees),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xffdae6eb),
+                        borderRadius: BorderRadius.circular(50),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xffdae6eb),
+                            spreadRadius: 10.0, //extend the shadow
+                          )
+                        ]),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            '1 min',
+                            style: TextStyle(color: Colors.blueGrey),
+                          ),
+                        ),
+                        Expanded(
+                          child: Slider(
+                            onChanged: (double value) {
+                              if (power == false) {
+                                setState(() {
+                                  time = value;
+                                });
+                              }
+                            },
+                            divisions: 12,
+                            label: mapValues(time).round().toString(),
+                            min: 1,
+                            max: 13,
+                            value: time,
+                            activeColor: Color(0xff2eb8c9),
+                            inactiveColor: Color(0xffffffff),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Text(
+                            '30 mins',
+                            style: TextStyle(color: Colors.blueGrey),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (power == false && time != 0) {
+                          if (isHeightSet == false) {
+                            setHeight(context);
+                          }
+                          if (isHeightSet == true) {
                             progressDegrees = 0;
                             runAnimation(
                                 Duration(minutes: mapValues(time).round()));
@@ -241,7 +406,155 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 )
               ],
             ),
-          ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Flexible(
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: <Widget>[
+                      FlareActor(
+                        'assets/breathing.flr',
+                        animation: power == true ? 'breath' : 'off',
+                      ),
+                      CustomPaint(
+                        child: Container(
+                          height: MediaQuery.of(context).size.width / 1.5,
+                          width: MediaQuery.of(context).size.width / 1.5,
+                          child: Center(
+                            child: Container(
+                              height:
+                                  (MediaQuery.of(context).size.width / 1.5) -
+                                      50,
+                              width: (MediaQuery.of(context).size.width / 1.5) -
+                                  50,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle, color: Colors.white),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    power == true
+                                        ? 'Time Remaining'
+                                        : 'Sterilizer Idle',
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                  Text(
+                                    '${getMinuets(((mapValues(time) * 60) - ((mapValues(time) * 60) / 360) * progressDegrees).round())}:${getSeconds(((mapValues(time) * 60) - ((mapValues(time) * 60) / 360) * progressDegrees).round())}',
+                                    style: TextStyle(fontSize: 60),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (power == false) {
+                                        setHeight(context);
+                                      }
+                                    },
+                                    child: Text(
+                                      isHeightSet == false
+                                          ? 'Tap to set Height'
+                                          : 'Height is set',
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        painter: RadialPainter(progressDegrees),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xffdae6eb),
+                        borderRadius: BorderRadius.circular(50),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xffdae6eb),
+                            spreadRadius: 10.0, //extend the shadow
+                          )
+                        ]),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            '1 min',
+                            style: TextStyle(color: Colors.blueGrey),
+                          ),
+                        ),
+                        Expanded(
+                          child: Slider(
+                            onChanged: (double value) {
+                              if (power == false) {
+                                setState(() {
+                                  time = value;
+                                });
+                              }
+                            },
+                            divisions: 12,
+                            label: mapValues(time).round().toString(),
+                            min: 1,
+                            max: 13,
+                            value: time,
+                            activeColor: Color(0xff2eb8c9),
+                            inactiveColor: Color(0xffffffff),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Text(
+                            '30 mins',
+                            style: TextStyle(color: Colors.blueGrey),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (power == false && time != 0) {
+                          if (isHeightSet == false) {
+                            setHeight(context);
+                          }
+                          if (isHeightSet == true) {
+                            progressDegrees = 0;
+                            runAnimation(
+                                Duration(minutes: mapValues(time).round()));
+                            _radialProgressAnimationController.forward();
+                            power = !power;
+                          }
+                        } else {
+                          //time = 2;
+                          destroyAnimation();
+                          //progressDegrees = 0;
+                          runAnimation(Duration(milliseconds: 500),
+                              begin: progressDegrees, end: 0);
+                          _radialProgressAnimationController.forward();
+                          power = !power;
+                        }
+                      });
+                    },
+                    child: Container(
+                      height: 100,
+                      width: 100,
+                      child: FlareActor('assets/powerButton.flr',
+                          animation: power == true ? "on" : "off"),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -293,30 +606,57 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
           ),
           children: <Widget>[
+            Listener(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: IconButton(
+                  icon: Icon(Icons.arrow_upward),
+                  onPressed: () {
+                    print('[*]');
+                  },
+                ),
+              ),
+              onPointerDown: (data) {
+                print('tap up');
+                //tap = true;
+                //heightOnTap(socket, '1');
+              },
+              onPointerUp: (data) {
+                print('cancel');
+                //tap = false;
+              },
+            ),
+            Listener(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: IconButton(
+                  icon: Icon(Icons.arrow_downward),
+                  onPressed: () {
+                    print('[*]');
+                  },
+                ),
+              ),
+              onPointerDown: (data) {
+                print('tap up');
+                //tap = true;
+                //heightOnTap(socket, '-1');
+              },
+              onPointerUp: (data) {
+                print('cancel');
+                //tap = false;
+              },
+            ),
             ListTile(
-              leading: Icon(
-                Icons.settings_input_composite,
-              ),
-              title: TextField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Height',
-                    disabledBorder: InputBorder.none),
-                onChanged: (text) {
-                  height = text;
-                },
-                onSubmitted: (text) {
-                  height = text;
-                  Navigator.pop(context);
-                },
-              ),
+              title: Text('Confirm height ?'),
               trailing: IconButton(
-                icon: Icon(Icons.check),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
+                  icon: Icon(Icons.check),
+                  onPressed: () {
+                    print('confirm');
+                    setState(() {
+                      isHeightSet = true;
+                    });
+                    Navigator.pop(context);
+                  }),
             )
           ],
         );
@@ -324,14 +664,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  runAnimation(Duration time, {double begin = 0.0, double end = 360.0}) {
-    _radialProgressAnimationController =
+  runAnimation(Duration time,
+      {double begin = 0.0, double end = 360.0, DeviceObject deviceObject}) {
+    deviceObject.radialProgressAnimationController =
         AnimationController(vsync: this, duration: time);
-    _progressAnimation = Tween(begin: begin, end: end).animate(CurvedAnimation(
-        parent: _radialProgressAnimationController, curve: Curves.linear))
+    deviceObject.progressAnimation = Tween(begin: begin, end: end).animate(
+        CurvedAnimation(
+            parent: deviceObject.radialProgressAnimationController,
+            curve: Curves.linear))
       ..addListener(() {
         setState(() {
-          progressDegrees = _progressAnimation.value;
+          progressDegrees = deviceObject.progressAnimation.value;
           if (progressDegrees == 360) {
             power = false;
           }
@@ -354,258 +697,5 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   getMinuets(int seconds) {
     var f = new NumberFormat("00", "en_US");
     return f.format((seconds / 60).floor());
-  }
-}
-
-class RadialPainter extends CustomPainter {
-  double progressInDegrees;
-
-  RadialPainter(this.progressInDegrees);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    Offset center = Offset(size.width / 2, size.height / 2);
-    Paint paint = Paint()
-      ..shader = RadialGradient(
-              colors: [Color(0xff2eb8c9), Color(0xff95dcdb), Color(0xffd1e6ea)])
-          .createShader(Rect.fromCircle(center: center, radius: size.width / 2))
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 50.0;
-
-    canvas.drawCircle(center, size.width / 2, paint);
-
-    Paint progressPaint = Paint()
-      ..shader = SweepGradient(
-              colors: [Color(0xff2eb8c9), Color(0xff95dcdb), Color(0xffb9dfe6)])
-          .createShader(Rect.fromCircle(center: center, radius: size.width / 2))
-      ..strokeCap = StrokeCap.butt
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 50.0;
-
-    canvas.drawArc(
-        Rect.fromCircle(center: center, radius: size.width / 2),
-        math.radians(0),
-        math.radians(-progressInDegrees),
-        false,
-        progressPaint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
-  }
-}
-
-class SocketScreen extends StatefulWidget {
-  @override
-  _SocketScreenState createState() => _SocketScreenState();
-}
-
-class _SocketScreenState extends State<SocketScreen> {
-  TextEditingController textEditingController;
-  TextEditingController ipEditingController;
-  TextEditingController portEditingController;
-  String serverIP = '0.0.0.0';
-  int port = 4041;
-  String incomingMessages = '';
-  bool isConnected = false;
-  bool fetching = false;
-  List<Socket> socketList = [];
-  bool tap = false;
-  bool _loopActive = false;
-
-  @override
-  void initState() {
-    textEditingController = TextEditingController();
-    ipEditingController = TextEditingController();
-    ipEditingController.text = serverIP;
-    portEditingController = TextEditingController();
-    portEditingController.text = '4041';
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    for (var s in socketList) {
-      s.close();
-      s.destroy();
-    }
-    socketList = [];
-    textEditingController.dispose();
-    ipEditingController.dispose();
-    portEditingController.dispose();
-    super.dispose();
-  }
-
-  @override
-  //Testing
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              ListTile(
-                onTap: () {
-                  setServerIP(context);
-                },
-                leading: Icon(Icons.computer),
-                title: Text('Create a TCP server'),
-                subtitle: Text(
-                    'Hosted TCP server on : ${isConnected == false ? 'None' : serverIP}'),
-              ),
-              ListTile(
-                title: TextField(
-                  controller: textEditingController,
-                  decoration: InputDecoration(
-                      hintText: 'Type text to send',
-                      disabledBorder: InputBorder.none),
-                ),
-                trailing: IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: () {
-                    for (var s in socketList) {
-                      s.write(textEditingController.text);
-                    }
-                    textEditingController.text = '';
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    Listener(
-                      child: Icon(Icons.arrow_upward),
-                      onPointerDown: (data) {
-                        print('tap up');
-                        tap = true;
-                        heightOnTap(socket, '1');
-                      },
-                      onPointerUp: (data) {
-                        print('cancel');
-                        tap = false;
-                      },
-                    ),
-                    Listener(
-                      child: Icon(Icons.arrow_downward),
-                      onPointerDown: (data) {
-                        print('tap up');
-                        tap = true;
-                        heightOnTap(socket, '-1');
-                      },
-                      onPointerUp: (data) {
-                        print('cancel');
-                        tap = false;
-                      },
-                    ),
-                    IconButton(
-                        icon: Icon(Icons.check_circle),
-                        onPressed: () {
-                          socket.write('true');
-                        })
-                  ],
-                ),
-              ),
-              Container(
-                child: ListTile(
-                    trailing: IconButton(
-                      icon: Icon(Icons.clear_all),
-                      onPressed: () {
-                        setState(() {
-                          incomingMessages = '';
-                        });
-                      },
-                    ),
-                    title: Text('Recived data'),
-                    subtitle: Text(incomingMessages)),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  heightOnTap(Socket socket, String value) async {
-    if (_loopActive) return;
-
-    _loopActive = true;
-    while (tap == true) {
-      socket.write(value);
-      await Future.delayed(Duration(milliseconds: 500));
-    }
-    _loopActive = false;
-  }
-
-  Future<void> setServerIP(context) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          title: Text(
-            'Set your server IP',
-            style:
-                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
-          ),
-          children: <Widget>[
-            ListTile(
-              leading: Icon(
-                Icons.computer,
-              ),
-              title: TextField(
-                keyboardType: TextInputType.number,
-                controller: ipEditingController,
-                decoration: InputDecoration(
-                    hintText: 'Server IP', disabledBorder: InputBorder.none),
-              ),
-            ),
-            ListTile(
-              title: TextField(
-                keyboardType: TextInputType.number,
-                controller: portEditingController,
-                decoration: InputDecoration(
-                    hintText: 'Port', disabledBorder: InputBorder.none),
-              ),
-              trailing: IconButton(
-                  icon: Icon(Icons.check),
-                  onPressed: () {
-                    port = int.parse(portEditingController.text);
-                    serverIP = ipEditingController.text;
-                    connect();
-                    Navigator.pop(context);
-                  }),
-            )
-          ],
-        );
-      },
-    );
-  }
-
-  void connect() async {
-    ServerSocket.bind(serverIP, port).then((serverSocket) {
-      setState(() {
-        isConnected = true;
-      });
-      serverSocket.listen((sock) {
-        // print([sock.address, sock.remoteAddress]);
-        //fetch();
-      }).onData((sock) {
-        socket = sock;
-        socketList.add(socket);
-        print([sock.remoteAddress, sock.remotePort, socketList.length]);
-        sock.listen((onData) {
-          setState(() {
-            incomingMessages = incomingMessages + String.fromCharCodes(onData);
-          });
-        });
-      });
-    });
   }
 }
