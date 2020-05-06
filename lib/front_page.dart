@@ -25,7 +25,7 @@ class _FrontPageState extends State<FrontPage> {
   }
 
   void connect() async {
-    ServerSocket.bind('0.0.0.0', 4042).then((sock) {
+    ServerSocket.bind('0.0.0.0', 4041).then((sock) {
       serverSocket = sock;
       serverOnline = true;
       print('Server Hosted');
@@ -34,8 +34,7 @@ class _FrontPageState extends State<FrontPage> {
         setState(() {
           print([clientSocket.remoteAddress, clientSocket.remotePort]);
           deviceObjectList.add(DeviceObject(
-              socket: clientSocket,
-              name: clientSocket.remoteAddress.toString()));
+              socket: clientSocket, name: clientSocket.remotePort.toString()));
         });
       });
     });
@@ -86,8 +85,13 @@ class _FrontPageState extends State<FrontPage> {
             itemCount: deviceObjectList.length,
             itemBuilder: (context, index) {
               return ListTile(
-                title: Text(
-                    deviceObjectList[index].socket.remoteAddress.toString()),
+                leading: Icon(Icons.power),
+                title: Text(deviceObjectList[index]
+                    .socket
+                    .remoteAddress
+                    .address
+                    .toString()),
+                subtitle: Text(deviceObjectList[index].power.toString()),
                 onTap: () {
                   Navigator.push(
                     context,

@@ -22,5 +22,9 @@ class DeviceObject {
     this.isHeightSet = false,
     this.time = 1,
     this.progressDegrees = 0,
-  });
+  }) {
+    socket.listen((onData) {
+      print([socket.remotePort, onData]);
+    });
+  }
 }
