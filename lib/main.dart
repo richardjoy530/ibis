@@ -1,10 +1,12 @@
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ibis/data.dart';
-import 'package:ibis/radial_painter.dart';
-import 'package:ibis/test_screen.dart';
 import 'package:intl/intl.dart';
+
+import 'data.dart';
+import 'front_page.dart';
+import 'radial_painter.dart';
+import 'test_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,44 +17,26 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'BalooTamma2',
       ),
-      home: HomePage(),
+      home: FrontPage(),
     );
   }
 }
 
 class HomePage extends StatefulWidget {
+  final DeviceObject deviceObject;
+  HomePage(this.deviceObject);
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  List<DeviceObject> deviceObjectList = [
-    DeviceObject(),
-    DeviceObject(),
-    DeviceObject()
-  ];
-  TabController tabController;
-  List<Tab> tabs = [
-    Tab(
-      text: 'Device 1',
-    ),
-    Tab(
-      text: 'Device 2',
-    ),
-    Tab(
-      text: 'Device 3',
-    )
-  ];
-
   @override
   void initState() {
-    tabController = TabController(length: deviceObjectList.length, vsync: this);
     super.initState();
   }
 
   @override
   void dispose() {
-    tabController.dispose();
     super.dispose();
   }
 
@@ -70,7 +54,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
         ),
         title: Text(
-          'Ibis Sterilyzer',
+          widget.deviceObject.name,
           style: TextStyle(
             fontSize: 24,
             color: Colors.black,
@@ -89,15 +73,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             },
           )
         ],
-        bottom: TabBar(
-          labelColor: Colors.black,
-          indicatorColor: Colors.blueGrey,
-          indicatorSize: TabBarIndicatorSize.label,
-          indicatorWeight: 2,
-          unselectedLabelColor: Colors.blueGrey,
-          tabs: tabs,
-          controller: tabController,
-        ),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -106,10 +81,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               end: Alignment.bottomCenter,
               colors: [Color(0xffb9dfe6), Color(0xffffffff)]),
         ),
-        child: TabBarView(
-          controller: tabController,
-          children: createTabViewList(deviceObjectList.length),
-        ),
+        child: tabView(context, widget.deviceObject),
       ),
     );
   }
@@ -117,12 +89,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   List<Widget> createTabViewList(int numberOfItems) {
     List<Widget> list = [];
     for (var index = 0; index < numberOfItems; index++) {
-      list.add(tabView(context, deviceObjectList[index], index));
+      list.add(tabView(context, deviceObjectList[index]));
     }
     return list;
   }
 
-  Widget tabView(BuildContext context, DeviceObject deviceObject, int index) {
+  Widget tabView(BuildContext context, DeviceObject deviceObject) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[

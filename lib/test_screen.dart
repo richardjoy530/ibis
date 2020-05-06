@@ -3,14 +3,13 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-Socket socket;
-
 class SocketScreen extends StatefulWidget {
   @override
   _SocketScreenState createState() => _SocketScreenState();
 }
 
 class _SocketScreenState extends State<SocketScreen> {
+  Socket socket;
   TextEditingController textEditingController;
   TextEditingController ipEditingController;
   TextEditingController portEditingController;
@@ -142,8 +141,8 @@ class _SocketScreenState extends State<SocketScreen> {
     if (_loopActive) return;
     _loopActive = true;
     while (tap == true) {
-      socket.write('$value\n\r');
-      await Future.delayed(Duration(milliseconds: 100));
+      socket.write('$value\r');
+      await Future.delayed(Duration(milliseconds: 500));
     }
     _loopActive = false;
   }
