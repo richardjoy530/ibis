@@ -211,6 +211,8 @@ class _SocketScreenState extends State<SocketScreen> {
           setState(() {
             incomingMessages = incomingMessages + String.fromCharCodes(onData);
           });
+        }).onDone(() {
+          print('Disconnected: ${sock.remoteAddress},${sock.remotePort}');
         });
       });
     });

@@ -251,6 +251,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 } else {
                   //time = 2;
                   destroyAnimation(deviceObject);
+                  deviceObject.isHeightSet = false;
                   //progressDegrees = 0;
                   runAnimation(Duration(milliseconds: 500),
                       begin: deviceObject.progressDegrees,
