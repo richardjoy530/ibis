@@ -14,10 +14,10 @@ bool serverOnline = false;
 
 class FrontPage extends StatefulWidget {
   @override
-  _FrontPageState createState() => _FrontPageState();
+  FrontPageState createState() => FrontPageState();
 }
 
-class _FrontPageState extends State<FrontPage> {
+class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   @override
   void initState() {
     connect();
@@ -25,7 +25,7 @@ class _FrontPageState extends State<FrontPage> {
   }
 
   void connect() async {
-    ServerSocket.bind('0.0.0.0', 4041).then((sock) {
+    ServerSocket.bind('0.0.0.0', 4042).then((sock) {
       serverSocket = sock;
       serverOnline = true;
       print('Server Hosted');
@@ -104,5 +104,19 @@ class _FrontPageState extends State<FrontPage> {
             }),
       ),
     );
+  }
+
+  runAnimation(Duration time,
+      {double begin = 0.0, double end = 360.0, DeviceObject deviceObject}) {
+    deviceObject.radialProgressAnimationController =
+        AnimationController(vsync: this, duration: time);
+    deviceObject.progressAnimation = Tween(begin: begin, end: end).animate(
+        CurvedAnimation(
+            parent: deviceObject.radialProgressAnimationController,
+            curve: Curves.linear));
+  }
+
+  destroyAnimation(DeviceObject deviceObject) {
+    deviceObject.radialProgressAnimationController.dispose();
   }
 }

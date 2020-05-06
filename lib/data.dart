@@ -4,7 +4,6 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 
 class DeviceObject {
-  // ignore: close_sinks
   Socket socket;
   String name;
   bool power;

@@ -2,6 +2,7 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import 'data.dart';
 import 'front_page.dart';
 import 'radial_painter.dart';
@@ -31,7 +32,22 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
+    poliSanam(widget.deviceObject);
     super.initState();
+  }
+
+  void poliSanam(DeviceObject deviceObject) {
+    deviceObject.progressAnimation.addListener(() {
+      setState(() {
+        deviceObject.progressDegrees = deviceObject.progressAnimation.value;
+        if (deviceObject.progressDegrees == 360) {
+          deviceObject.power = false;
+        }
+      });
+      if (deviceObject.progressDegrees == 360) {
+        deviceObject.progressDegrees = 0;
+      }
+    });
   }
 
   @override
@@ -213,7 +229,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   }
                   if (deviceObject.isHeightSet == true) {
                     deviceObject.progressDegrees = 0;
-                    runAnimation(
+                    FrontPageState().runAnimation(
                         Duration(minutes: mapValues(deviceObject.time).round()),
                         deviceObject: deviceObject);
                     deviceObject.radialProgressAnimationController.forward();
@@ -221,10 +237,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   }
                 } else {
                   //time = 2;
-                  destroyAnimation(deviceObject);
+                  FrontPageState().destroyAnimation(deviceObject);
                   deviceObject.isHeightSet = false;
                   //progressDegrees = 0;
-                  runAnimation(Duration(milliseconds: 500),
+                  FrontPageState().runAnimation(Duration(milliseconds: 500),
                       begin: deviceObject.progressDegrees,
                       end: 0,
                       deviceObject: deviceObject);
@@ -351,23 +367,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   runAnimation(Duration time,
       {double begin = 0.0, double end = 360.0, DeviceObject deviceObject}) {
-    deviceObject.radialProgressAnimationController =
-        AnimationController(vsync: this, duration: time);
-    deviceObject.progressAnimation = Tween(begin: begin, end: end).animate(
-        CurvedAnimation(
-            parent: deviceObject.radialProgressAnimationController,
-            curve: Curves.linear))
-      ..addListener(() {
-        setState(() {
-          deviceObject.progressDegrees = deviceObject.progressAnimation.value;
-          if (deviceObject.progressDegrees == 360) {
-            deviceObject.power = false;
-          }
-        });
-        if (deviceObject.progressDegrees == 360) {
-          deviceObject.progressDegrees = 0;
-        }
-      });
+    FrontPageState()
+        .runAnimation(time, begin: begin, end: end, deviceObject: deviceObject);
   }
 
   destroyAnimation(DeviceObject deviceObject) {

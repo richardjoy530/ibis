@@ -90,11 +90,12 @@ class _SocketScreenState extends State<SocketScreen> {
                       onPointerDown: (data) {
                         print('tap up');
                         tap = true;
-                        heightOnTap(socket, '1');
+                        socket.write('1\r');
                       },
                       onPointerUp: (data) {
                         print('cancel');
                         tap = false;
+                        socket.write('0\r');
                       },
                     ),
                     Listener(
@@ -102,11 +103,12 @@ class _SocketScreenState extends State<SocketScreen> {
                       onPointerDown: (data) {
                         print('tap up');
                         tap = true;
-                        heightOnTap(socket, '-1');
+                        socket.write('-1\r');
                       },
                       onPointerUp: (data) {
                         print('cancel');
                         tap = false;
+                        socket.write('0\r');
                       },
                     ),
                     IconButton(
