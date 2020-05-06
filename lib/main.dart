@@ -32,7 +32,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
-    poliSanam(widget.deviceObject);
     super.initState();
   }
 
@@ -141,7 +140,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             style: TextStyle(fontSize: 20),
                           ),
                           Text(
-                            '${getMinuets(((mapValues(deviceObject.time) * 60) - ((mapValues(deviceObject.time) * 60) / 360) * deviceObject.progressDegrees).round())}:${getSeconds(((mapValues(deviceObject.time) * 60) - ((mapValues(deviceObject.time) * 60) / 360) * deviceObject.progressDegrees).round())}',
+                            '${getMinuets(((mapValues(deviceObject.time) * 60) - ((mapValues(deviceObject.time) * 60) / 360) * deviceObject.progressDegrees).round())}'
+                            ':${getSeconds(((mapValues(deviceObject.time) * 60) - ((mapValues(deviceObject.time) * 60) / 360) * deviceObject.progressDegrees).round())}',
                             style: TextStyle(fontSize: 60),
                           ),
                           GestureDetector(
@@ -235,6 +235,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     deviceObject.radialProgressAnimationController.forward();
                     deviceObject.power = !deviceObject.power;
                   }
+                  poliSanam(widget.deviceObject);
                 } else {
                   //time = 2;
                   FrontPageState().destroyAnimation(deviceObject);
