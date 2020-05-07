@@ -6,6 +6,7 @@ import 'package:ibis/radial_painter.dart';
 import 'package:intl/intl.dart';
 import 'dart:io';
 void main() => runApp(MyApp());
+TextEditingController textEditingController;
 Socket socket;
 bool isConnected;
 var devno=0;
@@ -38,7 +39,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   List<DeviceObject> deviceObjectList = [];
-
+  List<DropdownMenuItem<Drop>> _dropdata=[];
   bool power = false;
   AnimationController _radialProgressAnimationController;
   Animation<double> _progressAnimation;
@@ -46,7 +47,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   double time = 1;
   bool isHeightSet = false;
 
-
+  Drop devicedata;
   void connect() async {
 
     ServerSocket.bind('0.0.0.0', 4041).then((serverSocket) {
@@ -58,8 +59,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       serverSocket.listen((sock) {
 
       }).onData((sock) {
-        socket = sock;
+        socket = sock;        
         socketList.add(socket);
+        var ipadd=sock.remoteAddress;
+        setState(() {
+        //  _dropdata.add(new DropdownMenuItem(child: Text('$ipadd'),value: devicedata,));
+
+          print(devicedata.ip);
+        });
+
         print(socketList);
         print([sock.remoteAddress, sock.remotePort, socketList.length]);
         setState(() {
@@ -83,6 +91,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   void initState() {
+    textEditingController = TextEditingController();
     connect();
     super.initState();
   }
@@ -95,7 +104,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    List<DropdownMenuItem<Drop>> _dropdata=[];
+    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffb9dfe6),
@@ -303,6 +312,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           animation: power == true ? "on" : "off"),
                     ),
                   ),
+                ),
+                ListTile(
+                  title: TextField(
+                    controller: textEditingController,
+                    decoration: InputDecoration(
+                        hintText: 'Type text to send',
+                        disabledBorder: InputBorder.none),
+                  ),
+                  trailing: IconButton(icon: Icon(Icons.send), onPressed: null),
                 )
               ],
             ),
