@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flare_flutter/flare_actor.dart';
@@ -18,9 +19,13 @@ class FrontPage extends StatefulWidget {
 }
 
 class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
+  Timer timer;
   @override
   void initState() {
     connect();
+    timer = Timer.periodic(Duration(seconds: 1), (callback) {
+      setState(() {});
+    });
     super.initState();
   }
 
@@ -38,6 +43,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         });
       });
     });
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
   }
 
   @override
@@ -86,12 +97,14 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             itemBuilder: (context, index) {
               return ListTile(
                 leading: Icon(Icons.power),
-                title: Text(deviceObjectList[index]
-                    .socket
-                    .remoteAddress
-                    .address
-                    .toString()),
-                subtitle: Text(deviceObjectList[index].power.toString()),
+                title: Text(
+                    '${deviceObjectList[index].socket.remoteAddress.address.toString()} : ${deviceObjectList[index].socket.remotePort}'),
+                subtitle: Visibility(
+                  visible: deviceObjectList[index].power,
+                  child: LinearProgressIndicator(
+                    value: (1 / 360) * deviceObjectList[index].progressDegrees,
+                  ),
+                ),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -104,19 +117,5 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             }),
       ),
     );
-  }
-
-  runAnimation(Duration time,
-      {double begin = 0.0, double end = 360.0, DeviceObject deviceObject}) {
-    deviceObject.radialProgressAnimationController =
-        AnimationController(vsync: this, duration: time);
-    deviceObject.progressAnimation = Tween(begin: begin, end: end).animate(
-        CurvedAnimation(
-            parent: deviceObject.radialProgressAnimationController,
-            curve: Curves.linear));
-  }
-
-  destroyAnimation(DeviceObject deviceObject) {
-    deviceObject.radialProgressAnimationController.dispose();
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/animation.dart';
@@ -7,15 +8,18 @@ class DeviceObject {
   Socket socket;
   String name;
   bool power;
+  //double ;
   AnimationController radialProgressAnimationController;
   Animation<double> progressAnimation;
   double progressDegrees;
   double time;
+  Timer timer;
   bool isHeightSet;
   DeviceObject({
     this.name,
     this.socket,
     this.radialProgressAnimationController,
+    this.timer,
     this.progressAnimation,
     this.power = false,
     this.isHeightSet = false,
