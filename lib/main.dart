@@ -19,7 +19,9 @@ class Drop
       this.ip
       );
 }
+
 class MyApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -47,7 +49,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   double time = 1;
   bool isHeightSet = false;
 
-  Drop devicedata;
+
   void connect() async {
 
     ServerSocket.bind('0.0.0.0', 4041).then((serverSocket) {
@@ -65,7 +67,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         setState(() {
         //  _dropdata.add(new DropdownMenuItem(child: Text('$ipadd'),value: devicedata,));
 
-          print(devicedata.ip);
+         // print(devicedata.ip);
         });
 
         print(socketList);
