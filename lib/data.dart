@@ -14,12 +14,14 @@ class DeviceObject {
   double progressDegrees;
   double time;
   Timer timer;
+  bool wantHeight;
   bool isHeightSet;
   DeviceObject({
     this.name,
     this.socket,
     this.radialProgressAnimationController,
     this.timer,
+    this.wantHeight,
     this.progressAnimation,
     this.linearProgressBarValue = 0,
     this.power = false,
