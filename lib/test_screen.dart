@@ -202,8 +202,6 @@ class _SocketScreenState extends State<SocketScreen> {
         isConnected = true;
       });
       serverSocket.listen((sock) {
-        // print([sock.address, sock.remoteAddress]);
-        //fetch();
       }).onData((sock) {
         socket = sock;
         socketList.add(socket);
