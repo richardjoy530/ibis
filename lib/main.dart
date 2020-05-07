@@ -11,6 +11,13 @@ bool isConnected;
 var devno=0;
 var serverIP='no server',port='no';
 List<Socket> socketList = [];
+class Drop
+{
+  var ip;
+  Drop(
+      this.ip
+      );
+}
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -88,6 +95,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    List<DropdownMenuItem<Drop>> _dropdata=[];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffb9dfe6),
@@ -148,7 +156,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-
+                DropdownButton<Drop>(
+                  hint: Text('Devices'),
+                    items: _dropdata, onChanged: null
+                ),
                 Flexible(
                   child: Stack(
                     alignment: Alignment.center,
