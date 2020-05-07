@@ -35,22 +35,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   double progressDegrees = 0;
   double time = 1;
   bool isHeightSet = false;
-  TabController tabController;
-  List<Tab> tabs = [
-    Tab(
-      text: 'Device 1',
-    ),
-    Tab(
-      text: 'Device 2',
-    ),
-    Tab(
-      text: 'Device 3',
-    )
-  ];
+
+
 
   @override
   void initState() {
-    tabController = TabController(length: 3, vsync: this);
+
     super.initState();
   }
 
@@ -93,15 +83,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             },
           )
         ],
-        bottom: TabBar(
-          labelColor: Colors.black,
-          indicatorColor: Colors.blueGrey,
-          indicatorSize: TabBarIndicatorSize.label,
-          indicatorWeight: 2,
-          unselectedLabelColor: Colors.blueGrey,
-          tabs: tabs,
-          controller: tabController,
-        ),
+
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -110,10 +92,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               end: Alignment.bottomCenter,
               colors: [Color(0xffb9dfe6), Color(0xffffffff)]),
         ),
-        child: TabBarView(
-          controller: tabController,
-          children: <Widget>[
-            Column(
+        child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Flexible(
@@ -262,304 +241,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 )
               ],
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Flexible(
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: <Widget>[
-                      FlareActor(
-                        'assets/breathing.flr',
-                        animation: power == true ? 'breath' : 'off',
-                      ),
-                      CustomPaint(
-                        child: Container(
-                          height: MediaQuery.of(context).size.width / 1.5,
-                          width: MediaQuery.of(context).size.width / 1.5,
-                          child: Center(
-                            child: Container(
-                              height:
-                                  (MediaQuery.of(context).size.width / 1.5) -
-                                      50,
-                              width: (MediaQuery.of(context).size.width / 1.5) -
-                                  50,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle, color: Colors.white),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    power == true
-                                        ? 'Time Remaining'
-                                        : 'Sterilizer Idle',
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  Text(
-                                    '${getMinuets(((mapValues(time) * 60) - ((mapValues(time) * 60) / 360) * progressDegrees).round())}:${getSeconds(((mapValues(time) * 60) - ((mapValues(time) * 60) / 360) * progressDegrees).round())}',
-                                    style: TextStyle(fontSize: 60),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      if (power == false) {
-                                        setHeight(context);
-                                      }
-                                    },
-                                    child: Text(
-                                      isHeightSet == false
-                                          ? 'Tap to set Height'
-                                          : 'Height is set',
-                                      style: TextStyle(fontSize: 20),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        painter: RadialPainter(progressDegrees),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Color(0xffdae6eb),
-                        borderRadius: BorderRadius.circular(50),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0xffdae6eb),
-                            spreadRadius: 10.0, //extend the shadow
-                          )
-                        ]),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            '1 min',
-                            style: TextStyle(color: Colors.blueGrey),
-                          ),
-                        ),
-                        Expanded(
-                          child: Slider(
-                            onChanged: (double value) {
-                              if (power == false) {
-                                setState(() {
-                                  time = value;
-                                });
-                              }
-                            },
-                            divisions: 12,
-                            label: mapValues(time).round().toString(),
-                            min: 1,
-                            max: 13,
-                            value: time,
-                            activeColor: Color(0xff2eb8c9),
-                            inactiveColor: Color(0xffffffff),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: Text(
-                            '30 mins',
-                            style: TextStyle(color: Colors.blueGrey),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (power == false && time != 0) {
-                          if (isHeightSet == false) {
-                            setHeight(context);
-                          }
-                          if (isHeightSet == true) {
-                            progressDegrees = 0;
-                            runAnimation(
-                                Duration(minutes: mapValues(time).round()));
-                            _radialProgressAnimationController.forward();
-                            power = !power;
-                          }
-                        } else {
-                          //time = 2;
-                          destroyAnimation();
-                          //progressDegrees = 0;
-                          runAnimation(Duration(milliseconds: 500),
-                              begin: progressDegrees, end: 0);
-                          _radialProgressAnimationController.forward();
-                          power = !power;
-                        }
-                      });
-                    },
-                    child: Container(
-                      height: 100,
-                      width: 100,
-                      child: FlareActor('assets/powerButton.flr',
-                          animation: power == true ? "on" : "off"),
-                    ),
-                  ),
-                )
-              ],
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Flexible(
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: <Widget>[
-                      FlareActor(
-                        'assets/breathing.flr',
-                        animation: power == true ? 'breath' : 'off',
-                      ),
-                      CustomPaint(
-                        child: Container(
-                          height: MediaQuery.of(context).size.width / 1.5,
-                          width: MediaQuery.of(context).size.width / 1.5,
-                          child: Center(
-                            child: Container(
-                              height:
-                                  (MediaQuery.of(context).size.width / 1.5) -
-                                      50,
-                              width: (MediaQuery.of(context).size.width / 1.5) -
-                                  50,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle, color: Colors.white),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    power == true
-                                        ? 'Time Remaining'
-                                        : 'Sterilizer Idle',
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  Text(
-                                    '${getMinuets(((mapValues(time) * 60) - ((mapValues(time) * 60) / 360) * progressDegrees).round())}:${getSeconds(((mapValues(time) * 60) - ((mapValues(time) * 60) / 360) * progressDegrees).round())}',
-                                    style: TextStyle(fontSize: 60),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      if (power == false) {
-                                        setHeight(context);
-                                      }
-                                    },
-                                    child: Text(
-                                      isHeightSet == false
-                                          ? 'Tap to set Height'
-                                          : 'Height is set',
-                                      style: TextStyle(fontSize: 20),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        painter: RadialPainter(progressDegrees),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Color(0xffdae6eb),
-                        borderRadius: BorderRadius.circular(50),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0xffdae6eb),
-                            spreadRadius: 10.0, //extend the shadow
-                          )
-                        ]),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            '1 min',
-                            style: TextStyle(color: Colors.blueGrey),
-                          ),
-                        ),
-                        Expanded(
-                          child: Slider(
-                            onChanged: (double value) {
-                              if (power == false) {
-                                setState(() {
-                                  time = value;
-                                });
-                              }
-                            },
-                            divisions: 12,
-                            label: mapValues(time).round().toString(),
-                            min: 1,
-                            max: 13,
-                            value: time,
-                            activeColor: Color(0xff2eb8c9),
-                            inactiveColor: Color(0xffffffff),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: Text(
-                            '30 mins',
-                            style: TextStyle(color: Colors.blueGrey),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (power == false && time != 0) {
-                          if (isHeightSet == false) {
-                            setHeight(context);
-                          }
-                          if (isHeightSet == true) {
-                            progressDegrees = 0;
-                            runAnimation(
-                                Duration(minutes: mapValues(time).round()));
-                            _radialProgressAnimationController.forward();
-                            power = !power;
-                          }
-                        } else {
-                          //time = 2;
-                          destroyAnimation();
-                          //progressDegrees = 0;
-                          runAnimation(Duration(milliseconds: 500),
-                              begin: progressDegrees, end: 0);
-                          _radialProgressAnimationController.forward();
-                          power = !power;
-                        }
-                      });
-                    },
-                    child: Container(
-                      height: 100,
-                      width: 100,
-                      child: FlareActor('assets/powerButton.flr',
-                          animation: power == true ? "on" : "off"),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ],
-        ),
+
+
       ),
     );
   }
