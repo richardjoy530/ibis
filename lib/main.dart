@@ -278,6 +278,31 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return temp;
   }
 
+  Future<void> motionDialog(context, DeviceObject deviceObject) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Text(
+            'Motion Detected',
+            style:
+                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
+          ),
+          children: <Widget>[
+            RaisedButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.pop(context);
+                })
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> setHeight(context, DeviceObject deviceObject) async {
     await showDialog(
       context: context,

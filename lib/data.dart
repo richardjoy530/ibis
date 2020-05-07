@@ -1,13 +1,15 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:ibis/front_page.dart';
 
 class DeviceObject {
   Socket socket;
   String name;
   bool power;
+  bool isBackground;
   double linearProgressBarValue;
   AnimationController radialProgressAnimationController;
   Animation<double> progressAnimation;
@@ -15,22 +17,28 @@ class DeviceObject {
   double time;
   Timer timer;
   bool wantHeight;
+  bool motionDetected;
   //bool isHeightSet;
   DeviceObject({
     this.name,
     this.socket,
+    this.isBackground = true,
     this.radialProgressAnimationController,
     this.timer,
+    this.motionDetected = false,
     this.wantHeight,
     this.progressAnimation,
     this.linearProgressBarValue = 0,
     this.power = false,
-    //this.isHeightSet = false,
     this.time = 1,
     this.progressDegrees = 0,
   }) {
     socket.listen((onData) {
       print([socket.remotePort, onData]);
+    }).onDone(() {
+      deviceObjectList.remove(deviceObjectList.singleWhere((test) {
+        return this.socket == test.socket ? true : false;
+      }));
     });
   }
 }

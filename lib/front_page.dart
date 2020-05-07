@@ -32,7 +32,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 ((60 / HomePageState().mapValues(deviceObjectList[i].time)) *
                         deviceObjectList[i].timer.tick.toDouble()) /
                     3600;
-            print(deviceObjectList[i].linearProgressBarValue);
           }
         }
       });

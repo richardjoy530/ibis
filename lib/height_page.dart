@@ -30,7 +30,7 @@ class _HeightPageState extends State<HeightPage> {
                       child: Text('YES'),
                       onPressed: () {
                         widget.deviceObject.wantHeight = true;
-                        widget.deviceObject.socket.write('yes');
+                        widget.deviceObject.socket.write('2\r');
                         setState(() {
                           quesVis = !quesVis;
                         });
@@ -39,7 +39,7 @@ class _HeightPageState extends State<HeightPage> {
                       child: Text('NO'),
                       onPressed: () {
                         widget.deviceObject.wantHeight = false;
-                        widget.deviceObject.socket.write('no');
+                        widget.deviceObject.socket.write('-2\r');
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -66,11 +66,11 @@ class _HeightPageState extends State<HeightPage> {
                       ),
                       onPointerDown: (data) {
                         print('tap up');
-                        widget.deviceObject.socket.write('1\n');
+                        widget.deviceObject.socket.write('1\r');
                       },
                       onPointerUp: (data) {
                         print('cancel');
-                        widget.deviceObject.socket.write('0\n');
+                        widget.deviceObject.socket.write('0\r');
                       },
                     ),
                     Listener(
