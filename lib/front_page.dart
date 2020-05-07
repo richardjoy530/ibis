@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
+import 'package:ibis/height_page.dart';
 import 'package:ibis/main.dart';
 
 import 'data.dart';
@@ -120,7 +121,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            HomePage(deviceObjectList[index])),
+                            deviceObjectList[index].power == false
+                                ? HeightPage(deviceObjectList[index])
+                                : HomePage(deviceObjectList[index])),
                   );
                 },
               );

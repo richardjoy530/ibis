@@ -147,19 +147,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             ':${getSeconds(((mapValues(deviceObject.time) * 60) - ((mapValues(deviceObject.time) * 60) / 360) * deviceObject.progressDegrees).round())}',
                             style: TextStyle(fontSize: 60),
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              if (deviceObject.power == false) {
-                                setHeight(context, deviceObject);
-                              }
-                            },
-                            child: Text(
-                              deviceObject.isHeightSet == false
-                                  ? 'Tap to set Height'
-                                  : 'Height is set',
-                              style: TextStyle(fontSize: 20),
-                            ),
-                          ),
                         ],
                       ),
                     ),
@@ -227,20 +214,16 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             onTap: () {
               setState(() {
                 if (deviceObject.power == false) {
-                  if (deviceObject.isHeightSet == false) {
-                    setHeight(context, deviceObject);
-                  }
-                  if (deviceObject.isHeightSet == true) {
-                    deviceObject.progressDegrees = 0;
-                    deviceObject.power = !deviceObject.power;
-                    startTimer(deviceObject);
-                    runAnimation(deviceObject: deviceObject);
-                    deviceObject.radialProgressAnimationController.forward();
-                  }
+                  deviceObject.socket
+                      .writeln(mapValues(deviceObject.time).round());
+                  deviceObject.progressDegrees = 0;
+                  deviceObject.power = !deviceObject.power;
+                  startTimer(deviceObject);
+                  runAnimation(deviceObject: deviceObject);
+                  deviceObject.radialProgressAnimationController.forward();
                 } else {
                   //time = 2;
                   destroyAnimation(deviceObject);
-                  deviceObject.isHeightSet = false;
                   deviceObject.power = !deviceObject.power;
                   deviceObject.timer.cancel();
                   runAnimation(
@@ -355,9 +338,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   icon: Icon(Icons.check),
                   onPressed: () {
                     print('confirm');
-                    setState(() {
-                      deviceObject.isHeightSet = true;
-                    });
+
                     Navigator.pop(context);
                   }),
             )
@@ -384,7 +365,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           if (deviceObject.progressDegrees == 360) {
             deviceObject.power = false;
             deviceObject.radialProgressAnimationController.stop();
-            deviceObject.isHeightSet = false;
             deviceObject.timer.cancel();
           }
         });

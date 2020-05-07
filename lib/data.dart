@@ -15,7 +15,7 @@ class DeviceObject {
   double time;
   Timer timer;
   bool wantHeight;
-  bool isHeightSet;
+  //bool isHeightSet;
   DeviceObject({
     this.name,
     this.socket,
@@ -25,7 +25,7 @@ class DeviceObject {
     this.progressAnimation,
     this.linearProgressBarValue = 0,
     this.power = false,
-    this.isHeightSet = false,
+    //this.isHeightSet = false,
     this.time = 1,
     this.progressDegrees = 0,
   }) {

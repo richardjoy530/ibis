@@ -18,88 +18,96 @@ class _HeightPageState extends State<HeightPage> {
     return Scaffold(
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Do you want height'),
             Visibility(
               visible: quesVis,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
+                  Text('Do you want height'),
                   RaisedButton(
                       child: Text('YES'),
                       onPressed: () {
                         widget.deviceObject.wantHeight = true;
+                        widget.deviceObject.socket.write('yes');
+                        setState(() {
+                          quesVis = !quesVis;
+                        });
                       }),
                   RaisedButton(
                       child: Text('NO'),
                       onPressed: () {
                         widget.deviceObject.wantHeight = false;
-                        Navigator.push(
+                        widget.deviceObject.socket.write('no');
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
                                   HomePage(widget.deviceObject)),
                         );
                       }),
-                  Visibility(
-                      child: Column(
-                    children: <Widget>[
-                      Listener(
-                        child: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: IconButton(
-                            icon: Icon(Icons.arrow_upward),
-                            onPressed: () {
-                              print('[*]');
-                            },
-                          ),
-                        ),
-                        onPointerDown: (data) {
-                          print('tap up');
-                          //tap = true;
-                          //heightOnTap(socket, '1');
-                        },
-                        onPointerUp: (data) {
-                          print('cancel');
-                          //tap = false;
-                        },
-                      ),
-                      Listener(
-                        child: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: IconButton(
-                            icon: Icon(Icons.arrow_downward),
-                            onPressed: () {
-                              print('[*]');
-                            },
-                          ),
-                        ),
-                        onPointerDown: (data) {
-                          print('tap up');
-                          //tap = true;
-                          //heightOnTap(socket, '-1');
-                        },
-                        onPointerUp: (data) {
-                          print('cancel');
-                          //tap = false;
-                        },
-                      ),
-                      ListTile(
-                        title: Text('Confirm height ?'),
-                        trailing: IconButton(
-                            icon: Icon(Icons.check),
-                            onPressed: () {
-                              print('confirm');
-                              setState(() {
-                                widget.deviceObject.isHeightSet = true;
-                              });
-                              Navigator.pop(context);
-                            }),
-                      ),
-                    ],
-                  ))
                 ],
               ),
-            )
+            ),
+            Visibility(
+                visible: !quesVis,
+                child: Column(
+                  children: <Widget>[
+                    Listener(
+                      child: Padding(
+                        padding: const EdgeInsets.all(50),
+                        child: IconButton(
+                          icon: Icon(Icons.arrow_upward),
+                          onPressed: () {
+                            print('[*]');
+                          },
+                        ),
+                      ),
+                      onPointerDown: (data) {
+                        print('tap up');
+                        widget.deviceObject.socket.write('1\n');
+                      },
+                      onPointerUp: (data) {
+                        print('cancel');
+                        widget.deviceObject.socket.write('0\n');
+                      },
+                    ),
+                    Listener(
+                      child: Padding(
+                        padding: const EdgeInsets.all(50),
+                        child: IconButton(
+                          icon: Icon(Icons.arrow_downward),
+                          onPressed: () {
+                            print('[*]');
+                          },
+                        ),
+                      ),
+                      onPointerDown: (data) {
+                        print('tap up');
+                        widget.deviceObject.socket.write('-1\r');
+                      },
+                      onPointerUp: (data) {
+                        print('cancel');
+                        widget.deviceObject.socket.write('0\r');
+                      },
+                    ),
+                    ListTile(
+                      title: Text('Confirm height ?'),
+                      trailing: IconButton(
+                          icon: Icon(Icons.check),
+                          onPressed: () {
+                            widget.deviceObject.socket.write('true');
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      HomePage(widget.deviceObject)),
+                            );
+                          }),
+                    ),
+                  ],
+                ))
           ],
         ),
       ),
