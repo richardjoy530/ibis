@@ -23,8 +23,18 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   @override
   void initState() {
     connect();
-    timer = Timer.periodic(Duration(seconds: 1), (callback) {
-      setState(() {});
+    timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
+      setState(() {
+        for (var i = 0; i < deviceObjectList.length; i++) {
+          if (deviceObjectList[i].power == true) {
+            deviceObjectList[i].linearProgressBarValue =
+                ((60 / HomePageState().mapValues(deviceObjectList[i].time)) *
+                        deviceObjectList[i].timer.tick.toDouble()) /
+                    3600;
+            print(deviceObjectList[i].linearProgressBarValue);
+          }
+        }
+      });
     });
     super.initState();
   }
@@ -102,7 +112,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 subtitle: Visibility(
                   visible: deviceObjectList[index].power,
                   child: LinearProgressIndicator(
-                    value: (1 / 360) * deviceObjectList[index].progressDegrees,
+                    value: deviceObjectList[index].linearProgressBarValue,
                   ),
                 ),
                 onTap: () {

@@ -8,7 +8,7 @@ class DeviceObject {
   Socket socket;
   String name;
   bool power;
-  //double ;
+  double linearProgressBarValue;
   AnimationController radialProgressAnimationController;
   Animation<double> progressAnimation;
   double progressDegrees;
@@ -21,6 +21,7 @@ class DeviceObject {
     this.radialProgressAnimationController,
     this.timer,
     this.progressAnimation,
+    this.linearProgressBarValue = 0,
     this.power = false,
     this.isHeightSet = false,
     this.time = 1,
