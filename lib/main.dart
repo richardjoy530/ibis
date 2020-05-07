@@ -3,11 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ibis/data.dart';
 import 'package:ibis/radial_painter.dart';
-import 'package:ibis/test_screen.dart';
 import 'package:intl/intl.dart';
-
+import 'dart:io';
 void main() => runApp(MyApp());
-
+Socket socket;
+bool isConnected;
+var devno=0;
+var serverIP='no server',port='no';
+List<Socket> socketList = [];
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -37,10 +40,43 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool isHeightSet = false;
 
 
+  void connect() async {
+
+    ServerSocket.bind('0.0.0.0', 4041).then((serverSocket) {
+      setState(() {
+        isConnected = true;
+        serverIP='0.0.0.0';
+        port='4041';
+      });
+      serverSocket.listen((sock) {
+
+      }).onData((sock) {
+        socket = sock;
+        socketList.add(socket);
+        print(socketList);
+        print([sock.remoteAddress, sock.remotePort, socketList.length]);
+        setState(() {
+          devno=socketList.length;
+        });
+        sock.listen((onData) {
+          setState(() {
+
+           // incomingMessages = incomingMessages + String.fromCharCodes(onData);
+          });
+        }).onDone((){
+          setState(() {
+            devno=devno-1;
+          });
+        });
+      });
+
+    });
+  }
+
 
   @override
   void initState() {
-
+    connect();
     super.initState();
   }
 
@@ -63,26 +99,43 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             animation: power == true ? 'Connected' : 'Connected',
           ),
         ),
-        title: Text(
-          'Ibis Sterilyzer',
-          style: TextStyle(
-            fontSize: 24,
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(right: 200),
+              child: Text(
+                'Ibis Sterilyzer',
+                style: TextStyle(
+                  fontSize: 24,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Text('Connected devices:$devno',
+                style: TextStyle(
+                  fontSize: 15,
+                ),),
+                Text('\t\t\t\t\t\t\tHost ip:$serverIP',
+                style: TextStyle(
+                  fontSize: 15,
+                ),
+                ),
+
+                Text('\t\t\t\t\t\tPort:$port',
+                style: TextStyle(
+                  fontSize: 15,
+                ),),
+              ],
+            ),
+          ],
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.phonelink_off),
-            color: Color(0xff3d84a7),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SocketScreen()),
-              );
-            },
-          )
-        ],
+
 
       ),
       body: Container(
@@ -95,6 +148,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
+
                 Flexible(
                   child: Stack(
                     alignment: Alignment.center,
