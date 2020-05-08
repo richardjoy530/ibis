@@ -43,6 +43,7 @@ class DeviceObject {
 
         }
     }).onDone((){
+      devno=devno-1;
       deviceObjectList.remove(deviceObjectList.singleWhere((test){
         return this.socket==test.socket?true:false;
       }));
