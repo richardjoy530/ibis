@@ -32,12 +32,13 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  double valueTemp = 1;
   @override
   void initState() {
     if (widget.deviceObject.power == true) {
       runAnimation(
-          begin: (360 / (mapValues(widget.deviceObject.time) * 60)) *
-              widget.deviceObject.timer.tick.toDouble(),
+          begin: (360 / (widget.deviceObject.time.inMinutes * 60)) *
+              widget.deviceObject.timer.tick,
           deviceObject: widget.deviceObject,
           end: 360);
       widget.deviceObject.radialProgressAnimationController.forward();
@@ -94,13 +95,19 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               end: Alignment.bottomCenter,
               colors: [Color(0xffb9dfe6), Color(0xffffffff)]),
         ),
-        child: tabView(context, widget.deviceObject),
+        child: widget.deviceObject.motionDetected == true
+            ? AlertDialog(
+                title: Text('Motion Detected'),
+              )
+            : tabView(context, widget.deviceObject),
       ),
     );
   }
 
   startTimer(DeviceObject deviceObject) {
-    deviceObject.timer = Timer.periodic(Duration(seconds: 1), (timer) {});
+    deviceObject.timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      print([deviceObject.socket.remotePort, 'tick']);
+    });
   }
 
   List<Widget> createTabViewList(int numberOfItems) {
@@ -143,8 +150,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             style: TextStyle(fontSize: 20),
                           ),
                           Text(
-                            '${getMinuets(((mapValues(deviceObject.time) * 60) - ((mapValues(deviceObject.time) * 60) / 360) * deviceObject.progressDegrees).round())}'
-                            ':${getSeconds(((mapValues(deviceObject.time) * 60) - ((mapValues(deviceObject.time) * 60) / 360) * deviceObject.progressDegrees).round())}',
+                            '${getMinuets(((deviceObject.time.inMinutes * 60) - ((deviceObject.time.inMinutes * 60) / 360) * deviceObject.progressDegrees).round())}'
+                            ':${getSeconds(((deviceObject.time.inMinutes * 60) - ((deviceObject.time.inMinutes * 60) / 360) * deviceObject.progressDegrees).round())}',
                             style: TextStyle(fontSize: 60),
                           ),
                         ],
@@ -184,15 +191,17 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     onChanged: (double value) {
                       if (deviceObject.power == false) {
                         setState(() {
-                          deviceObject.time = value;
+                          valueTemp = value;
+                          deviceObject.time =
+                              Duration(minutes: mapValues(value).toInt());
                         });
                       }
                     },
                     divisions: 12,
-                    label: mapValues(deviceObject.time).round().toString(),
+                    label: deviceObject.time.inMinutes.round().toString(),
                     min: 1,
                     max: 13,
-                    value: deviceObject.time,
+                    value: valueTemp,
                     activeColor: Color(0xff2eb8c9),
                     inactiveColor: Color(0xffffffff),
                   ),
@@ -215,7 +224,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               setState(() {
                 if (deviceObject.power == false) {
                   deviceObject.socket
-                      .writeln(mapValues(deviceObject.time).round());
+                      .writeln(deviceObject.time.inMinutes.round());
                   deviceObject.progressDegrees = 0;
                   deviceObject.power = !deviceObject.power;
                   startTimer(deviceObject);
@@ -224,6 +233,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 } else {
                   //time = 2;
                   destroyAnimation(deviceObject);
+                  deviceObject.socket.writeln('stop');
                   deviceObject.power = !deviceObject.power;
                   deviceObject.timer.cancel();
                   runAnimation(
@@ -246,7 +256,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  double mapValues(value) {
+  double mapValues(double value) {
     double temp;
     if (value == 1) {
       temp = 1;
@@ -378,7 +388,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     deviceObject.radialProgressAnimationController = AnimationController(
         vsync: this,
         duration: deviceObject.power == true
-            ? Duration(minutes: mapValues(deviceObject.time).round())
+            ? Duration(
+                seconds: deviceObject.time.inSeconds - deviceObject.timer.tick)
             : Duration(milliseconds: 500));
     deviceObject.progressAnimation = Tween(begin: begin, end: end).animate(
         CurvedAnimation(
@@ -387,6 +398,16 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       ..addListener(() {
         setState(() {
           deviceObject.progressDegrees = deviceObject.progressAnimation.value;
+          if (deviceObject.motionDetected == true) {
+            deviceObject.power = false;
+            deviceObject.radialProgressAnimationController.stop();
+            deviceObject.timer.cancel();
+            deviceObject.radialProgressAnimationController.dispose();
+            Future.delayed(const Duration(seconds: 5), () {
+              deviceObject.motionDetected = false;
+              Navigator.pop(context);
+            });
+          }
           if (deviceObject.progressDegrees == 360) {
             deviceObject.power = false;
             deviceObject.radialProgressAnimationController.stop();

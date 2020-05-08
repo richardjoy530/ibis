@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ class DeviceObject {
   AnimationController radialProgressAnimationController;
   Animation<double> progressAnimation;
   double progressDegrees;
-  double time;
+  Duration time;
   Timer timer;
   bool wantHeight;
   bool motionDetected;
@@ -26,15 +27,20 @@ class DeviceObject {
     this.radialProgressAnimationController,
     this.timer,
     this.motionDetected = false,
-    this.wantHeight,
     this.progressAnimation,
     this.linearProgressBarValue = 0,
     this.power = false,
-    this.time = 1,
+    this.time,
     this.progressDegrees = 0,
   }) {
     socket.listen((onData) {
       print([socket.remotePort, onData]);
+      if (String.fromCharCodes(onData).trim() == 'mot') {
+        //this.power = false;
+        this.motionDetected = true;
+        //this.timer.cancel();
+        //this.time = Duration(minutes: 0);
+      }
     }).onDone(() {
       deviceObjectList.remove(deviceObjectList.singleWhere((test) {
         return this.socket == test.socket ? true : false;

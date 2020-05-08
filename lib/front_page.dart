@@ -27,11 +27,21 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
       setState(() {
         for (var i = 0; i < deviceObjectList.length; i++) {
+          if (deviceObjectList[i].motionDetected == true) {
+            deviceObjectList[i].timer.cancel();
+            deviceObjectList[i].power = false;
+            deviceObjectList[i].motionDetected = false;
+          }
           if (deviceObjectList[i].power == true) {
             deviceObjectList[i].linearProgressBarValue =
-                ((60 / HomePageState().mapValues(deviceObjectList[i].time)) *
-                        deviceObjectList[i].timer.tick.toDouble()) /
-                    3600;
+                (1 / deviceObjectList[i].time.inSeconds) *
+                    deviceObjectList[i].timer.tick;
+            if (deviceObjectList[i].timer.tick >
+                deviceObjectList[i].time.inSeconds) {
+              deviceObjectList[i].power = false;
+              deviceObjectList[i].timer.cancel();
+              deviceObjectList[i].progressDegrees = 0;
+            }
           }
         }
       });
@@ -49,7 +59,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         setState(() {
           print([clientSocket.remoteAddress, clientSocket.remotePort]);
           deviceObjectList.add(DeviceObject(
-              socket: clientSocket, name: clientSocket.remotePort.toString()));
+              socket: clientSocket,
+              name: clientSocket.remotePort.toString(),
+              time: Duration(minutes: 0)));
         });
       });
     });

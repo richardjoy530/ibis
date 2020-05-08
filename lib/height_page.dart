@@ -29,7 +29,6 @@ class _HeightPageState extends State<HeightPage> {
                   RaisedButton(
                       child: Text('YES'),
                       onPressed: () {
-                        widget.deviceObject.wantHeight = true;
                         widget.deviceObject.socket.write('2\r');
                         setState(() {
                           quesVis = !quesVis;
@@ -38,8 +37,8 @@ class _HeightPageState extends State<HeightPage> {
                   RaisedButton(
                       child: Text('NO'),
                       onPressed: () {
-                        widget.deviceObject.wantHeight = false;
                         widget.deviceObject.socket.write('-2\r');
+                        widget.deviceObject.time = Duration(minutes: 1);
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -98,6 +97,7 @@ class _HeightPageState extends State<HeightPage> {
                           icon: Icon(Icons.check),
                           onPressed: () {
                             widget.deviceObject.socket.write('true');
+                            widget.deviceObject.time = Duration(minutes: 1);
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
