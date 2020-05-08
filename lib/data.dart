@@ -35,7 +35,7 @@ class DeviceObject {
   }) {
     socket.listen((onData) {
       print([socket.remotePort, onData]);
-      if (String.fromCharCodes(onData).trim() == 'mot') {
+      if (String.fromCharCodes(onData).trim() == '1') {
         //this.power = false;
         this.motionDetected = true;
         //this.timer.cancel();

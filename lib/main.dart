@@ -403,7 +403,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             deviceObject.radialProgressAnimationController.stop();
             deviceObject.timer.cancel();
             deviceObject.radialProgressAnimationController.dispose();
-            Future.delayed(const Duration(seconds: 5), () {
+            Future.delayed(const Duration(seconds: 3), () {
               deviceObject.motionDetected = false;
               Navigator.pop(context);
             });
