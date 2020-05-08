@@ -7,8 +7,8 @@ import 'package:ibis/height_page.dart';
 import 'package:ibis/main.dart';
 
 import 'data.dart';
-import 'test_screen.dart';
-var devno=0,port='no port',ip='not hosted';
+
+var devno = 0, port = 'no port', ip = 'not hosted';
 List<DeviceObject> deviceObjectList = [];
 List<Socket> sockets = [];
 ServerSocket serverSocket;
@@ -54,12 +54,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
       serverSocket = sock;
       serverOnline = true;
       print('Server Hosted');
-      ip='0.0.0.0';
-      port='4042';
+      ip = '0.0.0.0';
+      port = '4042';
     }).then((sock) {
       serverSocket.listen((sock) {}).onData((clientSocket) {
         setState(() {
-          devno=devno+1;
+          devno = devno + 1;
 
           print([clientSocket.remoteAddress, clientSocket.remotePort]);
           deviceObjectList.add(DeviceObject(
@@ -92,7 +92,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         ),
         title: Column(
           children: <Widget>[
-
             Container(
               padding: EdgeInsets.only(right: 200),
               child: Text(
@@ -101,21 +100,21 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   fontSize: 24,
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
-
                 ),
-
               ),
             ),
             Row(
               children: <Widget>[
-                Text('Connected Devices:$devno',style: TextStyle(fontSize: 15),),
-                Text('\t\t\t\t\tHost ip:$ip',style: TextStyle(fontSize: 15)),
-                Text('\t\t\t\t\tPort:$port',style: TextStyle(fontSize: 15))
+                Text(
+                  'Connected Devices:$devno',
+                  style: TextStyle(fontSize: 15),
+                ),
+                Text('\t\t\t\t\tHost ip:$ip', style: TextStyle(fontSize: 15)),
+                Text('\t\t\t\t\tPort:$port', style: TextStyle(fontSize: 15))
               ],
             )
           ],
         ),
-
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -136,12 +135,18 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   child: LinearProgressIndicator(
                     value: deviceObjectList[index].linearProgressBarValue,
                     backgroundColor: Colors.white,
-                    valueColor: new AlwaysStoppedAnimation<Color>(deviceObjectList[index].isMotion==false?Colors.green:Colors.red),
+                    valueColor: new AlwaysStoppedAnimation<Color>(
+                        deviceObjectList[index].motionDetected == false
+                            ? Colors.green
+                            : Colors.red),
                   ),
                 ),
                 trailing: Visibility(
-                  visible: deviceObjectList[index].isMotion,
-                  child: Icon(Icons.add_alert,color: Colors.red,),
+                  visible: deviceObjectList[index].motionDetected,
+                  child: Icon(
+                    Icons.add_alert,
+                    color: Colors.red,
+                  ),
                 ),
                 onTap: () {
                   Navigator.push(

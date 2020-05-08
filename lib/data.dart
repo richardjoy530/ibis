@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -34,10 +35,7 @@ class DeviceObject {
     socket.listen((onData) {
       print([socket.remotePort, onData]);
       if (String.fromCharCodes(onData).trim() == '1') {
-        //this.power = false;
         this.motionDetected = true;
-        //this.timer.cancel();
-        //this.time = Duration(minutes: 0);
       }
     }).onDone(() {
       deviceObjectList.remove(deviceObjectList.singleWhere((test) {
