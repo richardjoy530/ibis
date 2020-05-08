@@ -8,7 +8,7 @@ import 'package:ibis/main.dart';
 
 import 'data.dart';
 import 'test_screen.dart';
-var devno=0;
+var devno=0,port='no port',ip='not hosted';
 List<DeviceObject> deviceObjectList = [];
 List<Socket> sockets = [];
 ServerSocket serverSocket;
@@ -49,9 +49,13 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
       serverSocket = sock;
       serverOnline = true;
       print('Server Hosted');
+      ip='0.0.0.0';
+      port='4042';
     }).then((sock) {
       serverSocket.listen((sock) {}).onData((clientSocket) {
         setState(() {
+          devno=devno+1;
+
           print([clientSocket.remoteAddress, clientSocket.remotePort]);
           deviceObjectList.add(DeviceObject(
               socket: clientSocket, name: clientSocket.remotePort.toString()));
@@ -81,15 +85,27 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         ),
         title: Column(
           children: <Widget>[
-            Text(
-              'Ibis Sterilyzer',
-              style: TextStyle(
-                fontSize: 24,
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
+
+            Container(
+              padding: EdgeInsets.only(right: 200),
+              child: Text(
+                'Ibis Sterilyzer',
+                style: TextStyle(
+                  fontSize: 24,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+
+                ),
+
               ),
             ),
-            Text('Connected Devices:$devno')
+            Row(
+              children: <Widget>[
+                Text('Connected Devices:$devno',style: TextStyle(fontSize: 15),),
+                Text('\t\t\t\t\tHost ip:$ip',style: TextStyle(fontSize: 15)),
+                Text('\t\t\t\t\tPort:$port',style: TextStyle(fontSize: 15))
+              ],
+            )
           ],
         ),
 
