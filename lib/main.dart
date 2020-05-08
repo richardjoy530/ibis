@@ -147,7 +147,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             deviceObject.power == true
                                 ? 'Time Remaining'
                                 : 'Sterilizer Idle',
-                            style: TextStyle(fontSize: 20),
+                            style: TextStyle(fontSize: 20,color: deviceObject.motionDetected==false ? Colors.black:Colors.red),
                           ),
                           Text(
                             '${getMinuets(((deviceObject.time.inMinutes * 60) - ((deviceObject.time.inMinutes * 60) / 360) * deviceObject.progressDegrees).round())}'

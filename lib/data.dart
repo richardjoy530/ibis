@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +22,6 @@ class DeviceObject {
   DeviceObject({
     this.name,
     this.socket,
-    this.isBackground = true,
     this.radialProgressAnimationController,
     this.timer,
     this.motionDetected = false,
