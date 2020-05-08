@@ -59,6 +59,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           print([clientSocket.remoteAddress, clientSocket.remotePort]);
           deviceObjectList.add(DeviceObject(
               socket: clientSocket, name: clientSocket.remotePort.toString()));
+          clientSocket.listen((onData){}).onDone((){
+            devno=devno-1;
+          });
         });
       });
     });
