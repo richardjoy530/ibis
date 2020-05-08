@@ -8,7 +8,7 @@ import 'package:ibis/main.dart';
 
 import 'data.dart';
 import 'test_screen.dart';
-
+var devno=0;
 List<DeviceObject> deviceObjectList = [];
 List<Socket> sockets = [];
 ServerSocket serverSocket;
@@ -79,26 +79,20 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             animation: 'Connected',
           ),
         ),
-        title: Text(
-          'Ibis Sterilyzer',
-          style: TextStyle(
-            fontSize: 24,
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+        title: Column(
+          children: <Widget>[
+            Text(
+              'Ibis Sterilyzer',
+              style: TextStyle(
+                fontSize: 24,
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text('Connected Devices:$devno')
+          ],
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.phonelink_off),
-            color: Color(0xff3d84a7),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SocketScreen()),
-              );
-            },
-          )
-        ],
+
       ),
       body: Container(
         decoration: BoxDecoration(
