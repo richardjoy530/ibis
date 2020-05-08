@@ -39,6 +39,7 @@ class _HeightPageState extends State<HeightPage> {
                       onPressed: () {
                         widget.deviceObject.socket.write('-2\r');
                         widget.deviceObject.time = Duration(minutes: 1);
+                        widget.deviceObject.progressDegrees = 0;
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -96,6 +97,7 @@ class _HeightPageState extends State<HeightPage> {
                       trailing: IconButton(
                           icon: Icon(Icons.check),
                           onPressed: () {
+                            widget.deviceObject.progressDegrees = 0;
                             widget.deviceObject.socket.write('true');
                             widget.deviceObject.time = Duration(minutes: 1);
                             Navigator.pushReplacement(

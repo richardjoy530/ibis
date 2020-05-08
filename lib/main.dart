@@ -197,10 +197,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         });
                       }
                     },
-                    divisions: 12,
+                    divisions: 18,
                     label: deviceObject.time.inMinutes.round().toString(),
                     min: 1,
-                    max: 13,
+                    max: 19,
                     value: valueTemp,
                     activeColor: Color(0xff2eb8c9),
                     inactiveColor: Color(0xffffffff),
@@ -209,7 +209,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: Text(
-                    '30 mins',
+                    '60 mins',
                     style: TextStyle(color: Colors.blueGrey),
                   ),
                 ),
@@ -233,7 +233,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 } else {
                   //time = 2;
                   destroyAnimation(deviceObject);
-                  deviceObject.socket.writeln('stop');
+                  deviceObject.socket.write('stop');
                   deviceObject.power = !deviceObject.power;
                   deviceObject.timer.cancel();
                   runAnimation(
@@ -241,6 +241,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       end: 0,
                       deviceObject: deviceObject);
                   deviceObject.radialProgressAnimationController.forward();
+                  Future.delayed(const Duration(seconds: 2), () {
+                    Navigator.pop(context);
+                  });
                 }
               });
             },
@@ -271,11 +274,11 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     } else if (value == 6) {
       temp = 7;
     } else if (value == 7) {
-      temp = 9;
+      temp = 8;
     } else if (value == 8) {
-      temp = 10;
+      temp = 9;
     } else if (value == 9) {
-      temp = 12;
+      temp = 10;
     } else if (value == 10) {
       temp = 15;
     } else if (value == 11) {
@@ -284,6 +287,18 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       temp = 25;
     } else if (value == 13) {
       temp = 30;
+    } else if (value == 14) {
+      temp = 35;
+    } else if (value == 15) {
+      temp = 40;
+    } else if (value == 16) {
+      temp = 45;
+    } else if (value == 17) {
+      temp = 50;
+    } else if (value == 18) {
+      temp = 55;
+    } else if (value == 19) {
+      temp = 60;
     }
     return temp;
   }
@@ -416,6 +431,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         });
         if (deviceObject.progressDegrees == 360) {
           deviceObject.progressDegrees = 0;
+          Future.delayed(const Duration(seconds: 2), () {
+            Navigator.pop(context);
+          });
         }
       });
   }
