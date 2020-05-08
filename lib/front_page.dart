@@ -33,7 +33,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                         deviceObjectList[i].timer.tick.toDouble()) /
                     3600;
           }
+          if(deviceObjectList[i].isMotion==true)
+            {
+              deviceObjectList[i].timer.cancel();
+            }
         }
+
       });
     });
     super.initState();

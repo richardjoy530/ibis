@@ -32,6 +32,8 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  Timer t;
+  var ti=0;
   @override
   void initState() {
     if (widget.deviceObject.power == true) {
@@ -42,6 +44,24 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           end: 360);
       widget.deviceObject.radialProgressAnimationController.forward();
     }
+    t = Timer.periodic(Duration(milliseconds: 100), (callback)
+    {
+      if(widget.deviceObject.isMotion==true)
+        {
+          ti=ti+1;
+          widget.deviceObject.timer.cancel();
+        }
+      if(ti==30)
+        {
+
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      FrontPage())
+          );
+
+        }
+    });
     super.initState();
   }
 
@@ -164,17 +184,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   title: Center(child: Text('Alert',style: TextStyle(fontSize: 30,fontStyle: FontStyle.italic,color: Colors.pink),),),
                   children: <Widget>[
                     SimpleDialogOption(
-                      onPressed: ()
-                      {
-                         setState(() {
-                           deviceObject.timer.cancel();
-                         });
-                          Navigator.pushReplacement(context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      FrontPage())
-                          );
-                      },
+
                       child: Icon(Icons.add_alert,color: Colors.red,size: 100,),
                     )
                   ],
