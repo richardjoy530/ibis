@@ -113,9 +113,23 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   visible: deviceObjectList[index].power,
                   child: LinearProgressIndicator(
                     value: deviceObjectList[index].linearProgressBarValue,
+                    backgroundColor: Colors.white,
+                    valueColor: new AlwaysStoppedAnimation<Color>(deviceObjectList[index].isMotion==false?Colors.green:Colors.red),
                   ),
                 ),
+                trailing: Visibility(
+                  visible: deviceObjectList[index].isMotion,
+                  child: Icon(Icons.add_alert,color: Colors.red,),
+                ),
                 onTap: () {
+                  setState(() {
+                    if(deviceObjectList[index].isMotion==true)
+                    {
+                      deviceObjectList[index].isMotion=false;
+                      deviceObjectList[index].power=false;
+                    }
+                  });
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(

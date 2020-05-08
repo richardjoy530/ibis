@@ -123,6 +123,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 'assets/breathing.flr',
                 animation: deviceObject.power == true ? 'breath' : 'off',
               ),
+
               CustomPaint(
                 child: Container(
                   height: MediaQuery.of(context).size.width / 1.5,
@@ -140,21 +141,47 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             deviceObject.power == true
                                 ? 'Time Remaining'
                                 : 'Sterilizer Idle',
-                            style: TextStyle(fontSize: 20),
+                            style: TextStyle(fontSize: 20,color: deviceObject.isMotion==false ? Colors.black:Colors.red),
                           ),
                           Text(
                             '${getMinuets(((mapValues(deviceObject.time) * 60) - ((mapValues(deviceObject.time) * 60) / 360) * deviceObject.progressDegrees).round())}'
                             ':${getSeconds(((mapValues(deviceObject.time) * 60) - ((mapValues(deviceObject.time) * 60) / 360) * deviceObject.progressDegrees).round())}',
                             style: TextStyle(fontSize: 60),
                           ),
+
+
                         ],
                       ),
+
                     ),
                   ),
                 ),
                 painter: RadialPainter(deviceObject.progressDegrees),
               ),
+              Visibility(
+                visible: deviceObject.isMotion,
+                child:  SimpleDialog(
+                  title: Center(child: Text('Alert',style: TextStyle(fontSize: 30,fontStyle: FontStyle.italic,color: Colors.pink),),),
+                  children: <Widget>[
+                    SimpleDialogOption(
+                      onPressed: ()
+                      {
+                         setState(() {
+                           deviceObject.timer.cancel();
+                         });
+                          Navigator.pushReplacement(context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      FrontPage())
+                          );
+                      },
+                      child: Icon(Icons.add_alert,color: Colors.red,size: 100,),
+                    )
+                  ],
+                ),
+              )
             ],
+
           ),
         ),
         Padding(
@@ -213,6 +240,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           child: GestureDetector(
             onTap: () {
               setState(() {
+
                 if (deviceObject.power == false) {
                   deviceObject.socket
                       .writeln(mapValues(deviceObject.time).round());
