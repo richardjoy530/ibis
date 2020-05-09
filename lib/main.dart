@@ -12,9 +12,8 @@ import 'front_page.dart';
 import 'radial_painter.dart';
 import 'test_screen.dart';
 
-final _customcolor=CustomSliderColors(
+final customColor = CustomSliderColors(
   shadowStep: 1,
-
 );
 void main() {
   connect();
@@ -193,29 +192,21 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 min: 1,
                 max: 19,
                 initialValue: 1,
-
-                appearance:
-                CircularSliderAppearance(
-                  size: (MediaQuery.of(context).size.width / 1.5),
-                  customColors:_customcolor
-                ),
-                onChange: (double value)
-                {
+                appearance: CircularSliderAppearance(
+                    size: (MediaQuery.of(context).size.width / 1.5),
+                    customColors: customColor),
+                onChange: (double value) {
                   print(value);
-                  var displayTime=value.floor();
-
+                  var displayTime = value.floor();
 
                   if (deviceObject.power == false) {
                     setState(() {
-                      deviceObject.time =
-                          Duration(minutes: mapValues(displayTime.toDouble()).toInt());
+                      deviceObject.time = Duration(
+                          minutes: mapValues(displayTime.toDouble()).toInt());
                     });
                   }
-
                 },
-                innerWidget: (double value)
-                {
-                },
+                //innerWidget: (double value) {},
               )
             ],
           ),
