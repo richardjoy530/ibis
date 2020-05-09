@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,7 +11,31 @@ import 'front_page.dart';
 import 'radial_painter.dart';
 import 'test_screen.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  connect();
+  return runApp(MyApp());
+}
+
+void connect() async {
+  ServerSocket.bind(InternetAddress.ANY_IP_V4, 9000)
+      .then((ServerSocket server) {});
+  ServerSocket.bind('0.0.0.0', 4042).then((sock) {
+    serverSocket = sock;
+    serverOnline = true;
+    print('Server Hosted');
+    runZoned(() {}, onError: (e) {
+      print('Server error: $e');
+    });
+  }).then((sock) {
+    serverSocket.listen((sock) {}).onData((clientSocket) {
+      print([clientSocket.remoteAddress, clientSocket.remotePort]);
+      deviceObjectList.add(DeviceObject(
+          socket: clientSocket,
+          name: clientSocket.remotePort.toString(),
+          time: Duration(minutes: 0)));
+    });
+  });
+}
 
 class MyApp extends StatelessWidget {
   @override

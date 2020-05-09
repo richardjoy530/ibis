@@ -23,7 +23,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   Timer timer;
   @override
   void initState() {
-    connect();
     timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
       setState(() {
         for (var i = 0; i < deviceObjectList.length; i++) {
@@ -46,25 +45,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         }
       });
     });
-    super.initState();
-  }
 
-  void connect() async {
-    ServerSocket.bind('0.0.0.0', 4042).then((sock) {
-      serverSocket = sock;
-      serverOnline = true;
-      print('Server Hosted');
-    }).then((sock) {
-      serverSocket.listen((sock) {}).onData((clientSocket) {
-        setState(() {
-          print([clientSocket.remoteAddress, clientSocket.remotePort]);
-          deviceObjectList.add(DeviceObject(
-              socket: clientSocket,
-              name: clientSocket.remotePort.toString(),
-              time: Duration(minutes: 0)));
-        });
-      });
-    });
+    super.initState();
   }
 
   @override
