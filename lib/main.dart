@@ -221,7 +221,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     });
                   }
                 },
-                innerWidget: (double value) {},
+                innerWidget: (value) {return null;},
               )
             ],
           ),
