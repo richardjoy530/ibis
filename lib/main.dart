@@ -12,9 +12,15 @@ import 'front_page.dart';
 import 'radial_painter.dart';
 import 'test_screen.dart';
 
-final customColor = CustomSliderColors(
-  shadowStep: 1,
-);
+final customColor = CustomSliderColors();
+//final customColor = CustomSliderColors(
+//    progressBarColor: Color(0xffd1e6ea),
+//    hideShadow: true,
+//    trackColor: Color(0xffd1e6ea),
+//    progressBarColors: [
+//      Color(0xff2eb8c9),
+//      Color(0xff95dcdb),
+//    ]);
 void main() {
   connect();
   return runApp(MyApp());
@@ -59,6 +65,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  int displayTime;
   double valueTemp = 1;
   @override
   void initState() {
@@ -193,11 +200,13 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 max: 19,
                 initialValue: 1,
                 appearance: CircularSliderAppearance(
-                    size: (MediaQuery.of(context).size.width / 1.5),
+                    customWidths: CustomSliderWidths(
+                        trackWidth: 50, progressBarWidth: 50, shadowWidth: 50),
+                    size: (MediaQuery.of(context).size.width / 1.5) + 50,
                     customColors: customColor),
                 onChange: (double value) {
                   print(value);
-                  var displayTime = value.floor();
+                  displayTime = value.floor();
 
                   if (deviceObject.power == false) {
                     setState(() {
@@ -206,65 +215,65 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     });
                   }
                 },
-                //innerWidget: (double value) {},
+                innerWidget: (double value) {},
               )
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-          child: Container(
-            decoration: BoxDecoration(
-                color: Color(0xffdae6eb),
-                borderRadius: BorderRadius.circular(50),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0xffdae6eb),
-                    spreadRadius: 10.0, //extend the shadow
-                  )
-                ]),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Text(
-                    '1 min',
-                    style: TextStyle(color: Colors.blueGrey),
-                  ),
-                ),
-                Expanded(
-                  child: Slider(
-                    onChanged: (double value) {
-                      if (deviceObject.power == false) {
-                        setState(() {
-                          valueTemp = value;
-
-                          deviceObject.time =
-                              Duration(minutes: mapValues(value).toInt());
-                        });
-                      }
-                    },
-                    divisions: 18,
-                    label: deviceObject.time.inMinutes.round().toString(),
-                    min: 1,
-                    max: 19,
-                    value: valueTemp,
-                    activeColor: Color(0xff2eb8c9),
-                    inactiveColor: Color(0xffffffff),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Text(
-                    '60 mins',
-                    style: TextStyle(color: Colors.blueGrey),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+//        Padding(
+//          padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+//          child: Container(
+//            decoration: BoxDecoration(
+//                color: Color(0xffdae6eb),
+//                borderRadius: BorderRadius.circular(50),
+//                boxShadow: [
+//                  BoxShadow(
+//                    color: Color(0xffdae6eb),
+//                    spreadRadius: 10.0, //extend the shadow
+//                  )
+//                ]),
+//            child: Row(
+//              mainAxisAlignment: MainAxisAlignment.center,
+//              children: <Widget>[
+//                Padding(
+//                  padding: const EdgeInsets.only(left: 8.0),
+//                  child: Text(
+//                    '1 min',
+//                    style: TextStyle(color: Colors.blueGrey),
+//                  ),
+//                ),
+////                Expanded(
+////                  child: Slider(
+////                    onChanged: (double value) {
+////                      if (deviceObject.power == false) {
+////                        setState(() {
+////                          valueTemp = value;
+////
+////                          deviceObject.time =
+////                              Duration(minutes: mapValues(value).toInt());
+////                        });
+////                      }
+////                    },
+////                    divisions: 18,
+////                    label: deviceObject.time.inMinutes.round().toString(),
+////                    min: 1,
+////                    max: 19,
+////                    value: valueTemp,
+////                    activeColor: Color(0xff2eb8c9),
+////                    inactiveColor: Color(0xffffffff),
+////                  ),
+////                ),
+////                Padding(
+////                  padding: const EdgeInsets.only(right: 8.0),
+////                  child: Text(
+////                    '60 mins',
+////                    style: TextStyle(color: Colors.blueGrey),
+////                  ),
+////                ),
+//              ],
+//            ),
+//          ),
+//        ),
         Padding(
           padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
           child: GestureDetector(
