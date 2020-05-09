@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 class HeightPainter extends CustomPainter {
   double heightIn100;
+  double height = 370;
+  double width = 100;
 
   HeightPainter(this.heightIn100);
 
@@ -44,18 +46,20 @@ class HeightPainter extends CustomPainter {
     //canvas.drawLine(center, Offset(size.width / 2, heightIn100), progressPaint);
     canvas.drawRRect(
         RRect.fromRectAndRadius(
-            Rect.fromLTWH(-50 + size.width / 2, -400 / 2, 100, 400),
-            Radius.circular(10)),
+            Rect.fromLTWH(
+                -(width / 2) + size.width / 2, -(height / 2), width, height),
+            Radius.circular(20)),
         outlinePaint);
     for (var i = 1; i < 11; i++) {
       if ((heightIn100 / 10).floor() >= i) {
         canvas.drawRRect(
             RRect.fromRectAndRadius(
                 Rect.fromCenter(
-                    center: Offset(size.width / 2, (200.0 + 15) - i * 35),
-                    width: 90,
+                    center:
+                        Offset(size.width / 2, ((height / 2) + 10) - i * 35),
+                    width: width - 10,
                     height: 30),
-                Radius.circular(5)),
+                Radius.circular(10)),
             progressPaint);
       }
     }
