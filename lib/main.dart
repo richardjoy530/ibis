@@ -1,16 +1,51 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 import 'data.dart';
 import 'front_page.dart';
 import 'radial_painter.dart';
 import 'test_screen.dart';
 
-void main() => runApp(MyApp());
+final customColor = CustomSliderColors();
+//final customColor = CustomSliderColors(
+//    progressBarColor: Color(0xffd1e6ea),
+//    hideShadow: true,
+//    trackColor: Color(0xffd1e6ea),
+//    progressBarColors: [
+//      Color(0xff2eb8c9),
+//      Color(0xff95dcdb),
+//    ]);
+void main() {
+  connect();
+  return runApp(MyApp());
+}
+
+void connect() async {
+  ServerSocket.bind('0.0.0.0', 4042).then((sock) {
+    serverSocket = sock;
+    serverOnline = true;
+    print('Server Hosted');
+    runZoned(() {}, onError: (e) {
+      print('Server error: $e');
+    });
+  }).then((sock) {
+    serverSocket.listen((sock) {}).onData((clientSocket) {
+      print([clientSocket.remoteAddress, clientSocket.remotePort]);
+      deviceObjectList.add(DeviceObject(
+          socket: clientSocket,
+          name: clientSocket.remotePort.toString(),
+          time: Duration(minutes: 0)));
+    });
+  }).catchError((onError) {
+    print(['Server error: ', onError.toString()]);
+  });
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -32,6 +67,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  int displayTime;
   double valueTemp = 1;
   @override
   void initState() {
@@ -165,62 +201,85 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 ),
                 painter: RadialPainter(deviceObject.progressDegrees),
               ),
+              SleekCircularSlider(
+                min: 1,
+                max: 19,
+                initialValue: 1,
+                appearance: CircularSliderAppearance(
+                    customWidths: CustomSliderWidths(
+                        trackWidth: 50, progressBarWidth: 50, shadowWidth: 50),
+                    size: (MediaQuery.of(context).size.width / 1.5) + 50,
+                    customColors: customColor),
+                onChange: (double value) {
+                  print(value);
+                  displayTime = value.floor();
+
+                  if (deviceObject.power == false) {
+                    setState(() {
+                      deviceObject.time = Duration(
+                          minutes: mapValues(displayTime.toDouble()).toInt());
+                    });
+                  }
+                },
+                innerWidget: (double value) {},
+              )
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-          child: Container(
-            decoration: BoxDecoration(
-                color: Color(0xffdae6eb),
-                borderRadius: BorderRadius.circular(50),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0xffdae6eb),
-                    spreadRadius: 10.0, //extend the shadow
-                  )
-                ]),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Text(
-                    '1 min',
-                    style: TextStyle(color: Colors.blueGrey),
-                  ),
-                ),
-                Expanded(
-                  child: Slider(
-                    onChanged: (double value) {
-                      if (deviceObject.power == false) {
-                        setState(() {
-                          valueTemp = value;
-                          deviceObject.time =
-                              Duration(minutes: mapValues(value).toInt());
-                        });
-                      }
-                    },
-                    divisions: 18,
-                    label: deviceObject.time.inMinutes.round().toString(),
-                    min: 1,
-                    max: 19,
-                    value: valueTemp,
-                    activeColor: Color(0xff2eb8c9),
-                    inactiveColor: Color(0xffffffff),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Text(
-                    '60 mins',
-                    style: TextStyle(color: Colors.blueGrey),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+//        Padding(
+//          padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+//          child: Container(
+//            decoration: BoxDecoration(
+//                color: Color(0xffdae6eb),
+//                borderRadius: BorderRadius.circular(50),
+//                boxShadow: [
+//                  BoxShadow(
+//                    color: Color(0xffdae6eb),
+//                    spreadRadius: 10.0, //extend the shadow
+//                  )
+//                ]),
+//            child: Row(
+//              mainAxisAlignment: MainAxisAlignment.center,
+//              children: <Widget>[
+//                Padding(
+//                  padding: const EdgeInsets.only(left: 8.0),
+//                  child: Text(
+//                    '1 min',
+//                    style: TextStyle(color: Colors.blueGrey),
+//                  ),
+//                ),
+////                Expanded(
+////                  child: Slider(
+////                    onChanged: (double value) {
+////                      if (deviceObject.power == false) {
+////                        setState(() {
+////                          valueTemp = value;
+////
+////                          deviceObject.time =
+////                              Duration(minutes: mapValues(value).toInt());
+////                        });
+////                      }
+////                    },
+////                    divisions: 18,
+////                    label: deviceObject.time.inMinutes.round().toString(),
+////                    min: 1,
+////                    max: 19,
+////                    value: valueTemp,
+////                    activeColor: Color(0xff2eb8c9),
+////                    inactiveColor: Color(0xffffffff),
+////                  ),
+////                ),
+////                Padding(
+////                  padding: const EdgeInsets.only(right: 8.0),
+////                  child: Text(
+////                    '60 mins',
+////                    style: TextStyle(color: Colors.blueGrey),
+////                  ),
+////                ),
+//              ],
+//            ),
+//          ),
+//        ),
         Padding(
           padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
           child: GestureDetector(

@@ -1,5 +1,5 @@
-import 'dart:io';
 
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -205,6 +205,7 @@ class _SocketScreenState extends State<SocketScreen> {
       }).onData((sock) {
         socket = sock;
         socketList.add(socket);
+        print(socketList);
         print([sock.remoteAddress, sock.remotePort, socketList.length]);
         sock.listen((onData) {
           setState(() {
