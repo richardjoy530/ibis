@@ -13,6 +13,7 @@ class HeightPage extends StatefulWidget {
 }
 
 class _HeightPageState extends State<HeightPage> {
+  int indicator;
   bool quesVis = true;
   @override
   Widget build(BuildContext context) {
@@ -65,7 +66,6 @@ class _HeightPageState extends State<HeightPage> {
                   ],
                 )
               : Stack(
-
                   //mainAxisAlignment: MainAxisAlignment.spaceAround,
                   alignment: Alignment.center,
                   children: <Widget>[
@@ -84,6 +84,7 @@ class _HeightPageState extends State<HeightPage> {
                             },
                           ),
                           onPointerDown: (data) {
+                            indicator = 1;
                             print('tap up');
                             widget.deviceObject.socket.write('1\r');
                           },
