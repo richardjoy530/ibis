@@ -8,7 +8,7 @@ import 'package:ibis/main.dart';
 
 import 'data.dart';
 
-var devno = 0, port = 'no port', ip = 'not hosted';
+var port = 'no port', ip = 'not hosted';
 List<DeviceObject> deviceObjectList = [];
 List<Socket> sockets = [];
 ServerSocket serverSocket;
@@ -59,7 +59,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     }).then((sock) {
       serverSocket.listen((sock) {}).onData((clientSocket) {
         setState(() {
-          devno = devno + 1;
 
           print([clientSocket.remoteAddress, clientSocket.remotePort]);
           deviceObjectList.add(DeviceObject(
@@ -106,7 +105,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             Row(
               children: <Widget>[
                 Text(
-                  'Connected Devices:$devno',
+                  'Connected Devices:${deviceObjectList.length}',
                   style: TextStyle(fontSize: 15),
                 ),
                 Text('\t\t\t\t\tHost ip:$ip', style: TextStyle(fontSize: 15)),
