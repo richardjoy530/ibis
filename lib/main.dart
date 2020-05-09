@@ -248,6 +248,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       if (deviceObject.power == false) {
                         setState(() {
                           valueTemp = value;
+
                           deviceObject.time =
                               Duration(minutes: mapValues(value).toInt());
                         });
