@@ -19,6 +19,7 @@ class DeviceObject {
   Timer timer;
   bool wantHeight;
   bool motionDetected;
+  double height;
   //bool isHeightSet;
   DeviceObject({
     this.name,
@@ -26,6 +27,7 @@ class DeviceObject {
     this.isBackground = true,
     this.radialProgressAnimationController,
     this.timer,
+    this.height = 0,
     this.motionDetected = false,
     this.progressAnimation,
     this.linearProgressBarValue = 0,

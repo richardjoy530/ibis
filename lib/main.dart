@@ -17,8 +17,6 @@ void main() {
 }
 
 void connect() async {
-  ServerSocket.bind(InternetAddress.ANY_IP_V4, 9000)
-      .then((ServerSocket server) {});
   ServerSocket.bind('0.0.0.0', 4042).then((sock) {
     serverSocket = sock;
     serverOnline = true;
