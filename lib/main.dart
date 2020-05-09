@@ -5,12 +5,17 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 import 'data.dart';
 import 'front_page.dart';
 import 'radial_painter.dart';
 import 'test_screen.dart';
 
+final _customcolor=CustomSliderColors(
+  shadowStep: 1,
+
+);
 void main() {
   connect();
   return runApp(MyApp());
@@ -184,6 +189,34 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 ),
                 painter: RadialPainter(deviceObject.progressDegrees),
               ),
+              SleekCircularSlider(
+                min: 1,
+                max: 19,
+                initialValue: 1,
+
+                appearance:
+                CircularSliderAppearance(
+                  size: (MediaQuery.of(context).size.width / 1.5),
+                  customColors:_customcolor
+                ),
+                onChange: (double value)
+                {
+                  print(value);
+                  var displayTime=value.floor();
+
+
+                  if (deviceObject.power == false) {
+                    setState(() {
+                      deviceObject.time =
+                          Duration(minutes: mapValues(displayTime.toDouble()).toInt());
+                    });
+                  }
+
+                },
+                innerWidget: (double value)
+                {
+                },
+              )
             ],
           ),
         ),

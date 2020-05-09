@@ -71,7 +71,7 @@ class _HeightPageState extends State<HeightPage> {
                   children: <Widget>[
                     CustomPaint(
                       child: Text(''),
-                      painter: HeightPainter(55),
+                      painter: HeightPainter(20),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
