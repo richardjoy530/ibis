@@ -23,7 +23,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   Timer timer;
   @override
   void initState() {
-    connect();
     timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
       setState(() {
         for (var i = 0; i < deviceObjectList.length; i++) {
@@ -52,6 +51,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    print('Front Page Disposed');
     timer.cancel();
     super.dispose();
   }

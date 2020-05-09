@@ -27,24 +27,28 @@ void main() {
 }
 
 void connect() async {
-  ServerSocket.bind('0.0.0.0', 4042).then((sock) {
-    serverSocket = sock;
-    serverOnline = true;
-    print('Server Hosted');
-    runZoned(() {}, onError: (e) {
-      print('Server error: $e');
+  ServerSocket.bind('0.0.0.0', 4042)
+    ..then((sock) {
+      serverSocket = sock;
+      serverOnline = true;
+      print('Server Hosted');
+      runZoned(() {}, onError: (e) {
+        print('Server error 1: $e');
+      });
+      serverSocket.listen((sock) {}).onData((clientSocket) {
+        print([clientSocket.remoteAddress, clientSocket.remotePort]);
+        deviceObjectList.add(DeviceObject(
+            socket: clientSocket,
+            name: clientSocket.remotePort.toString(),
+            time: Duration(minutes: 0)));
+      });
+    })
+    ..catchError((onError) {
+      print(['Server error 2: ', onError.toString()]);
+    })
+    ..whenComplete(() {
+      print(['Complete']);
     });
-  }).then((sock) {
-    serverSocket.listen((sock) {}).onData((clientSocket) {
-      print([clientSocket.remoteAddress, clientSocket.remotePort]);
-      deviceObjectList.add(DeviceObject(
-          socket: clientSocket,
-          name: clientSocket.remotePort.toString(),
-          time: Duration(minutes: 0)));
-    });
-  }).catchError((onError) {
-    print(['Server error: ', onError.toString()]);
-  });
 }
 
 class MyApp extends StatelessWidget {
@@ -68,9 +72,11 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   int displayTime;
+  Timer mainTimer;
   double valueTemp = 1;
   @override
   void initState() {
+    mainTick();
     if (widget.deviceObject.power == true) {
       runAnimation(
           begin: (360 / (widget.deviceObject.time.inMinutes * 60)) *
@@ -84,9 +90,11 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    print('Main Page Disposed');
     if (widget.deviceObject.power == true) {
       widget.deviceObject.radialProgressAnimationController.dispose();
     }
+    mainTimer.cancel();
     super.dispose();
   }
 
@@ -142,7 +150,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   startTimer(DeviceObject deviceObject) {
     deviceObject.timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      print([deviceObject.socket.remotePort, 'tick']);
+      if (serverOnline == true && widget.deviceObject.clientError == false) {
+        print([deviceObject.socket.remotePort, 'tick']);
+      }
     });
   }
 
@@ -221,7 +231,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     });
                   }
                 },
-                innerWidget: (value) {return null;},
+                innerWidget: (value) {
+                  return null;
+                },
               )
             ],
           ),
@@ -513,5 +525,13 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   getMinuets(int seconds) {
     var f = new NumberFormat("00", "en_US");
     return f.format((seconds / 60).floor());
+  }
+
+  Future<void> mainTick() async {
+    mainTimer = Timer.periodic(Duration(seconds: 1), (callback) {
+      if (serverOnline == false || widget.deviceObject.clientError == true) {
+        Navigator.pop(context);
+      }
+    });
   }
 }

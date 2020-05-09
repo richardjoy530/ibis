@@ -4,10 +4,12 @@ import 'dart:io';
 import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ibis/front_page.dart';
+
+import 'front_page.dart';
 
 class DeviceObject {
   Socket socket;
+  bool clientError = false;
   String name;
   bool power;
   bool isBackground;
@@ -26,6 +28,7 @@ class DeviceObject {
     this.socket,
     this.radialProgressAnimationController,
     this.timer,
+    this.clientError,
     this.height = 0,
     this.motionDetected = false,
     this.progressAnimation,
@@ -39,10 +42,23 @@ class DeviceObject {
       if (String.fromCharCodes(onData).trim() == '1') {
         this.motionDetected = true;
       }
-    }).onDone(() {
-      deviceObjectList.remove(deviceObjectList.singleWhere((test) {
-        return this.socket == test.socket ? true : false;
-      }));
-    });
+    })
+      ..onError((handleError) {
+        print('Client Error : ${handleError.toString()}');
+        deviceObjectList = [];
+        serverOnline = false;
+        serverSocket.close();
+        this.clientError = true;
+        this.socket.close();
+      })
+      ..onDone(() {
+        this.socket.close();
+        this.clientError = true;
+        if (serverOnline == true) {
+          deviceObjectList.remove(deviceObjectList.singleWhere((test) {
+            return this.socket == test.socket ? true : false;
+          }));
+        }
+      });
   }
 }

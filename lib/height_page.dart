@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:ibis/height_bar.dart';
 
 import 'data.dart';
+import 'front_page.dart';
 import 'main.dart';
 
 class HeightPage extends StatefulWidget {
@@ -15,9 +16,24 @@ class HeightPage extends StatefulWidget {
 }
 
 class _HeightPageState extends State<HeightPage> {
+  Timer mainTimer;
   Timer timer;
   int indicator = 0;
   bool quesVis = true;
+
+  @override
+  void initState() {
+    mainTick();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    print('Height Page Disposed');
+    mainTimer.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,19 +114,14 @@ class _HeightPageState extends State<HeightPage> {
                                 child: IconButton(
                                   color: Colors.blueGrey,
                                   icon: Icon(Icons.arrow_upward),
-                                  onPressed: () {
-                                    print('[*]');
-                                  },
+                                  onPressed: () {},
                                 ),
                                 onPointerDown: (data) {
-                                  print('tap');
                                   indicator = 1;
                                   widget.deviceObject.socket.write('1\r');
                                   tick();
-                                  print('tick');
                                 },
                                 onPointerUp: (data) {
-                                  print('done');
                                   indicator = 0;
                                   timer.cancel();
                                   widget.deviceObject.socket.write('0\r');
@@ -123,19 +134,14 @@ class _HeightPageState extends State<HeightPage> {
                                 child: IconButton(
                                   color: Colors.blueGrey,
                                   icon: Icon(Icons.arrow_downward),
-                                  onPressed: () {
-                                    print('[*]');
-                                  },
+                                  onPressed: () {},
                                 ),
                                 onPointerDown: (data) {
-                                  print('tap');
                                   indicator = -1;
                                   widget.deviceObject.socket.write('-1\r');
                                   tick();
-                                  print('tick');
                                 },
                                 onPointerUp: (data) {
-                                  print('done');
                                   timer.cancel();
                                   indicator = 0;
                                   widget.deviceObject.socket.write('0\r');
@@ -183,7 +189,6 @@ class _HeightPageState extends State<HeightPage> {
 
   Future<void> tick() async {
     timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
-      print('future');
       setState(() {
         if (indicator == 1) {
           widget.deviceObject.height += 1;
@@ -197,6 +202,14 @@ class _HeightPageState extends State<HeightPage> {
           widget.deviceObject.height = 0;
         }
       });
+    });
+  }
+
+  Future<void> mainTick() async {
+    mainTimer = Timer.periodic(Duration(seconds: 1), (callback) {
+      if (serverOnline == false || widget.deviceObject.clientError == true) {
+        Navigator.pop(context);
+      }
     });
   }
 }
