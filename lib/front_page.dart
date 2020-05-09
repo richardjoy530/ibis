@@ -96,31 +96,45 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               end: Alignment.bottomCenter,
               colors: [Color(0xffb9dfe6), Color(0xffffffff)]),
         ),
-        child: ListView.builder(
-            itemCount: deviceObjectList.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                leading: Icon(Icons.power),
-                title: Text(
-                    '${deviceObjectList[index].socket.remoteAddress.address.toString()} : ${deviceObjectList[index].socket.remotePort}'),
-                subtitle: Visibility(
-                  visible: deviceObjectList[index].power,
-                  child: LinearProgressIndicator(
-                    value: deviceObjectList[index].linearProgressBarValue,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            deviceObjectList[index].power == false
-                                ? HeightPage(deviceObjectList[index])
-                                : HomePage(deviceObjectList[index])),
+        child: serverOnline == true
+            ? ListView.builder(
+                itemCount: deviceObjectList.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    leading: Icon(Icons.power),
+                    title: Text(
+                        '${deviceObjectList[index].socket.remoteAddress.address.toString()} : ${deviceObjectList[index].socket.remotePort}'),
+                    subtitle: Visibility(
+                      visible: deviceObjectList[index].power,
+                      child: LinearProgressIndicator(
+                        value: deviceObjectList[index].linearProgressBarValue,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                deviceObjectList[index].power == false
+                                    ? HeightPage(deviceObjectList[index])
+                                    : HomePage(deviceObjectList[index])),
+                      );
+                    },
                   );
-                },
-              );
-            }),
+                })
+            : AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                title: Text('Server is Offline'),
+                actions: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.refresh),
+                    onPressed: () {
+                      connect();
+                    },
+                  )
+                ],
+              ),
       ),
     );
   }
