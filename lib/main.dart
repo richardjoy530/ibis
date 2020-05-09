@@ -42,6 +42,8 @@ void connect() async {
           name: clientSocket.remotePort.toString(),
           time: Duration(minutes: 0)));
     });
+  }).catchError((onError) {
+    print(['Server error: ', onError.toString()]);
   });
 }
 
