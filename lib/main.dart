@@ -12,15 +12,15 @@ import 'front_page.dart';
 import 'radial_painter.dart';
 import 'test_screen.dart';
 
-final customColor = CustomSliderColors();
-//final customColor = CustomSliderColors(
-//    progressBarColor: Color(0xffd1e6ea),
-//    hideShadow: true,
-//    trackColor: Color(0xffd1e6ea),
-//    progressBarColors: [
-//      Color(0xff2eb8c9),
-//      Color(0xff95dcdb),
-//    ]);
+//final customColor = CustomSliderColors();
+final customColor = CustomSliderColors(
+    progressBarColor: Color(0xffd1e6ea),
+    hideShadow: true,
+    trackColor: Color(0xffd1e6ea),
+    progressBarColors: [
+      Color(0xff2eb8c9),
+      Color(0xff95dcdb),
+    ]);
 void main() {
   connect();
   return runApp(MyApp());
