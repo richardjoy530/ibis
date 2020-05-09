@@ -65,6 +65,7 @@ class _HeightPageState extends State<HeightPage> {
                   ],
                 )
               : Stack(
+
                   //mainAxisAlignment: MainAxisAlignment.spaceAround,
                   alignment: Alignment.center,
                   children: <Widget>[
