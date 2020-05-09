@@ -4,12 +4,12 @@ import 'dart:io';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ibis/radial_painter.dart';
 import 'package:intl/intl.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 import 'data.dart';
 import 'front_page.dart';
-import 'radial_painter.dart';
 import 'test_screen.dart';
 
 //final customColor = CustomSliderColors();
@@ -72,8 +72,10 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   int displayTime;
+  double tempValue = 1;
   Timer mainTimer;
   double valueTemp = 1;
+  bool errorRemover = false;
   @override
   void initState() {
     mainTick();
@@ -224,12 +226,13 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   print(value);
                   displayTime = value.floor();
 
-                  if (deviceObject.power == false) {
+                  if (deviceObject.power == false && errorRemover == true) {
                     setState(() {
                       deviceObject.time = Duration(
                           minutes: mapValues(displayTime.toDouble()).toInt());
                     });
                   }
+                  errorRemover = true;
                 },
                 innerWidget: (value) {
                   return null;

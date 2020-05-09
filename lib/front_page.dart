@@ -60,13 +60,16 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xffb9dfe6),
-        leading: Container(
-          height: 30,
-          width: 30,
-          child: FlareActor(
-            'assets/status.flr',
-            animation: 'Connected',
+        backgroundColor: Color(0xffffe9ea),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            height: 30,
+            width: 30,
+            child: FlareActor(
+              'assets/status.flr',
+              animation: 'Connected',
+            ),
           ),
         ),
         title: Text(
@@ -74,13 +77,13 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           style: TextStyle(
             fontSize: 24,
             color: Colors.black,
-            fontWeight: FontWeight.bold,
+            //fontWeight: FontWeight.bold,
           ),
         ),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.phonelink_off),
-            color: Color(0xff3d84a7),
+            icon: Icon(Icons.menu),
+            color: Color(0xff000000),
             onPressed: () {
               Navigator.push(
                 context,
@@ -95,34 +98,54 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xffb9dfe6), Color(0xffffffff)]),
+              colors: [Color(0xffffe9ea), Color(0xffffffff)]),
         ),
         child: serverOnline == true
-            ? ListView.builder(
-                itemCount: deviceObjectList.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: Icon(Icons.power),
-                    title: Text(
-                        '${deviceObjectList[index].socket.remoteAddress.address.toString()} : ${deviceObjectList[index].socket.remotePort}'),
-                    subtitle: Visibility(
-                      visible: deviceObjectList[index].power,
-                      child: LinearProgressIndicator(
-                        value: deviceObjectList[index].linearProgressBarValue,
+            ? deviceObjectList.length == 0
+                ? Center(
+                    child: Container(
+                      margin: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          color: Color(0xffdec3e4),
+                          borderRadius: BorderRadius.circular(20)),
+                      child: ListTile(
+                        leading: Icon(Icons.wifi_tethering),
+                        title: Text('Please connect your device!'),
                       ),
                     ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                deviceObjectList[index].power == false
-                                    ? HeightPage(deviceObjectList[index])
-                                    : HomePage(deviceObjectList[index])),
+                  )
+                : ListView.builder(
+                    itemCount: deviceObjectList.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        margin: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            color: Color(0xffdec3e4),
+                            borderRadius: BorderRadius.circular(20)),
+                        child: ListTile(
+                          leading: Icon(Icons.wifi),
+                          title: Text(
+                              '${deviceObjectList[index].socket.remoteAddress.address.toString()} : ${deviceObjectList[index].socket.remotePort}'),
+                          subtitle: Visibility(
+                            visible: deviceObjectList[index].power,
+                            child: LinearProgressIndicator(
+                              value: deviceObjectList[index]
+                                  .linearProgressBarValue,
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      deviceObjectList[index].power == false
+                                          ? HeightPage(deviceObjectList[index])
+                                          : HomePage(deviceObjectList[index])),
+                            );
+                          },
+                        ),
                       );
-                    },
-                  );
-                })
+                    })
             : AlertDialog(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(20.0))),
