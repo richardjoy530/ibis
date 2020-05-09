@@ -27,7 +27,7 @@ class HeightPainter extends CustomPainter {
       ..shader = LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xffeaeaea), Color(0xffeaeaea)])
+              colors: [Color(0xffb9dfe6), Color(0xffeaeaea)])
           .createShader(Rect.fromCircle(center: center, radius: size.width / 2))
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.fill

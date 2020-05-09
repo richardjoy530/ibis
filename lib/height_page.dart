@@ -75,8 +75,10 @@ class _HeightPageState extends State<HeightPage> {
                       margin: EdgeInsets.only(
                         top: 50,
                       ),
-                      child:
-                          Text(widget.deviceObject.height.floor().toString()),
+                      child: Text(
+                          '${widget.deviceObject.height.floor().toString()}% ',
+                          style:
+                              TextStyle(fontSize: 40, color: Colors.blueGrey)),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -87,7 +89,7 @@ class _HeightPageState extends State<HeightPage> {
                             painter: HeightPainter(widget.deviceObject.height),
                           ),
                         ),
-                        Row(
+                        Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[
                             Padding(
@@ -183,16 +185,16 @@ class _HeightPageState extends State<HeightPage> {
     timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
       print('future');
       setState(() {
+        if (indicator == 1) {
+          widget.deviceObject.height += 1;
+        } else if (indicator == -1) {
+          widget.deviceObject.height -= 1;
+        }
         if (widget.deviceObject.height >= 100) {
           widget.deviceObject.height = 100;
         }
         if (widget.deviceObject.height <= 0) {
           widget.deviceObject.height = 0;
-        }
-        if (indicator == 1) {
-          widget.deviceObject.height += 1;
-        } else if (indicator == -1) {
-          widget.deviceObject.height -= 1;
         }
       });
     });
