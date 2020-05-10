@@ -104,8 +104,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             if (widget.deviceObject.balanceTime >= 0 &&
                 widget.deviceObject.balanceTime < 3600) {
               print(widget.deviceObject.balanceTime);
-              decrement =
-                  (3600/ (widget.deviceObject.time.inSeconds));
+              decrement = (3600 / (widget.deviceObject.time.inSeconds));
               if (widget.deviceObject.balanceTime + decrement < 3600) {
                 widget.deviceObject.balanceTime =
                     widget.deviceObject.balanceTime + decrement;
