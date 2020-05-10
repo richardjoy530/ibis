@@ -101,7 +101,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       if (widget.deviceObject.power == true) {
         setState(() {
           if (balanceTime >= 0 && balanceTime < 3600) {
-            print(balanceTime);
             decrement = (3600 / (temp * 60));
             if (balanceTime + decrement < 3600) {
               balanceTime = balanceTime + decrement;
@@ -128,12 +127,15 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffffe9ea),
-        leading: Container(
-          height: 30,
-          width: 30,
-          child: FlareActor(
-            'assets/status.flr',
-            animation: 'Connected',
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            height: 30,
+            width: 30,
+            child: FlareActor(
+              'assets/status.flr',
+              animation: 'Connected',
+            ),
           ),
         ),
         title: Text(
@@ -184,9 +186,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   startTimer(DeviceObject deviceObject) {
     deviceObject.timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (serverOnline == true && widget.deviceObject.clientError == false) {
-        print([deviceObject.socket.remotePort, 'tick']);
-      }
+      if (serverOnline == true && widget.deviceObject.clientError == false) {}
     });
   }
 
