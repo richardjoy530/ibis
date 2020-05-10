@@ -11,7 +11,9 @@ import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'data.dart';
 import 'front_page.dart';
 import 'test_screen.dart';
-
+double balancetime=0.0;
+var displayTime;
+double temp=1;
 //final customColor = CustomSliderColors();
 final customColor = CustomSliderColors(
     progressBarColor: Color(0xffd1e6ea),
@@ -71,7 +73,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  int displayTime;
+
   double tempValue = 1;
   Timer mainTimer;
   double valueTemp = 1;
@@ -87,7 +89,29 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           end: 360);
       widget.deviceObject.radialProgressAnimationController.forward();
     }
+    autoback();
     super.initState();
+  }
+
+  void autoback() async
+  { var decrement;
+    Timer.periodic(Duration(milliseconds: 1000), (callback)
+    {
+      if(widget.deviceObject.power==true)
+      {
+        setState(() {
+          if(balancetime>=0 && balancetime<3600)
+          {
+            print(balancetime);
+            decrement=(3600/(temp*60));
+            if(balancetime+decrement<3600)
+            {
+              balancetime = balancetime + decrement;
+            }
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -240,8 +264,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               )
                   :SleekCircularSlider(
                 min: 0,
-                max: 360,
-                initialValue: 360-deviceObject.progressDegrees,
+                max: 3600,
+                initialValue:3600- balancetime,
                 appearance: CircularSliderAppearance(
                     customWidths: CustomSliderWidths(
                         trackWidth: 50, progressBarWidth: 50, shadowWidth: 50),
@@ -351,7 +375,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   double mapValues(double value) {
-    double temp;
+
     if (value == 1) {
       temp = 1;
     } else if (value == 2) {
