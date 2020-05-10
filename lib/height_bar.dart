@@ -67,7 +67,9 @@ class HeightPainter extends CustomPainter {
                 Rect.fromLTRB(
                     5 + (-(width / 2) + size.width / 2),
                     (heightIn100 / 10).floor() <= i
-                        ? -((heightIn100).remainder(10) * 3)
+                        ? -(heightIn100).remainder(10) * 3 +
+                            (height / 2) -
+                            temp * i
                         : (height / 2) - 30 - temp * i,
                     (-(width / 2) + size.width / 2) + width - 5,
                     (height / 2) - temp * i),

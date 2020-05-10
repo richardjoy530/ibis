@@ -87,7 +87,7 @@ class _HeightPageState extends State<HeightPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   CustomPaint(
-                    child: Text('Data'),
+                    child: Text(''),
                     painter: HeightPainter(widget.deviceObject.height),
                   ),
                   Column(
@@ -206,7 +206,7 @@ class _HeightPageState extends State<HeightPage> {
   }
 
   Future<void> tick() async {
-    timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
+    timer = Timer.periodic(Duration(milliseconds: 10), (callback) {
       setState(() {
         if (indicator == 1) {
           widget.deviceObject.height += 1;

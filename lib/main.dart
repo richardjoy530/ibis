@@ -12,7 +12,6 @@ import 'data.dart';
 import 'front_page.dart';
 import 'test_screen.dart';
 
-
 int displayTime;
 double temp = 1;
 //final customColor = CustomSliderColors();
@@ -97,15 +96,15 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   void autoBack() async {
     double decrement;
-    autoBackTimer = Timer.periodic(Duration(milliseconds: 1000), (callback) {
+    autoBackTimer = Timer.periodic(Duration(seconds: 1), (callback) {
       if (widget.deviceObject.power == true) {
         setState(() {
-
-          if (widget.deviceObject.balanceTime >= 0 && widget.deviceObject.balanceTime < 3600) {
+          if (widget.deviceObject.balanceTime >= 0 &&
+              widget.deviceObject.balanceTime < 3600) {
             if (widget.deviceObject.balanceTime >= 0 &&
                 widget.deviceObject.balanceTime < 3600) {
               print(widget.deviceObject.balanceTime);
-              decrement = (3600 / (temp * 60));
+              decrement = (3600 / (widget.deviceObject.time.inSeconds));
               if (widget.deviceObject.balanceTime + decrement < 3600) {
                 widget.deviceObject.balanceTime =
                     widget.deviceObject.balanceTime + decrement;
@@ -370,7 +369,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   //time = 2;
                   destroyAnimation(deviceObject);
                   deviceObject.socket.write('stop');
-                  deviceObject.balanceTime=0.0;
+                  deviceObject.balanceTime = 0.0;
                   deviceObject.power = !deviceObject.power;
                   deviceObject.timer.cancel();
 //                  runAnimation(
@@ -561,7 +560,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           }
           if (deviceObject.progressDegrees == 360) {
             deviceObject.power = false;
-            deviceObject.balanceTime=0.0;
+            deviceObject.balanceTime = 0.0;
             deviceObject.radialProgressAnimationController.stop();
             deviceObject.timer.cancel();
           }
