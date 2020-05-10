@@ -149,7 +149,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       );
                     })
             : AlertDialog(
-          backgroundColor: Color(0xffdec3e4),
+                backgroundColor: Color(0xffdec3e4),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(20.0))),
                 title: Text('Server is Offline'),
