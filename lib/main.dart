@@ -12,8 +12,8 @@ import 'data.dart';
 import 'front_page.dart';
 import 'test_screen.dart';
 
-double balancetime = 0.0;
-var displayTime;
+double balanceTime = 0.0;
+int displayTime;
 double temp = 1;
 //final customColor = CustomSliderColors();
 final customColor = CustomSliderColors(
@@ -95,16 +95,16 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   void autoBack() async {
-    var decrement;
+    double decrement;
     autoBackTimer = Timer.periodic(Duration(milliseconds: 1000), (callback) {
       if (widget.deviceObject.power == true) {
 
         setState(() {
-          if (balancetime >= 0 && balancetime < 3600) {
-            print(balancetime);
+          if (balanceTime >= 0 && balanceTime < 3600) {
+            print(balanceTime);
             decrement = (3600 / (temp * 60));
-            if (balancetime + decrement < 3600) {
-              balancetime = balancetime + decrement;
+            if (balanceTime + decrement < 3600) {
+              balanceTime = balanceTime + decrement;
             }
           }
         });
@@ -166,7 +166,16 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ),
         child: widget.deviceObject.motionDetected == true
             ? AlertDialog(
-                title: Text('Motion Detected'),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                title: Align(
+                    alignment: Alignment.center,
+                    child: Text('Motion Detected')),
+                content: Icon(
+                  Icons.warning,
+                  color: Colors.red,
+                ),
+                backgroundColor: Color(0xffdec3e4),
               )
             : tabView(context, widget.deviceObject),
       ),
@@ -269,7 +278,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   : SleekCircularSlider(
                       min: 0,
                       max: 3600,
-                      initialValue: 3600 - balancetime,
+                      initialValue: 3600 - balanceTime,
                       appearance: CircularSliderAppearance(
                           customWidths: CustomSliderWidths(
                               trackWidth: 50,
