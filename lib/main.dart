@@ -213,44 +213,52 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 ),
                 painter: RadialPainter(deviceObject.progressDegrees),
               ),
-              deviceObject.power==false?SleekCircularSlider(
-                min: 1,
-                max: 19,
-                initialValue: 1,
-                appearance: CircularSliderAppearance(
-                    customWidths: CustomSliderWidths(
-                        trackWidth: 50, progressBarWidth: 50, shadowWidth: 50),
-                    size: (MediaQuery.of(context).size.width / 1.5) + 50,
-                    customColors: customColor),
-                onChange: (double value) {
-                  print(value);
-                  displayTime = value.floor();
+              deviceObject.power == false
+                  ? SleekCircularSlider(
+                      min: 1,
+                      max: 19,
+                      initialValue: 1,
+                      appearance: CircularSliderAppearance(
+                          customWidths: CustomSliderWidths(
+                              trackWidth: 50,
+                              progressBarWidth: 50,
+                              shadowWidth: 50),
+                          size: (MediaQuery.of(context).size.width / 1.5) + 50,
+                          customColors: customColor),
+                      onChange: (double value) {
+                        print(value);
+                        displayTime = value.floor();
 
-                  if (deviceObject.power == false && errorRemover == true) {
-                    setState(() {
-                      deviceObject.time = Duration(
-                          minutes: mapValues(displayTime.toDouble()).toInt());
-                    });
-                  }
-                  errorRemover = true;
-                },
-                innerWidget: (value) {
-                  return null;
-                },
-              )
-                  :SleekCircularSlider(
-                min: 0,
-                max: 360,
-                initialValue: 360-deviceObject.progressDegrees,
-                appearance: CircularSliderAppearance(
-                    customWidths: CustomSliderWidths(
-                        trackWidth: 50, progressBarWidth: 50, shadowWidth: 50),
-                    size: (MediaQuery.of(context).size.width / 1.5) + 50,
-                    customColors: customColor),
-                innerWidget: (value) {
-                  return null;
-                },
-              )
+                        if (deviceObject.power == false &&
+                            errorRemover == true) {
+                          setState(() {
+                            deviceObject.time = Duration(
+                                minutes:
+                                    mapValues(displayTime.toDouble()).toInt());
+                          });
+                        }
+                        errorRemover = true;
+                      },
+                      innerWidget: (value) {
+                        return null;
+                      },
+                    )
+                  : SleekCircularSlider(
+                      min: 0,
+                      max: 360,
+                      initialValue: ((360 / 60) * deviceObject.time.inMinutes) -
+                          deviceObject.progressDegrees,
+                      appearance: CircularSliderAppearance(
+                          customWidths: CustomSliderWidths(
+                              trackWidth: 50,
+                              progressBarWidth: 50,
+                              shadowWidth: 50),
+                          size: (MediaQuery.of(context).size.width / 1.5) + 50,
+                          customColors: customColor),
+                      innerWidget: (value) {
+                        return null;
+                      },
+                    )
             ],
           ),
         ),
@@ -474,7 +482,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               },
             ),
             ListTile(
-
               title: Text('Confirm height ?'),
               trailing: IconButton(
                   icon: Icon(Icons.check),
