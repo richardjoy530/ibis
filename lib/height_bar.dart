@@ -55,22 +55,39 @@ class HeightPainter extends CustomPainter {
     //canvas.drawLine(center, Offset(size.width / 2, heightIn100), progressPaint);
     canvas.drawRRect(
         RRect.fromRectAndRadius(
-            Rect.fromLTWH(
-                -(width / 2) + size.width / 2, -(height / 2), width, height),
+            Rect.fromLTWH(-(width / 2) + size.width / 2,
+                -(height / 2) + size.height / 2, width, height),
             Radius.circular(20)),
         outlinePaint);
-    for (var i = 1; i < 11; i++) {
-      if ((heightIn100 / 10).ceil() >= i) {
+    var temp = 35;
+    for (int i = 0; i < 10; i++) {
+      if ((heightIn100 / 10).floor() >= i) {
         canvas.drawRRect(
             RRect.fromRectAndRadius(
                 Rect.fromLTRB(
-                    (-(width / 2) + size.width / 2) + 5,
-                    ((height / 2) + 4) - i * 34,
-                    ((width / 2) + size.width / 2) - 5,
-                    ((height / 2)) - (i - 1) * 34),
+                    5 + (-(width / 2) + size.width / 2),
+                    (heightIn100 / 10).floor() <= i
+                        ? -((heightIn100).remainder(10) * 3)
+                        : (height / 2) - 30 - temp * i,
+                    (-(width / 2) + size.width / 2) + width - 5,
+                    (height / 2) - temp * i),
                 Radius.circular(10)),
-            progressPaint..color = barColors[i - 1]);
+            progressPaint..color = barColors[i]);
+      }
+    }
 
+//    for (var i = 1; i < 11; i++) {
+//      if ((heightIn100 / 10).ceil() >= i) {
+////        canvas.drawRRect(
+////            RRect.fromRectAndRadius(
+////                Rect.fromLTRB(
+////                    (-(width / 2) + size.width / 2) + 5,
+////                    ((height / 2) + 4) - i * 34,
+////                    ((width / 2) + size.width / 2) - 5,
+////                    ((height / 2)) - (i - 1) * 34),
+////                Radius.circular(10)),
+////            progressPaint..color = barColors[i - 1]);
+//
 //        canvas.drawRRect(
 //            RRect.fromRectAndRadius(
 //                Rect.fromCenter(
@@ -84,8 +101,8 @@ class HeightPainter extends CustomPainter {
 //                        : 30),
 //                Radius.circular(10)),
 //            progressPaint..color = barColors[i - 1]);
-      }
-    }
+//      }
+//    }
   }
 
   @override

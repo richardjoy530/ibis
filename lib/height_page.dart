@@ -87,7 +87,7 @@ class _HeightPageState extends State<HeightPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   CustomPaint(
-                    child: Container(),
+                    child: Text('Data'),
                     painter: HeightPainter(widget.deviceObject.height),
                   ),
                   Column(
