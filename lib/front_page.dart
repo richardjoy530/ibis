@@ -29,7 +29,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           if (deviceObjectList[i].motionDetected == true) {
             deviceObjectList[i].timer.cancel();
             deviceObjectList[i].power = false;
-            deviceObjectList[i].motionDetected = false;
+            //deviceObjectList[i].motionDetected = false;
           }
           if (deviceObjectList[i].power == true) {
             deviceObjectList[i].linearProgressBarValue =
