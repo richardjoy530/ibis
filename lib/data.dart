@@ -17,6 +17,7 @@ class DeviceObject {
   AnimationController radialProgressAnimationController;
   Animation<double> progressAnimation;
   double progressDegrees;
+  double balanceTime;
   Duration time;
   Timer timer;
   bool wantHeight;
@@ -36,6 +37,8 @@ class DeviceObject {
     this.power = false,
     this.time,
     this.progressDegrees = 0,
+    this.balanceTime=0.0
+
   }) {
     socket.listen((onData) {
       print([socket.remotePort, onData]);
