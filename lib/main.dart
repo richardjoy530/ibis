@@ -12,6 +12,9 @@ import 'data.dart';
 import 'front_page.dart';
 import 'test_screen.dart';
 
+double balancetime = 0.0;
+var displayTime;
+double temp = 1;
 //final customColor = CustomSliderColors();
 final customColor = CustomSliderColors(
     progressBarColor: Color(0xffd1e6ea),
@@ -71,9 +74,9 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  int displayTime;
   double tempValue = 1;
   Timer mainTimer;
+  Timer autoBackTimer;
   double valueTemp = 1;
   bool errorRemover = false;
   @override
@@ -87,7 +90,25 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           end: 360);
       widget.deviceObject.radialProgressAnimationController.forward();
     }
+    autoBack();
     super.initState();
+  }
+
+  void autoBack() async {
+    var decrement;
+    autoBackTimer = Timer.periodic(Duration(milliseconds: 1000), (callback) {
+      if (widget.deviceObject.power == true) {
+        setState(() {
+          if (balancetime >= 0 && balancetime < 3600) {
+            print(balancetime);
+            decrement = (3600 / (temp * 60));
+            if (balancetime + decrement < 3600) {
+              balancetime = balancetime + decrement;
+            }
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -97,6 +118,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       widget.deviceObject.radialProgressAnimationController.dispose();
     }
     mainTimer.cancel();
+    autoBackTimer.cancel();
     super.dispose();
   }
 
@@ -222,31 +244,51 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 ),
                 painter: RadialPainter(deviceObject.progressDegrees),
               ),
-              SleekCircularSlider(
-                min: 1,
-                max: 19,
-                initialValue: 1,
-                appearance: CircularSliderAppearance(
-                    customWidths: CustomSliderWidths(
-                        trackWidth: 50, progressBarWidth: 50, shadowWidth: 50),
-                    size: (MediaQuery.of(context).size.width / 1.5) + 50,
-                    customColors: customColor),
-                onChange: (double value) {
-                  print(value);
-                  displayTime = value.floor();
+              deviceObject.power == false
+                  ? SleekCircularSlider(
+                      min: 1,
+                      max: 19,
+                      initialValue: 1,
+                      appearance: CircularSliderAppearance(
+                          customWidths: CustomSliderWidths(
+                              trackWidth: 50,
+                              progressBarWidth: 50,
+                              shadowWidth: 50),
+                          size: (MediaQuery.of(context).size.width / 1.5) + 50,
+                          customColors: customColor),
+                      onChange: (double value) {
+                        print(value);
+                        displayTime = value.floor();
 
-                  if (deviceObject.power == false && errorRemover == true) {
-                    setState(() {
-                      deviceObject.time = Duration(
-                          minutes: mapValues(displayTime.toDouble()).toInt());
-                    });
-                  }
-                  errorRemover = true;
-                },
-                innerWidget: (value) {
-                  return null;
-                },
-              )
+                        if (deviceObject.power == false &&
+                            errorRemover == true) {
+                          setState(() {
+                            deviceObject.time = Duration(
+                                minutes:
+                                    mapValues(displayTime.toDouble()).toInt());
+                          });
+                        }
+                        errorRemover = true;
+                      },
+                      innerWidget: (value) {
+                        return null;
+                      },
+                    )
+                  : SleekCircularSlider(
+                      min: 0,
+                      max: 3600,
+                      initialValue: 3600 - balancetime,
+                      appearance: CircularSliderAppearance(
+                          customWidths: CustomSliderWidths(
+                              trackWidth: 50,
+                              progressBarWidth: 50,
+                              shadowWidth: 50),
+                          size: (MediaQuery.of(context).size.width / 1.5) + 50,
+                          customColors: customColor),
+                      innerWidget: (value) {
+                        return null;
+                      },
+                    )
             ],
           ),
         ),
@@ -347,7 +389,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   double mapValues(double value) {
-    double temp;
     if (value == 1) {
       temp = 1;
     } else if (value == 2) {
