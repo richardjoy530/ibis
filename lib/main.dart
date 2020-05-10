@@ -213,7 +213,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 ),
                 painter: RadialPainter(deviceObject.progressDegrees),
               ),
-              SleekCircularSlider(
+              deviceObject.power==false?SleekCircularSlider(
                 min: 1,
                 max: 19,
                 initialValue: 1,
@@ -234,6 +234,19 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   }
                   errorRemover = true;
                 },
+                innerWidget: (value) {
+                  return null;
+                },
+              )
+                  :SleekCircularSlider(
+                min: 0,
+                max: 360,
+                initialValue: 360-deviceObject.progressDegrees,
+                appearance: CircularSliderAppearance(
+                    customWidths: CustomSliderWidths(
+                        trackWidth: 50, progressBarWidth: 50, shadowWidth: 50),
+                    size: (MediaQuery.of(context).size.width / 1.5) + 50,
+                    customColors: customColor),
                 innerWidget: (value) {
                   return null;
                 },
@@ -461,6 +474,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               },
             ),
             ListTile(
+
               title: Text('Confirm height ?'),
               trailing: IconButton(
                   icon: Icon(Icons.check),
