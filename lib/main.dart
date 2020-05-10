@@ -98,6 +98,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     var decrement;
     autoBackTimer = Timer.periodic(Duration(milliseconds: 1000), (callback) {
       if (widget.deviceObject.power == true) {
+
         setState(() {
           if (balancetime >= 0 && balancetime < 3600) {
             print(balancetime);
