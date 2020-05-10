@@ -20,6 +20,7 @@ final customColor = CustomSliderColors(
     hideShadow: true,
     trackColor: Color(0xffffe9ea),
     progressBarColors: [
+      Color(0xff262687),
       Color(0xffa43dbd),
       Color(0xffe563a7),
       Color(0xfff7a4b2),
