@@ -550,6 +550,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             Future.delayed(const Duration(seconds: 2), () {
               deviceObject.motionDetected = false;
               Navigator.pop(context);
+              //deviceObject.motionDetected =false;
             });
           }
           if (deviceObject.progressDegrees == 360) {
