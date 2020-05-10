@@ -142,7 +142,18 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               colors: [Color(0xffb9dfe6), Color(0xffffffff)]),
         ),
         child: widget.deviceObject.motionDetected == true
-            ? motionDialog(context, widget.deviceObject)
+            ? AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                title: Align(
+                    alignment: Alignment.center,
+                    child: Text('Motion Detected')),
+                content: Icon(
+                  Icons.warning,
+                  color: Colors.red,
+                ),
+                backgroundColor: Color(0xffdec3e4),
+              )
             : tabView(context, widget.deviceObject),
       ),
     );
@@ -383,17 +394,21 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
+        return SimpleDialog(
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0))),
-          title: Text('Motion Detected'),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.settings_remote),
-              onPressed: () {
-                connect();
-              },
-            )
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Text(
+            'Motion Detected',
+            style:
+                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
+          ),
+          children: <Widget>[
+            RaisedButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.pop(context);
+                })
           ],
         );
       },

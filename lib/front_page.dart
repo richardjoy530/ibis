@@ -134,19 +134,22 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                             ),
                           ),
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      deviceObjectList[index].power == false
-                                          ? HeightPage(deviceObjectList[index])
-                                          : HomePage(deviceObjectList[index])),
-                            );
+                            if (deviceObjectList[index].power == true) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        HomePage(deviceObjectList[index])),
+                              );
+                            } else {
+                              setHeightYN(context, deviceObjectList[index]);
+                            }
                           },
                         ),
                       );
                     })
             : AlertDialog(
+          backgroundColor: Color(0xffdec3e4),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(20.0))),
                 title: Text('Server is Offline'),
@@ -161,5 +164,48 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               ),
       ),
     );
+  }
+
+  Future<void> setHeightYN(context, DeviceObject deviceObject) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            backgroundColor: Color(0xffdec3e4),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            title: Text(
+              'Do you want height?',
+              style: TextStyle(
+                  color: Colors.blueGrey, fontWeight: FontWeight.bold),
+            ),
+            children: <Widget>[
+              SimpleDialogOption(
+                child: Text('Yes'),
+                onPressed: () {
+                  deviceObject.socket.write('2\r');
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => HeightPage(deviceObject)),
+                  );
+                },
+              ),
+              SimpleDialogOption(
+                  child: Text('No'),
+                  onPressed: () {
+                    deviceObject.socket.write('-2\r');
+                    deviceObject.time = Duration(minutes: 1);
+                    deviceObject.progressDegrees = 0;
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => HomePage(deviceObject)),
+                    );
+                  })
+            ],
+          );
+        });
   }
 }
