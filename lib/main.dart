@@ -144,6 +144,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             fontWeight: FontWeight.bold,
           ),
         ),
+
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.phonelink_off),
