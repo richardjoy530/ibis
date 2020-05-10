@@ -12,7 +12,7 @@ import 'data.dart';
 import 'front_page.dart';
 import 'test_screen.dart';
 
-double balanceTime = 0.0;
+
 int displayTime;
 double temp = 1;
 //final customColor = CustomSliderColors();
@@ -100,10 +100,16 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     autoBackTimer = Timer.periodic(Duration(milliseconds: 1000), (callback) {
       if (widget.deviceObject.power == true) {
         setState(() {
-          if (balanceTime >= 0 && balanceTime < 3600) {
-            decrement = (3600 / (temp * 60));
-            if (balanceTime + decrement < 3600) {
-              balanceTime = balanceTime + decrement;
+
+          if (widget.deviceObject.balanceTime >= 0 && widget.deviceObject.balanceTime < 3600) {
+            if (widget.deviceObject.balanceTime >= 0 &&
+                widget.deviceObject.balanceTime < 3600) {
+              print(widget.deviceObject.balanceTime);
+              decrement = (3600 / (temp * 60));
+              if (widget.deviceObject.balanceTime + decrement < 3600) {
+                widget.deviceObject.balanceTime =
+                    widget.deviceObject.balanceTime + decrement;
+              }
             }
           }
         });
@@ -278,7 +284,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   : SleekCircularSlider(
                       min: 0,
                       max: 3600,
-                      initialValue: 3600 - balanceTime,
+                      initialValue: 3600 - widget.deviceObject.balanceTime,
                       appearance: CircularSliderAppearance(
                           customWidths: CustomSliderWidths(
                               trackWidth: 50,
@@ -364,6 +370,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   //time = 2;
                   destroyAnimation(deviceObject);
                   deviceObject.socket.write('stop');
+                  deviceObject.balanceTime=0.0;
                   deviceObject.power = !deviceObject.power;
                   deviceObject.timer.cancel();
 //                  runAnimation(
@@ -554,6 +561,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           }
           if (deviceObject.progressDegrees == 360) {
             deviceObject.power = false;
+            deviceObject.balanceTime=0.0;
             deviceObject.radialProgressAnimationController.stop();
             deviceObject.timer.cancel();
           }
