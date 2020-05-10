@@ -366,12 +366,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   deviceObject.socket.write('stop');
                   deviceObject.power = !deviceObject.power;
                   deviceObject.timer.cancel();
-                  runAnimation(
-                      begin: deviceObject.progressDegrees,
-                      end: 0,
-                      deviceObject: deviceObject);
-                  deviceObject.radialProgressAnimationController.forward();
-                  Future.delayed(const Duration(seconds: 2), () {
+//                  runAnimation(
+//                      begin: deviceObject.progressDegrees,
+//                      end: 0,
+//                      deviceObject: deviceObject);
+//                  deviceObject.radialProgressAnimationController.forward();
+                  Future.delayed(const Duration(seconds: 1), () {
                     Navigator.pop(context);
                   });
                 }
@@ -547,7 +547,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             deviceObject.radialProgressAnimationController.stop();
             deviceObject.timer.cancel();
             deviceObject.radialProgressAnimationController.dispose();
-            Future.delayed(const Duration(seconds: 3), () {
+            Future.delayed(const Duration(seconds: 2), () {
               deviceObject.motionDetected = false;
               Navigator.pop(context);
             });
@@ -560,7 +560,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         });
         if (deviceObject.progressDegrees == 360) {
           deviceObject.progressDegrees = 0;
-          Future.delayed(const Duration(seconds: 2), () {
+          Future.delayed(const Duration(seconds: 1), () {
             Navigator.pop(context);
           });
         }
