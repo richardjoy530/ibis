@@ -12,17 +12,18 @@ import 'data.dart';
 import 'front_page.dart';
 import 'test_screen.dart';
 
-double balancetime = 0.0;
-var displayTime;
+double balanceTime = 0.0;
+int displayTime;
 double temp = 1;
 //final customColor = CustomSliderColors();
 final customColor = CustomSliderColors(
-    progressBarColor: Color(0xffd1e6ea),
+    progressBarColor: Color(0xffffe9ea),
     hideShadow: true,
-    trackColor: Color(0xffd1e6ea),
+    trackColor: Color(0xffffe9ea),
     progressBarColors: [
-      Color(0xff2eb8c9),
-      Color(0xff95dcdb),
+      Color(0xffa43dbd),
+      Color(0xffe563a7),
+      Color(0xfff7a4b2),
     ]);
 void main() {
   connect();
@@ -95,15 +96,15 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   void autoBack() async {
-    var decrement;
+    double decrement;
     autoBackTimer = Timer.periodic(Duration(milliseconds: 1000), (callback) {
       if (widget.deviceObject.power == true) {
         setState(() {
-          if (balancetime >= 0 && balancetime < 3600) {
-            print(balancetime);
+          if (balanceTime >= 0 && balanceTime < 3600) {
+            print(balanceTime);
             decrement = (3600 / (temp * 60));
-            if (balancetime + decrement < 3600) {
-              balancetime = balancetime + decrement;
+            if (balanceTime + decrement < 3600) {
+              balanceTime = balanceTime + decrement;
             }
           }
         });
@@ -126,7 +127,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xffb9dfe6),
+        backgroundColor: Color(0xffffe9ea),
         leading: Container(
           height: 30,
           width: 30,
@@ -161,7 +162,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xffb9dfe6), Color(0xffffffff)]),
+              colors: [Color(0xffffe9ea), Color(0xffffffff)]),
         ),
         child: widget.deviceObject.motionDetected == true
             ? AlertDialog(
@@ -277,7 +278,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   : SleekCircularSlider(
                       min: 0,
                       max: 3600,
-                      initialValue: 3600 - balancetime,
+                      initialValue: 3600 - balanceTime,
                       appearance: CircularSliderAppearance(
                           customWidths: CustomSliderWidths(
                               trackWidth: 50,
