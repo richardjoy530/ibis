@@ -38,7 +38,7 @@ class _HeightPageState extends State<HeightPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xffb9dfe6),
+        backgroundColor: Color(0xffffe9ea),
         automaticallyImplyLeading: false,
         title: Text(
           'Adjust Height',
@@ -53,7 +53,7 @@ class _HeightPageState extends State<HeightPage> {
           gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xffb9dfe6), Color(0xffffffff)]),
+              colors: [Color(0xffffe9ea), Color(0xffffffff)]),
         ),
         child: Center(
           child: quesVis == true
@@ -93,8 +93,8 @@ class _HeightPageState extends State<HeightPage> {
                       ),
                       child: Text(
                           '${widget.deviceObject.height.floor().toString()}% ',
-                          style:
-                              TextStyle(fontSize: 40, color: Colors.blueGrey)),
+                          style: TextStyle(
+                              fontSize: 40, color: Color(0xff9a6c9f))),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -156,7 +156,7 @@ class _HeightPageState extends State<HeightPage> {
                       padding: const EdgeInsets.fromLTRB(15, 8, 15, 50),
                       child: Container(
                         decoration: BoxDecoration(
-                            color: Color(0xffb9dfe6),
+                            color: Color(0xffdec3e4),
                             borderRadius: BorderRadius.circular(10)),
                         child: ListTile(
                           title: Text(

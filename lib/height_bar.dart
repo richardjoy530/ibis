@@ -5,6 +5,19 @@ class HeightPainter extends CustomPainter {
   double height = 370;
   double width = 100;
 
+  List<Color> barColors = [
+    Color(0xff292888),
+    Color(0xff3b338b),
+    Color(0xff594491),
+    Color(0xff725496),
+    Color(0xff87609b),
+    Color(0xff9a6c9f),
+    Color(0xffad77a3),
+    Color(0xffc485a8),
+    Color(0xffdc94ac),
+    Color(0xfff6a4b2)
+  ];
+
   HeightPainter(this.heightIn100);
 
   @override
@@ -27,18 +40,13 @@ class HeightPainter extends CustomPainter {
       ..shader = LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xffb9dfe6), Color(0xffeaeaea)])
+              colors: [Color(0xffffe9ea), Color(0xffffe9ea)])
           .createShader(Rect.fromCircle(center: center, radius: size.width / 2))
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.fill
       ..strokeWidth = 2;
 
     Paint progressPaint = Paint()
-      ..shader = LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xff18c894), Color(0xff18c894)])
-          .createShader(Rect.fromCircle(center: center, radius: size.width / 2))
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.fill
       ..strokeWidth = 2;
@@ -51,16 +59,20 @@ class HeightPainter extends CustomPainter {
             Radius.circular(20)),
         outlinePaint);
     for (var i = 1; i < 11; i++) {
-      if ((heightIn100 / 10).floor() >= i) {
+      if ((heightIn100 / 10).ceil() >= i) {
         canvas.drawRRect(
             RRect.fromRectAndRadius(
                 Rect.fromCenter(
                     center:
                         Offset(size.width / 2, ((height / 2) + 10) - i * 35),
                     width: width - 10,
-                    height: 30),
+                    height: (heightIn100 / 10).ceil() == i
+                        ? heightIn100.remainder(10) == 0
+                            ? 30
+                            : (((heightIn100).remainder(10) * 3))
+                        : 30),
                 Radius.circular(10)),
-            progressPaint);
+            progressPaint..color = barColors[i - 1]);
       }
     }
   }
