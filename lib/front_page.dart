@@ -143,7 +143,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                   ? 'Device Idle'
                                   : 'Motion Detected : Tap to start again')
                               : LinearPercentIndicator(
-                                  lineHeight: 15.0,
+                                  lineHeight: 5.0,
                                   animation: false,
                                   animationDuration: 0,
                                   backgroundColor: Color(0xffffe9ea),
