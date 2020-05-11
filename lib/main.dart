@@ -174,14 +174,14 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           widget.deviceObject.name,
           style: TextStyle(
             fontSize: 24,
-            color: Colors.black,
+            color: Color(0xff3b338b),
             fontWeight: FontWeight.bold,
           ),
         ),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.phonelink_off),
-            color: Color(0xff3d84a7),
+            color: Color(0xff3b338b),
             onPressed: () {
               Navigator.push(
                 context,
@@ -389,6 +389,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 if (deviceObject.power == false) {
                   deviceObject.socket
                       .writeln(deviceObject.time.inMinutes.round());
+
                   deviceObject.progressDegrees = 0;
                   deviceObject.power = !deviceObject.power;
                   startTimer(deviceObject);
