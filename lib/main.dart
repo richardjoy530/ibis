@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:ibis/radial_painter.dart';
 import 'package:intl/intl.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
@@ -13,8 +14,8 @@ import 'front_page.dart';
 import 'test_screen.dart';
 
 int displayTime;
-
-//final customColor = CustomSliderColors();
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 final customColor = CustomSliderColors(
     progressBarColor: Color(0xffffe9ea),
     hideShadow: true,
@@ -24,11 +25,28 @@ final customColor = CustomSliderColors(
       Color(0xffe563a7),
       Color(0xfff7a4b2),
     ]);
+var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
+var initializationSettingsIOS = IOSInitializationSettings();
+var initializationSettings = InitializationSettings(
+    initializationSettingsAndroid, initializationSettingsIOS);
+
 void main() {
   connect();
   return runApp(MyApp());
 }
-//
+
+Future<void> notification(String message) async {
+  var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your channel id', 'your channel name', 'your channel description',
+      importance: Importance.Default,
+      priority: Priority.Default,
+      ticker: 'ticker');
+  var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+  var platformChannelSpecifics = NotificationDetails(
+      androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+  await flutterLocalNotificationsPlugin
+      .show(0, 'Alert', message, platformChannelSpecifics, payload: 'item x');
+}
 
 void connect() async {
   ServerSocket.bind('0.0.0.0', 4042)
@@ -80,7 +98,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool errorRemover = false;
   @override
   void initState() {
-    //
     temp = 1;
     mainTick();
     if (widget.deviceObject.power == true) {
@@ -91,8 +108,19 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           end: 360);
       widget.deviceObject.radialProgressAnimationController.forward();
     }
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
     super.initState();
   }
+
+//  Future selectNotification(String payload) async {
+//    if (payload != null) {
+//      debugPrint('notification payload: ' + payload);
+//    }
+//    await Navigator.push(
+//      context,
+//      MaterialPageRoute(builder: (context) => FrontPage()),
+//    );
+//  }
 
   @override
   void dispose() {
