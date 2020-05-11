@@ -23,9 +23,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   Timer timer;
   @override
   void initState() {
+
     timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
+
       setState(() {
         for (var i = 0; i < deviceObjectList.length; i++) {
+
           if (deviceObjectList[i].motionDetected == true) {
             deviceObjectList[i].timer.cancel();
             deviceObjectList[i].power = false;
@@ -49,6 +52,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 
     super.initState();
   }
+
 
   @override
   void dispose() {

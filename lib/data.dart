@@ -42,6 +42,7 @@ class DeviceObject {
       print([socket.remotePort, onData]);
       if (String.fromCharCodes(onData).trim() == '1') {
         this.motionDetected = true;
+
       }
     })
       ..onError((handleError) {
