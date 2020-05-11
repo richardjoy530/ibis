@@ -17,7 +17,6 @@ class DeviceObject {
   AnimationController radialProgressAnimationController;
   Animation<double> progressAnimation;
   double progressDegrees;
-  double balanceTime;
   Duration time;
   Timer timer;
   bool wantHeight;
