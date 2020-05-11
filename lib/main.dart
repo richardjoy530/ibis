@@ -95,8 +95,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     autoBackTemp=Timer.periodic(Duration(seconds: 1),(callback)
     {
       setState(() {
-        widget.deviceObject.balanceTime=widget.deviceObject.balanceTime;
-      });
+        if(widget.deviceObject.power==true) {
+          widget.deviceObject.balanceTime = widget.deviceObject.balanceTime;
+        }
+          });
     });
     autoBack();
     super.initState();
@@ -556,6 +558,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         setState(() {
           deviceObject.progressDegrees = deviceObject.progressAnimation.value;
           if (deviceObject.motionDetected == true) {
+            autoBackTimer.cancel();
             deviceObject.power = false;
             deviceObject.radialProgressAnimationController.stop();
             deviceObject.timer.cancel();
