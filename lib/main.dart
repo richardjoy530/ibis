@@ -12,17 +12,18 @@ import 'data.dart';
 import 'front_page.dart';
 import 'test_screen.dart';
 
-double balanceTime = 0.0;
 int displayTime;
 double temp = 1;
 //final customColor = CustomSliderColors();
 final customColor = CustomSliderColors(
-    progressBarColor: Color(0xffd1e6ea),
+    progressBarColor: Color(0xffffe9ea),
     hideShadow: true,
-    trackColor: Color(0xffd1e6ea),
+    trackColor: Color(0xffffe9ea),
     progressBarColors: [
-      Color(0xff2eb8c9),
-      Color(0xff95dcdb),
+      Color(0xff262687),
+      Color(0xffa43dbd),
+      Color(0xffe563a7),
+      Color(0xfff7a4b2),
     ]);
 void main() {
   connect();
@@ -96,14 +97,19 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   void autoBack() async {
     double decrement;
-    autoBackTimer = Timer.periodic(Duration(milliseconds: 1000), (callback) {
+    autoBackTimer = Timer.periodic(Duration(seconds: 1), (callback) {
       if (widget.deviceObject.power == true) {
         setState(() {
-          if (balanceTime >= 0 && balanceTime < 3600) {
-            print(balanceTime);
-            decrement = (3600 / (temp * 60));
-            if (balanceTime + decrement < 3600) {
-              balanceTime = balanceTime + decrement;
+          if (widget.deviceObject.balanceTime >= 0 &&
+              widget.deviceObject.balanceTime < 3600) {
+            if (widget.deviceObject.balanceTime >= 0 &&
+                widget.deviceObject.balanceTime < 3600) {
+              print(widget.deviceObject.balanceTime);
+              decrement = (3600 / (widget.deviceObject.time.inSeconds));
+              if (widget.deviceObject.balanceTime + decrement < 3600) {
+                widget.deviceObject.balanceTime =
+                    widget.deviceObject.balanceTime + decrement;
+              }
             }
           }
         });
@@ -126,13 +132,16 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xffb9dfe6),
-        leading: Container(
-          height: 30,
-          width: 30,
-          child: FlareActor(
-            'assets/status.flr',
-            animation: 'Connected',
+        backgroundColor: Color(0xffffe9ea),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            height: 30,
+            width: 30,
+            child: FlareActor(
+              'assets/status.flr',
+              animation: 'Connected',
+            ),
           ),
         ),
         title: Text(
@@ -161,7 +170,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xffb9dfe6), Color(0xffffffff)]),
+              colors: [Color(0xffffe9ea), Color(0xffffffff)]),
         ),
         child: widget.deviceObject.motionDetected == true
             ? AlertDialog(
@@ -183,9 +192,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   startTimer(DeviceObject deviceObject) {
     deviceObject.timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (serverOnline == true && widget.deviceObject.clientError == false) {
-        print([deviceObject.socket.remotePort, 'tick']);
-      }
+      if (serverOnline == true && widget.deviceObject.clientError == false) {}
     });
   }
 
@@ -277,7 +284,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   : SleekCircularSlider(
                       min: 0,
                       max: 3600,
-                      initialValue: 3600 - balanceTime,
+                      initialValue: 3600 - widget.deviceObject.balanceTime,
                       appearance: CircularSliderAppearance(
                           customWidths: CustomSliderWidths(
                               trackWidth: 50,
@@ -363,16 +370,15 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   //time = 2;
                   destroyAnimation(deviceObject);
                   deviceObject.socket.write('stop');
+                  deviceObject.balanceTime = 0.0;
                   deviceObject.power = !deviceObject.power;
                   deviceObject.timer.cancel();
-                  runAnimation(
-                      begin: deviceObject.progressDegrees,
-                      end: 0,
-                      deviceObject: deviceObject);
-                  deviceObject.radialProgressAnimationController.forward();
-                  Future.delayed(const Duration(seconds: 2), () {
-                    Navigator.pop(context);
-                  });
+//                  runAnimation(
+//                      begin: deviceObject.progressDegrees,
+//                      end: 0,
+//                      deviceObject: deviceObject);
+//                  deviceObject.radialProgressAnimationController.forward();
+                  Navigator.pop(context);
                 }
               });
             },
@@ -546,20 +552,21 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             deviceObject.radialProgressAnimationController.stop();
             deviceObject.timer.cancel();
             deviceObject.radialProgressAnimationController.dispose();
-            Future.delayed(const Duration(seconds: 3), () {
-              deviceObject.motionDetected = false;
+            Future.delayed(const Duration(seconds: 2), () {
+              //deviceObject.motionDetected = false;
               Navigator.pop(context);
             });
           }
           if (deviceObject.progressDegrees == 360) {
             deviceObject.power = false;
+            deviceObject.balanceTime = 0.0;
             deviceObject.radialProgressAnimationController.stop();
             deviceObject.timer.cancel();
           }
         });
         if (deviceObject.progressDegrees == 360) {
           deviceObject.progressDegrees = 0;
-          Future.delayed(const Duration(seconds: 2), () {
+          Future.delayed(const Duration(seconds: 1), () {
             Navigator.pop(context);
           });
         }

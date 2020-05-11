@@ -31,6 +31,7 @@ class _HeightPageState extends State<HeightPage> {
   void initState() {
     mainTick();
     super.initState();
+    print('object');
   }
 
   @override
@@ -87,7 +88,7 @@ class _HeightPageState extends State<HeightPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   CustomPaint(
-                    child: Container(),
+                    child: Text(''),
                     painter: HeightPainter(widget.deviceObject.height),
                   ),
                   Column(
@@ -110,20 +111,20 @@ class _HeightPageState extends State<HeightPage> {
                             upBGColor = upArrowColor;
                             upArrowColor = downBGColor;
                             indicator = 1;
-                            if (widget.deviceObject.height < 100) {
-                              widget.deviceObject.socket.write('1\r');
+                            if (widget.deviceObject.height != 100) {
+                              widget.deviceObject.socket.write('-3\r');
+                              tick();
                             }
-                            tick();
                           },
                           onPointerUp: (data) {
                             setState(() {
                               upArrowColor = Color(0xfff6a4b2);
                               upBGColor = Color(0xffffe9ea);
                             });
-                            indicator = 0;
                             timer.cancel();
-                            if (widget.deviceObject.height < 100) {
-                              widget.deviceObject.socket.write('0\r');
+                            if (indicator != 0) {
+                              indicator = 0;
+                              widget.deviceObject.socket.write('-1\r');
                             }
                           },
                         ),
@@ -144,10 +145,10 @@ class _HeightPageState extends State<HeightPage> {
                               downBGColor = downArrowColor;
                               downArrowColor = upBGColor;
                               indicator = -1;
-                              if (widget.deviceObject.height > 0) {
-                                widget.deviceObject.socket.write('-1\r');
+                              if (widget.deviceObject.height != 0) {
+                                widget.deviceObject.socket.write('-2\r');
+                                tick();
                               }
-                              tick();
                             },
                             onPointerUp: (data) {
                               setState(() {
@@ -155,9 +156,9 @@ class _HeightPageState extends State<HeightPage> {
                                 downBGColor = Color(0xffffe9ea);
                               });
                               timer.cancel();
-                              indicator = 0;
-                              if (widget.deviceObject.height > 0) {
-                                widget.deviceObject.socket.write('0\r');
+                              if (indicator != 0) {
+                                indicator = 0;
+                                widget.deviceObject.socket.write('-1\r');
                               }
                             },
                           ),
@@ -186,7 +187,8 @@ class _HeightPageState extends State<HeightPage> {
                         icon: Icon(Icons.check),
                         onPressed: () {
                           widget.deviceObject.progressDegrees = 0;
-                          widget.deviceObject.socket.write('true');
+                          widget.deviceObject.socket
+                              .write('${widget.deviceObject.height.toInt()}');
                           widget.deviceObject.time = Duration(minutes: 1);
                           Navigator.pushReplacement(
                             context,
@@ -215,9 +217,13 @@ class _HeightPageState extends State<HeightPage> {
         }
         if (widget.deviceObject.height >= 100) {
           widget.deviceObject.height = 100;
+          indicator = 0;
+          widget.deviceObject.socket.write('-1\r');
         }
         if (widget.deviceObject.height <= 0) {
           widget.deviceObject.height = 0;
+          indicator = 0;
+          widget.deviceObject.socket.write('-1\r');
         }
       });
     });
