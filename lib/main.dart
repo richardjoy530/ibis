@@ -82,6 +82,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool errorRemover = false;
   @override
   void initState() {
+    //
     temp=1;
     mainTick();
     if (widget.deviceObject.power == true) {
