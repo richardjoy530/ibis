@@ -76,10 +76,7 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   double temp;
-  double tempValue = 1;
   Timer mainTimer;
-  Timer autoBackTimer, autoBackTemp;
-  double valueTemp = 1;
   bool errorRemover = false;
   @override
   void initState() {
@@ -94,35 +91,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           end: 360);
       widget.deviceObject.radialProgressAnimationController.forward();
     }
-    autoBackTemp = Timer.periodic(Duration(seconds: 1), (callback) {
-      if (widget.deviceObject.power == true) {
-        setState(() {
-          widget.deviceObject.balanceTime = widget.deviceObject.balanceTime;
-        });
-      }
-    });
-    autoBack();
     super.initState();
-  }
-
-  void autoBack() async {
-    double decrement;
-    autoBackTimer = Timer.periodic(Duration(seconds: 1), (callback) {
-      if (widget.deviceObject.power == true) {
-        if (widget.deviceObject.balanceTime >= 0 &&
-            widget.deviceObject.balanceTime < 3600) {
-          if (widget.deviceObject.balanceTime >= 0 &&
-              widget.deviceObject.balanceTime < 3600) {
-            print(widget.deviceObject.balanceTime);
-            decrement = (3600 / (widget.deviceObject.time.inSeconds));
-            if (widget.deviceObject.balanceTime + decrement < 3600) {
-              widget.deviceObject.balanceTime =
-                  widget.deviceObject.balanceTime + decrement;
-            }
-          }
-        }
-      }
-    });
   }
 
   @override
@@ -132,7 +101,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       widget.deviceObject.radialProgressAnimationController.dispose();
     }
     mainTimer.cancel();
-    autoBackTemp.cancel();
     super.dispose();
   }
 
@@ -292,7 +260,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   : SleekCircularSlider(
                       min: 0,
                       max: 3600,
-                      initialValue: 3600 - widget.deviceObject.balanceTime,
+                      initialValue: 3600 -
+                          (3600 / deviceObject.time.inSeconds) *
+                              deviceObject.timer.tick,
                       appearance: CircularSliderAppearance(
                           customWidths: CustomSliderWidths(
                               trackWidth: 50,
@@ -378,9 +348,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   //time = 2;
                   destroyAnimation(deviceObject);
                   deviceObject.socket.write('stop');
-                  autoBackTemp.cancel();
-                  autoBackTimer.cancel();
-                  deviceObject.balanceTime = 0.0;
                   deviceObject.power = !deviceObject.power;
                   deviceObject.timer.cancel();
 //                  runAnimation(
@@ -388,9 +355,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //                      end: 0,
 //                      deviceObject: deviceObject);
 //                  deviceObject.radialProgressAnimationController.forward();
-                  Future.delayed(const Duration(seconds: 1), () {
-                    Navigator.pop(context);
-                  });
+                  Navigator.pop(context);
                 }
               });
             },
@@ -560,8 +525,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         setState(() {
           deviceObject.progressDegrees = deviceObject.progressAnimation.value;
           if (deviceObject.motionDetected == true) {
-            autoBackTimer.cancel();
-            autoBackTemp.cancel();
             deviceObject.power = false;
             deviceObject.radialProgressAnimationController.stop();
             deviceObject.timer.cancel();
@@ -573,7 +536,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           }
           if (deviceObject.progressDegrees == 360) {
             deviceObject.power = false;
-            deviceObject.balanceTime = 0.0;
             deviceObject.radialProgressAnimationController.stop();
             deviceObject.timer.cancel();
           }
