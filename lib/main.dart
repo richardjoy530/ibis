@@ -13,6 +13,7 @@ import 'front_page.dart';
 import 'test_screen.dart';
 
 int displayTime;
+
 //final customColor = CustomSliderColors();
 final customColor = CustomSliderColors(
     progressBarColor: Color(0xffffe9ea),
@@ -76,7 +77,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   double temp;
   double tempValue = 1;
   Timer mainTimer;
-  Timer autoBackTimer;
+  Timer autoBackTimer,autoBackTemp;
   double valueTemp = 1;
   bool errorRemover = false;
   @override
@@ -91,6 +92,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           end: 360);
       widget.deviceObject.radialProgressAnimationController.forward();
     }
+    autoBackTemp=Timer.periodic(Duration(seconds: 1),(callback)
+    {
+      setState(() {
+        widget.deviceObject.balanceTime=widget.deviceObject.balanceTime;
+      });
+    });
     autoBack();
     super.initState();
   }
@@ -99,7 +106,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     double decrement;
     autoBackTimer = Timer.periodic(Duration(seconds: 1), (callback) {
       if (widget.deviceObject.power == true) {
-        setState(() {
           if (widget.deviceObject.balanceTime >= 0 &&
               widget.deviceObject.balanceTime < 3600) {
             if (widget.deviceObject.balanceTime >= 0 &&
@@ -112,7 +118,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               }
             }
           }
-        });
+
       }
     });
   }
@@ -124,7 +130,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       widget.deviceObject.radialProgressAnimationController.dispose();
     }
     mainTimer.cancel();
-    autoBackTimer.cancel();
+    autoBackTemp.cancel();
     super.dispose();
   }
 
