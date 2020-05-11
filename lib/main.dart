@@ -378,6 +378,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   deviceObject.socket
                       .writeln(deviceObject.time.inMinutes.round());
                   deviceObject.progressDegrees = 0;
+                      mainActive = true;
+
                   deviceObject.power = !deviceObject.power;
                   startTimer(deviceObject);
                   runAnimation(deviceObject: deviceObject);
