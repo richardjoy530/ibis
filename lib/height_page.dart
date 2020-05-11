@@ -31,6 +31,7 @@ class _HeightPageState extends State<HeightPage> {
   void initState() {
     mainTick();
     super.initState();
+    print('object');
   }
 
   @override
