@@ -157,7 +157,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     child: Text('Motion Detected')),
                 content: Icon(
                   Icons.warning,
-                  color: Colors.red,
+                  color: Color(0xff725496),
+                  size: 50,
                 ),
                 backgroundColor: Color(0xffdec3e4),
               )

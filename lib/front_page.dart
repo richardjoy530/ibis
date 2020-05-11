@@ -181,14 +181,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(20.0))),
                 title: Text('Server is Offline'),
-                actions: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.refresh),
-                    onPressed: () {
-                      connect();
-                    },
-                  )
-                ],
+                content: IconButton(
+                  icon: Icon(Icons.refresh),
+                  onPressed: () {
+                    connect();
+                  },
+                ),
               ),
       ),
     );
