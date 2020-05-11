@@ -83,6 +83,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     //
     temp = 1;
     mainTick();
+
     if (widget.deviceObject.power == true) {
       runAnimation(
           begin: (360 / (widget.deviceObject.time.inMinutes * 60)) *
