@@ -5,6 +5,7 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:ibis/height_page.dart';
 import 'package:ibis/main.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 import 'data.dart';
 import 'test_screen.dart';
@@ -76,14 +77,14 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           'Ibis Sterilyzer',
           style: TextStyle(
             fontSize: 24,
-            color: Colors.black,
+            color: Color(0xff3b338b),
             //fontWeight: FontWeight.bold,
           ),
         ),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.menu),
-            color: Color(0xff000000),
+            color: Color(0xff725496),
             onPressed: () {
               Navigator.push(
                 context,
@@ -123,23 +124,34 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                             color: Color(0xffdec3e4),
                             borderRadius: BorderRadius.circular(20)),
                         child: ListTile(
-                          leading: Icon(Icons.wifi),
+                          leading: Icon(
+                            Icons.network_wifi,
+                            color: Color(0xff725496),
+                          ),
                           trailing: Visibility(
                             visible: deviceObjectList[index].motionDetected,
                             child: Icon(
                               Icons.warning,
-                              color: Colors.red,
+                              color: Color(0xff725496),
                             ),
                           ),
                           title: Text(
                               '${deviceObjectList[index].socket.remoteAddress.address.toString()} : ${deviceObjectList[index].socket.remotePort}'),
-                          subtitle: Visibility(
-                            visible: deviceObjectList[index].power,
-                            child: LinearProgressIndicator(
-                              value: deviceObjectList[index]
-                                  .linearProgressBarValue,
-                            ),
-                          ),
+                          subtitle: deviceObjectList[index].power == false
+                              ? Text(deviceObjectList[index].motionDetected ==
+                                      false
+                                  ? 'Device Idle'
+                                  : 'Motion Detected : Tap to start again')
+                              : LinearPercentIndicator(
+                                  lineHeight: 5.0,
+                                  animation: false,
+                                  animationDuration: 0,
+                                  backgroundColor: Color(0xffffe9ea),
+                                  percent: deviceObjectList[index]
+                                      .linearProgressBarValue,
+                                  linearStrokeCap: LinearStrokeCap.roundAll,
+                                  progressColor: Color(0xff9a6c9f),
+                                ),
                           onTap: () {
                             if (deviceObjectList[index].power == true) {
                               Navigator.push(
@@ -169,14 +181,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(20.0))),
                 title: Text('Server is Offline'),
-                actions: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.refresh),
-                    onPressed: () {
-                      connect();
-                    },
-                  )
-                ],
+                content: IconButton(
+                  icon: Icon(Icons.refresh),
+                  onPressed: () {
+                    connect();
+                  },
+                ),
               ),
       ),
     );
