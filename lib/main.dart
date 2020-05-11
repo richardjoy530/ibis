@@ -13,13 +13,14 @@ import 'front_page.dart';
 import 'test_screen.dart';
 
 int displayTime;
-
+double temp = 1;
 //final customColor = CustomSliderColors();
 final customColor = CustomSliderColors(
     progressBarColor: Color(0xffffe9ea),
     hideShadow: true,
     trackColor: Color(0xffffe9ea),
     progressBarColors: [
+      Color(0xff262687),
       Color(0xffa43dbd),
       Color(0xffe563a7),
       Color(0xfff7a4b2),
@@ -74,15 +75,10 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  double temp;
-  double tempValue = 1;
   Timer mainTimer;
-  Timer autoBackTimer,autoBackTemp;
-  double valueTemp = 1;
   bool errorRemover = false;
   @override
   void initState() {
-    temp=1;
     mainTick();
     if (widget.deviceObject.power == true) {
       runAnimation(
@@ -92,37 +88,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           end: 360);
       widget.deviceObject.radialProgressAnimationController.forward();
     }
-    autoBackTemp=Timer.periodic(Duration(seconds: 1),(callback)
-    {
-      setState(() {
-        if(widget.deviceObject.power==true) {
-          widget.deviceObject.balanceTime = widget.deviceObject.balanceTime;
-        }
-          });
-    });
-    autoBack();
     super.initState();
-  }
-
-  void autoBack() async {
-    double decrement;
-    autoBackTimer = Timer.periodic(Duration(seconds: 1), (callback) {
-      if (widget.deviceObject.power == true) {
-          if (widget.deviceObject.balanceTime >= 0 &&
-              widget.deviceObject.balanceTime < 3600) {
-            if (widget.deviceObject.balanceTime >= 0 &&
-                widget.deviceObject.balanceTime < 3600) {
-              print(widget.deviceObject.balanceTime);
-              decrement = (3600 / (widget.deviceObject.time.inSeconds));
-              if (widget.deviceObject.balanceTime + decrement < 3600) {
-                widget.deviceObject.balanceTime =
-                    widget.deviceObject.balanceTime + decrement;
-              }
-            }
-          }
-
-      }
-    });
   }
 
   @override
@@ -131,8 +97,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     if (widget.deviceObject.power == true) {
       widget.deviceObject.radialProgressAnimationController.dispose();
     }
-    mainTimer.cancel();
-    autoBackTemp.cancel();
     super.dispose();
   }
 
@@ -292,7 +256,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   : SleekCircularSlider(
                       min: 0,
                       max: 3600,
-                      initialValue: 3600 - widget.deviceObject.balanceTime,
+                      initialValue: 3600 -
+                          (3600 / widget.deviceObject.time.inSeconds) *
+                              widget.deviceObject.timer.tick,
                       appearance: CircularSliderAppearance(
                           customWidths: CustomSliderWidths(
                               trackWidth: 50,
@@ -370,6 +336,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   deviceObject.socket
                       .writeln(deviceObject.time.inMinutes.round());
                   deviceObject.progressDegrees = 0;
+
                   deviceObject.power = !deviceObject.power;
                   startTimer(deviceObject);
                   runAnimation(deviceObject: deviceObject);
@@ -386,9 +353,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //                      end: 0,
 //                      deviceObject: deviceObject);
 //                  deviceObject.radialProgressAnimationController.forward();
-                  Future.delayed(const Duration(seconds: 1), () {
-                    Navigator.pop(context);
-                  });
+                  Navigator.pop(context);
                 }
               });
             },
@@ -558,10 +523,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         setState(() {
           deviceObject.progressDegrees = deviceObject.progressAnimation.value;
           if (deviceObject.motionDetected == true) {
-            autoBackTimer.cancel();
             deviceObject.power = false;
             deviceObject.radialProgressAnimationController.stop();
             deviceObject.timer.cancel();
+
             deviceObject.radialProgressAnimationController.dispose();
             Future.delayed(const Duration(seconds: 2), () {
               //deviceObject.motionDetected = false;
