@@ -21,11 +21,27 @@ class FrontPage extends StatefulWidget {
 
 class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   Timer timer;
+  Timer autoBackTimer;
   @override
   void initState() {
     timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
+
       setState(() {
         for (var i = 0; i < deviceObjectList.length; i++) {
+          if (deviceObjectList[i].power == true) {
+
+              if (deviceObjectList[i].balanceTime >= 0 && deviceObjectList[i].balanceTime < 3600) {
+                if (deviceObjectList[i].balanceTime >= 0 &&
+                    deviceObjectList[i].balanceTime < 3600) {
+                  print(deviceObjectList[i].balanceTime);
+                  var decrement = (3600*10 /deviceObjectList[i].time.inMilliseconds);
+                  if (deviceObjectList[i].balanceTime + decrement < 3600) {
+                    deviceObjectList[i].balanceTime =
+                        deviceObjectList[i].balanceTime + decrement;
+                  }
+                }
+              }
+          }
           if (deviceObjectList[i].motionDetected == true) {
             deviceObjectList[i].timer.cancel();
             deviceObjectList[i].power = false;
@@ -48,6 +64,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 
     super.initState();
   }
+
 
   @override
   void dispose() {
