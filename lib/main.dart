@@ -4,17 +4,18 @@ import 'dart:io';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:ibis/radial_painter.dart';
 import 'package:intl/intl.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 import 'data.dart';
 import 'front_page.dart';
 import 'test_screen.dart';
 
 int displayTime;
-
-//final customColor = CustomSliderColors();
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+     FlutterLocalNotificationsPlugin();
 final customColor = CustomSliderColors(
     progressBarColor: Color(0xffffe9ea),
     hideShadow: true,
@@ -24,11 +25,29 @@ final customColor = CustomSliderColors(
       Color(0xffe563a7),
       Color(0xfff7a4b2),
     ]);
+var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
+var initializationSettingsIOS = IOSInitializationSettings();
+var initializationSettings = InitializationSettings(
+    initializationSettingsAndroid, initializationSettingsIOS);
+
 void main() {
   connect();
   return runApp(MyApp());
 }
-//
+
+Future<void> notification(String message) async {
+  var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your channel id', 'your channel name', 'your channel description',
+      importance: Importance.Default,
+      priority: Priority.Default,
+      ticker: 'ticker');
+  var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+  var platformChannelSpecifics = NotificationDetails(
+      androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+  await flutterLocalNotificationsPlugin
+      .show(0, 'Alert', message, platformChannelSpecifics, payload: 'item x');
+}
+
 
 void connect() async {
   ServerSocket.bind('0.0.0.0', 4042)
@@ -76,28 +95,12 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   double temp;
-  Timer mainTimer,_notificationTimer;
+  Timer mainTimer;
   bool errorRemover = false;
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin=new FlutterLocalNotificationsPlugin();
-  Future<void> notofication() async
-  {
-
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-        0, 'Alert', 'Motion was Deteected', platformChannelSpecifics,
-        payload: 'item x');
-  }
   @override
   void initState() {
-    //
     temp = 1;
     mainTick();
-
     if (widget.deviceObject.power == true) {
       runAnimation(
           begin: (360 / (widget.deviceObject.time.inMinutes * 60)) *
@@ -106,42 +109,19 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           end: 360);
       widget.deviceObject.radialProgressAnimationController.forward();
     }
-    var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
-    var initializationSettingsIOS = IOSInitializationSettings();
-    var initializationSettings = InitializationSettings(
-        initializationSettingsAndroid, initializationSettingsIOS);
-    flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: selectNotification);
-    notificationTimer();
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
     super.initState();
   }
 
-  Future<void> notificationTimer() async
-  {
-    _notificationTimer=Timer.periodic(Duration(milliseconds: 100),(callback)
-    {
-      if(widget.deviceObject.motionDetected==true)
-        {
-          widget.deviceObject.notification=true;
-        }
-      if(widget.deviceObject.notification==true)
-        {
-          notofication();
-          widget.deviceObject.notification=false;
-          _notificationTimer.cancel();
-        }
-    });
-  }
-
-  Future selectNotification(String payload) async {
-    if (payload != null) {
-      debugPrint('notification payload: ' + payload);
-    }
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => FrontPage()),
-    );
-  }
+//  Future selectNotification(String payload) async {
+//    if (payload != null) {
+//      debugPrint('notification payload: ' + payload);
+//    }
+//    await Navigator.push(
+//      context,
+//      MaterialPageRoute(builder: (context) => FrontPage()),
+//    );
+//  }
 
   @override
   void dispose() {
@@ -150,7 +130,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       widget.deviceObject.radialProgressAnimationController.dispose();
     }
     mainTimer.cancel();
-    _notificationTimer.cancel();
     super.dispose();
   }
 

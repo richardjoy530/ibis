@@ -6,24 +6,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'front_page.dart';
+import 'main.dart' as main;
 
 class DeviceObject {
   Socket socket;
   bool clientError = false;
   String name;
   bool power;
-  bool isBackground;
   double linearProgressBarValue;
   AnimationController radialProgressAnimationController;
   Animation<double> progressAnimation;
   double progressDegrees;
   Duration time;
   Timer timer;
-  bool wantHeight;
   bool motionDetected;
   double height;
-  bool notification;
-  //bool isHeightSet;
   DeviceObject({
     this.name,
     this.socket,
@@ -37,13 +34,12 @@ class DeviceObject {
     this.power = false,
     this.time,
     this.progressDegrees = 0,
-    this.notification=false,
   }) {
     socket.listen((onData) {
       print([socket.remotePort, onData]);
       if (String.fromCharCodes(onData).trim() == '1') {
         this.motionDetected = true;
-
+        main.notification('Motion was detected');
       }
     })
       ..onError((handleError) {
