@@ -22,6 +22,7 @@ class DeviceObject {
   bool wantHeight;
   bool motionDetected;
   double height;
+  bool notification;
   //bool isHeightSet;
   DeviceObject({
     this.name,
@@ -36,6 +37,7 @@ class DeviceObject {
     this.power = false,
     this.time,
     this.progressDegrees = 0,
+    this.notification=false,
   }) {
     socket.listen((onData) {
       print([socket.remotePort, onData]);
