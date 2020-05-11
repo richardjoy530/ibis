@@ -146,7 +146,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                         HomePage(deviceObjectList[index])),
                               );
                             } else {
-                              setHeightYN(context, deviceObjectList[index]);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        HeightPage(deviceObjectList[index])),
+                              );
                             }
                           },
                         ),
