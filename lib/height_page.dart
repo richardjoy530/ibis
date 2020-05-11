@@ -110,22 +110,20 @@ class _HeightPageState extends State<HeightPage> {
                             upBGColor = upArrowColor;
                             upArrowColor = downBGColor;
                             indicator = 1;
-                            if(widget.deviceObject.height!=100){
-                              widget.deviceObject.socket.write('1\r');
+                            if (widget.deviceObject.height != 100) {
+                              widget.deviceObject.socket.write('-3\r');
                               tick();
                             }
-
                           },
                           onPointerUp: (data) {
                             setState(() {
                               upArrowColor = Color(0xfff6a4b2);
                               upBGColor = Color(0xffffe9ea);
                             });
-                            indicator = 0;
                             timer.cancel();
-                            if(indicator!=0){
+                            if (indicator != 0) {
                               indicator = 0;
-                              widget.deviceObject.socket.write('0\r');
+                              widget.deviceObject.socket.write('-1\r');
                             }
                           },
                         ),
@@ -146,11 +144,10 @@ class _HeightPageState extends State<HeightPage> {
                               downBGColor = downArrowColor;
                               downArrowColor = upBGColor;
                               indicator = -1;
-                              if(widget.deviceObject.height!=0){
-                                widget.deviceObject.socket.write('-1\r');
+                              if (widget.deviceObject.height != 0) {
+                                widget.deviceObject.socket.write('-2\r');
                                 tick();
                               }
-
                             },
                             onPointerUp: (data) {
                               setState(() {
@@ -158,11 +155,10 @@ class _HeightPageState extends State<HeightPage> {
                                 downBGColor = Color(0xffffe9ea);
                               });
                               timer.cancel();
-                              if(indicator!=0){
+                              if (indicator != 0) {
                                 indicator = 0;
-                                widget.deviceObject.socket.write('0\r');
+                                widget.deviceObject.socket.write('-1\r');
                               }
-
                             },
                           ),
                         ),
@@ -190,7 +186,8 @@ class _HeightPageState extends State<HeightPage> {
                         icon: Icon(Icons.check),
                         onPressed: () {
                           widget.deviceObject.progressDegrees = 0;
-                          widget.deviceObject.socket.write('true');
+                          widget.deviceObject.socket
+                              .write('${widget.deviceObject.height.toInt()}');
                           widget.deviceObject.time = Duration(minutes: 1);
                           Navigator.pushReplacement(
                             context,
@@ -210,7 +207,7 @@ class _HeightPageState extends State<HeightPage> {
   }
 
   Future<void> tick() async {
-    timer = Timer.periodic(Duration(milliseconds: 10), (callback) {
+    timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
       setState(() {
         if (indicator == 1) {
           widget.deviceObject.height += 1;
@@ -219,15 +216,13 @@ class _HeightPageState extends State<HeightPage> {
         }
         if (widget.deviceObject.height >= 100) {
           widget.deviceObject.height = 100;
-          indicator=0;
-          widget.deviceObject.socket.write('0\r');
-
+          indicator = 0;
+          widget.deviceObject.socket.write('-1\r');
         }
         if (widget.deviceObject.height <= 0) {
           widget.deviceObject.height = 0;
-          indicator=0;
-          widget.deviceObject.socket.write('0\r');
-
+          indicator = 0;
+          widget.deviceObject.socket.write('-1\r');
         }
       });
     });

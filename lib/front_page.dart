@@ -29,14 +29,15 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           if (deviceObjectList[i].motionDetected == true) {
             deviceObjectList[i].timer.cancel();
             deviceObjectList[i].power = false;
-            deviceObjectList[i].balanceTime=0.0;
+            deviceObjectList[i].balanceTime = 0.0;
             //deviceObjectList[i].motionDetected = false;
           }
           if (deviceObjectList[i].power == true) {
             deviceObjectList[i].linearProgressBarValue =
                 (1 / deviceObjectList[i].time.inSeconds) *
                     deviceObjectList[i].timer.tick;
-            if (deviceObjectList[i].timer.tick > deviceObjectList[i].time.inSeconds) {
+            if (deviceObjectList[i].timer.tick >
+                deviceObjectList[i].time.inSeconds) {
               deviceObjectList[i].power = false;
               deviceObjectList[i].timer.cancel();
               deviceObjectList[i].progressDegrees = 0;
@@ -126,7 +127,10 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                           leading: Icon(Icons.wifi),
                           trailing: Visibility(
                             visible: deviceObjectList[index].motionDetected,
-                            child: Icon(Icons.warning,color: Colors.red,),
+                            child: Icon(
+                              Icons.warning,
+                              color: Colors.red,
+                            ),
                           ),
                           title: Text(
                               '${deviceObjectList[index].socket.remoteAddress.address.toString()} : ${deviceObjectList[index].socket.remotePort}'),
@@ -146,6 +150,10 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                         HomePage(deviceObjectList[index])),
                               );
                             } else {
+                              deviceObjectList[index].motionDetected = false;
+                              deviceObjectList[index].time =
+                                  Duration(minutes: 1);
+                              deviceObjectList[index].progressDegrees = 0;
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -193,7 +201,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               SimpleDialogOption(
                 child: Text('Yes'),
                 onPressed: () {
-                  deviceObject.motionDetected=false;
+                  deviceObject.motionDetected = false;
                   deviceObject.socket.write('2\r');
                   Navigator.pushReplacement(
                     context,
@@ -205,7 +213,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               SimpleDialogOption(
                   child: Text('No'),
                   onPressed: () {
-                    deviceObject.motionDetected=false;
+                    deviceObject.motionDetected = false;
                     deviceObject.socket.write('-2\r');
                     deviceObject.time = Duration(minutes: 1);
                     deviceObject.progressDegrees = 0;
