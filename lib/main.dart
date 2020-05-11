@@ -15,7 +15,7 @@ import 'test_screen.dart';
 
 int displayTime;
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-     FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
 final customColor = CustomSliderColors(
     progressBarColor: Color(0xffffe9ea),
     hideShadow: true,
@@ -47,7 +47,6 @@ Future<void> notification(String message) async {
   await flutterLocalNotificationsPlugin
       .show(0, 'Alert', message, platformChannelSpecifics, payload: 'item x');
 }
-
 
 void connect() async {
   ServerSocket.bind('0.0.0.0', 4042)
