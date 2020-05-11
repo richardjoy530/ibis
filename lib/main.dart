@@ -14,6 +14,7 @@ import 'test_screen.dart';
 
 int displayTime;
 double temp = 1;
+bool mainActive = false;
 //final customColor = CustomSliderColors();
 final customColor = CustomSliderColors(
     progressBarColor: Color(0xffffe9ea),
@@ -82,6 +83,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool errorRemover = false;
   @override
   void initState() {
+    mainActive = true;
     mainTick();
     if (widget.deviceObject.power == true) {
       runAnimation(
@@ -99,7 +101,22 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     double decrement;
     autoBackTimer = Timer.periodic(Duration(seconds: 1), (callback) {
       if (widget.deviceObject.power == true) {
-        setState(() {
+        if (mainActive == true) {
+          setState(() {
+            if (widget.deviceObject.balanceTime >= 0 &&
+                widget.deviceObject.balanceTime < 3600) {
+              if (widget.deviceObject.balanceTime >= 0 &&
+                  widget.deviceObject.balanceTime < 3600) {
+                print(widget.deviceObject.balanceTime);
+                decrement = (3600 / (widget.deviceObject.time.inSeconds));
+                if (widget.deviceObject.balanceTime + decrement < 3600) {
+                  widget.deviceObject.balanceTime =
+                      widget.deviceObject.balanceTime + decrement;
+                }
+              }
+            }
+          });
+        } else {
           if (widget.deviceObject.balanceTime >= 0 &&
               widget.deviceObject.balanceTime < 3600) {
             if (widget.deviceObject.balanceTime >= 0 &&
@@ -112,7 +129,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               }
             }
           }
-        });
+        }
       }
     });
   }
@@ -123,8 +140,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     if (widget.deviceObject.power == true) {
       widget.deviceObject.radialProgressAnimationController.dispose();
     }
-    mainTimer.cancel();
-    autoBackTimer.cancel();
+    mainActive = false;
     super.dispose();
   }
 
@@ -373,6 +389,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   deviceObject.balanceTime = 0.0;
                   deviceObject.power = !deviceObject.power;
                   deviceObject.timer.cancel();
+                  autoBackTimer.cancel();
 //                  runAnimation(
 //                      begin: deviceObject.progressDegrees,
 //                      end: 0,
@@ -551,6 +568,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             deviceObject.power = false;
             deviceObject.radialProgressAnimationController.stop();
             deviceObject.timer.cancel();
+            autoBackTimer.cancel();
+
             deviceObject.radialProgressAnimationController.dispose();
             Future.delayed(const Duration(seconds: 2), () {
               //deviceObject.motionDetected = false;
@@ -561,6 +580,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             deviceObject.power = false;
             deviceObject.balanceTime = 0.0;
             deviceObject.radialProgressAnimationController.stop();
+            autoBackTimer.cancel();
             deviceObject.timer.cancel();
           }
         });
