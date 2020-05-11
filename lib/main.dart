@@ -13,14 +13,13 @@ import 'front_page.dart';
 import 'test_screen.dart';
 
 int displayTime;
-double temp = 1;
+
 //final customColor = CustomSliderColors();
 final customColor = CustomSliderColors(
     progressBarColor: Color(0xffffe9ea),
     hideShadow: true,
     trackColor: Color(0xffffe9ea),
     progressBarColors: [
-      Color(0xff262687),
       Color(0xffa43dbd),
       Color(0xffe563a7),
       Color(0xfff7a4b2),
@@ -76,10 +75,13 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  double temp;
   Timer mainTimer;
   bool errorRemover = false;
   @override
   void initState() {
+    //
+    temp = 1;
     mainTick();
     if (widget.deviceObject.power == true) {
       runAnimation(
@@ -98,6 +100,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     if (widget.deviceObject.power == true) {
       widget.deviceObject.radialProgressAnimationController.dispose();
     }
+    mainTimer.cancel();
     super.dispose();
   }
 
@@ -258,8 +261,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       min: 0,
                       max: 3600,
                       initialValue: 3600 -
-                          (3600 / widget.deviceObject.time.inSeconds) *
-                              widget.deviceObject.timer.tick,
+                          (3600 / deviceObject.time.inSeconds) *
+                              deviceObject.timer.tick,
                       appearance: CircularSliderAppearance(
                           customWidths: CustomSliderWidths(
                               trackWidth: 50,
@@ -337,7 +340,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   deviceObject.socket
                       .writeln(deviceObject.time.inMinutes.round());
                   deviceObject.progressDegrees = 0;
-
                   deviceObject.power = !deviceObject.power;
                   startTimer(deviceObject);
                   runAnimation(deviceObject: deviceObject);
@@ -346,7 +348,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   //time = 2;
                   destroyAnimation(deviceObject);
                   deviceObject.socket.write('stop');
-                  deviceObject.balanceTime = 0.0;
                   deviceObject.power = !deviceObject.power;
                   deviceObject.timer.cancel();
 //                  runAnimation(
@@ -527,7 +528,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             deviceObject.power = false;
             deviceObject.radialProgressAnimationController.stop();
             deviceObject.timer.cancel();
-
             deviceObject.radialProgressAnimationController.dispose();
             Future.delayed(const Duration(seconds: 2), () {
               //deviceObject.motionDetected = false;
@@ -536,7 +536,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           }
           if (deviceObject.progressDegrees == 360) {
             deviceObject.power = false;
-            deviceObject.balanceTime = 0.0;
             deviceObject.radialProgressAnimationController.stop();
             deviceObject.timer.cancel();
           }
