@@ -126,7 +126,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         }
       if(widget.deviceObject.notification==true)
         {
-
           notofication();
           widget.deviceObject.notification=false;
 
