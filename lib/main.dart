@@ -77,13 +77,13 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   double temp;
   double tempValue = 1;
   Timer mainTimer;
-  Timer autoBackTimer,autoBackTemp;
+  Timer autoBackTimer, autoBackTemp;
   double valueTemp = 1;
   bool errorRemover = false;
   @override
   void initState() {
     //
-    temp=1;
+    temp = 1;
     mainTick();
     if (widget.deviceObject.power == true) {
       runAnimation(
@@ -93,14 +93,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           end: 360);
       widget.deviceObject.radialProgressAnimationController.forward();
     }
-    autoBackTemp=Timer.periodic(Duration(seconds: 1),(callback)
-    {
-      if(widget.deviceObject.power==true)
-        {
-          setState(() {
-            widget.deviceObject.balanceTime=widget.deviceObject.balanceTime;
-          });
-        }
+    autoBackTemp = Timer.periodic(Duration(seconds: 1), (callback) {
+      if (widget.deviceObject.power == true) {
+        setState(() {
+          widget.deviceObject.balanceTime = widget.deviceObject.balanceTime;
+        });
+      }
     });
     autoBack();
     super.initState();
@@ -110,19 +108,18 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     double decrement;
     autoBackTimer = Timer.periodic(Duration(seconds: 1), (callback) {
       if (widget.deviceObject.power == true) {
+        if (widget.deviceObject.balanceTime >= 0 &&
+            widget.deviceObject.balanceTime < 3600) {
           if (widget.deviceObject.balanceTime >= 0 &&
               widget.deviceObject.balanceTime < 3600) {
-            if (widget.deviceObject.balanceTime >= 0 &&
-                widget.deviceObject.balanceTime < 3600) {
-              print(widget.deviceObject.balanceTime);
-              decrement = (3600 / (widget.deviceObject.time.inSeconds));
-              if (widget.deviceObject.balanceTime + decrement < 3600) {
-                widget.deviceObject.balanceTime =
-                    widget.deviceObject.balanceTime + decrement;
-              }
+            print(widget.deviceObject.balanceTime);
+            decrement = (3600 / (widget.deviceObject.time.inSeconds));
+            if (widget.deviceObject.balanceTime + decrement < 3600) {
+              widget.deviceObject.balanceTime =
+                  widget.deviceObject.balanceTime + decrement;
             }
           }
-
+        }
       }
     });
   }
