@@ -308,6 +308,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           (3600 / deviceObject.time.inSeconds) *
                               deviceObject.timer.tick,
                       appearance: CircularSliderAppearance(
+
                         startAngle: 210,
                           counterClockwise: true,
                           customWidths: CustomSliderWidths(
