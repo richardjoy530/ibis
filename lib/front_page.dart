@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:ibis/height_page.dart';
 import 'package:ibis/main.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:flutter/services.dart';
 
 import 'data.dart';
 import 'test_screen.dart';
@@ -21,6 +22,7 @@ class FrontPage extends StatefulWidget {
 }
 
 class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
+  static const platform=const MethodChannel("com.richard.ibis/ibis");
   Timer timer;
   @override
   void initState() {
@@ -46,8 +48,19 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         }
       });
     });
-
+    hotspot();
     super.initState();
+  }
+
+  void hotspot() async
+  {
+    String value;
+    try{
+       value= await platform.invokeMethod("hotspot");
+    }catch(e){
+      print(e);
+    }
+    print(value);
   }
 
   @override
