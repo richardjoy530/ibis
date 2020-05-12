@@ -118,6 +118,7 @@ void connect() async {
               (element) => element.ip == clientSocket.remoteAddress.address);
           deviceObjectList[deviceObjectList.indexOf(temp)].socket =
               clientSocket;
+          deviceObjectList[deviceObjectList.indexOf(temp)].clientError = false;
           deviceObjectList[deviceObjectList.indexOf(temp)].offline = false;
           deviceObjectList[deviceObjectList.indexOf(temp)].run();
           deviceObjectList[deviceObjectList.indexOf(temp)].time =
