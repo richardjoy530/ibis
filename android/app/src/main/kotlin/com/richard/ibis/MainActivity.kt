@@ -1,4 +1,3 @@
-package com.richard.ibis
 import android.content.Context
 import android.net.wifi.WifiManager
 import android.os.Build
@@ -26,6 +25,8 @@ class MainActivity: FlutterActivity() {
             }
         }
     }
+
+
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         GeneratedPluginRegistrant.registerWith(flutterEngine)
     }
