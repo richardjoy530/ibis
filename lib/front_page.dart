@@ -112,115 +112,114 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               ),
               serverOnline == true
                   ? deviceObjectList.length == 0
-                  ? Center(
-                child: Container(
-                  margin: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                      color: Color(0xffdec3e4),
-                      borderRadius: BorderRadius.circular(20)),
-                  child: ListTile(
-                    leading: Icon(Icons.wifi_tethering),
-                    title: Text('Please connect your device!'),
-                  ),
-                ),
-              )
-                  : Expanded(
-                child: ListView.builder(
-                    itemCount: deviceObjectList.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        margin: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            color: Color(0xffdec3e4),
-                            borderRadius: BorderRadius.circular(20)),
-                        child: ListTile(
-                          leading: Icon(
-                            deviceObjectList[index].offline == true
-                                ? Icons.signal_wifi_off
-                                : Icons.network_wifi,
-                            color: Color(0xff725496),
-                          ),
-                          trailing: Visibility(
-                            visible: deviceObjectList[index]
-                                .motionDetected,
-                            child: Icon(
-                              Icons.warning,
-                              color: Color(0xff725496),
+                      ? Center(
+                          child: Container(
+                            margin: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                                color: Color(0xffdec3e4),
+                                borderRadius: BorderRadius.circular(20)),
+                            child: ListTile(
+                              leading: Icon(Icons.wifi_tethering),
+                              title: Text('Please connect your device!'),
                             ),
                           ),
-                          title:
-                          Text('${deviceObjectList[index].name}'),
-                          subtitle: deviceObjectList[index].power ==
-                              false
-                              ? Text(deviceObjectList[index]
-                              .offline ==
-                              true
-                              ? 'Device is Offline'
-                              : deviceObjectList[index]
-                              .motionDetected ==
-                              false
-                              ? 'Device Idle'
-                              : 'Motion Detected : Tap to start again')
-                              : LinearPercentIndicator(
-                            lineHeight: 5.0,
-                            animation: false,
-                            animationDuration: 0,
-                            backgroundColor: Color(0xffffe9ea),
-                            percent: deviceObjectList[index]
-                                .linearProgressBarValue,
-                            linearStrokeCap:
-                            LinearStrokeCap.roundAll,
-                            progressColor: Color(0xff9a6c9f),
-                          ),
-                          onTap: () {
-                            if (deviceObjectList[index].offline ==
-                                false) {
-                              if (deviceObjectList[index].power ==
-                                  true) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          HomePage(
-                                              deviceObjectList[index])),
+                        )
+                      : Expanded(
+                          child: ListView.builder(
+                              itemCount: deviceObjectList.length,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  margin: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      color: Color(0xffdec3e4),
+                                      borderRadius: BorderRadius.circular(20)),
+                                  child: ListTile(
+                                    leading: Icon(
+                                      deviceObjectList[index].offline == true
+                                          ? Icons.signal_wifi_off
+                                          : Icons.network_wifi,
+                                      color: Color(0xff725496),
+                                    ),
+                                    trailing: Visibility(
+                                      visible: deviceObjectList[index]
+                                          .motionDetected,
+                                      child: Icon(
+                                        Icons.warning,
+                                        color: Color(0xff725496),
+                                      ),
+                                    ),
+                                    title:
+                                        Text('${deviceObjectList[index].name}'),
+                                    subtitle: deviceObjectList[index].power ==
+                                            false
+                                        ? Text(deviceObjectList[index]
+                                                    .offline ==
+                                                true
+                                            ? 'Device is Offline'
+                                            : deviceObjectList[index]
+                                                        .motionDetected ==
+                                                    false
+                                                ? 'Device Idle'
+                                                : 'Motion Detected : Tap to start again')
+                                        : LinearPercentIndicator(
+                                            lineHeight: 5.0,
+                                            animation: false,
+                                            animationDuration: 0,
+                                            backgroundColor: Color(0xffffe9ea),
+                                            percent: deviceObjectList[index]
+                                                .linearProgressBarValue,
+                                            linearStrokeCap:
+                                                LinearStrokeCap.roundAll,
+                                            progressColor: Color(0xff9a6c9f),
+                                          ),
+                                    onTap: () {
+                                      if (deviceObjectList[index].offline ==
+                                          false) {
+                                        if (deviceObjectList[index].power ==
+                                            true) {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => HomePage(
+                                                    deviceObjectList[index])),
+                                          );
+                                        } else {
+                                          deviceObjectList[index]
+                                              .motionDetected = false;
+                                          deviceObjectList[index].time =
+                                              Duration(minutes: 1);
+                                          deviceObjectList[index]
+                                              .progressDegrees = 0;
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    HeightPage(deviceObjectList[
+                                                        index])),
+                                          );
+                                        }
+                                      }
+                                    },
+                                    onLongPress: () {
+                                      setName(context, deviceObjectList[index]);
+                                    },
+                                  ),
                                 );
-                              } else {
-                                deviceObjectList[index]
-                                    .motionDetected = false;
-                                deviceObjectList[index].time =
-                                    Duration(minutes: 1);
-                                deviceObjectList[index]
-                                    .progressDegrees = 0;
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          HeightPage(deviceObjectList[
-                                          index])),
-                                );
-                              }
-                            }
-                          },
-                          onLongPress: () {
-                            setName(context, deviceObjectList[index]);
-                          },
-                        ),
-                      );
-                    }),
-              )
+                              }),
+                        )
                   : AlertDialog(
-                backgroundColor: Color(0xffdec3e4),
-                shape: RoundedRectangleBorder(
-                    borderRadius:
-                    BorderRadius.all(Radius.circular(20.0))),
-                title: Text('Server is Offline'),
-                content: IconButton(
-                  icon: Icon(Icons.refresh),
-                  onPressed: () {
-                    connect();
-                  },
-                ),
-              ),
+                      backgroundColor: Color(0xffdec3e4),
+                      shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(20.0))),
+                      title: Text('Server is Offline'),
+                      content: IconButton(
+                        icon: Icon(Icons.refresh),
+                        onPressed: () {
+                          connect();
+                        },
+                      ),
+                    ),
             ],
           )),
     );

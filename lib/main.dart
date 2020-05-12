@@ -249,18 +249,18 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
             widget.deviceObject.motionDetected == true
                 ? AlertDialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              title: Align(
-                  alignment: Alignment.center,
-                  child: Text('Motion Detected')),
-              content: Icon(
-                Icons.warning,
-                color: Color(0xff725496),
-                size: 50,
-              ),
-              backgroundColor: Color(0xffdec3e4),
-            )
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                    title: Align(
+                        alignment: Alignment.center,
+                        child: Text('Motion Detected')),
+                    content: Icon(
+                      Icons.warning,
+                      color: Color(0xff725496),
+                      size: 50,
+                    ),
+                    backgroundColor: Color(0xffdec3e4),
+                  )
                 : Expanded(child: tabView(context, widget.deviceObject))
           ],
         ),
@@ -296,22 +296,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ),
               CustomPaint(
                 child: Container(
-                  height: min(MediaQuery
-                      .of(context)
-                      .size
-                      .height / 1.5,
-                      MediaQuery
-                          .of(context)
-                          .size
-                          .width / 1.5),
-                  width: min(MediaQuery
-                      .of(context)
-                      .size
-                      .height / 1.5,
-                      MediaQuery
-                          .of(context)
-                          .size
-                          .width / 1.5),
+                  height: min(MediaQuery.of(context).size.height / 1.5,
+                      MediaQuery.of(context).size.width / 1.5),
+                  width: min(MediaQuery.of(context).size.height / 1.5,
+                      MediaQuery.of(context).size.width / 1.5),
                   child: Center(
                     child: Container(
                       height: (MediaQuery.of(context).size.width / 1.5) - 50,
