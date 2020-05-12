@@ -276,6 +276,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       initialValue: 1,
                       appearance: CircularSliderAppearance(
                         counterClockwise: true,
+                          startAngle: 210,
                           customWidths: CustomSliderWidths(
                               trackWidth: 50,
                               progressBarWidth: 50,
