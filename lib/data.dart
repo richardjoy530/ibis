@@ -51,7 +51,6 @@ class DeviceObject {
     })
       ..onError((handleError) {
         print('Client Error : ${handleError.toString()}');
-        //deviceObjectList = [];
         serverOnline = false;
         serverSocket.close();
         this.clientError = true;
@@ -61,6 +60,8 @@ class DeviceObject {
         this.socket.close();
         this.clientError = true;
         this.offline = true;
+        this.timer.cancel();
+        this.power = false;
       });
   }
 }

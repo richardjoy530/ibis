@@ -74,7 +74,7 @@ class HeightPainter extends CustomPainter {
                     (-(width / 2) + size.width / 2) + width - 5,
                     (height / 2) - temp * i),
                 Radius.circular(10)),
-            progressPaint..color = barColors[i]);
+            progressPaint..color = barColors[9 - i]);
       }
     }
 

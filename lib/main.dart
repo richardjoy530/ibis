@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,14 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:ibis/radial_painter.dart';
+import 'package:ibis/test_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
-
 import 'data.dart';
 import 'front_page.dart';
-import 'test_screen.dart';
 
 int displayTime;
 SharedPreferences prefs;
@@ -119,6 +119,7 @@ void connect() async {
           deviceObjectList[deviceObjectList.indexOf(temp)].socket =
               clientSocket;
           deviceObjectList[deviceObjectList.indexOf(temp)].offline = false;
+          deviceObjectList[deviceObjectList.indexOf(temp)].clientError = false;
           deviceObjectList[deviceObjectList.indexOf(temp)].run();
           deviceObjectList[deviceObjectList.indexOf(temp)].time =
               Duration(minutes: 0);
@@ -192,7 +193,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    print('Main Page Disposed');
     if (widget.deviceObject.power == true) {
       widget.deviceObject.radialProgressAnimationController.dispose();
     }
@@ -203,62 +203,67 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xffffe9ea),
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            height: 30,
-            width: 30,
-            child: FlareActor(
-              'assets/status.flr',
-              animation: 'Connected',
-            ),
-          ),
-        ),
-        title: Text(
-          widget.deviceObject.name,
-          style: TextStyle(
-            fontSize: 24,
-            color: Color(0xff3b338b),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.phonelink_off),
-            color: Color(0xff3b338b),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SocketScreen()),
-              );
-            },
-          )
-        ],
-      ),
       body: Container(
+        padding: EdgeInsets.only(top: 40),
         decoration: BoxDecoration(
           gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [Color(0xffffe9ea), Color(0xffffffff)]),
         ),
-        child: widget.deviceObject.motionDetected == true
-            ? AlertDialog(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                title: Align(
-                    alignment: Alignment.center,
-                    child: Text('Motion Detected')),
-                content: Icon(
-                  Icons.warning,
-                  color: Color(0xff725496),
-                  size: 50,
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    height: 30,
+                    width: 30,
+                    child: FlareActor(
+                      'assets/status.flr',
+                      animation: 'Connected',
+                    ),
+                  ),
                 ),
-                backgroundColor: Color(0xffdec3e4),
-              )
-            : tabView(context, widget.deviceObject),
+                Text(
+                  widget.deviceObject.name,
+                  style: TextStyle(
+                    fontSize: 30,
+                    color: Color(0xff3b338b),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.menu),
+                  color: Color(0xff725496),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SocketScreen()),
+                    );
+                  },
+                )
+              ],
+            ),
+            widget.deviceObject.motionDetected == true
+                ? AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              title: Align(
+                  alignment: Alignment.center,
+                  child: Text('Motion Detected')),
+              content: Icon(
+                Icons.warning,
+                color: Color(0xff725496),
+                size: 50,
+              ),
+              backgroundColor: Color(0xffdec3e4),
+            )
+                : Expanded(child: tabView(context, widget.deviceObject))
+          ],
+        ),
       ),
     );
   }
@@ -291,8 +296,22 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ),
               CustomPaint(
                 child: Container(
-                  height: MediaQuery.of(context).size.width / 1.5,
-                  width: MediaQuery.of(context).size.width / 1.5,
+                  height: min(MediaQuery
+                      .of(context)
+                      .size
+                      .height / 1.5,
+                      MediaQuery
+                          .of(context)
+                          .size
+                          .width / 1.5),
+                  width: min(MediaQuery
+                      .of(context)
+                      .size
+                      .height / 1.5,
+                      MediaQuery
+                          .of(context)
+                          .size
+                          .width / 1.5),
                   child: Center(
                     child: Container(
                       height: (MediaQuery.of(context).size.width / 1.5) - 50,
@@ -330,7 +349,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       max: 19,
                       initialValue: 1,
                       appearance: CircularSliderAppearance(
-                        counterClockwise: true,
+                          counterClockwise: true,
                           startAngle: 210,
                           customWidths: CustomSliderWidths(
                               trackWidth: 50,
@@ -339,7 +358,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           size: (MediaQuery.of(context).size.width / 1.5) + 50,
                           customColors: customColor),
                       onChange: (double value) {
-                        print(value);
                         displayTime = value.floor();
 
                         if (deviceObject.power == false &&
@@ -363,8 +381,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           (3600 / deviceObject.time.inSeconds) *
                               deviceObject.timer.tick,
                       appearance: CircularSliderAppearance(
-
-                        startAngle: 210,
+                          startAngle: 210,
                           counterClockwise: true,
                           customWidths: CustomSliderWidths(
                               trackWidth: 50,
@@ -561,18 +578,14 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 padding: const EdgeInsets.all(20),
                 child: IconButton(
                   icon: Icon(Icons.arrow_upward),
-                  onPressed: () {
-                    print('[*]');
-                  },
+                  onPressed: () {},
                 ),
               ),
               onPointerDown: (data) {
-                print('tap up');
                 //tap = true;
                 //heightOnTap(socket, '1');
               },
               onPointerUp: (data) {
-                print('cancel');
                 //tap = false;
               },
             ),
@@ -581,18 +594,14 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 padding: const EdgeInsets.all(20),
                 child: IconButton(
                   icon: Icon(Icons.arrow_downward),
-                  onPressed: () {
-                    print('[*]');
-                  },
+                  onPressed: () {},
                 ),
               ),
               onPointerDown: (data) {
-                print('tap up');
                 //tap = true;
                 //heightOnTap(socket, '-1');
               },
               onPointerUp: (data) {
-                print('cancel');
                 //tap = false;
               },
             ),
@@ -601,8 +610,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               trailing: IconButton(
                   icon: Icon(Icons.check),
                   onPressed: () {
-                    print('confirm');
-
                     Navigator.pop(context);
                   }),
             )
