@@ -9,6 +9,8 @@ import 'front_page.dart';
 import 'main.dart' as main;
 
 class DeviceObject {
+  bool offline;
+  String ip;
   Socket socket;
   bool clientError = false;
   String name;
@@ -22,6 +24,8 @@ class DeviceObject {
   bool motionDetected;
   double height;
   DeviceObject({
+    this.ip,
+    this.offline,
     this.name,
     this.socket,
     this.radialProgressAnimationController,
@@ -34,17 +38,20 @@ class DeviceObject {
     this.power = false,
     this.time,
     this.progressDegrees = 0,
-  }) {
+  });
+  void run() {
     socket.listen((onData) {
       print([socket.remotePort, onData]);
-      if (String.fromCharCodes(onData).trim() == '1') {
-        this.motionDetected = true;
-        main.notification('Motion was detected');
+      if (this.offline == false) {
+        if (String.fromCharCodes(onData).trim() == '1') {
+          this.motionDetected = true;
+          main.notification('Motion was detected');
+        }
       }
     })
       ..onError((handleError) {
         print('Client Error : ${handleError.toString()}');
-        deviceObjectList = [];
+        //deviceObjectList = [];
         serverOnline = false;
         serverSocket.close();
         this.clientError = true;
@@ -53,11 +60,7 @@ class DeviceObject {
       ..onDone(() {
         this.socket.close();
         this.clientError = true;
-        if (serverOnline == true) {
-          deviceObjectList.remove(deviceObjectList.singleWhere((test) {
-            return this.socket == test.socket ? true : false;
-          }));
-        }
+        this.offline = true;
       });
   }
 }

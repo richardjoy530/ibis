@@ -21,11 +21,12 @@ class MainActivity: FlutterActivity() {
         wifiManager = this.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         MethodChannel(flutterEngine?.dartExecutor,channel).setMethodCallHandler{ MethodCall, result->
             if (MethodCall.method=="test"){
-                wifiManager.isWifiEnabled = false
+                //wifiManager.isWifiEnabled = false
                 result.success("test")
             }
         }
     }
+
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         GeneratedPluginRegistrant.registerWith(flutterEngine)
     }

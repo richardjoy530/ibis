@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:ibis/radial_painter.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 import 'data.dart';
@@ -15,6 +16,9 @@ import 'front_page.dart';
 import 'test_screen.dart';
 
 int displayTime;
+SharedPreferences prefs;
+String deviceName;
+int deviceHeight;
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 final customColor = CustomSliderColors(
@@ -34,6 +38,20 @@ const platform = const MethodChannel("com.richard.ibis/ibis");
 void main() {
   connect();
   return runApp(MyApp());
+}
+
+Future<void> getIpList() async {
+  prefs = await SharedPreferences.getInstance();
+  ipList = (prefs.getStringList('iplist')) ?? [];
+  for (var eachIp in ipList) {
+    deviceName = prefs.getString('${eachIp}name');
+    deviceHeight = prefs.getInt('${eachIp}height') ?? 0;
+    deviceObjectList.add(DeviceObject(
+        offline: true,
+        ip: eachIp,
+        name: deviceName,
+        height: deviceHeight.toDouble()));
+  }
 }
 
 void test() async {
@@ -70,11 +88,48 @@ void connect() async {
         print('Server error 1: $e');
       });
       serverSocket.listen((sock) {}).onData((clientSocket) {
-        print([clientSocket.remoteAddress, clientSocket.remotePort]);
-        deviceObjectList.add(DeviceObject(
-            socket: clientSocket,
-            name: clientSocket.remotePort.toString(),
-            time: Duration(minutes: 0)));
+        if (!ipList.contains(clientSocket.remoteAddress.address)) {
+          //New Devices
+          deviceObjectList.add(DeviceObject(
+              offline: false,
+              socket: clientSocket,
+              ip: clientSocket.remoteAddress.address,
+              name: clientSocket.remotePort.toString(),
+              time: Duration(minutes: 0)));
+          DeviceObject temp = deviceObjectList.singleWhere(
+              (element) => element.ip == clientSocket.remoteAddress.address);
+          deviceObjectList[deviceObjectList.indexOf(temp)].run();
+          ipList.add(clientSocket.remoteAddress.address);
+          SharedPreferences.getInstance().then((prefs) {
+            prefs.setStringList('iplist', ipList);
+            prefs.setString('${clientSocket.remoteAddress.address}name',
+                'Device${clientSocket.remotePort}');
+          });
+
+          print([
+            clientSocket.remoteAddress,
+            clientSocket.remotePort,
+            'Not in ipList'
+          ]);
+        } else {
+          //Registered Devices
+          DeviceObject temp = deviceObjectList.singleWhere(
+              (element) => element.ip == clientSocket.remoteAddress.address);
+          deviceObjectList[deviceObjectList.indexOf(temp)].socket =
+              clientSocket;
+          deviceObjectList[deviceObjectList.indexOf(temp)].offline = false;
+          deviceObjectList[deviceObjectList.indexOf(temp)].run();
+          deviceObjectList[deviceObjectList.indexOf(temp)].time =
+              Duration(minutes: 0);
+          SharedPreferences.getInstance().then((prefs) =>
+              deviceObjectList[deviceObjectList.indexOf(temp)].name =
+                  prefs.getString('${clientSocket.remoteAddress.address}name'));
+          print([
+            clientSocket.remoteAddress,
+            clientSocket.remotePort,
+            'In ipList'
+          ]);
+        }
       });
     })
     ..catchError((onError) {

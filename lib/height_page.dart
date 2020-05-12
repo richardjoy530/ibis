@@ -189,6 +189,8 @@ class _HeightPageState extends State<HeightPage> {
                           widget.deviceObject.progressDegrees = 0;
                           widget.deviceObject.socket
                               .write('${widget.deviceObject.height.toInt()}\r');
+                          prefs.setInt('${widget.deviceObject.ip}height',
+                              widget.deviceObject.height.toInt());
                           widget.deviceObject.time = Duration(minutes: 1);
                           Navigator.pushReplacement(
                             context,
