@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:ibis/radial_painter.dart';
 import 'package:intl/intl.dart';
@@ -30,10 +31,21 @@ var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
 var initializationSettingsIOS = IOSInitializationSettings();
 var initializationSettings = InitializationSettings(
     initializationSettingsAndroid, initializationSettingsIOS);
-
+const platform = const MethodChannel("com.richard.ibis/ibis");
 void main() {
   connect();
   return runApp(MyApp());
+}
+
+void test() async {
+  String value;
+  try {
+    value = await platform.invokeMethod('test');
+  } catch (e) {
+    print(e);
+  }
+
+  print('Test : $value');
 }
 
 Future<void> notification(String message) async {
