@@ -7,6 +7,7 @@ import 'package:ibis/height_page.dart';
 import 'package:ibis/main.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
+
 import 'data.dart';
 import 'test_screen.dart';
 
@@ -22,6 +23,7 @@ class FrontPage extends StatefulWidget {
 }
 
 class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
+
   Timer timer;
   TextEditingController nameController;
   @override
@@ -55,6 +57,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 
     super.initState();
   }
+
+
 
   @override
   void dispose() {

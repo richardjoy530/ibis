@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
+
 import 'data.dart';
 import 'front_page.dart';
 import 'test_screen.dart';
@@ -329,6 +330,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       max: 19,
                       initialValue: 1,
                       appearance: CircularSliderAppearance(
+                        counterClockwise: true,
+                          startAngle: 210,
                           customWidths: CustomSliderWidths(
                               trackWidth: 50,
                               progressBarWidth: 50,
@@ -360,6 +363,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           (3600 / deviceObject.time.inSeconds) *
                               deviceObject.timer.tick,
                       appearance: CircularSliderAppearance(
+
+                        startAngle: 210,
+                          counterClockwise: true,
                           customWidths: CustomSliderWidths(
                               trackWidth: 50,
                               progressBarWidth: 50,
