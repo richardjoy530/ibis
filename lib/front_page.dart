@@ -24,6 +24,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   Timer timer;
   @override
   void initState() {
+    test();
     timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
       setState(() {
         for (var i = 0; i < deviceObjectList.length; i++) {
