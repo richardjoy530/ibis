@@ -12,6 +12,7 @@ import 'data.dart';
 import 'test_screen.dart';
 
 List<DeviceObject> deviceObjectList = [];
+List<String> ipList = [];
 List<Socket> sockets = [];
 ServerSocket serverSocket;
 bool serverOnline = false;
@@ -24,13 +25,17 @@ class FrontPage extends StatefulWidget {
 class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 
   Timer timer;
+  TextEditingController nameController;
   @override
   void initState() {
+    nameController = TextEditingController();
+    getIpList();
     test();
     timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
       setState(() {
         for (var i = 0; i < deviceObjectList.length; i++) {
-          if (deviceObjectList[i].motionDetected == true) {
+          if (deviceObjectList[i].motionDetected == true &&
+              deviceObjectList[i].power == true) {
             deviceObjectList[i].timer.cancel();
             deviceObjectList[i].power = false;
             //deviceObjectList[i].motionDetected = false;
@@ -57,6 +62,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    nameController.dispose();
     print('Front Page Disposed');
     timer.cancel();
     super.dispose();
@@ -158,7 +164,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                             borderRadius: BorderRadius.circular(20)),
                         child: ListTile(
                           leading: Icon(
-                            Icons.network_wifi,
+                            deviceObjectList[index].offline == true
+                                ? Icons.signal_wifi_off
+                                : Icons.network_wifi,
                             color: Color(0xff725496),
                           ),
                           trailing: Visibility(
@@ -168,13 +176,14 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                               color: Color(0xff725496),
                             ),
                           ),
-                          title: Text(
-                              '${deviceObjectList[index].socket.remoteAddress.address.toString()} : ${deviceObjectList[index].socket.remotePort}'),
+                          title: Text('${deviceObjectList[index].name}'),
                           subtitle: deviceObjectList[index].power == false
-                              ? Text(deviceObjectList[index].motionDetected ==
-                                      false
-                                  ? 'Device Idle'
-                                  : 'Motion Detected : Tap to start again')
+                              ? Text(deviceObjectList[index].offline == true
+                                  ? 'Device is Offline'
+                                  : deviceObjectList[index].motionDetected ==
+                                          false
+                                      ? 'Device Idle'
+                                      : 'Motion Detected : Tap to start again')
                               : LinearPercentIndicator(
                                   lineHeight: 5.0,
                                   animation: false,
@@ -186,25 +195,30 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                   progressColor: Color(0xff9a6c9f),
                                 ),
                           onTap: () {
-                            if (deviceObjectList[index].power == true) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        HomePage(deviceObjectList[index])),
-                              );
-                            } else {
-                              deviceObjectList[index].motionDetected = false;
-                              deviceObjectList[index].time =
-                                  Duration(minutes: 1);
-                              deviceObjectList[index].progressDegrees = 0;
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        HeightPage(deviceObjectList[index])),
-                              );
+                            if (deviceObjectList[index].offline == false) {
+                              if (deviceObjectList[index].power == true) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          HomePage(deviceObjectList[index])),
+                                );
+                              } else {
+                                deviceObjectList[index].motionDetected = false;
+                                deviceObjectList[index].time =
+                                    Duration(minutes: 1);
+                                deviceObjectList[index].progressDegrees = 0;
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          HeightPage(deviceObjectList[index])),
+                                );
+                              }
                             }
+                          },
+                          onLongPress: () {
+                            setName(context, deviceObjectList[index]);
                           },
                         ),
                       );
@@ -223,6 +237,49 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               ),
       ),
     );
+  }
+
+  Future<void> setName(context, DeviceObject deviceObject) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            backgroundColor: Color(0xffdec3e4),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            title: Text(
+              'Give a name for your device',
+              style: TextStyle(
+                  color: Colors.blueGrey, fontWeight: FontWeight.bold),
+            ),
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(hintText: 'Enter name'),
+                  onSubmitted: (name) {
+                    deviceObject.name = nameController.text;
+                    prefs.setString('${deviceObject.ip}name', name);
+                    nameController.text = '';
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              SimpleDialogOption(
+                child: Text('OK'),
+                onPressed: () {
+                  deviceObject.name = nameController.text;
+                  prefs.setString(
+                      '${deviceObject.ip}name', nameController.text);
+                  nameController.text = '';
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
   }
 
   Future<void> setHeightYN(context, DeviceObject deviceObject) async {
