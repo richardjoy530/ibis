@@ -65,6 +65,31 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawer: Drawer(
+        child: SafeArea(
+          child: Container(
+             child: Column(
+              children: <Widget>[
+              Container(
+                color: Colors.lightBlue,
+                height: 300,
+              ),
+                Container(
+                  child: ListTile(
+                    leading: Icon(Icons.settings),
+                    title: Text("Settings"),
+                    onTap: ()
+                    {
+                      Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Settings() ));
+                    },
+                  ),
+                )
+            ],
+          ),
+        ),
+      ),
+      ),
       appBar: AppBar(
         backgroundColor: Color(0xffffe9ea),
         leading: Padding(
@@ -96,7 +121,10 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 MaterialPageRoute(builder: (context) => SocketScreen()),
               );
             },
-          )
+          ),
+          
+
+
         ],
       ),
       body: Container(
@@ -242,3 +270,67 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         });
   }
 }
+
+class Settings extends StatefulWidget {
+  @override
+  _SettingsState createState() => _SettingsState();
+}
+
+class _SettingsState extends State<Settings> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Settings"),
+      ),
+      body:Container(
+       child: Column(
+         children: <Widget>[
+           ListTile(
+              title: Container(
+                padding: EdgeInsets.all(20),
+                height: 80,
+                decoration: BoxDecoration(
+                  color:Color(0xff725496),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text("Devices",style: TextStyle(fontSize: 25,color: Colors.white),),
+
+              ),
+            ),
+           Container(
+             height: 3,
+             width:400 ,
+             decoration: BoxDecoration(
+               color: Colors.black,
+               borderRadius: BorderRadius.circular(3)
+             ),
+           ),
+           Expanded(
+             child: Container(
+               child: ListView.builder(
+                 itemCount: deviceObjectList.length,
+                   itemBuilder:(context, index) {
+                   return Container(
+                     margin: EdgeInsets.all(10),
+                     decoration: BoxDecoration(
+                       color: Color(0xff725496),
+                       borderRadius: BorderRadius.circular(20),
+                     ),
+                     child: ListTile(
+                       title: Text(deviceObjectList[index].name.toString()),
+                     ),
+                   );
+                   }),
+             ),
+           )
+         ],
+       )
+    ) ,
+
+      
+    );
+  }
+}
+
+
