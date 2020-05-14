@@ -163,10 +163,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                onTap: ()
                                {
                                  print('tapped');
-                                 return SimpleDialog(
-                                   title: Text('hlo'),
-
-                                 );
+                                 info(context, deviceObjectList[index]);
 
 
                                },
@@ -178,10 +175,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                             child:Row(
                               children: <Widget>[
                                 Text('${deviceObjectList[index].name}'),
-                                Text('\t\t\t\t\t\t\t\t Total Duration: '),
-                                Text(((prefs.getInt('${deviceObjectList[index].ip}totalDuration')/(60*60)).floor()).toString()+':'),
-                                Text(((prefs.getInt('${deviceObjectList[index].ip}totalDuration')/60).floor()).toString()+':'),
-                                Text((prefs.getInt('${deviceObjectList[index].ip}totalDuration')%60).toString()),
                               ],
                             )
                           ),
@@ -244,6 +237,28 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 ),
               ),
       ),
+    );
+  }
+
+  Future<void> info(context,DeviceObject deviceObject) async{
+    await showDialog(context:context,
+    builder: (BuildContext context)
+        {
+          return SimpleDialog(
+            title: Column(
+              children: <Widget>[
+                Text('${deviceObject.name}'),
+                Row(
+                  children: <Widget>[
+                    Text('\t\t\t\t\t\t\t\t Total Duration: '),
+                    Text(((prefs.getInt('${deviceObject.ip}totalDuration')/(60*60)).floor()).toString()+':'),
+                    Text(((prefs.getInt('${deviceObject.ip}totalDuration')/60).floor()).toString()),
+                  ],
+                )
+              ],
+            ),
+          );
+        }
     );
   }
 
