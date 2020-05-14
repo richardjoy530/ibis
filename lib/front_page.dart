@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:clay_containers/clay_containers.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:ibis/height_page.dart';
@@ -122,17 +123,42 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               height: 200,
               width: 400,
               color: Colors.lightBlue,
-              child: Center(
-                  child: FutureBuilder(
-                  future: WiFiForIoTPlugin.getIP(),
-                  initialData: "Loading..",
-                  builder: (BuildContext context, AsyncSnapshot<String> ip) {
-                    return Text("IP : ${ip.data}",style: TextStyle(fontSize: 25));
-                  })
-              ),
+              child:Column(
+                children: <Widget>[
+                  FutureBuilder(
+                      future: WiFiForIoTPlugin.getIP(),
+                      initialData: "Loading..",
+                      builder: (BuildContext context, AsyncSnapshot<String> ip) {
+                        return Text("IP : ${ip.data}",style: TextStyle(fontSize: 25));
+                      }),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      FutureBuilder(
+                          future: WiFiForIoTPlugin.getBSSID(),
+                          initialData: "Loading..",
+                          builder: (BuildContext context, AsyncSnapshot<String> bssid) {
+                            return Text("BSSID: ${bssid.data}");
+                          }),
+                      FutureBuilder(
+                          future: WiFiForIoTPlugin.getCurrentSignalStrength(),
+                          initialData: 0,
+                          builder: (BuildContext context, AsyncSnapshot<int> signal) {
+                            return Text("\t\t\tSignal: ${signal.data}");
+                          }),
+                    ],
+                  ),
+                ],
+              )
+
             ),
-            Container(
+            ClayContainer(
+                color: Color(0xffd6e7ee),
+              borderRadius: 20,
+              curveType: CurveType.convex,
+              spread: 2,
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   ListTile(
                     title: Center(child:Text('Wifi',style: TextStyle(fontSize: 30),),),
