@@ -32,12 +32,14 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
       setState(() {
         for (var i = 0; i < deviceObjectList.length; i++) {
+          //print(prefs.getInt('${deviceObjectList[i].ip}totalDuration'));
           if (deviceObjectList[i].motionDetected == true &&
               deviceObjectList[i].power == true) {
             deviceObjectList[i].timer.cancel();
             deviceObjectList[i].power = false;
             //deviceObjectList[i].motionDetected = false;
           }
+
           if (deviceObjectList[i].power == true) {
             deviceObjectList[i].linearProgressBarValue =
                 (1 / deviceObjectList[i].time.inSeconds) *
@@ -311,3 +313,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         });
   }
 }
+
+
+

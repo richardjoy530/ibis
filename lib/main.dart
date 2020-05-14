@@ -105,6 +105,9 @@ void connect() async {
             prefs.setStringList('iplist', ipList);
             prefs.setString('${clientSocket.remoteAddress.address}name',
                 'Device${clientSocket.remotePort}');
+            prefs.setInt('${clientSocket.remoteAddress.address}totalDuration', 0);
+
+
           });
 
           print([
@@ -118,6 +121,7 @@ void connect() async {
               (element) => element.ip == clientSocket.remoteAddress.address);
           deviceObjectList[deviceObjectList.indexOf(temp)].socket =
               clientSocket;
+          deviceObjectList[deviceObjectList.indexOf(temp)].clientError = false;
           deviceObjectList[deviceObjectList.indexOf(temp)].offline = false;
           deviceObjectList[deviceObjectList.indexOf(temp)].clientError = false;
           deviceObjectList[deviceObjectList.indexOf(temp)].run();
@@ -274,6 +278,11 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   startTimer(DeviceObject deviceObject) {
     deviceObject.timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (serverOnline == true && widget.deviceObject.clientError == false) {}
+      if(widget.deviceObject.power==true && widget.deviceObject.motionDetected==false && widget.deviceObject.pause==false)
+        {
+          widget.deviceObject.totalDuration=prefs.getInt('${widget.deviceObject.ip}totalDuration') + 1;
+          prefs.setInt('${widget.deviceObject.ip}totalDuration', widget.deviceObject.totalDuration);
+        }
     });
   }
 
