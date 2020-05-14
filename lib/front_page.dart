@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 
+import 'package:clay_containers/clay_containers.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:ibis/height_page.dart';
 import 'package:ibis/main.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:wifi_iot/wifi_iot.dart';
 
 import 'data.dart';
 import 'test_screen.dart';
@@ -15,7 +18,11 @@ List<String> ipList = [];
 List<Socket> sockets = [];
 ServerSocket serverSocket;
 bool serverOnline = false;
+bool _isEnabled = false;
+bool _isConnected=false;
 
+
+final List<bool> isSelected=[false];
 class FrontPage extends StatefulWidget {
   @override
   FrontPageState createState() => FrontPageState();
@@ -24,9 +31,47 @@ class FrontPage extends StatefulWidget {
 class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   Timer timer;
   TextEditingController nameController;
+
+  Future<void> wifi() async
+  {
+    setState(() {
+      WiFiForIoTPlugin.isEnabled().then((val) {
+        if (val != null) {
+          _isEnabled = val;
+          print('wifi status:$_isEnabled');
+          if(_isEnabled==true)
+          {
+             isSelected[0]=true;
+          }
+          else{
+            WiFiForIoTPlugin.setEnabled(true);
+            isSelected[0]=true;
+            print('wifi turned on');
+          }
+        }
+      });
+      WiFiForIoTPlugin.isConnected().then((val) {
+        if (val != null) {
+          _isConnected = val;
+          print('connected:$_isConnected');
+          if(_isConnected=true)
+          {
+
+          }
+          else
+          {
+
+          }
+        }
+      });
+    });
+
+  }
+
   @override
   void initState() {
     nameController = TextEditingController();
+    wifi();
     getIpList();
     test();
     timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
@@ -57,6 +102,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     super.initState();
   }
 
+
+
   @override
   void dispose() {
     nameController.dispose();
@@ -67,6 +114,72 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawer: Drawer(
+        child: Column(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.only(top: 140),
+              height: 200,
+              width: 400,
+              color: Colors.lightBlue,
+              child:Column(
+                children: <Widget>[
+                  FutureBuilder(
+                      future: WiFiForIoTPlugin.getIP(),
+                      initialData: "Loading..",
+                      builder: (BuildContext context, AsyncSnapshot<String> ip) {
+                        return Text("IP : ${ip.data}",style: TextStyle(fontSize: 25));
+                      }),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      FutureBuilder(
+                          future: WiFiForIoTPlugin.getBSSID(),
+                          initialData: "Loading..",
+                          builder: (BuildContext context, AsyncSnapshot<String> bssid) {
+                            return Text("BSSID: ${bssid.data}");
+                          }),
+                      FutureBuilder(
+                          future: WiFiForIoTPlugin.getCurrentSignalStrength(),
+                          initialData: 0,
+                          builder: (BuildContext context, AsyncSnapshot<int> signal) {
+                            return Text("\t\t\tSignal: ${signal.data}");
+                          }),
+                    ],
+                  ),
+                ],
+              )
+
+            ),
+            ClayContainer(
+                color: Color(0xffd6e7ee),
+              borderRadius: 20,
+              curveType: CurveType.convex,
+              spread: 2,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  ListTile(
+                    title: Center(child:Text('Wifi',style: TextStyle(fontSize: 30),),),
+                    trailing: ToggleButtons(children: <Widget>[
+                      Icon(Icons.wifi)
+                    ],
+                        onPressed: (int index){
+                      setState(() {
+                        isSelected[index]=!isSelected[index];
+                        WiFiForIoTPlugin.setEnabled(isSelected[index]);
+                      });
+                        }
+
+                        , isSelected:isSelected),
+                  )
+
+                ],
+              )
+            )
+          ],
+        ),
+      ),
       body: Container(
           padding: EdgeInsets.only(top: 40),
           decoration: BoxDecoration(
@@ -139,14 +252,26 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                           : Icons.network_wifi,
                                       color: Color(0xff02457a),
                                     ),
-                                    trailing: Visibility(
-                                      visible: deviceObjectList[index]
-                                          .motionDetected,
-                                      child: Icon(
+                                    trailing:deviceObjectList[index].motionDetected==true?
+                                    Icon(
                                         Icons.warning,
                                         color: Color(0xff02457a),
+                                      )
+                                    :Container(
+                                      height: 70,
+                                      width: 50,
+                                      child: GestureDetector(
+                                        child:Icon(
+                                        Icons.info,
+                                        color: Color(0xff02457a),
+                                           ),
+                                        onTap: ()
+                                        {
+                                          info(context, deviceObjectList[index]);
+                                        },
                                       ),
                                     ),
+
                                     title:
                                         Text('${deviceObjectList[index].name}'),
                                     subtitle: deviceObjectList[index].power ==
@@ -221,6 +346,36 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     ),
             ],
           )),
+    );
+  }
+
+  Future<void> info(context,DeviceObject deviceObject)async
+  {
+    await showDialog(context: context,
+    builder: (BuildContext context){
+      return SimpleDialog(
+        backgroundColor: Color(0xff83caec),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20)
+        ),
+        title: Column(
+          children: <Widget>[
+            Text(deviceObject.name,style: TextStyle(fontSize: 35),),
+            Row(
+              children: <Widget>[
+                Text('Total Duration:\t\t',style: TextStyle(fontSize: 28)),
+                Text(((prefs.getInt('${deviceObject.ip}totalDuration')/(60*60)).floor()).toString()+':',style: TextStyle(fontSize: 28),),
+                Text(((prefs.getInt('${deviceObject.ip}totalDuration')/60).floor()).toString(),style: TextStyle(fontSize: 28)),
+                Text('\tHrs',style: TextStyle(fontSize: 28)),
+
+              ],
+            ),
+          ],
+        ),
+
+      );
+    }
+
     );
   }
 
