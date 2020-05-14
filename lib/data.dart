@@ -9,7 +9,11 @@ import 'front_page.dart';
 import 'main.dart' as main;
 
 class DeviceObject {
+  int elapsedTime;
+  Duration mainTime;
   bool offline;
+  String flare;
+  Duration totalDuration;
   String ip;
   bool pause;
   Socket socket;
@@ -24,9 +28,9 @@ class DeviceObject {
   Timer timer;
   bool motionDetected;
   double height;
-  int totalDuration;
   DeviceObject({
-    this.pause,
+    this.flare = 'off',
+    this.elapsedTime = 0,
     this.ip,
     this.offline,
     this.name,
@@ -35,14 +39,15 @@ class DeviceObject {
     this.timer,
     this.clientError,
     this.height = 0,
+    this.mainTime,
     this.motionDetected = false,
     this.progressAnimation,
     this.linearProgressBarValue = 0,
     this.power = false,
     this.time,
     this.progressDegrees = 0,
-    this.pause=false,
-    this.totalDuration=0,
+    this.pause = false,
+    this.totalDuration,
   });
   void run() {
     socket.listen((onData) {

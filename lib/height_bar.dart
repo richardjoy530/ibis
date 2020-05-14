@@ -77,34 +77,6 @@ class HeightPainter extends CustomPainter {
             progressPaint..color = barColors[9 - i]);
       }
     }
-
-//    for (var i = 1; i < 11; i++) {
-//      if ((heightIn100 / 10).ceil() >= i) {
-////        canvas.drawRRect(
-////            RRect.fromRectAndRadius(
-////                Rect.fromLTRB(
-////                    (-(width / 2) + size.width / 2) + 5,
-////                    ((height / 2) + 4) - i * 34,
-////                    ((width / 2) + size.width / 2) - 5,
-////                    ((height / 2)) - (i - 1) * 34),
-////                Radius.circular(10)),
-////            progressPaint..color = barColors[i - 1]);
-//
-//        canvas.drawRRect(
-//            RRect.fromRectAndRadius(
-//                Rect.fromCenter(
-//                    center:
-//                        Offset(size.width / 2, ((height / 2) + 10) - i * 35),
-//                    width: width - 10,
-//                    height: (heightIn100 / 10).ceil() == i
-//                        ? heightIn100.remainder(10) == 0
-//                            ? 30
-//                            : (((heightIn100).remainder(10) * 3))
-//                        : 30),
-//                Radius.circular(10)),
-//            progressPaint..color = barColors[i - 1]);
-//      }
-//    }
   }
 
   @override

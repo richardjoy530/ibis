@@ -32,19 +32,18 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
       setState(() {
         for (var i = 0; i < deviceObjectList.length; i++) {
-          //print(prefs.getInt('${deviceObjectList[i].ip}totalDuration'));
           if (deviceObjectList[i].motionDetected == true &&
               deviceObjectList[i].power == true) {
             deviceObjectList[i].timer.cancel();
             deviceObjectList[i].power = false;
-            //deviceObjectList[i].motionDetected = false;
           }
 
-          if (deviceObjectList[i].power == true) {
+          if (deviceObjectList[i].power == true &&
+              deviceObjectList[i].pause == false) {
             deviceObjectList[i].linearProgressBarValue =
                 (1 / deviceObjectList[i].time.inSeconds) *
-                    deviceObjectList[i].timer.tick;
-            if (deviceObjectList[i].timer.tick >
+                    deviceObjectList[i].elapsedTime;
+            if (deviceObjectList[i].elapsedTime >
                 deviceObjectList[i].time.inSeconds) {
               deviceObjectList[i].power = false;
               deviceObjectList[i].timer.cancel();
