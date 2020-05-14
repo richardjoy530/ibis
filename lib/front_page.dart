@@ -165,6 +165,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                  print('tapped');
                                  return SimpleDialog(
                                    title: Text('hlo'),
+
                                  );
 
 
