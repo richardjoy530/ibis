@@ -242,14 +242,18 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     await showDialog(context: context,
     builder: (BuildContext context){
       return SimpleDialog(
+        backgroundColor: Color(0xff83caec),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20)
+        ),
         title: Column(
           children: <Widget>[
-            Text(deviceObject.name),
+            Text(deviceObject.name,style: TextStyle(fontSize: 35),),
             Row(
               children: <Widget>[
-                Text('Total Duration'),
-                Text(((prefs.getInt('${deviceObject.ip}totalDuration')/(60*60)).floor()).toString()+':'),
-                Text(((prefs.getInt('${deviceObject.ip}totalDuration')/60).floor()).toString()+':'),
+                Text('Total Duration:\t\t',style: TextStyle(fontSize: 28)),
+                Text(((prefs.getInt('${deviceObject.ip}totalDuration')/(60*60)).floor()).toString()+':',style: TextStyle(fontSize: 28),),
+                Text(((prefs.getInt('${deviceObject.ip}totalDuration')/60).floor()).toString(),style: TextStyle(fontSize: 28)),
 
               ],
             ),
