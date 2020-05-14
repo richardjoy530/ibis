@@ -26,7 +26,6 @@ class DeviceObject {
   double height;
   int totalDuration;
   DeviceObject({
-    this.pause,
     this.ip,
     this.offline,
     this.name,

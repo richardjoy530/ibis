@@ -140,14 +140,26 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                           : Icons.network_wifi,
                                       color: Color(0xff02457a),
                                     ),
-                                    trailing: Visibility(
-                                      visible: deviceObjectList[index]
-                                          .motionDetected,
-                                      child: Icon(
+                                    trailing:deviceObjectList[index].motionDetected==true?
+                                    Icon(
                                         Icons.warning,
                                         color: Color(0xff02457a),
+                                      )
+                                    :Container(
+                                      height: 70,
+                                      width: 50,
+                                      child: GestureDetector(
+                                        child:Icon(
+                                        Icons.info,
+                                        color: Color(0xff02457a),
+                                           ),
+                                        onTap: ()
+                                        {
+                                          info(context, deviceObjectList[index]);
+                                        },
                                       ),
                                     ),
+
                                     title:
                                         Text('${deviceObjectList[index].name}'),
                                     subtitle: deviceObjectList[index].power ==
@@ -222,6 +234,31 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     ),
             ],
           )),
+    );
+  }
+
+  Future<void> info(context,DeviceObject deviceObject)async
+  {
+    await showDialog(context: context,
+    builder: (BuildContext context){
+      return SimpleDialog(
+        title: Column(
+          children: <Widget>[
+            Text(deviceObject.name),
+            Row(
+              children: <Widget>[
+                Text('Total Duration'),
+                Text(((prefs.getInt('${deviceObject.ip}totalDuration')/(60*60)).floor()).toString()+':'),
+                Text(((prefs.getInt('${deviceObject.ip}totalDuration')/60).floor()).toString()+':'),
+                Text(((prefs.getInt('${deviceObject.ip}totalDuration')%60).floor()).toString()),
+              ],
+            ),
+          ],
+        ),
+
+      );
+    }
+
     );
   }
 
