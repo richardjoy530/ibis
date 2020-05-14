@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:ibis/height_page.dart';
 import 'package:ibis/main.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:wifi_iot/wifi_iot.dart';
 
 import 'data.dart';
 import 'test_screen.dart';
@@ -15,7 +17,10 @@ List<String> ipList = [];
 List<Socket> sockets = [];
 ServerSocket serverSocket;
 bool serverOnline = false;
-
+String ip='not connected';
+bool _isEnabled = false;
+bool _isConnected=false;
+final List<bool> isSelected=[false];
 class FrontPage extends StatefulWidget {
   @override
   FrontPageState createState() => FrontPageState();
@@ -24,9 +29,47 @@ class FrontPage extends StatefulWidget {
 class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   Timer timer;
   TextEditingController nameController;
+
+  void wifi() async
+  {
+    setState(() {
+      WiFiForIoTPlugin.isEnabled().then((val) {
+        if (val != null) {
+          _isEnabled = val;
+          print('wifi status:$_isEnabled');
+          if(_isEnabled==true)
+          {
+             isSelected[0]=true;
+          }
+          else{
+            WiFiForIoTPlugin.setEnabled(true);
+            isSelected[0]=true;
+            print('wifi turned on');
+          }
+        }
+      });
+      WiFiForIoTPlugin.isConnected().then((val) {
+        if (val != null) {
+          _isConnected = val;
+          print('connected:$_isConnected');
+          if(_isConnected=true)
+          {
+
+          }
+          else
+          {
+
+          }
+        }
+      });
+    });
+
+  }
+
   @override
   void initState() {
     nameController = TextEditingController();
+    wifi();
     getIpList();
     test();
     timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
@@ -58,6 +101,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     super.initState();
   }
 
+
+
   @override
   void dispose() {
     nameController.dispose();
@@ -68,6 +113,39 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawer: Drawer(
+        child: Column(
+          children: <Widget>[
+            Container(
+              height: 200,
+              width: 300,
+              color: Colors.lightBlue,
+              child: Center(child: Text(ip)),
+            ),
+            Container(
+              child: Column(
+                children: <Widget>[
+                  ListTile(
+                    title: Center(child:Text('Wifi',style: TextStyle(fontSize: 30),),),
+                    trailing: ToggleButtons(children: <Widget>[
+                      Icon(Icons.wifi)
+                    ],
+                        onPressed: (int index){
+                      setState(() {
+                        isSelected[index]=!isSelected[index];
+                        WiFiForIoTPlugin.setEnabled(isSelected[index]);
+                      });
+                        }
+
+                        , isSelected:isSelected),
+                  )
+
+                ],
+              )
+            )
+          ],
+        ),
+      ),
       body: Container(
           padding: EdgeInsets.only(top: 40),
           decoration: BoxDecoration(
@@ -254,6 +332,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 Text('Total Duration:\t\t',style: TextStyle(fontSize: 28)),
                 Text(((prefs.getInt('${deviceObject.ip}totalDuration')/(60*60)).floor()).toString()+':',style: TextStyle(fontSize: 28),),
                 Text(((prefs.getInt('${deviceObject.ip}totalDuration')/60).floor()).toString(),style: TextStyle(fontSize: 28)),
+                Text('\tHrs',style: TextStyle(fontSize: 28)),
 
               ],
             ),
