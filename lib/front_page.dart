@@ -34,12 +34,14 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
       setState(() {
         for (var i = 0; i < deviceObjectList.length; i++) {
+          //print(prefs.getInt('${deviceObjectList[i].ip}totalDuration'));
           if (deviceObjectList[i].motionDetected == true &&
               deviceObjectList[i].power == true) {
             deviceObjectList[i].timer.cancel();
             deviceObjectList[i].power = false;
             //deviceObjectList[i].motionDetected = false;
           }
+
           if (deviceObjectList[i].power == true) {
             deviceObjectList[i].linearProgressBarValue =
                 (1 / deviceObjectList[i].time.inSeconds) *
@@ -71,31 +73,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: Drawer(
-        child: SafeArea(
-          child: Container(
-             child: Column(
-              children: <Widget>[
-              Container(
-                color: Colors.lightBlue,
-                height: 300,
-              ),
-                Container(
-                  child: ListTile(
-                    leading: Icon(Icons.settings),
-                    title: Text("Settings"),
-                    onTap: ()
-                    {
-                      Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Settings() ));
-                    },
-                  ),
-                )
-            ],
-          ),
-        ),
-      ),
-      ),
       appBar: AppBar(
         backgroundColor: Color(0xffffe9ea),
         leading: Padding(
@@ -169,14 +146,44 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                 : Icons.network_wifi,
                             color: Color(0xff725496),
                           ),
-                          trailing: Visibility(
-                            visible: deviceObjectList[index].motionDetected,
-                            child: Icon(
+                          trailing: deviceObjectList[index].motionDetected==true?
+                            Icon(
                               Icons.warning,
                               color: Color(0xff725496),
-                            ),
+                            )
+                        :Container(
+                            height: 70,
+                             width: 50,
+                             child: GestureDetector(
+                               child: Icon(
+                                 Icons.info,
+                                 color:Color(0xff725496) ,
+
+                               ),
+                               onTap: ()
+                               {
+                                 print('tapped');
+                                 return SimpleDialog(
+                                   title: Text('hlo'),
+                                 );
+
+
+                               },
+                             ),
                           ),
-                          title: Text('${deviceObjectList[index].name}'),
+
+
+                          title: Container(
+                            child:Row(
+                              children: <Widget>[
+                                Text('${deviceObjectList[index].name}'),
+                                Text('\t\t\t\t\t\t\t\t Total Duration: '),
+                                Text(((prefs.getInt('${deviceObjectList[index].ip}totalDuration')/(60*60)).floor()).toString()+':'),
+                                Text(((prefs.getInt('${deviceObjectList[index].ip}totalDuration')/60).floor()).toString()+':'),
+                                Text((prefs.getInt('${deviceObjectList[index].ip}totalDuration')%60).toString()),
+                              ],
+                            )
+                          ),
                           subtitle: deviceObjectList[index].power == false
                               ? Text(deviceObjectList[index].offline == true
                                   ? 'Device is Offline'
@@ -328,66 +335,5 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   }
 }
 
-class Settings extends StatefulWidget {
-  @override
-  _SettingsState createState() => _SettingsState();
-}
-
-class _SettingsState extends State<Settings> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Settings"),
-      ),
-      body:Container(
-       child: Column(
-         children: <Widget>[
-           ListTile(
-              title: Container(
-                padding: EdgeInsets.all(20),
-                height: 80,
-                decoration: BoxDecoration(
-                  color:Color(0xff725496),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text("Devices",style: TextStyle(fontSize: 25,color: Colors.white),),
-
-              ),
-            ),
-           Container(
-             height: 3,
-             width:400 ,
-             decoration: BoxDecoration(
-               color: Colors.black,
-               borderRadius: BorderRadius.circular(3)
-             ),
-           ),
-           Expanded(
-             child: Container(
-               child: ListView.builder(
-                 itemCount: deviceObjectList.length,
-                   itemBuilder:(context, index) {
-                   return Container(
-                     margin: EdgeInsets.all(10),
-                     decoration: BoxDecoration(
-                       color: Color(0xff725496),
-                       borderRadius: BorderRadius.circular(20),
-                     ),
-                     child: ListTile(
-                       title: Text(deviceObjectList[index].name.toString()),
-                     ),
-                   );
-                   }),
-             ),
-           )
-         ],
-       )
-    ) ,
-
-      
-    );
-  }
-}
 
 

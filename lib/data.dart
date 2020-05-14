@@ -23,6 +23,8 @@ class DeviceObject {
   Timer timer;
   bool motionDetected;
   double height;
+  bool pause;
+  int totalDuration;
   DeviceObject({
     this.ip,
     this.offline,
@@ -38,6 +40,8 @@ class DeviceObject {
     this.power = false,
     this.time,
     this.progressDegrees = 0,
+    this.pause=false,
+    this.totalDuration=0,
   });
   void run() {
     socket.listen((onData) {
