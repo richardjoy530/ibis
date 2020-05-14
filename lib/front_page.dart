@@ -250,7 +250,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 Text('Total Duration'),
                 Text(((prefs.getInt('${deviceObject.ip}totalDuration')/(60*60)).floor()).toString()+':'),
                 Text(((prefs.getInt('${deviceObject.ip}totalDuration')/60).floor()).toString()+':'),
-                Text(((prefs.getInt('${deviceObject.ip}totalDuration')%60).floor()).toString()),
+
               ],
             ),
           ],
