@@ -11,18 +11,37 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 
 import 'data.dart';
-import 'test_screen.dart';
 
 List<DeviceObject> deviceObjectList = [];
 List<String> ipList = [];
 List<Socket> sockets = [];
 ServerSocket serverSocket;
 bool serverOnline = false;
-bool _isEnabled = false;
-bool _isConnected=false;
+bool isEnabled = false;
+bool isConnected = false;
+String serverIp;
 
+final List<bool> isSelected = [false];
+Future<void> wifi() async {
+  WiFiForIoTPlugin.isEnabled().then((val) {
+    if (val != null) {
+      isEnabled = val;
+      print('Wifi Status:$isEnabled');
+      if (isEnabled == false) {
+        WiFiForIoTPlugin.setEnabled(true);
+        print('Wifi turned on');
+      }
+    }
+  });
+  WiFiForIoTPlugin.isConnected().then((val) {
+    if (val != null) {
+      isConnected = val;
+      print('Connected:$isConnected');
+    }
+  });
+  serverIp = await WiFiForIoTPlugin.getIP();
+}
 
-final List<bool> isSelected=[false];
 class FrontPage extends StatefulWidget {
   @override
   FrontPageState createState() => FrontPageState();
@@ -31,42 +50,6 @@ class FrontPage extends StatefulWidget {
 class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   Timer timer;
   TextEditingController nameController;
-
-  Future<void> wifi() async
-  {
-    setState(() {
-      WiFiForIoTPlugin.isEnabled().then((val) {
-        if (val != null) {
-          _isEnabled = val;
-          print('wifi status:$_isEnabled');
-          if(_isEnabled==true)
-          {
-             isSelected[0]=true;
-          }
-          else{
-            WiFiForIoTPlugin.setEnabled(true);
-            isSelected[0]=true;
-            print('wifi turned on');
-          }
-        }
-      });
-      WiFiForIoTPlugin.isConnected().then((val) {
-        if (val != null) {
-          _isConnected = val;
-          print('connected:$_isConnected');
-          if(_isConnected=true)
-          {
-
-          }
-          else
-          {
-
-          }
-        }
-      });
-    });
-
-  }
 
   @override
   void initState() {
@@ -102,8 +85,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     super.initState();
   }
 
-
-
   @override
   void dispose() {
     nameController.dispose();
@@ -118,65 +99,68 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         child: Column(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.only(top: 140),
-              height: 200,
-              width: 400,
-              color: Colors.lightBlue,
-              child:Column(
-                children: <Widget>[
-                  FutureBuilder(
-                      future: WiFiForIoTPlugin.getIP(),
-                      initialData: "Loading..",
-                      builder: (BuildContext context, AsyncSnapshot<String> ip) {
-                        return Text("IP : ${ip.data}",style: TextStyle(fontSize: 25));
-                      }),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      FutureBuilder(
-                          future: WiFiForIoTPlugin.getBSSID(),
-                          initialData: "Loading..",
-                          builder: (BuildContext context, AsyncSnapshot<String> bssid) {
-                            return Text("BSSID: ${bssid.data}");
-                          }),
-                      FutureBuilder(
-                          future: WiFiForIoTPlugin.getCurrentSignalStrength(),
-                          initialData: 0,
-                          builder: (BuildContext context, AsyncSnapshot<int> signal) {
-                            return Text("\t\t\tSignal: ${signal.data}");
-                          }),
-                    ],
-                  ),
-                ],
-              )
-
-            ),
+                padding: EdgeInsets.only(top: 140),
+                height: 200,
+                width: 400,
+                color: Colors.lightBlue,
+                child: Column(
+                  children: <Widget>[
+                    FutureBuilder(
+                        future: WiFiForIoTPlugin.getIP(),
+                        initialData: "Loading..",
+                        builder:
+                            (BuildContext context, AsyncSnapshot<String> ip) {
+                          return Text("IP : ${ip.data}",
+                              style: TextStyle(fontSize: 25));
+                        }),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        FutureBuilder(
+                            future: WiFiForIoTPlugin.getBSSID(),
+                            initialData: "Loading..",
+                            builder: (BuildContext context,
+                                AsyncSnapshot<String> bssId) {
+                              return Text("BSSID: ${bssId.data}");
+                            }),
+                        FutureBuilder(
+                            future: WiFiForIoTPlugin.getCurrentSignalStrength(),
+                            initialData: 0,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<int> signal) {
+                              return Text("\t\t\tSignal: ${signal.data}");
+                            }),
+                      ],
+                    ),
+                  ],
+                )),
             ClayContainer(
                 color: Color(0xffd6e7ee),
-              borderRadius: 20,
-              curveType: CurveType.convex,
-              spread: 2,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  ListTile(
-                    title: Center(child:Text('Wifi',style: TextStyle(fontSize: 30),),),
-                    trailing: ToggleButtons(children: <Widget>[
-                      Icon(Icons.wifi)
-                    ],
-                        onPressed: (int index){
-                      setState(() {
-                        isSelected[index]=!isSelected[index];
-                        WiFiForIoTPlugin.setEnabled(isSelected[index]);
-                      });
-                        }
-
-                        , isSelected:isSelected),
-                  )
-
-                ],
-              )
-            )
+                borderRadius: 20,
+                curveType: CurveType.convex,
+                spread: 2,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    ListTile(
+                      title: Center(
+                        child: Text(
+                          'Wifi',
+                          style: TextStyle(fontSize: 30),
+                        ),
+                      ),
+                      trailing: ToggleButtons(
+                          children: <Widget>[Icon(Icons.wifi)],
+                          onPressed: (int index) {
+                            setState(() {
+                              isSelected[index] = !isSelected[index];
+                              WiFiForIoTPlugin.setEnabled(isSelected[index]);
+                            });
+                          },
+                          isSelected: isSelected),
+                    )
+                  ],
+                ))
           ],
         ),
       ),
@@ -212,11 +196,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       icon: Icon(Icons.menu),
                       color: Color(0xff02457a),
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SocketScreen()),
-                        );
+                        onMenuPressed(context);
                       },
                     ),
                   )
@@ -252,26 +232,28 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                           : Icons.network_wifi,
                                       color: Color(0xff02457a),
                                     ),
-                                    trailing:deviceObjectList[index].motionDetected==true?
-                                    Icon(
-                                        Icons.warning,
-                                        color: Color(0xff02457a),
-                                      )
-                                    :Container(
-                                      height: 70,
-                                      width: 50,
-                                      child: GestureDetector(
-                                        child:Icon(
-                                        Icons.info,
-                                        color: Color(0xff02457a),
-                                           ),
-                                        onTap: ()
-                                        {
-                                          info(context, deviceObjectList[index]);
-                                        },
-                                      ),
-                                    ),
-
+                                    trailing: deviceObjectList[index]
+                                                .motionDetected ==
+                                            true
+                                        ? Icon(
+                                            Icons.warning,
+                                            color: Color(0xff02457a),
+                                          )
+                                        : Visibility(
+                                            visible: deviceObjectList[index]
+                                                        .offline ==
+                                                    false
+                                                ? true
+                                                : false,
+                                            child: IconButton(
+                                              icon: Icon(Icons.more_vert,
+                                                  color: Color(0xff02457a)),
+                                              onPressed: () {
+                                                info(context,
+                                                    deviceObjectList[index]);
+                                              },
+                                            ),
+                                          ),
                                     title:
                                         Text('${deviceObjectList[index].name}'),
                                     subtitle: deviceObjectList[index].power ==
@@ -331,17 +313,25 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                 );
                               }),
                         )
-                  : AlertDialog(
-                      backgroundColor: Color(0xff83caec),
-                      shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(20.0))),
-                      title: Text('Server is Offline'),
-                      content: IconButton(
-                        icon: Icon(Icons.refresh),
-                        onPressed: () {
-                          connect();
-                        },
+                  : Align(
+                      alignment: Alignment.center,
+                      child: AlertDialog(
+                        backgroundColor: Color(0xffffffff),
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20.0))),
+                        title: Text(
+                          'Server is Offline',
+                          style: TextStyle(
+                              color: Color(0xff02457a),
+                              fontWeight: FontWeight.bold),
+                        ),
+                        content: IconButton(
+                          icon: Icon(Icons.refresh),
+                          onPressed: () {
+                            connect();
+                          },
+                        ),
                       ),
                     ),
             ],
@@ -349,34 +339,81 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     );
   }
 
-  Future<void> info(context,DeviceObject deviceObject)async
-  {
-    await showDialog(context: context,
-    builder: (BuildContext context){
-      return SimpleDialog(
-        backgroundColor: Color(0xff83caec),
+  void onMenuPressed(BuildContext context) {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20)
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
         ),
-        title: Column(
-          children: <Widget>[
-            Text(deviceObject.name,style: TextStyle(fontSize: 35),),
-            Row(
-              children: <Widget>[
-                Text('Total Duration:\t\t',style: TextStyle(fontSize: 28)),
-                Text(((prefs.getInt('${deviceObject.ip}totalDuration')/(60*60)).floor()).toString()+':',style: TextStyle(fontSize: 28),),
-                Text(((prefs.getInt('${deviceObject.ip}totalDuration')/60).floor()).toString(),style: TextStyle(fontSize: 28)),
-                Text('\tHrs',style: TextStyle(fontSize: 28)),
+        builder: (context) {
+          return Wrap(
+            children: <Widget>[
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(200.0, 10, 200, 10),
+                  child: Divider(thickness: 2, color: Colors.grey[500])),
+              ListTile(
+                  leading: Icon(
+                    Icons.settings_input_composite,
+                    color: Colors.grey[500],
+                  ),
+                  title: Text(
+                    'Server Ip: $serverIp',
+                  )),
+              ListTile(
+                leading: Icon(
+                  isEnabled == true
+                      ? Icons.signal_wifi_4_bar
+                      : Icons.signal_wifi_off,
+                  color: Colors.grey[500],
+                ),
+                title: Text(
+                  isEnabled == true ? 'Tap to disconnect' : 'Tap to connect',
+                ),
+                onTap: () {
+                  setState(() {
+                    WiFiForIoTPlugin.setEnabled(!isEnabled);
+                    isEnabled = !isEnabled;
+                  });
+                },
+              ),
+              ListTile(
+                  leading: Icon(
+                    Icons.info_outline,
+                    color: Colors.grey[500],
+                  ),
+                  title: Text('About')),
+            ],
+          );
+        });
+  }
 
-              ],
+  Future<void> info(context, DeviceObject deviceObject) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            backgroundColor: Color(0xffffffff),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: Align(
+              alignment: Alignment.center,
+              child: Text(
+                'Total Runtime',
+                style: TextStyle(
+                    color: Color(0xff02457a), fontWeight: FontWeight.bold),
+              ),
             ),
-          ],
-        ),
-
-      );
-    }
-
-    );
+            children: <Widget>[
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                    "${deviceObject.totalDuration.inDays} Days, ${deviceObject.totalDuration.inHours} Hours, ${deviceObject.totalDuration.inMinutes} Minuets"),
+              )
+            ],
+          );
+        });
   }
 
   Future<void> setName(context, DeviceObject deviceObject) async {
@@ -384,7 +421,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(
-            backgroundColor: Color(0xff83caec),
+            backgroundColor: Color(0xffffffff),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -395,7 +432,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             ),
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(15.0),
                 child: TextField(
                   controller: nameController,
                   decoration: InputDecoration(hintText: 'Enter name'),

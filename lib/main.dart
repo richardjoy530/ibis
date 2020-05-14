@@ -12,6 +12,7 @@ import 'package:ibis/test_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
+import 'package:wifi_iot/wifi_iot.dart';
 
 import 'data.dart';
 import 'front_page.dart';
@@ -92,6 +93,7 @@ void connect() async {
         if (!ipList.contains(clientSocket.remoteAddress.address)) {
           //New Devices
           deviceObjectList.add(DeviceObject(
+              totalDuration: Duration(seconds: 0),
               offline: false,
               socket: clientSocket,
               ip: clientSocket.remoteAddress.address,
@@ -284,6 +286,56 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             deviceObject.totalDuration.inSeconds);
       }
     });
+  }
+
+  void onMenuPressed(BuildContext context) {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+        ),
+        builder: (context) {
+          return Wrap(
+            children: <Widget>[
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(200.0, 10, 200, 10),
+                  child: Divider(thickness: 2, color: Colors.grey[500])),
+              ListTile(
+                  leading: Icon(
+                    Icons.settings_input_composite,
+                    color: Colors.grey[500],
+                  ),
+                  title: Text(
+                    'Server Ip: $serverIp',
+                  )),
+              ListTile(
+                leading: Icon(
+                  isEnabled == true
+                      ? Icons.signal_wifi_4_bar
+                      : Icons.signal_wifi_off,
+                  color: Colors.grey[500],
+                ),
+                title: Text(
+                  isEnabled == true ? 'Tap to disconnect' : 'Tap to connect',
+                ),
+                onTap: () {
+                  setState(() {
+                    WiFiForIoTPlugin.setEnabled(!isEnabled);
+                    isEnabled = !isEnabled;
+                  });
+                },
+              ),
+              ListTile(
+                  leading: Icon(
+                    Icons.info_outline,
+                    color: Colors.grey[500],
+                  ),
+                  title: Text('About')),
+            ],
+          );
+        });
   }
 
   Widget tabView(BuildContext context, DeviceObject deviceObject) {
