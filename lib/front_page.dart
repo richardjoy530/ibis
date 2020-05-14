@@ -313,6 +313,3 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         });
   }
 }
-
-
-

@@ -24,7 +24,6 @@ class DeviceObject {
   Timer timer;
   bool motionDetected;
   double height;
-  bool pause;
   int totalDuration;
   DeviceObject({
     this.pause,
