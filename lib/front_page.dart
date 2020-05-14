@@ -17,9 +17,10 @@ List<String> ipList = [];
 List<Socket> sockets = [];
 ServerSocket serverSocket;
 bool serverOnline = false;
-String ip='not connected';
 bool _isEnabled = false;
 bool _isConnected=false;
+
+
 final List<bool> isSelected=[false];
 class FrontPage extends StatefulWidget {
   @override
@@ -30,7 +31,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   Timer timer;
   TextEditingController nameController;
 
-  void wifi() async
+  Future<void> wifi() async
   {
     setState(() {
       WiFiForIoTPlugin.isEnabled().then((val) {
@@ -117,10 +118,18 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         child: Column(
           children: <Widget>[
             Container(
+              padding: EdgeInsets.only(top: 140),
               height: 200,
-              width: 300,
+              width: 400,
               color: Colors.lightBlue,
-              child: Center(child: Text(ip)),
+              child: Center(
+                  child: FutureBuilder(
+                  future: WiFiForIoTPlugin.getIP(),
+                  initialData: "Loading..",
+                  builder: (BuildContext context, AsyncSnapshot<String> ip) {
+                    return Text("IP : ${ip.data}",style: TextStyle(fontSize: 25));
+                  })
+              ),
             ),
             Container(
               child: Column(
