@@ -11,6 +11,7 @@ import 'main.dart' as main;
 class DeviceObject {
   bool offline;
   String ip;
+  bool pause;
   Socket socket;
   bool clientError = false;
   String name;
@@ -23,9 +24,9 @@ class DeviceObject {
   Timer timer;
   bool motionDetected;
   double height;
-  bool pause;
   int totalDuration;
   DeviceObject({
+    this.pause,
     this.ip,
     this.offline,
     this.name,
@@ -55,7 +56,6 @@ class DeviceObject {
     })
       ..onError((handleError) {
         print('Client Error : ${handleError.toString()}');
-        //deviceObjectList = [];
         serverOnline = false;
         serverSocket.close();
         this.clientError = true;
@@ -65,6 +65,8 @@ class DeviceObject {
         this.socket.close();
         this.clientError = true;
         this.offline = true;
+        this.timer.cancel();
+        this.power = false;
       });
   }
 }

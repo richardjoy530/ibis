@@ -7,16 +7,16 @@ class HeightPainter extends CustomPainter {
   double width = 100;
 
   List<Color> barColors = [
-    Color(0xff292888),
-    Color(0xff3b338b),
-    Color(0xff594491),
-    Color(0xff725496),
-    Color(0xff87609b),
-    Color(0xff9a6c9f),
-    Color(0xffad77a3),
-    Color(0xffc485a8),
-    Color(0xffdc94ac),
-    Color(0xfff6a4b2)
+    Color(0xff009ce9),
+    Color(0xff26aaea),
+    Color(0xff44b3ea),
+    Color(0xff5cbceb),
+    Color(0xff6ac1eb),
+    Color(0xff75c5ec),
+    Color(0xff83caec),
+    Color(0xff9ad2ec),
+    Color(0xffadd8ed),
+    Color(0xffbddeee)
   ];
 
   HeightPainter(this.heightIn100);
@@ -41,7 +41,7 @@ class HeightPainter extends CustomPainter {
       ..shader = LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xffffe9ea), Color(0xffffe9ea)])
+              colors: [Color(0xffd6e7ee), Color(0xffd6e7ee)])
           .createShader(Rect.fromCircle(center: center, radius: size.width / 2))
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.fill
@@ -74,7 +74,7 @@ class HeightPainter extends CustomPainter {
                     (-(width / 2) + size.width / 2) + width - 5,
                     (height / 2) - temp * i),
                 Radius.circular(10)),
-            progressPaint..color = barColors[i]);
+            progressPaint..color = barColors[9 - i]);
       }
     }
 
