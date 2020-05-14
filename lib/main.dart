@@ -23,13 +23,13 @@ int deviceHeight;
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 final customColor = CustomSliderColors(
-    progressBarColor: Color(0xffffe9ea),
+    progressBarColor: Color(0xffd6e7ee),
     hideShadow: true,
-    trackColor: Color(0xffffe9ea),
+    trackColor: Color(0xffd6e7ee),
     progressBarColors: [
-      Color(0xffa43dbd),
-      Color(0xffe563a7),
-      Color(0xfff7a4b2),
+      Color(0xff00477d),
+      Color(0xff008bc0),
+      Color(0xff97cadb),
     ]);
 var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
 var initializationSettingsIOS = IOSInitializationSettings();
@@ -164,6 +164,9 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   double temp;
   Timer mainTimer;
+  bool pause = false;
+  String flare;
+  bool play = false;
   bool errorRemover = false;
   @override
   void initState() {
@@ -209,7 +212,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xffffe9ea), Color(0xffffffff)]),
+              colors: [Color(0xffffffff), Color(0xffffffff)]),
         ),
         child: Column(
           children: <Widget>[
@@ -231,13 +234,13 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   widget.deviceObject.name,
                   style: TextStyle(
                     fontSize: 30,
-                    color: Color(0xff3b338b),
+                    color: Color(0xff02457a),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 IconButton(
                   icon: Icon(Icons.menu),
-                  color: Color(0xff725496),
+                  color: Color(0xff02457a),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -256,10 +259,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         child: Text('Motion Detected')),
                     content: Icon(
                       Icons.warning,
-                      color: Color(0xff725496),
+                      color: Color(0xff02457a),
                       size: 50,
                     ),
-                    backgroundColor: Color(0xffdec3e4),
+                    backgroundColor: Color(0xff97cadb),
                   )
                 : Expanded(child: tabView(context, widget.deviceObject))
           ],
@@ -292,7 +295,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             children: <Widget>[
               FlareActor(
                 'assets/breathing.flr',
-                animation: deviceObject.power == true ? 'breath' : 'off',
+                animation: deviceObject.power == true ? 'off' : 'breath',
               ),
               CustomPaint(
                 child: Container(
@@ -440,38 +443,60 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //        ),
         Padding(
           padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-          child: GestureDetector(
-            onTap: () {
-              setState(() {
-                if (deviceObject.power == false) {
-                  deviceObject.socket
-                      .writeln(deviceObject.time.inMinutes.round());
+          child: Container(
+            height: 130,
+            child: GestureDetector(
+              onTapUp: (onTapUpDetails) {
+                setState(() {
+                  if (deviceObject.power == false &&
+                      onTapUpDetails.localPosition.dx >
+                          MediaQuery.of(context).size.width / 3 &&
+                      onTapUpDetails.localPosition.dx <
+                          MediaQuery.of(context).size.width * 2 / 3) {
+                    print('middle');
+                    deviceObject.socket
+                        .writeln(deviceObject.time.inMinutes.round());
 
-                  deviceObject.progressDegrees = 0;
-                  deviceObject.power = !deviceObject.power;
-                  startTimer(deviceObject);
-                  runAnimation(deviceObject: deviceObject);
-                  deviceObject.radialProgressAnimationController.forward();
-                } else {
-                  //time = 2;
-                  destroyAnimation(deviceObject);
-                  deviceObject.socket.write('stop');
-                  deviceObject.power = !deviceObject.power;
-                  deviceObject.timer.cancel();
+                    deviceObject.progressDegrees = 0;
+                    deviceObject.power = !deviceObject.power;
+                    startTimer(deviceObject);
+                    runAnimation(deviceObject: deviceObject);
+                    deviceObject.radialProgressAnimationController.forward();
+                  } else if (deviceObject.power == true &&
+                      onTapUpDetails.localPosition.dx <
+                          MediaQuery.of(context).size.width / 2) {
+                    print('stop');
+                    //time = 2;
+                    destroyAnimation(deviceObject);
+                    deviceObject.socket.write('stop');
+                    deviceObject.power = !deviceObject.power;
+                    deviceObject.timer.cancel();
 //                  runAnimation(
 //                      begin: deviceObject.progressDegrees,
 //                      end: 0,
 //                      deviceObject: deviceObject);
 //                  deviceObject.radialProgressAnimationController.forward();
-                  Navigator.pop(context);
-                }
-              });
-            },
-            child: Container(
-              height: 100,
-              width: 100,
-              child: FlareActor('assets/powerButton.flr',
-                  animation: deviceObject.power == true ? "on" : "off"),
+                    Navigator.pop(context);
+                  } else if (deviceObject.power == true &&
+                      onTapUpDetails.localPosition.dx >
+                          MediaQuery.of(context).size.width / 2) {
+                    print('Pause/Play');
+                    if (deviceObject.pause == false) {
+                      flare = 'pause';
+                      deviceObject.pause = true;
+                      deviceObject.time = Duration(
+                          seconds: deviceObject.time.inSeconds -
+                              deviceObject.timer.tick);
+                      deviceObject.timer.cancel();
+                      deviceObject.socket.write('pause');
+                    }
+                  }
+                });
+              },
+              child: FlareActor('assets/playpausepower.flr',
+                  animation: deviceObject.power == true
+                      ? pause == true ? 'pause' : play == true ? 'play' : 'on'
+                      : "off"),
             ),
           ),
         )
@@ -532,8 +557,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
           title: Text(
             'Motion Detected',
-            style:
-                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: Color(0xff02457a), fontWeight: FontWeight.bold),
           ),
           children: <Widget>[
             RaisedButton(

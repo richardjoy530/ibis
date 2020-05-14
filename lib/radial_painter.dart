@@ -9,9 +9,10 @@ class RadialPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     Offset center = Offset(size.width / 2, size.height / 2);
     Paint paint = Paint()
-      ..shader = RadialGradient(
-              colors: [Color(0xffe563a7), Color(0xfff7a4b2), Color(0xffffe9ea)])
-          .createShader(Rect.fromCircle(center: center, radius: size.width / 2))
+      ..shader = RadialGradient(colors: [
+        Color(0xff008bc0),
+        Color(0xff97cadb),
+      ]).createShader(Rect.fromCircle(center: center, radius: size.width / 2))
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke
       ..strokeWidth = 50.0;

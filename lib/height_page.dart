@@ -17,10 +17,10 @@ class HeightPage extends StatefulWidget {
 }
 
 class _HeightPageState extends State<HeightPage> {
-  Color upArrowColor = Color(0xfff6a4b2);
-  Color upBGColor = Color(0xffffe9ea);
-  Color downArrowColor = Color(0xff292888);
-  Color downBGColor = Color(0xffffe9ea);
+  Color upArrowColor = Color(0xff02457a);
+  Color upBGColor = Color(0xff97cadb);
+  Color downArrowColor = Color(0xffd6e7ee);
+  Color downBGColor = Color(0xff97cadb);
 
   Timer mainTimer;
   Timer timer;
@@ -57,7 +57,7 @@ class _HeightPageState extends State<HeightPage> {
           gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xffffe9ea), Color(0xffffffff)]),
+              colors: [Color(0xffffffff), Color(0xffffffff)]),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -68,7 +68,7 @@ class _HeightPageState extends State<HeightPage> {
                 'Adjust Height',
                 style: TextStyle(
                   fontSize: 30,
-                  color: Colors.black,
+                  color: Color(0xff02457a),
                 ),
               ),
             ),
@@ -78,7 +78,7 @@ class _HeightPageState extends State<HeightPage> {
                 alignment: Alignment.center,
                 child: Text(
                     '${widget.deviceObject.height.floor().toString()}% ',
-                    style: TextStyle(fontSize: 40, color: Color(0xff292888))),
+                    style: TextStyle(fontSize: 40, color: Color(0xff02457a))),
               ),
             ),
             Row(
@@ -115,8 +115,8 @@ class _HeightPageState extends State<HeightPage> {
                         },
                         onPointerUp: (data) {
                           setState(() {
-                            upArrowColor = Color(0xfff6a4b2);
-                            upBGColor = Color(0xffffe9ea);
+                            upArrowColor = Color(0xff02457a);
+                            upBGColor = Color(0xff97cadb);
                           });
                           timer.cancel();
                           if (indicator != 0) {
@@ -149,8 +149,8 @@ class _HeightPageState extends State<HeightPage> {
                           },
                           onPointerUp: (data) {
                             setState(() {
-                              downArrowColor = Color(0xff292888);
-                              downBGColor = Color(0xffffe9ea);
+                              downArrowColor = Color(0xff02457a);
+                              downBGColor = Color(0xff97cadb);
                             });
                             timer.cancel();
                             if (indicator != 0) {
@@ -170,17 +170,17 @@ class _HeightPageState extends State<HeightPage> {
               child: ClayContainer(
                 borderRadius: 20,
                 spread: 3,
-                color: Color(0xffffe9ea),
+                color: Color(0xff97cadb),
 //                        decoration: BoxDecoration(
 //                            color: Color(0xffdec3e4),
 //                            borderRadius: BorderRadius.circular(10)),
                 child: ListTile(
                   title: Text(
                     'Confirm height ?',
-                    style: TextStyle(color: Color(0xff292888)),
+                    style: TextStyle(color: Color(0xff02457a)),
                   ),
                   trailing: IconButton(
-                      color: Color(0xff292888),
+                      color: Color(0xff02457a),
                       icon: Icon(Icons.check),
                       onPressed: () {
                         widget.deviceObject.progressDegrees = 0;

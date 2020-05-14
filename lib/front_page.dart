@@ -72,7 +72,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Color(0xffffe9ea), Color(0xffffffff)]),
+                colors: [Color(0xffffffff), Color(0xffffffff)]),
           ),
           child: Column(
             children: <Widget>[
@@ -82,6 +82,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20),
                       height: 30,
                       width: 30,
                       child: FlareActor(
@@ -90,23 +91,20 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       ),
                     ),
                   ),
-                  Text(
-                    'RazeCov',
-                    style: TextStyle(
-                      fontSize: 30,
-                      color: Color(0xff3b338b),
-                      //fontWeight: FontWeight.bold,
+                  Expanded(child: Image.asset('images/razecov.jfif')),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    child: IconButton(
+                      icon: Icon(Icons.menu),
+                      color: Color(0xff02457a),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SocketScreen()),
+                        );
+                      },
                     ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.menu),
-                    color: Color(0xff725496),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SocketScreen()),
-                      );
-                    },
                   )
                 ],
               ),
@@ -116,7 +114,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                           child: Container(
                             margin: EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                                color: Color(0xffdec3e4),
+                                color: Color(0xffd6e7ee),
                                 borderRadius: BorderRadius.circular(20)),
                             child: ListTile(
                               leading: Icon(Icons.wifi_tethering),
@@ -131,21 +129,21 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                 return Container(
                                   margin: EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                      color: Color(0xffdec3e4),
+                                      color: Color(0xff83caec),
                                       borderRadius: BorderRadius.circular(20)),
                                   child: ListTile(
                                     leading: Icon(
                                       deviceObjectList[index].offline == true
                                           ? Icons.signal_wifi_off
                                           : Icons.network_wifi,
-                                      color: Color(0xff725496),
+                                      color: Color(0xff02457a),
                                     ),
                                     trailing: Visibility(
                                       visible: deviceObjectList[index]
                                           .motionDetected,
                                       child: Icon(
                                         Icons.warning,
-                                        color: Color(0xff725496),
+                                        color: Color(0xff02457a),
                                       ),
                                     ),
                                     title:
@@ -165,12 +163,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                             lineHeight: 5.0,
                                             animation: false,
                                             animationDuration: 0,
-                                            backgroundColor: Color(0xffffe9ea),
+                                            backgroundColor: Color(0xffd6e7ee),
                                             percent: deviceObjectList[index]
                                                 .linearProgressBarValue,
                                             linearStrokeCap:
                                                 LinearStrokeCap.roundAll,
-                                            progressColor: Color(0xff9a6c9f),
+                                            progressColor: Color(0xff018abe),
                                           ),
                                     onTap: () {
                                       if (deviceObjectList[index].offline ==
@@ -208,7 +206,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                               }),
                         )
                   : AlertDialog(
-                      backgroundColor: Color(0xffdec3e4),
+                      backgroundColor: Color(0xff83caec),
                       shape: RoundedRectangleBorder(
                           borderRadius:
                               BorderRadius.all(Radius.circular(20.0))),
@@ -230,14 +228,14 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(
-            backgroundColor: Color(0xffdec3e4),
+            backgroundColor: Color(0xff83caec),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
             title: Text(
               'Give a name for your device',
               style: TextStyle(
-                  color: Colors.blueGrey, fontWeight: FontWeight.bold),
+                  color: Color(0xff02457a), fontWeight: FontWeight.bold),
             ),
             children: <Widget>[
               Padding(
@@ -280,7 +278,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             title: Text(
               'Do you want height?',
               style: TextStyle(
-                  color: Colors.blueGrey, fontWeight: FontWeight.bold),
+                  color: Color(0xff83caec), fontWeight: FontWeight.bold),
             ),
             children: <Widget>[
               SimpleDialogOption(

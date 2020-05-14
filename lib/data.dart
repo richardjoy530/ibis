@@ -11,6 +11,7 @@ import 'main.dart' as main;
 class DeviceObject {
   bool offline;
   String ip;
+  bool pause;
   Socket socket;
   bool clientError = false;
   String name;
@@ -24,6 +25,7 @@ class DeviceObject {
   bool motionDetected;
   double height;
   DeviceObject({
+    this.pause,
     this.ip,
     this.offline,
     this.name,
