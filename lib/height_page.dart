@@ -60,7 +60,7 @@ class _HeightPageState extends State<HeightPage> {
               colors: [Color(0xffffffff), Color(0xffffffff)]),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Column(
               children: <Widget>[
@@ -87,7 +87,7 @@ class _HeightPageState extends State<HeightPage> {
               ],
             ),
             Container(
-              height: 500,
+              height: 400,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
@@ -127,6 +127,8 @@ class _HeightPageState extends State<HeightPage> {
                             });
                             timer.cancel();
                             if (indicator != 0) {
+                              prefs.setInt('${widget.deviceObject.ip}height',
+                                  widget.deviceObject.height.toInt());
                               indicator = 0;
                               widget.deviceObject.socket.write('-1\r');
                             }
@@ -161,6 +163,8 @@ class _HeightPageState extends State<HeightPage> {
                               });
                               timer.cancel();
                               if (indicator != 0) {
+                                prefs.setInt('${widget.deviceObject.ip}height',
+                                    widget.deviceObject.height.toInt());
                                 indicator = 0;
                                 widget.deviceObject.socket.write('-1\r');
                               }
@@ -172,6 +176,9 @@ class _HeightPageState extends State<HeightPage> {
                   ),
                 ],
               ),
+            ),
+            SizedBox(
+              height: 10,
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
@@ -224,11 +231,15 @@ class _HeightPageState extends State<HeightPage> {
         if (widget.deviceObject.height >= 100) {
           widget.deviceObject.height = 100;
           indicator = 0;
+          prefs.setInt('${widget.deviceObject.ip}height',
+              widget.deviceObject.height.toInt());
           widget.deviceObject.socket.write('-1\r');
         }
         if (widget.deviceObject.height <= 0) {
           widget.deviceObject.height = 0;
           indicator = 0;
+          prefs.setInt('${widget.deviceObject.ip}height',
+              widget.deviceObject.height.toInt());
           widget.deviceObject.socket.write('-1\r');
         }
       });
