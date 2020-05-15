@@ -35,7 +35,6 @@ var initializationSettingsIOS = IOSInitializationSettings();
 var initializationSettings = InitializationSettings(
     initializationSettingsAndroid, initializationSettingsIOS);
 void main() {
-  connect();
   return runApp(MyApp());
 }
 
@@ -612,6 +611,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Future<void> mainTick() async {
     mainTimer = Timer.periodic(Duration(seconds: 1), (callback) {
       if (serverOnline == false || widget.deviceObject.clientError == true) {
+        destroyAnimation(widget.deviceObject);
         Navigator.pop(context);
       }
     });

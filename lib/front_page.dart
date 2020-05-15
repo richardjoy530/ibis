@@ -52,6 +52,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 
   @override
   void initState() {
+    connect();
     nameController = TextEditingController();
     wifi();
     getIpList();
