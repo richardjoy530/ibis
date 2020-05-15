@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:clay_containers/clay_containers.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:ibis/height_page.dart';
@@ -56,7 +55,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     nameController = TextEditingController();
     wifi();
     getIpList();
-    test();
     timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
       setState(() {
         for (var i = 0; i < deviceObjectList.length; i++) {
@@ -194,7 +192,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     margin: EdgeInsets.symmetric(horizontal: 20),
                     child: IconButton(
                       icon: Icon(Icons.menu),
-                      color: Color(0xff02457a),
+                      color: Color(0xff019ae6),
                       onPressed: () {
                         onMenuPressed(context);
                       },
@@ -223,21 +221,21 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                 return Container(
                                   margin: EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                      color: Color(0xff83caec),
+                                      color: Color(0xffa9d5ea),
                                       borderRadius: BorderRadius.circular(20)),
                                   child: ListTile(
                                     leading: Icon(
                                       deviceObjectList[index].offline == true
                                           ? Icons.signal_wifi_off
                                           : Icons.network_wifi,
-                                      color: Color(0xff02457a),
+                                      color: Color(0xff019ae6),
                                     ),
                                     trailing: deviceObjectList[index]
                                                 .motionDetected ==
                                             true
                                         ? Icon(
                                             Icons.warning,
-                                            color: Color(0xff02457a),
+                                            color: Color(0xff019ae6),
                                           )
                                         : Visibility(
                                             visible: deviceObjectList[index]
@@ -247,7 +245,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                 : false,
                                             child: IconButton(
                                               icon: Icon(Icons.more_vert,
-                                                  color: Color(0xff02457a)),
+                                                  color: Color(0xff019ae6)),
                                               onPressed: () {
                                                 info(context,
                                                     deviceObjectList[index]);
@@ -276,7 +274,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                 .linearProgressBarValue,
                                             linearStrokeCap:
                                                 LinearStrokeCap.roundAll,
-                                            progressColor: Color(0xff018abe),
+                                            progressColor: Color(0xff019ae6),
                                           ),
                                     onTap: () {
                                       if (deviceObjectList[index].offline ==
@@ -329,7 +327,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                         content: IconButton(
                           icon: Icon(
                             Icons.refresh,
-                            color: Color(0xff02457a),
+                            color: Color(0xff019ae6),
                           ),
                           onPressed: () {
                             connect();

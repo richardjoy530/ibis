@@ -5,10 +5,8 @@ import 'dart:math';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:ibis/radial_painter.dart';
-import 'package:ibis/test_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
@@ -36,7 +34,6 @@ var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
 var initializationSettingsIOS = IOSInitializationSettings();
 var initializationSettings = InitializationSettings(
     initializationSettingsAndroid, initializationSettingsIOS);
-const platform = const MethodChannel("com.richard.ibis/ibis");
 void main() {
   connect();
   return runApp(MyApp());
@@ -56,17 +53,6 @@ Future<void> getIpList() async {
   }
 }
 
-void test() async {
-  String value;
-  try {
-    value = await platform.invokeMethod('test');
-  } catch (e) {
-    print(e);
-  }
-
-  print('Test : $value');
-}
-
 Future<void> notification(String message) async {
   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'your channel id', 'your channel name', 'your channel description',
@@ -81,6 +67,10 @@ Future<void> notification(String message) async {
 }
 
 void connect() async {
+  if (isEnabled == false) {
+    WiFiForIoTPlugin.setEnabled(true);
+    isEnabled = true;
+  }
   ServerSocket.bind('0.0.0.0', 4042)
     ..then((sock) {
       serverSocket = sock;
@@ -247,10 +237,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   icon: Icon(Icons.menu),
                   color: Color(0xff02457a),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SocketScreen()),
-                    );
+                    onMenuPressed(context);
                   },
                 )
               ],
@@ -303,19 +290,27 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   padding: const EdgeInsets.fromLTRB(200.0, 10, 200, 10),
                   child: Divider(thickness: 2, color: Colors.grey[500])),
               ListTile(
-                  leading: Icon(
-                    Icons.settings_input_composite,
-                    color: Colors.grey[500],
-                  ),
-                  title: Text(
-                    'Server Ip: $serverIp',
-                  )),
+                leading: Icon(
+                  Icons.settings_input_composite,
+                  color: Color(0xff02457a),
+                ),
+                title: Text(
+                  'Server Ip: $serverIp',
+                ),
+                subtitle: Text('Refresh'),
+                onTap: () {
+                  setState(() {
+                    WiFiForIoTPlugin.getIP().then((value) => serverIp = value);
+                  });
+                  Navigator.pop(context);
+                },
+              ),
               ListTile(
                 leading: Icon(
                   isEnabled == true
                       ? Icons.signal_wifi_4_bar
                       : Icons.signal_wifi_off,
-                  color: Colors.grey[500],
+                  color: Color(0xff02457a),
                 ),
                 title: Text(
                   isEnabled == true ? 'Tap to disconnect' : 'Tap to connect',
@@ -324,13 +319,14 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   setState(() {
                     WiFiForIoTPlugin.setEnabled(!isEnabled);
                     isEnabled = !isEnabled;
+                    Navigator.pop(context);
                   });
                 },
               ),
               ListTile(
                   leading: Icon(
                     Icons.info_outline,
-                    color: Colors.grey[500],
+                    color: Color(0xff02457a),
                   ),
                   title: Text('About')),
             ],
