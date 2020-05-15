@@ -95,75 +95,75 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: Drawer(
-        child: Column(
-          children: <Widget>[
-            Container(
-                padding: EdgeInsets.only(top: 140),
-                height: 200,
-                width: 400,
-                color: Colors.lightBlue,
-                child: Column(
-                  children: <Widget>[
-                    FutureBuilder(
-                        future: WiFiForIoTPlugin.getIP(),
-                        initialData: "Loading..",
-                        builder:
-                            (BuildContext context, AsyncSnapshot<String> ip) {
-                          return Text("IP : ${ip.data}",
-                              style: TextStyle(fontSize: 25));
-                        }),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        FutureBuilder(
-                            future: WiFiForIoTPlugin.getBSSID(),
-                            initialData: "Loading..",
-                            builder: (BuildContext context,
-                                AsyncSnapshot<String> bssId) {
-                              return Text("BSSID: ${bssId.data}");
-                            }),
-                        FutureBuilder(
-                            future: WiFiForIoTPlugin.getCurrentSignalStrength(),
-                            initialData: 0,
-                            builder: (BuildContext context,
-                                AsyncSnapshot<int> signal) {
-                              return Text("\t\t\tSignal: ${signal.data}");
-                            }),
-                      ],
-                    ),
-                  ],
-                )),
-            ClayContainer(
-                color: Color(0xffd6e7ee),
-                borderRadius: 20,
-                curveType: CurveType.convex,
-                spread: 2,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    ListTile(
-                      title: Center(
-                        child: Text(
-                          'Wifi',
-                          style: TextStyle(fontSize: 30),
-                        ),
-                      ),
-                      trailing: ToggleButtons(
-                          children: <Widget>[Icon(Icons.wifi)],
-                          onPressed: (int index) {
-                            setState(() {
-                              isSelected[index] = !isSelected[index];
-                              WiFiForIoTPlugin.setEnabled(isSelected[index]);
-                            });
-                          },
-                          isSelected: isSelected),
-                    )
-                  ],
-                ))
-          ],
-        ),
-      ),
+//      endDrawer: Drawer(
+//        child: Column(
+//          children: <Widget>[
+//            Container(
+//                padding: EdgeInsets.only(top: 140),
+//                height: 200,
+//                width: 400,
+//                color: Colors.lightBlue,
+//                child: Column(
+//                  children: <Widget>[
+//                    FutureBuilder(
+//                        future: WiFiForIoTPlugin.getIP(),
+//                        initialData: "Loading..",
+//                        builder:
+//                            (BuildContext context, AsyncSnapshot<String> ip) {
+//                          return Text("IP : ${ip.data}",
+//                              style: TextStyle(fontSize: 25));
+//                        }),
+//                    Row(
+//                      mainAxisAlignment: MainAxisAlignment.center,
+//                      children: <Widget>[
+//                        FutureBuilder(
+//                            future: WiFiForIoTPlugin.getBSSID(),
+//                            initialData: "Loading..",
+//                            builder: (BuildContext context,
+//                                AsyncSnapshot<String> bssId) {
+//                              return Text("BSSID: ${bssId.data}");
+//                            }),
+//                        FutureBuilder(
+//                            future: WiFiForIoTPlugin.getCurrentSignalStrength(),
+//                            initialData: 0,
+//                            builder: (BuildContext context,
+//                                AsyncSnapshot<int> signal) {
+//                              return Text("\t\t\tSignal: ${signal.data}");
+//                            }),
+//                      ],
+//                    ),
+//                  ],
+//                )),
+//            ClayContainer(
+//                color: Color(0xffd6e7ee),
+//                borderRadius: 20,
+//                curveType: CurveType.convex,
+//                spread: 2,
+//                child: Column(
+//                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                  children: <Widget>[
+//                    ListTile(
+//                      title: Center(
+//                        child: Text(
+//                          'Wifi',
+//                          style: TextStyle(fontSize: 30),
+//                        ),
+//                      ),
+//                      trailing: ToggleButtons(
+//                          children: <Widget>[Icon(Icons.wifi)],
+//                          onPressed: (int index) {
+//                            setState(() {
+//                              isSelected[index] = !isSelected[index];
+//                              WiFiForIoTPlugin.setEnabled(isSelected[index]);
+//                            });
+//                          },
+//                          isSelected: isSelected),
+//                    )
+//                  ],
+//                ))
+//          ],
+//        ),
+//      ),
       body: Container(
           padding: EdgeInsets.only(top: 40),
           decoration: BoxDecoration(
