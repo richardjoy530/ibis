@@ -9,6 +9,7 @@ import 'front_page.dart';
 import 'main.dart' as main;
 
 class DeviceObject {
+  bool temp;
   int elapsedTime;
   Duration mainTime;
   bool offline;
@@ -29,6 +30,7 @@ class DeviceObject {
   bool motionDetected;
   double height;
   DeviceObject({
+    this.temp,
     this.flare = 'off',
     this.elapsedTime = 0,
     this.ip,

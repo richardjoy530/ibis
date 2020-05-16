@@ -194,6 +194,11 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       widget.deviceObject.radialProgressAnimationController.dispose();
     }
     mainTimer.cancel();
+    if (widget.deviceObject.power == false &&
+        widget.deviceObject.clientError == false &&
+        widget.deviceObject.temp == true) {
+      widget.deviceObject.socket.write(65);
+    }
     super.dispose();
   }
 
@@ -450,8 +455,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           MediaQuery.of(context).size.width / 3 &&
                       onTapUpDetails.localPosition.dx <
                           MediaQuery.of(context).size.width * 2 / 3) {
-                    print('middle');
                     deviceObject.flare = 'on';
+                    deviceObject.temp = false;
                     deviceObject.socket
                         .writeln(deviceObject.time.inMinutes.round());
 
