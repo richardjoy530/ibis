@@ -371,6 +371,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   'Server Ip: $serverIp',
                 ),
                 subtitle: Text(_friendlyName),
+
                 onTap: () {
                   setState(() {
                     WiFiForIoTPlugin.getIP().then((value) => serverIp = value);
