@@ -195,6 +195,11 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       widget.deviceObject.radialProgressAnimationController.dispose();
     }
     mainTimer.cancel();
+    if (widget.deviceObject.power == false &&
+        widget.deviceObject.clientError == false &&
+        widget.deviceObject.temp == true) {
+      widget.deviceObject.socket.write(65);
+    }
     super.dispose();
   }
 
@@ -451,8 +456,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           MediaQuery.of(context).size.width / 3 &&
                       onTapUpDetails.localPosition.dx <
                           MediaQuery.of(context).size.width * 2 / 3) {
-                    print('middle');
                     deviceObject.flare = 'on';
+                    deviceObject.temp = false;
                     deviceObject.socket
                         .writeln(deviceObject.time.inMinutes.round());
 
@@ -470,7 +475,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     deviceObject.flare = 'off';
                     //time = 2;
                     destroyAnimation(deviceObject);
-                    deviceObject.socket.write('stop');
+                    deviceObject.socket.write('s');
                     deviceObject.power = false;
                     deviceObject.time = Duration(minutes: 1);
                     deviceObject.mainTime = Duration(minutes: 1);
@@ -484,13 +489,13 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       deviceObject.flare = 'pause';
                       deviceObject.pause = true;
                       deviceObject.timer.cancel();
-                      deviceObject.socket.write('hault');
+                      deviceObject.socket.write('h');
                       deviceObject.radialProgressAnimationController.stop();
                     } else {
                       deviceObject.pause = false;
                       startTimer(deviceObject);
                       deviceObject.flare = 'play';
-                      deviceObject.socket.write('play');
+                      deviceObject.socket.write('p');
                       deviceObject.radialProgressAnimationController.forward();
                     }
                   }
