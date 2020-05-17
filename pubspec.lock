@@ -97,6 +97,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.2"
+  flutter_device_friendly_name:
+    dependency: "direct main"
+    description:
+      name: flutter_device_friendly_name
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0"
   flutter_local_notifications:
     dependency: "direct main"
     description:
