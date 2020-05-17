@@ -8,6 +8,7 @@ import 'package:ibis/height_page.dart';
 import 'package:ibis/main.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:wifi_iot/wifi_iot.dart';
+import 'package:flutter_device_friendly_name/flutter_device_friendly_name.dart';
 
 import 'data.dart';
 
@@ -49,9 +50,15 @@ class FrontPage extends StatefulWidget {
 class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   Timer timer;
   TextEditingController nameController;
+  String _friendlyName = 'Loading...';
 
   @override
   void initState() {
+    FlutterDeviceFriendlyName.friendlyName.then((x) {
+      setState(() {
+        _friendlyName = x;
+      });
+    });
     connect();
     nameController = TextEditingController();
     wifi();
@@ -363,7 +370,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 title: Text(
                   'Server Ip: $serverIp',
                 ),
-                subtitle: Text('Refresh'),
+                subtitle: Text(_friendlyName),
                 onTap: () {
                   setState(() {
                     WiFiForIoTPlugin.getIP().then((value) => serverIp = value);
