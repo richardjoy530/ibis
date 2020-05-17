@@ -205,7 +205,7 @@ class _HeightPageState extends State<HeightPage> {
                             widget.deviceObject.height.toInt());
                         widget.deviceObject.time = Duration(minutes: 1);
                         widget.deviceObject.temp = true;
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>

@@ -12,7 +12,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 
-
 import 'data.dart';
 import 'front_page.dart';
 
@@ -616,6 +615,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Future<void> mainTick() async {
     mainTimer = Timer.periodic(Duration(seconds: 1), (callback) {
+      if (mainTimer.tick > 60&&widget.deviceObject.power==false) {
+        Navigator.pop(context);
+      }
       if (serverOnline == false || widget.deviceObject.clientError == true) {
         destroyAnimation(widget.deviceObject);
         Navigator.pop(context);
