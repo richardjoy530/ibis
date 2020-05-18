@@ -217,20 +217,19 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    margin: EdgeInsets.only(left: 20),
-                    height: 30,
-                    width: 30,
-                    child: FlareActor(
-                      'assets/back.flr',
-                      animation: 'back',
+                IconButton(
+                    icon: Icon(
+                      Icons.arrow_back_ios,
+                      color: Color(0xff02457a),
                     ),
-                  ),
-                ),
+                    onPressed: () {
+                      if (widget.deviceObject.power == false &&
+                          widget.deviceObject.clientError == false &&
+                          widget.deviceObject.temp == true) {
+                        widget.deviceObject.socket.write(65);
+                      }
+                      Navigator.pop(context);
+                    }),
                 Text(
                   widget.deviceObject.name,
                   style: TextStyle(
@@ -398,10 +397,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       appearance: CircularSliderAppearance(
                           animationEnabled: false,
                           startAngle: 270,
-                          angleRange: 350,
+                          angleRange: 359,
                           customWidths: CustomSliderWidths(
                             handlerSize: 20,
-                            trackWidth: 20,
+                            trackWidth: 5,
                             progressBarWidth: 20,
                           ),
                           size: (MediaQuery.of(context).size.width / 1.5) + 50,
@@ -621,7 +620,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Future<void> mainTick() async {
     mainTimer = Timer.periodic(Duration(seconds: 1), (callback) {
-      if (mainTimer.tick > 40 && widget.deviceObject.power == false) {
+      if (mainTimer.tick > 40&&mainTimer.tick<60 && widget.deviceObject.power == false) {
         Navigator.pop(context);
       }
       if (serverOnline == false || widget.deviceObject.clientError == true) {
