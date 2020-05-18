@@ -6,7 +6,6 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:ibis/radial_painter.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
@@ -24,7 +23,7 @@ FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 final customColor = CustomSliderColors(
     progressBarColor: Color(0xffd6e7ee),
     hideShadow: true,
-    trackColor: Color(0xffd6e7ee),
+    trackColor: Color(0xffffffff),
     progressBarColors: [
       Color(0xff00477d),
       Color(0xff008bc0),
@@ -218,14 +217,17 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
+                GestureDetector(
+                  onTap: (){
+                    Navigator.pop(context);
+                  },
                   child: Container(
+                    margin: EdgeInsets.only(left: 20),
                     height: 30,
                     width: 30,
                     child: FlareActor(
-                      'assets/status.flr',
-                      animation: 'Connected',
+                      'assets/back.flr',
+                      animation: 'back',
                     ),
                   ),
                 ),
@@ -237,13 +239,17 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                IconButton(
-                  icon: Icon(Icons.menu),
-                  color: Color(0xff02457a),
-                  onPressed: () {
-                    onMenuPressed(context);
-                  },
-                )
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    height: 30,
+                    width: 30,
+                    child: FlareActor(
+                      'assets/status.flr',
+                      animation: 'Connected',
+                    ),
+                  ),
+                ),
               ],
             ),
             widget.deviceObject.motionDetected == true
@@ -348,7 +354,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             children: <Widget>[
               FlareActor(
                 'assets/breathing.flr',
-                animation: deviceObject.power == true ? 'off' : 'breath',
+                animation: deviceObject.power == true ? 'of f' : 'b reath',
               ),
               CustomPaint(
                 child: Container(
@@ -385,7 +391,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ),
                   ),
                 ),
-                painter: RadialPainter(deviceObject.progressDegrees),
               ),
               deviceObject.power == false
                   ? SleekCircularSlider(
@@ -394,12 +399,13 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       initialValue: 1,
                       appearance: CircularSliderAppearance(
                           animationEnabled: false,
-                          counterClockwise: true,
-                          startAngle: 210,
+                          startAngle: 270,
+                          angleRange: 350,
                           customWidths: CustomSliderWidths(
-                              trackWidth: 50,
-                              progressBarWidth: 50,
-                              shadowWidth: 50),
+                            handlerSize: 20,
+                              trackWidth: 20,
+                              progressBarWidth: 20,
+                              ),
                           size: (MediaQuery.of(context).size.width / 1.5) + 50,
                           customColors: customColor),
                       onChange: (double value) {
@@ -428,12 +434,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       initialValue: 360 - deviceObject.progressDegrees,
                       appearance: CircularSliderAppearance(
                           animationEnabled: false,
-                          startAngle: 210,
-                          counterClockwise: true,
+                          startAngle: 270,
+                          angleRange: 350,
                           customWidths: CustomSliderWidths(
-                              trackWidth: 50,
-                              progressBarWidth: 50,
-                              shadowWidth: 50),
+                              trackWidth: 5,
+                              progressBarWidth: 20,
+                              ),
                           size: (MediaQuery.of(context).size.width / 1.5) + 50,
                           customColors: customColor),
                       innerWidget: (value) {
@@ -615,11 +621,13 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Future<void> mainTick() async {
     mainTimer = Timer.periodic(Duration(seconds: 1), (callback) {
-      if (mainTimer.tick > 60&&widget.deviceObject.power==false) {
+      if (mainTimer.tick > 40 && widget.deviceObject.power == false) {
         Navigator.pop(context);
       }
       if (serverOnline == false || widget.deviceObject.clientError == true) {
-        destroyAnimation(widget.deviceObject);
+        if (widget.deviceObject.power == true) {
+          destroyAnimation(widget.deviceObject);
+        }
         Navigator.pop(context);
       }
     });
