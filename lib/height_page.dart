@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:clay_containers/clay_containers.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ibis/height_bar.dart';
@@ -42,16 +43,28 @@ class _HeightPageState extends State<HeightPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-//      appBar: AppBar(
-//        backgroundColor: Color(0xffffe9ea),
-//        title: Text(
-//          'Adjust Height',
-//          style: TextStyle(
-//            fontSize: 24,
-//            color: Colors.black,
-//          ),
-//        ),
-//      ),
+     appBar: AppBar(
+       backgroundColor: Color(0xffffffff),
+       leading:GestureDetector(
+                  onTap: (){
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(left: 20),
+                    height: 30,
+                    width: 30,
+                    child: FlareActor(
+                      'assets/back.flr',
+                      animation: 'back',
+                    ),
+                  ),
+                ) ,
+       title: Text(
+         'Adjust Height',
+          style:
+                            TextStyle(fontSize: 24, color: Color(0xff02457a)),
+       ),
+     ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -62,29 +75,15 @@ class _HeightPageState extends State<HeightPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 30),
-                  child: Text(
-                    'Adjust Height',
-                    style: TextStyle(
-                      fontSize: 30,
-                      color: Color(0xff02457a),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                        '${widget.deviceObject.height.floor().toString()}% ',
-                        style:
-                            TextStyle(fontSize: 40, color: Color(0xff02457a))),
-                  ),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                    '${widget.deviceObject.height.floor().toString()}% ',
+                    style:
+                        TextStyle(fontSize: 40, color: Color(0xff02457a))),
+              ),
             ),
             Container(
               height: 400,
@@ -199,13 +198,16 @@ class _HeightPageState extends State<HeightPage> {
                       icon: Icon(Icons.check),
                       onPressed: () {
                         widget.deviceObject.progressDegrees = 0;
-                        widget.deviceObject.socket
-                            .write('${widget.deviceObject.height.toInt()}\r');
+                        if (widget.deviceObject.height.toInt() == 0) {
+                          widget.deviceObject.socket.write('0\r');
+                        } else {
+                          widget.deviceObject.socket.write('5\r');
+                        }
                         prefs.setInt('${widget.deviceObject.ip}height',
                             widget.deviceObject.height.toInt());
-                        widget.deviceObject.time = Duration(minutes: 1);
+                        widget.deviceObject.time = Duration(minutes: 0);
                         widget.deviceObject.temp = true;
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
