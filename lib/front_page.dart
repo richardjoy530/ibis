@@ -299,7 +299,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                           deviceObjectList[index]
                                               .motionDetected = false;
                                           deviceObjectList[index].time =
-                                              Duration(minutes: 1);
+                                              Duration(minutes: 0);
                                           deviceObjectList[index]
                                               .progressDegrees = 0;
                                           Navigator.push(
@@ -509,7 +509,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   onPressed: () {
                     deviceObject.motionDetected = false;
                     deviceObject.socket.write('-2\r');
-                    deviceObject.time = Duration(minutes: 1);
+                    deviceObject.time = Duration(minutes: 0);
                     deviceObject.progressDegrees = 0;
                     Navigator.pushReplacement(
                       context,

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:clay_containers/clay_containers.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ibis/height_bar.dart';
@@ -44,9 +45,20 @@ class _HeightPageState extends State<HeightPage> {
     return Scaffold(
      appBar: AppBar(
        backgroundColor: Color(0xffffffff),
-       leading:IconButton(icon: Icon(Icons.arrow_back_ios,color: Color(0xff02457a),), onPressed: (){
-         Navigator.pop(context);
-       }) ,
+       leading:GestureDetector(
+                  onTap: (){
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(left: 20),
+                    height: 30,
+                    width: 30,
+                    child: FlareActor(
+                      'assets/back.flr',
+                      animation: 'back',
+                    ),
+                  ),
+                ) ,
        title: Text(
          'Adjust Height',
           style:
@@ -193,7 +205,7 @@ class _HeightPageState extends State<HeightPage> {
                         }
                         prefs.setInt('${widget.deviceObject.ip}height',
                             widget.deviceObject.height.toInt());
-                        widget.deviceObject.time = Duration(minutes: 1);
+                        widget.deviceObject.time = Duration(minutes: 0);
                         widget.deviceObject.temp = true;
                         Navigator.pushReplacement(
                           context,

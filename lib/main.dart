@@ -86,8 +86,8 @@ void connect() async {
               socket: clientSocket,
               ip: clientSocket.remoteAddress.address,
               name: 'Device${clientSocket.remotePort}',
-              mainTime: Duration(minutes: 1),
-              time: Duration(minutes: 1)));
+              mainTime: Duration(minutes: 0),
+              time: Duration(minutes: 0)));
           DeviceObject temp = deviceObjectList.singleWhere(
               (element) => element.ip == clientSocket.remoteAddress.address);
           deviceObjectList[deviceObjectList.indexOf(temp)].run();
@@ -116,9 +116,9 @@ void connect() async {
           deviceObjectList[deviceObjectList.indexOf(temp)].clientError = false;
           deviceObjectList[deviceObjectList.indexOf(temp)].run();
           deviceObjectList[deviceObjectList.indexOf(temp)].time =
-              Duration(minutes: 1);
+              Duration(minutes: 0);
           deviceObjectList[deviceObjectList.indexOf(temp)].mainTime =
-              Duration(minutes: 1);
+              Duration(minutes: 0);
           SharedPreferences.getInstance().then((prefs) {
             deviceObjectList[deviceObjectList.indexOf(temp)].name =
                 prefs.getString('${clientSocket.remoteAddress.address}name');
@@ -218,7 +218,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     Navigator.pop(context);
                   },
                   child: Container(
@@ -354,7 +354,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             children: <Widget>[
               FlareActor(
                 'assets/breathing.flr',
-                animation: deviceObject.power == true ? 'of f' : 'b reath',
+                animation: deviceObject.power == true ? 'off' : 'breath',
               ),
               CustomPaint(
                 child: Container(
@@ -372,9 +372,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            deviceObject.power == true
-                                ? 'Time Remaining'
-                                : 'Sterilizer Idle',
+                            deviceObject.power == true ? '' : 'Sterilizer Idle',
                             style: TextStyle(
                                 fontSize: 20,
                                 color: deviceObject.motionDetected == false
@@ -394,18 +392,18 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ),
               deviceObject.power == false
                   ? SleekCircularSlider(
-                      min: 1,
+                      min: 0,
                       max: 19,
-                      initialValue: 1,
+                      initialValue: 0,
                       appearance: CircularSliderAppearance(
                           animationEnabled: false,
                           startAngle: 270,
                           angleRange: 350,
                           customWidths: CustomSliderWidths(
                             handlerSize: 20,
-                              trackWidth: 20,
-                              progressBarWidth: 20,
-                              ),
+                            trackWidth: 20,
+                            progressBarWidth: 20,
+                          ),
                           size: (MediaQuery.of(context).size.width / 1.5) + 50,
                           customColors: customColor),
                       onChange: (double value) {
@@ -435,11 +433,11 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       appearance: CircularSliderAppearance(
                           animationEnabled: false,
                           startAngle: 270,
-                          angleRange: 350,
+                          angleRange: 360,
                           customWidths: CustomSliderWidths(
-                              trackWidth: 5,
-                              progressBarWidth: 20,
-                              ),
+                            trackWidth: 5,
+                            progressBarWidth: 20,
+                          ),
                           size: (MediaQuery.of(context).size.width / 1.5) + 50,
                           customColors: customColor),
                       innerWidget: (value) {
@@ -482,8 +480,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     destroyAnimation(deviceObject);
                     deviceObject.socket.write('s');
                     deviceObject.power = false;
-                    deviceObject.time = Duration(minutes: 1);
-                    deviceObject.mainTime = Duration(minutes: 1);
+                    deviceObject.time = Duration(minutes: 0);
+                    deviceObject.mainTime = Duration(minutes: 0);
                     deviceObject.timer.cancel();
                     Navigator.pop(context);
                   } else if (deviceObject.power == true &&
@@ -516,7 +514,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   double mapValues(double value) {
-    if (value == 1) {
+    if (value == 0) {
+      temp = 0;
+    } else if (value == 1) {
       temp = 1;
     } else if (value == 2) {
       temp = 2;
@@ -592,8 +592,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             deviceObject.timer.cancel();
             deviceObject.flare = 'off';
             deviceObject.elapsedTime = 0;
-            deviceObject.time = Duration(minutes: 1);
-            deviceObject.mainTime = Duration(minutes: 1);
+            deviceObject.time = Duration(minutes: 0);
+            deviceObject.mainTime = Duration(minutes: 0);
           }
         });
         if (deviceObject.progressDegrees == 360) {
