@@ -25,7 +25,7 @@ FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 final customColor = CustomSliderColors(
     progressBarColor: Color(0xffd6e7ee),
     hideShadow: true,
-    trackColor: Color(0xffd6e7ee),
+    trackColor: Colors.amber,
     progressBarColors: [
       Color(0xff00477d),
       Color(0xff008bc0),
@@ -404,8 +404,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           counterClockwise: false,
                           startAngle: 270,
                           angleRange: 360,
+
                           customWidths: CustomSliderWidths(
                               trackWidth: 20,
+
                               progressBarWidth: 50,
                               shadowWidth: 50),
                           size: (MediaQuery.of(context).size.width / 1.5) + 50,
