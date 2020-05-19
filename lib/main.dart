@@ -98,6 +98,8 @@ void connect() async {
                 'Device${clientSocket.remotePort}');
             prefs.setInt(
                 '${clientSocket.remoteAddress.address}totalDuration', 0);
+            prefs.setInt('${clientSocket.remoteAddress.address}secondDuration', 0);
+
           });
 
           print([
@@ -184,6 +186,15 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      if(widget.deviceObject.power==true&&widget.deviceObject.pause==false&&widget.deviceObject.height.floor()>0)
+      {
+
+        var secondDuration = prefs.getInt('${widget.deviceObject.ip}secondDuration');
+        secondDuration = secondDuration + 1;
+        prefs.setInt('${widget.deviceObject.ip}secondDuration', secondDuration);
+      }
+        });
     super.initState();
   }
 
@@ -395,7 +406,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               deviceObject.power == false
                   ? SleekCircularSlider(
                       min: 0,
-                      max: 19,
+                      max: 20,
                       initialValue: 0,
                       appearance: CircularSliderAppearance(
                           animationEnabled: false,
@@ -556,6 +567,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       temp = 55;
     } else if (value == 19) {
       temp = 60;
+    }
+    else if(value==20){
+      temp=60;
     }
     return temp;
   }
