@@ -370,18 +370,21 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Text(
-                            deviceObject.power == true ? '' : 'Sterilizer Idle',
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: deviceObject.motionDetected == false
-                                    ? Colors.black
-                                    : Colors.red),
+                          Visibility(
+                            visible: !deviceObject.power,
+                            child: Text(
+                              'Disinfector Idle',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: deviceObject.motionDetected == false
+                                      ? Colors.black
+                                      : Colors.red),
+                            ),
                           ),
                           Text(
                             '${getMinuets(((deviceObject.time.inSeconds) - ((deviceObject.time.inSeconds) / 360) * deviceObject.progressDegrees).round())}'
                             ':${getSeconds(((deviceObject.time.inSeconds) - ((deviceObject.time.inSeconds) / 360) * deviceObject.progressDegrees).round())}',
-                            style: TextStyle(fontSize: 60),
+                            style: TextStyle(fontSize: 40),
                           ),
                         ],
                       ),
@@ -449,11 +452,11 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         Padding(
           padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
           child: Container(
-            height: 130,
+            height: 100,
             child: GestureDetector(
               onTapUp: (onTapUpDetails) {
                 setState(() {
-                  if (deviceObject.power == false &&
+                  if (deviceObject.time.inMinutes>0&&deviceObject.power == false &&
                       onTapUpDetails.localPosition.dx >
                           MediaQuery.of(context).size.width / 3 &&
                       onTapUpDetails.localPosition.dx <
@@ -620,7 +623,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Future<void> mainTick() async {
     mainTimer = Timer.periodic(Duration(seconds: 1), (callback) {
-      if (mainTimer.tick > 40&&mainTimer.tick<60 && widget.deviceObject.power == false) {
+      if (mainTimer.tick > 40 &&
+          mainTimer.tick < 60 &&
+          widget.deviceObject.power == false) {
         Navigator.pop(context);
       }
       if (serverOnline == false || widget.deviceObject.clientError == true) {

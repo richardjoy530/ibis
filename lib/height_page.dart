@@ -42,181 +42,172 @@ class _HeightPageState extends State<HeightPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-//      appBar: AppBar(
-//        backgroundColor: Color(0xffffe9ea),
-//        title: Text(
-//          'Adjust Height',
-//          style: TextStyle(
-//            fontSize: 24,
-//            color: Colors.black,
-//          ),
-//        ),
-//      ),
       body: Stack(
         children: <Widget>[
-         Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Color(0xffffffff), Color(0xffffffff)]),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                            '${widget.deviceObject.height.floor().toString()}% ',
-                            style: TextStyle(
-                                fontSize: 40, color: Color(0xff02457a))),
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  height: 400,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Column(
                     children: <Widget>[
-                      CustomPaint(
-                        child: Text(''),
-                        painter: HeightPainter(widget.deviceObject.height),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                              '${widget.deviceObject.height.floor().toString()}% ',
+                              style: TextStyle(
+                                  fontSize: 40, color: Color(0xff02457a))),
+                        ),
                       ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Listener(
-                              child: ClayContainer(
-                                color: upBGColor,
-                                spread: 2,
-                                borderRadius: 20,
-                                child: IconButton(
-                                  color: upArrowColor,
-                                  icon: Icon(Icons.arrow_upward),
-                                  onPressed: () {},
-                                ),
-                              ),
-                              onPointerDown: (data) {
-                                upBGColor = upArrowColor;
-                                upArrowColor = downBGColor;
-                                indicator = 1;
-                                if (widget.deviceObject.height != 100) {
-                                  widget.deviceObject.socket.write('-3\r');
-                                  tick();
-                                }
-                              },
-                              onPointerUp: (data) {
-                                setState(() {
-                                  upArrowColor = Color(0xff02457a);
-                                  upBGColor = Color(0xff97cadb);
-                                });
-                                timer.cancel();
-                                if (indicator != 0) {
-                                  prefs.setInt(
-                                      '${widget.deviceObject.ip}height',
-                                      widget.deviceObject.height.toInt());
-                                  indicator = 0;
-                                  widget.deviceObject.socket.write('-1\r');
-                                }
-                              },
+                      Container(
+                        height: 400,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            CustomPaint(
+                              child: Text(''),
+                              painter:
+                                  HeightPainter(widget.deviceObject.height),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: ClayContainer(
-                              spread: 2,
-                              color: downBGColor,
-                              borderRadius: 20,
-                              child: Listener(
-                                child: IconButton(
-                                  color: downArrowColor,
-                                  icon: Icon(Icons.arrow_downward),
-                                  onPressed: () {},
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(20),
+                                  child: Listener(
+                                    child: ClayContainer(
+                                      color: upBGColor,
+                                      spread: 2,
+                                      borderRadius: 20,
+                                      child: IconButton(
+                                        color: upArrowColor,
+                                        icon: Icon(Icons.arrow_upward),
+                                        onPressed: () {},
+                                      ),
+                                    ),
+                                    onPointerDown: (data) {
+                                      upBGColor = upArrowColor;
+                                      upArrowColor = downBGColor;
+                                      indicator = 1;
+                                      if (widget.deviceObject.height != 100) {
+                                        widget.deviceObject.socket
+                                            .write('-3\r');
+                                        tick();
+                                      }
+                                    },
+                                    onPointerUp: (data) {
+                                      setState(() {
+                                        upArrowColor = Color(0xff02457a);
+                                        upBGColor = Color(0xff97cadb);
+                                      });
+                                      timer.cancel();
+                                      if (indicator != 0) {
+                                        prefs.setInt(
+                                            '${widget.deviceObject.ip}height',
+                                            widget.deviceObject.height.toInt());
+                                        indicator = 0;
+                                        widget.deviceObject.socket
+                                            .write('-1\r');
+                                      }
+                                    },
+                                  ),
                                 ),
-                                onPointerDown: (data) {
-                                  downBGColor = downArrowColor;
-                                  downArrowColor = upBGColor;
-                                  indicator = -1;
-                                  if (widget.deviceObject.height != 0) {
-                                    widget.deviceObject.socket.write('-2\r');
-                                    tick();
-                                  }
-                                },
-                                onPointerUp: (data) {
-                                  setState(() {
-                                    downArrowColor = Color(0xff02457a);
-                                    downBGColor = Color(0xff97cadb);
-                                  });
-                                  timer.cancel();
-                                  if (indicator != 0) {
-                                    prefs.setInt(
-                                        '${widget.deviceObject.ip}height',
-                                        widget.deviceObject.height.toInt());
-                                    indicator = 0;
-                                    widget.deviceObject.socket.write('-1\r');
-                                  }
-                                },
-                              ),
+                                Padding(
+                                  padding: const EdgeInsets.all(20),
+                                  child: ClayContainer(
+                                    spread: 2,
+                                    color: downBGColor,
+                                    borderRadius: 20,
+                                    child: Listener(
+                                      child: IconButton(
+                                        color: downArrowColor,
+                                        icon: Icon(Icons.arrow_downward),
+                                        onPressed: () {},
+                                      ),
+                                      onPointerDown: (data) {
+                                        downBGColor = downArrowColor;
+                                        downArrowColor = upBGColor;
+                                        indicator = -1;
+                                        if (widget.deviceObject.height != 0) {
+                                          widget.deviceObject.socket
+                                              .write('-2\r');
+                                          tick();
+                                        }
+                                      },
+                                      onPointerUp: (data) {
+                                        setState(() {
+                                          downArrowColor = Color(0xff02457a);
+                                          downBGColor = Color(0xff97cadb);
+                                        });
+                                        timer.cancel();
+                                        if (indicator != 0) {
+                                          prefs.setInt(
+                                              '${widget.deviceObject.ip}height',
+                                              widget.deviceObject.height
+                                                  .toInt());
+                                          indicator = 0;
+                                          widget.deviceObject.socket
+                                              .write('-1\r');
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
-                  child: ClayContainer(
-                    borderRadius: 20,
-                    spread: 3,
-                    color: Color(0xff97cadb),
-//                        decoration: BoxDecoration(
-//                            color: Color(0xffdec3e4),
-//                            borderRadius: BorderRadius.circular(10)),
-                    child: ListTile(
-                      title: Text(
-                        'Confirm height ?',
-                        style: TextStyle(color: Color(0xff02457a)),
-                      ),
-                      trailing: IconButton(
-                          color: Color(0xff02457a),
-                          icon: Icon(Icons.check),
-                          onPressed: () {
-                            widget.deviceObject.progressDegrees = 0;
-                            if (widget.deviceObject.height.toInt() == 0) {
-                              widget.deviceObject.socket.write('0\r');
-                            } else {
-                              widget.deviceObject.socket.write('5\r');
-                            }
-                            prefs.setInt('${widget.deviceObject.ip}height',
-                                widget.deviceObject.height.toInt());
-                            widget.deviceObject.time = Duration(minutes: 0);
-                            widget.deviceObject.temp = true;
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      HomePage(widget.deviceObject)),
-                            );
-                          }),
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-         Positioned(
-            top: 50,
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Color(0xff97cadb),
+                ),
+                child: ListTile(
+                  title: Text(
+                    'Confirm height ?',
+                    style: TextStyle(color: Color(0xff02457a)),
+                  ),
+                  trailing: IconButton(
+                      color: Color(0xff02457a),
+                      icon: Icon(Icons.check),
+                      onPressed: () {
+                        widget.deviceObject.progressDegrees = 0;
+                        if (widget.deviceObject.height.toInt() == 0) {
+                          widget.deviceObject.socket.write('0\r');
+                        } else {
+                          widget.deviceObject.socket.write('5\r');
+                        }
+                        prefs.setInt('${widget.deviceObject.ip}height',
+                            widget.deviceObject.height.toInt());
+                        widget.deviceObject.time = Duration(minutes: 0);
+                        widget.deviceObject.temp = true;
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  HomePage(widget.deviceObject)),
+                        );
+                      }),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 20,
             left: 0,
             child: Row(
               children: <Widget>[
@@ -228,20 +219,20 @@ class _HeightPageState extends State<HeightPage> {
                     onPressed: () {
                       Navigator.pop(context);
                     }),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20),
-                      child: Text(
-                          'Adjust Height',
-                          style: TextStyle(
-                            fontSize: 30,
-                            color: Color(0xff02457a),
-                          ),
-                        ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: Text(
+                    'Adjust Height',
+                    style: TextStyle(
+                      fontSize: 30,
+                      color: Color(0xff02457a),
                     ),
+                  ),
+                ),
               ],
             ),
           ),
-          ],
+        ],
       ),
     );
   }

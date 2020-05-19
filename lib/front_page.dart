@@ -427,7 +427,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                    "${deviceObject.totalDuration.inDays} Days, ${deviceObject.totalDuration.inHours} Hours, ${deviceObject.totalDuration.inMinutes} Minuets"),
+                    "${deviceObject.totalDuration.inDays} Days, ${deviceObject.totalDuration.inHours} Hours, ${deviceObject.totalDuration.inMinutes} Minutes"),
               )
             ],
           );
