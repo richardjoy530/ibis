@@ -444,7 +444,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 curve: Curves.bounceInOut,
               ),
               LinearPercentIndicator(
-                leading: Text("Upper\t",style: TextStyle(color: Color(0xff02457a), fontWeight: FontWeight.bold,fontSize: 15) ),
+                leading: Text("Upper\t",style: TextStyle(color: Color(0xff02457a), fontWeight: FontWeight.bold,fontSize: 15)),
                 lineHeight: 15.0,
                 center: Text("${(100-(((prefs.getInt('${deviceObject.ip}secondDuration')/3600).floor()/9000)*100))}%"),
                 percent: 1-((prefs.getInt('${deviceObject.ip}secondDuration')/3600).floor()/9000),
