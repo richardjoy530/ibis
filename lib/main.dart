@@ -397,15 +397,15 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               deviceObject.power == false
                   ? SleekCircularSlider(
                       min: 1,
-                      max: 19,
+                      max: 20,
                       initialValue: 1,
                       appearance: CircularSliderAppearance(
                           animationEnabled: false,
                           counterClockwise: false,
                           startAngle: 270,
-                          angleRange: 300,
+                          angleRange: 360,
                           customWidths: CustomSliderWidths(
-                              trackWidth: 50,
+                              trackWidth: 20,
                               progressBarWidth: 50,
                               shadowWidth: 50),
                           size: (MediaQuery.of(context).size.width / 1.5) + 50,
@@ -436,8 +436,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       initialValue: 360 - deviceObject.progressDegrees,
                       appearance: CircularSliderAppearance(
                           animationEnabled: false,
-                          startAngle: 210,
-                          counterClockwise: true,
+                          startAngle: 270,
+                          angleRange: 360,
+                          counterClockwise: false,
                           customWidths: CustomSliderWidths(
                               trackWidth: 50,
                               progressBarWidth: 50,
@@ -556,6 +557,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       temp = 55;
     } else if (value == 19) {
       temp = 60;
+    }
+    else if(value==20){
+      temp=60;
     }
     return temp;
   }
