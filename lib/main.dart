@@ -188,16 +188,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
-    Timer.periodic(Duration(seconds: 1), (timer) {
-      if (widget.deviceObject.power == true &&
-          widget.deviceObject.pause == false &&
-          widget.deviceObject.height.floor() > 0) {
-        var secondDuration =
-            prefs.getInt('${widget.deviceObject.ip}secondDuration');
-        secondDuration = secondDuration + 1;
-        prefs.setInt('${widget.deviceObject.ip}secondDuration', secondDuration);
-      }
-    });
     super.initState();
   }
 
@@ -288,6 +278,14 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   startTimer(DeviceObject deviceObject) {
     deviceObject.timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (widget.deviceObject.power == true &&
+          widget.deviceObject.pause == false &&
+          widget.deviceObject.height.floor() > 0) {
+        var secondDuration =
+            prefs.getInt('${widget.deviceObject.ip}secondDuration');
+        secondDuration = secondDuration + 1;
+        prefs.setInt('${widget.deviceObject.ip}secondDuration', secondDuration);
+      }
       if (deviceObject.pause == false) {
         deviceObject.elapsedTime++;
         deviceObject.totalDuration =
@@ -424,6 +422,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           customColors: customColor),
                       onChange: (double value) {
                         displayTime = value.floor();
+                        print(displayTime);
 
                         if (deviceObject.power == false &&
                             errorRemover == true) {
@@ -493,13 +492,13 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     errorRemover = false;
                     deviceObject.elapsedTime = 0;
                     deviceObject.flare = 'off';
-                    //time = 2;
                     destroyAnimation(deviceObject);
                     deviceObject.socket.write('s');
                     deviceObject.power = false;
                     deviceObject.time = Duration(minutes: 0);
                     deviceObject.mainTime = Duration(minutes: 0);
                     deviceObject.timer.cancel();
+                    deviceObject.progressDegrees = 0;
                     Navigator.pop(context);
                   } else if (deviceObject.power == true &&
                       onTapUpDetails.localPosition.dx >
