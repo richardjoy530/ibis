@@ -169,6 +169,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool errorRemover = false;
   @override
   void initState() {
+    errorRemover = false;
+
     temp = 1;
     mainTick();
     if (widget.deviceObject.power == true) {
@@ -597,9 +599,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         });
         if (deviceObject.progressDegrees == 360) {
           deviceObject.progressDegrees = 0;
-          Future.delayed(const Duration(seconds: 1), () {
-            Navigator.pop(context);
-          });
+          Navigator.pop(context);
         }
       });
   }
@@ -620,7 +620,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Future<void> mainTick() async {
     mainTimer = Timer.periodic(Duration(seconds: 1), (callback) {
-      if (mainTimer.tick > 40&&mainTimer.tick<60 && widget.deviceObject.power == false) {
+      if (mainTimer.tick > 40 &&
+          mainTimer.tick < 60 &&
+          widget.deviceObject.power == false) {
         Navigator.pop(context);
       }
       if (serverOnline == false || widget.deviceObject.clientError == true) {

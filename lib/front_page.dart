@@ -4,11 +4,11 @@ import 'dart:ui';
 
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_device_friendly_name/flutter_device_friendly_name.dart';
 import 'package:ibis/height_page.dart';
 import 'package:ibis/main.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:wifi_iot/wifi_iot.dart';
-import 'package:flutter_device_friendly_name/flutter_device_friendly_name.dart';
 
 import 'data.dart';
 
@@ -80,6 +80,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             if (deviceObjectList[i].elapsedTime >
                 deviceObjectList[i].time.inSeconds) {
               deviceObjectList[i].power = false;
+              deviceObjectList[i].flare = 'off';
               deviceObjectList[i].timer.cancel();
               deviceObjectList[i].progressDegrees = 0;
             }
