@@ -100,6 +100,7 @@ void connect() async {
                 'Device${clientSocket.remotePort}');
             prefs.setInt(
                 '${clientSocket.remoteAddress.address}totalDuration', 0);
+            prefs.setInt('${clientSocket.remoteAddress.address}secondDuration', 0);
           });
 
           print([
@@ -186,6 +187,15 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      if(widget.deviceObject.power==true&&widget.deviceObject.pause==false&&widget.deviceObject.height.floor()>0)
+      {
+
+        var secondDuration = prefs.getInt('${widget.deviceObject.ip}secondDuration');
+        secondDuration = secondDuration + 1;
+        prefs.setInt('${widget.deviceObject.ip}secondDuration', secondDuration);
+      }
+        });
     super.initState();
   }
 
