@@ -68,8 +68,13 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         for (var i = 0; i < deviceObjectList.length; i++) {
           if (deviceObjectList[i].motionDetected == true &&
               deviceObjectList[i].power == true) {
-            deviceObjectList[i].timer.cancel();
             deviceObjectList[i].power = false;
+            deviceObjectList[i].flare = 'off';
+            deviceObjectList[i].timer.cancel();
+            deviceObjectList[i].elapsedTime = 0;
+            deviceObjectList[i].time = Duration(minutes: 0);
+            deviceObjectList[i].mainTime = Duration(minutes: 0);
+            deviceObjectList[i].progressDegrees = 0;
           }
 
           if (deviceObjectList[i].power == true &&
@@ -82,6 +87,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               deviceObjectList[i].power = false;
               deviceObjectList[i].flare = 'off';
               deviceObjectList[i].timer.cancel();
+              deviceObjectList[i].elapsedTime = 0;
+              deviceObjectList[i].time = Duration(minutes: 0);
+              deviceObjectList[i].mainTime = Duration(minutes: 0);
               deviceObjectList[i].progressDegrees = 0;
             }
           }
@@ -432,56 +440,63 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               ),
               Center(
                   child: Text(
-                "Life Time",
+                "Health",
                 style: TextStyle(
                     color: Color(0xff02457a),
                     fontWeight: FontWeight.bold,
                     fontSize: 22),
               )),
-              LinearPercentIndicator(
-                leading: Text("Lower\t",
-                    style: TextStyle(
-                        color: Color(0xff02457a),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15)),
-                center: Text(
-                    "${100 - ((deviceObject.totalDuration.inHours / 9000) * 100)}%"),
-                lineHeight: 15.0,
-                percent: 1 - ((deviceObject.totalDuration.inHours) / 9000),
-                progressColor: (deviceObject.totalDuration.inHours / 9000) > .5
-                    ? ((deviceObject.totalDuration.inHours / 9000) > .8
-                        ? Colors.red
-                        : Colors.orange)
-                    : Colors.green,
-                curve: Curves.bounceInOut,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: LinearPercentIndicator(
+                  leading: Text("Lower\t",
+                      style: TextStyle(
+                          color: Color(0xff02457a),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15)),
+                  center: Text(
+                      "${100 - ((deviceObject.totalDuration.inHours / 9000) * 100)}%"),
+                  lineHeight: 15.0,
+                  percent: 1 - ((deviceObject.totalDuration.inHours) / 9000),
+                  progressColor:
+                      (deviceObject.totalDuration.inHours / 9000) > .5
+                          ? ((deviceObject.totalDuration.inHours / 9000) > .8
+                              ? Colors.red
+                              : Colors.orange)
+                          : Colors.green,
+                  curve: Curves.bounceInOut,
+                ),
               ),
-              LinearPercentIndicator(
-                leading: Text("Upper\t",
-                    style: TextStyle(
-                        color: Color(0xff02457a),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15)),
-                lineHeight: 15.0,
-                center: Text(
-                    "${(100 - (((prefs.getInt('${deviceObject.ip}secondDuration') / 3600).floor() / 9000) * 100))}%"),
-                percent: 1 -
-                    ((prefs.getInt('${deviceObject.ip}secondDuration') / 3600)
-                            .floor() /
-                        9000),
-                progressColor:
-                    ((prefs.getInt('${deviceObject.ip}secondDuration') / 3600)
-                                    .floor() /
-                                9000) >
-                            .5
-                        ? ((prefs.getInt('${deviceObject.ip}secondDuration') /
-                                            3600)
-                                        .floor() /
-                                    9000) >
-                                .2
-                            ? Colors.red
-                            : Colors.orange
-                        : Colors.green,
-                curve: Curves.bounceInOut,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: LinearPercentIndicator(
+                  leading: Text("Upper\t",
+                      style: TextStyle(
+                          color: Color(0xff02457a),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15)),
+                  lineHeight: 15.0,
+                  center: Text(
+                      "${(100 - (((prefs.getInt('${deviceObject.ip}secondDuration') / 3600).floor() / 9000) * 100))}%"),
+                  percent: 1 -
+                      ((prefs.getInt('${deviceObject.ip}secondDuration') / 3600)
+                              .floor() /
+                          9000),
+                  progressColor:
+                      ((prefs.getInt('${deviceObject.ip}secondDuration') / 3600)
+                                      .floor() /
+                                  9000) >
+                              .5
+                          ? ((prefs.getInt('${deviceObject.ip}secondDuration') /
+                                              3600)
+                                          .floor() /
+                                      9000) >
+                                  .2
+                              ? Colors.red
+                              : Colors.orange
+                          : Colors.green,
+                  curve: Curves.bounceInOut,
+                ),
               ),
             ],
           );
