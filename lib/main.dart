@@ -391,7 +391,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       ),
                     ),
                   ),
-
                 ),
                 painter: RadialPainter(deviceObject.progressDegrees),
               ),
