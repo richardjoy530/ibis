@@ -128,11 +128,6 @@ void connect() async {
                 Duration(
                     seconds: prefs.getInt(
                         '${clientSocket.remoteAddress.address}totalDuration'));
-            deviceObjectList[deviceObjectList.indexOf(temp)]
-                    .secondaryTotalDuration =
-                Duration(
-                    seconds: prefs.getInt(
-                        '${clientSocket.remoteAddress.address}secondDuration'));
           });
           print([
             clientSocket.remoteAddress,
@@ -176,6 +171,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool errorRemover = false;
   @override
   void initState() {
+    errorRemover = false;
+
     temp = 1;
     mainTick();
     if (widget.deviceObject.power == true) {
@@ -191,6 +188,16 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      if (widget.deviceObject.power == true &&
+          widget.deviceObject.pause == false &&
+          widget.deviceObject.height.floor() > 0) {
+        var secondDuration =
+            prefs.getInt('${widget.deviceObject.ip}secondDuration');
+        secondDuration = secondDuration + 1;
+        prefs.setInt('${widget.deviceObject.ip}secondDuration', secondDuration);
+      }
+    });
     super.initState();
   }
 
@@ -287,13 +294,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             Duration(seconds: deviceObject.totalDuration.inSeconds + 1);
         prefs.setInt('${deviceObject.ip}totalDuration',
             deviceObject.totalDuration.inSeconds);
-        if (deviceObject.height > 0) {
-          var secondDuration =
-              prefs.getInt('${widget.deviceObject.ip}secondDuration');
-          secondDuration = secondDuration + 1;
-          prefs.setInt(
-              '${widget.deviceObject.ip}secondDuration', secondDuration);
-        }
       }
     });
   }
@@ -617,9 +617,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         });
         if (deviceObject.progressDegrees == 360) {
           deviceObject.progressDegrees = 0;
-          Future.delayed(const Duration(seconds: 1), () {
-            Navigator.pop(context);
-          });
+          Navigator.pop(context);
         }
       });
   }

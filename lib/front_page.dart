@@ -80,6 +80,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             if (deviceObjectList[i].elapsedTime >
                 deviceObjectList[i].time.inSeconds) {
               deviceObjectList[i].power = false;
+              deviceObjectList[i].flare = 'off';
               deviceObjectList[i].timer.cancel();
               deviceObjectList[i].progressDegrees = 0;
             }
@@ -427,65 +428,60 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                    "${deviceObject.totalDuration.inDays} Days, ${(deviceObject.totalDuration.inHours.remainder(24))} Hours, ${(deviceObject.totalDuration.inMinutes.remainder(60))} Minutes"),
+                    "${deviceObject.totalDuration.inDays} Days, ${(deviceObject.totalDuration.inSeconds / 3600).floor()} Hours, ${(deviceObject.totalDuration.inSeconds / 60).floor()} Minuets"),
               ),
               Center(
                   child: Text(
-                "Tube Health",
+                "Life Time",
                 style: TextStyle(
                     color: Color(0xff02457a),
                     fontWeight: FontWeight.bold,
                     fontSize: 22),
               )),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: LinearPercentIndicator(
-                  leading: Text("Lower",
-                      style: TextStyle(
-                          color: Color(0xff02457a),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15)),
-                  center: Text(
-                      "${100 - ((deviceObject.totalDuration.inHours / 9000) * 100)}%"),
-                  lineHeight: 15.0,
-                  percent: 1 - ((deviceObject.totalDuration.inHours) / 9000),
-                  progressColor:
-                      (deviceObject.totalDuration.inHours / 9000) > .5
-                          ? ((deviceObject.totalDuration.inHours / 9000) > .8
-                              ? Colors.red
-                              : Colors.orange)
-                          : Colors.green,
-                ),
+              LinearPercentIndicator(
+                leading: Text("Lower\t",
+                    style: TextStyle(
+                        color: Color(0xff02457a),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15)),
+                center: Text(
+                    "${100 - ((deviceObject.totalDuration.inHours / 9000) * 100)}%"),
+                lineHeight: 15.0,
+                percent: 1 - ((deviceObject.totalDuration.inHours) / 9000),
+                progressColor: (deviceObject.totalDuration.inHours / 9000) > .5
+                    ? ((deviceObject.totalDuration.inHours / 9000) > .8
+                        ? Colors.red
+                        : Colors.orange)
+                    : Colors.green,
+                curve: Curves.bounceInOut,
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: LinearPercentIndicator(
-                  leading: Text("Upper",
-                      style: TextStyle(
-                          color: Color(0xff02457a),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15)),
-                  lineHeight: 5.0,
-                  center: Text(
-                      "${(100 - (((prefs.getInt('${deviceObject.ip}secondDuration') / 3600).floor() / 9000) * 100))}%"),
-                  percent: 1 -
-                      ((prefs.getInt('${deviceObject.ip}secondDuration') / 3600)
-                              .floor() /
-                          9000),
-                  progressColor:
-                      ((prefs.getInt('${deviceObject.ip}secondDuration') / 3600)
-                                      .floor() /
-                                  9000) >
-                              .5
-                          ? ((prefs.getInt('${deviceObject.ip}secondDuration') /
-                                              3600)
-                                          .floor() /
-                                      9000) >
-                                  .2
-                              ? Colors.red
-                              : Colors.orange
-                          : Colors.green,
-                ),
+              LinearPercentIndicator(
+                leading: Text("Upper\t",
+                    style: TextStyle(
+                        color: Color(0xff02457a),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15)),
+                lineHeight: 15.0,
+                center: Text(
+                    "${(100 - (((prefs.getInt('${deviceObject.ip}secondDuration') / 3600).floor() / 9000) * 100))}%"),
+                percent: 1 -
+                    ((prefs.getInt('${deviceObject.ip}secondDuration') / 3600)
+                            .floor() /
+                        9000),
+                progressColor:
+                    ((prefs.getInt('${deviceObject.ip}secondDuration') / 3600)
+                                    .floor() /
+                                9000) >
+                            .5
+                        ? ((prefs.getInt('${deviceObject.ip}secondDuration') /
+                                            3600)
+                                        .floor() /
+                                    9000) >
+                                .2
+                            ? Colors.red
+                            : Colors.orange
+                        : Colors.green,
+                curve: Curves.bounceInOut,
               ),
             ],
           );
