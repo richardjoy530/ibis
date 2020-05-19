@@ -264,7 +264,7 @@ class _HeightPageState extends State<HeightPage> {
   }
 
   Future<void> mainTick() async {
-    mainTimer = Timer.periodic(Duration(milliseconds: 100), (callback) {
+    mainTimer = Timer.periodic(Duration(milliseconds: 1000), (callback) {
       if (serverOnline == false || widget.deviceObject.clientError == true) {
         Navigator.pop(context);
       }
