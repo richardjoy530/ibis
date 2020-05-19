@@ -101,6 +101,7 @@ void connect() async {
             prefs.setInt(
                 '${clientSocket.remoteAddress.address}totalDuration', 0);
             prefs.setInt('${clientSocket.remoteAddress.address}secondDuration', 0);
+
           });
 
           print([
