@@ -72,8 +72,8 @@ class DeviceObject {
         this.socket.close();
         this.clientError = true;
         this.offline = true;
-        if(this.power==true){
-                  this.timer.cancel();
+        if (this.power == true) {
+          this.timer.cancel();
         }
         this.power = false;
       });
