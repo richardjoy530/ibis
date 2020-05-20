@@ -446,7 +446,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                    "${deviceObject.totalDuration.inDays} Days, ${(deviceObject.totalDuration.inSeconds / 3600).floor()} Hours, ${(deviceObject.totalDuration.inSeconds / 60).floor()} Minuets"),
+                    "${deviceObject.totalDuration.inDays} Days, ${(deviceObject.totalDuration.inSeconds / 3600).floor()} Hours, ${(deviceObject.totalDuration.inSeconds / 60).floor()} Minutes"),
               ),
               Center(
                   child: Text(
