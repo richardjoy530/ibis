@@ -40,6 +40,16 @@ Future<void> wifi() async {
     }
   });
   serverIp = await WiFiForIoTPlugin.getIP();
+  //WiFiForIoTPlugin.setWiFiAPEnabled(true);
+  //WiFiForIoTPlugin.isWiFiAPEnabled().then((value) => print('hotspot status:$value')).catchError((error)=>print('error:$error'));
+
+
+  /*WiFiForIoTPlugin.setWiFiAPSSIDHidden(true);
+  WiFiForIoTPlugin.isWiFiAPSSIDHidden().then((val) {
+    if (val != null) {
+      print('hidden network:$val');
+    }
+  }).catchError((val) => print('error hidden:$val'));*/
 }
 
 class FrontPage extends StatefulWidget {

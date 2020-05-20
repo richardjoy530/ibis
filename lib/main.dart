@@ -188,6 +188,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
     super.initState();
   }
 
