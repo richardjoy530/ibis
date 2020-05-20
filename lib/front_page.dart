@@ -70,6 +70,10 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           if (deviceObjectList[i].motionDetected == true &&
               deviceObjectList[i].power == true) {
             deviceObjectList[i].power = false;
+            prefs.setInt('${deviceObjectList[i].ip}totalDuration',
+                deviceObjectList[i].totalDuration.inSeconds);
+            prefs.setInt('${deviceObjectList[i].ip}secondDuration',
+                deviceObjectList[i].secondDuration.inSeconds);
             deviceObjectList[i].flare = 'off';
             deviceObjectList[i].timer.cancel();
             deviceObjectList[i].elapsedTime = 0;
@@ -85,7 +89,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     deviceObjectList[i].elapsedTime;
             if (deviceObjectList[i].elapsedTime >
                 deviceObjectList[i].time.inSeconds) {
+              prefs.setInt('${deviceObjectList[i].ip}totalDuration',
+                  deviceObjectList[i].totalDuration.inSeconds);
+              prefs.setInt('${deviceObjectList[i].ip}secondDuration',
+                  deviceObjectList[i].secondDuration.inSeconds);
               deviceObjectList[i].power = false;
+              deviceObjectList[i].pause = false;
               deviceObjectList[i].flare = 'off';
               deviceObjectList[i].timer.cancel();
               deviceObjectList[i].elapsedTime = 0;
@@ -111,75 +120,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-//      endDrawer: Drawer(
-//        child: Column(
-//          children: <Widget>[
-//            Container(
-//                padding: EdgeInsets.only(top: 140),
-//                height: 200,
-//                width: 400,
-//                color: Colors.lightBlue,
-//                child: Column(
-//                  children: <Widget>[
-//                    FutureBuilder(
-//                        future: WiFiForIoTPlugin.getIP(),
-//                        initialData: "Loading..",
-//                        builder:
-//                            (BuildContext context, AsyncSnapshot<String> ip) {
-//                          return Text("IP : ${ip.data}",
-//                              style: TextStyle(fontSize: 25));
-//                        }),
-//                    Row(
-//                      mainAxisAlignment: MainAxisAlignment.center,
-//                      children: <Widget>[
-//                        FutureBuilder(
-//                            future: WiFiForIoTPlugin.getBSSID(),
-//                            initialData: "Loading..",
-//                            builder: (BuildContext context,
-//                                AsyncSnapshot<String> bssId) {
-//                              return Text("BSSID: ${bssId.data}");
-//                            }),
-//                        FutureBuilder(
-//                            future: WiFiForIoTPlugin.getCurrentSignalStrength(),
-//                            initialData: 0,
-//                            builder: (BuildContext context,
-//                                AsyncSnapshot<int> signal) {
-//                              return Text("\t\t\tSignal: ${signal.data}");
-//                            }),
-//                      ],
-//                    ),
-//                  ],
-//                )),
-//            ClayContainer(
-//                color: Color(0xffd6e7ee),
-//                borderRadius: 20,
-//                curveType: CurveType.convex,
-//                spread: 2,
-//                child: Column(
-//                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                  children: <Widget>[
-//                    ListTile(
-//                      title: Center(
-//                        child: Text(
-//                          'Wifi',
-//                          style: TextStyle(fontSize: 30),
-//                        ),
-//                      ),
-//                      trailing: ToggleButtons(
-//                          children: <Widget>[Icon(Icons.wifi)],
-//                          onPressed: (int index) {
-//                            setState(() {
-//                              isSelected[index] = !isSelected[index];
-//                              WiFiForIoTPlugin.setEnabled(isSelected[index]);
-//                            });
-//                          },
-//                          isSelected: isSelected),
-//                    )
-//                  ],
-//                ))
-//          ],
-//        ),
-//      ),
       body: Container(
           padding: EdgeInsets.only(top: 40),
           decoration: BoxDecoration(
@@ -255,20 +195,13 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                             Icons.warning,
                                             color: Color(0xff019ae6),
                                           )
-                                        : Visibility(
-                                            visible: deviceObjectList[index]
-                                                        .offline ==
-                                                    false
-                                                ? true
-                                                : false,
-                                            child: IconButton(
-                                              icon: Icon(Icons.more_vert,
-                                                  color: Color(0xff019ae6)),
-                                              onPressed: () {
-                                                info(context,
-                                                    deviceObjectList[index]);
-                                              },
-                                            ),
+                                        : IconButton(
+                                            icon: Icon(Icons.more_vert,
+                                                color: Color(0xff019ae6)),
+                                            onPressed: () {
+                                              info(context,
+                                                  deviceObjectList[index]);
+                                            },
                                           ),
                                     title:
                                         Text('${deviceObjectList[index].name}'),
@@ -425,78 +358,70 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             backgroundColor: Color(0xffffffff),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            title: Align(
-              alignment: Alignment.center,
-              child: Text(
-                'Total Runtime',
-                style: TextStyle(
-                    color: Color(0xff02457a), fontWeight: FontWeight.bold),
-              ),
-            ),
             children: <Widget>[
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                    "${deviceObject.totalDuration.inDays} Days, ${(deviceObject.totalDuration.inSeconds / 3600).floor()} Hours, ${(deviceObject.totalDuration.inSeconds / 60).floor()} Minutes"),
+                  'Total Runtime',
+                  style: TextStyle(
+                      fontSize: 15,
+                      color: Color(0xff02457a),
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                    "${deviceObject.totalDuration.inDays} Days, ${deviceObject.totalDuration.inHours.remainder(24)} Hours, ${deviceObject.totalDuration.inMinutes.remainder(60)} Minutes"),
               ),
               Center(
-                  child: Text(
-                "Health",
-                style: TextStyle(
-                    color: Color(0xff02457a),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22),
-              )),
+                child: Text(
+                  "Health",
+                  style: TextStyle(
+                      color: Color(0xff02457a),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15),
+                ),
+              ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(left: 8, right: 8),
                 child: LinearPercentIndicator(
-                  leading: Text("Lower\t",
+                  leading: Text("Upper",
                       style: TextStyle(
                           color: Color(0xff02457a),
                           fontWeight: FontWeight.bold,
                           fontSize: 15)),
-                  center: Text(
-                      "${100 - ((deviceObject.totalDuration.inHours / 9000) * 100)}%"),
-                  lineHeight: 15.0,
-                  percent: 1 - ((deviceObject.totalDuration.inHours) / 9000),
-                  progressColor:
-                      (deviceObject.totalDuration.inHours / 9000) > .5
-                          ? ((deviceObject.totalDuration.inHours / 9000) > .8
-                              ? Colors.red
-                              : Colors.orange)
-                          : Colors.green,
+                  lineHeight: 5.0,
+                  trailing: Text(
+                      "${(100 - ((deviceObject.secondDuration.inHours / 9000) * 100)).floor()}%"),
+                  percent: 1 - deviceObject.secondDuration.inHours / 9000,
+                  backgroundColor: Colors.grey[300],
+                  progressColor: deviceObject.secondDuration.inHours / 9000 > .5
+                      ? deviceObject.secondDuration.inHours / 9000 > .2
+                          ? Colors.red
+                          : Colors.orange
+                      : Colors.green,
                   curve: Curves.bounceInOut,
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(left: 8, right: 8),
                 child: LinearPercentIndicator(
-                  leading: Text("Upper\t",
+                  leading: Text("Lower",
                       style: TextStyle(
                           color: Color(0xff02457a),
                           fontWeight: FontWeight.bold,
                           fontSize: 15)),
-                  lineHeight: 15.0,
-                  center: Text(
-                      "${(100 - (((prefs.getInt('${deviceObject.ip}secondDuration') / 3600).floor() / 9000) * 100))}%"),
-                  percent: 1 -
-                      ((prefs.getInt('${deviceObject.ip}secondDuration') / 3600)
-                              .floor() /
-                          9000),
-                  progressColor:
-                      ((prefs.getInt('${deviceObject.ip}secondDuration') / 3600)
-                                      .floor() /
-                                  9000) >
-                              .5
-                          ? ((prefs.getInt('${deviceObject.ip}secondDuration') /
-                                              3600)
-                                          .floor() /
-                                      9000) >
-                                  .2
-                              ? Colors.red
-                              : Colors.orange
-                          : Colors.green,
-                  curve: Curves.bounceInOut,
+                  trailing: Text(
+                      "${(100 - ((deviceObject.totalDuration.inHours / 9000) * 100)).floor()}%"),
+                  lineHeight: 5.0,
+                  percent: 1 - (deviceObject.totalDuration.inHours) / 9000,
+                  backgroundColor: Colors.grey[300],
+                  progressColor: deviceObject.totalDuration.inHours / 9000 > .5
+                      ? deviceObject.totalDuration.inHours / 9000 > .8
+                          ? Colors.red
+                          : Colors.orange
+                      : Colors.green,
                 ),
               ),
             ],
