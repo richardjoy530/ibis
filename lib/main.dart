@@ -47,6 +47,10 @@ Future<void> getIpList() async {
         offline: true,
         ip: eachIp,
         name: deviceName,
+        totalDuration:
+            Duration(seconds: prefs.getInt('${eachIp}totalDuration')),
+        secondDuration:
+            Duration(seconds: prefs.getInt('${eachIp}secondDuration')),
         height: deviceHeight.toDouble()));
   }
 }
@@ -82,6 +86,7 @@ void connect() async {
           //New Devices
           deviceObjectList.add(DeviceObject(
               totalDuration: Duration(seconds: 0),
+              secondDuration: Duration(seconds: 0),
               offline: false,
               socket: clientSocket,
               ip: clientSocket.remoteAddress.address,
@@ -128,6 +133,10 @@ void connect() async {
                 Duration(
                     seconds: prefs.getInt(
                         '${clientSocket.remoteAddress.address}totalDuration'));
+            deviceObjectList[deviceObjectList.indexOf(temp)].secondDuration =
+                Duration(
+                    seconds: prefs.getInt(
+                        '${clientSocket.remoteAddress.address}secondDuration'));
           });
           print([
             clientSocket.remoteAddress,
@@ -278,20 +287,23 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   startTimer(DeviceObject deviceObject) {
     deviceObject.timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (widget.deviceObject.power == true &&
-          widget.deviceObject.pause == false &&
-          widget.deviceObject.height.floor() > 0) {
-        var secondDuration =
-            prefs.getInt('${widget.deviceObject.ip}secondDuration');
-        secondDuration = secondDuration + 1;
-        prefs.setInt('${widget.deviceObject.ip}secondDuration', secondDuration);
-      }
       if (deviceObject.pause == false) {
         deviceObject.elapsedTime++;
         deviceObject.totalDuration =
             Duration(seconds: deviceObject.totalDuration.inSeconds + 1);
-        prefs.setInt('${deviceObject.ip}totalDuration',
-            deviceObject.totalDuration.inSeconds);
+        if (deviceObject.timer.tick.remainder(10) == 0) {
+          prefs.setInt('${deviceObject.ip}totalDuration',
+              deviceObject.totalDuration.inSeconds);
+        }
+
+        if (deviceObject.height > 0) {
+          deviceObject.secondDuration =
+              Duration(seconds: deviceObject.secondDuration.inSeconds + 1);
+          if (deviceObject.timer.tick.remainder(10) == 0) {
+            prefs.setInt('${deviceObject.ip}secondDuration',
+                deviceObject.secondDuration.inSeconds);
+          }
+        }
       }
     });
   }
@@ -394,8 +406,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             ),
                           ),
                           Text(
-                            '${getMinuets(((deviceObject.time.inSeconds) - ((deviceObject.time.inSeconds) / 360) * deviceObject.progressDegrees).round())}'
-                            ':${getSeconds(((deviceObject.time.inSeconds) - ((deviceObject.time.inSeconds) / 360) * deviceObject.progressDegrees).round())}',
+                            '${getMinuets(((deviceObject.time.inSeconds) - deviceObject.elapsedTime).round())}'
+                            ':${getSeconds(((deviceObject.time.inSeconds) - deviceObject.elapsedTime).round())}',
                             style: TextStyle(fontSize: 40),
                           ),
                         ],
@@ -422,8 +434,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           customColors: customColor),
                       onChange: (double value) {
                         displayTime = value.floor();
-                        print(displayTime);
-
                         if (deviceObject.power == false &&
                             errorRemover == true) {
                           setState(() {
@@ -479,7 +489,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     deviceObject.temp = false;
                     deviceObject.socket
                         .writeln(deviceObject.time.inMinutes.round());
-
+                    deviceObject.elapsedTime = 0;
                     deviceObject.progressDegrees = 0;
                     deviceObject.power = true;
                     startTimer(deviceObject);
@@ -489,6 +499,11 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       onTapUpDetails.localPosition.dx <
                           MediaQuery.of(context).size.width / 2) {
                     print('stop');
+                    prefs.setInt('${deviceObject.ip}totalDuration',
+                        deviceObject.totalDuration.inSeconds);
+                    prefs.setInt('${deviceObject.ip}secondDuration',
+                        deviceObject.secondDuration.inSeconds);
+                    deviceObject.pause = false;
                     errorRemover = false;
                     deviceObject.elapsedTime = 0;
                     deviceObject.flare = 'off';
@@ -505,6 +520,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           MediaQuery.of(context).size.width / 2) {
                     print('Pause/Play');
                     if (deviceObject.pause == false) {
+                      prefs.setInt('${deviceObject.ip}totalDuration',
+                          deviceObject.totalDuration.inSeconds);
+                      prefs.setInt('${deviceObject.ip}secondDuration',
+                          deviceObject.secondDuration.inSeconds);
                       deviceObject.flare = 'pause';
                       deviceObject.pause = true;
                       deviceObject.timer.cancel();
@@ -591,12 +610,19 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         setState(() {
           deviceObject.progressDegrees = deviceObject.progressAnimation.value;
           if (deviceObject.motionDetected == true) {
+            prefs.setInt('${deviceObject.ip}totalDuration',
+                deviceObject.totalDuration.inSeconds);
+            prefs.setInt('${deviceObject.ip}secondDuration',
+                deviceObject.secondDuration.inSeconds);
             deviceObject.power = false;
             errorRemover = false;
             deviceObject.flare = 'off';
             deviceObject.elapsedTime = 0;
             deviceObject.radialProgressAnimationController.stop();
             deviceObject.timer.cancel();
+            deviceObject.pause = false;
+            deviceObject.time = Duration(minutes: 0);
+            deviceObject.mainTime = Duration(minutes: 0);
             deviceObject.radialProgressAnimationController.dispose();
             Future.delayed(const Duration(seconds: 2), () {
               //deviceObject.motionDetected = false;
@@ -604,10 +630,15 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             });
           }
           if (deviceObject.progressDegrees == 360) {
+            prefs.setInt('${deviceObject.ip}totalDuration',
+                deviceObject.totalDuration.inSeconds);
+            prefs.setInt('${deviceObject.ip}secondDuration',
+                deviceObject.secondDuration.inSeconds);
             deviceObject.power = false;
             errorRemover = false;
             deviceObject.radialProgressAnimationController.stop();
             deviceObject.timer.cancel();
+            deviceObject.pause = false;
             deviceObject.flare = 'off';
             deviceObject.elapsedTime = 0;
             deviceObject.time = Duration(minutes: 0);

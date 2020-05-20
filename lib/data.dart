@@ -15,7 +15,7 @@ class DeviceObject {
   bool offline;
   String flare;
   Duration totalDuration;
-  Duration secondaryTotalDuration;
+  Duration secondDuration;
   String ip;
   bool pause;
   Socket socket;
@@ -51,7 +51,7 @@ class DeviceObject {
     this.progressDegrees = 0,
     this.pause = false,
     this.totalDuration,
-    this.secondaryTotalDuration,
+    this.secondDuration,
   });
   void run() {
     socket.listen((onData) {
