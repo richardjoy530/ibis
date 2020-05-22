@@ -397,7 +397,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           Visibility(
                             visible: !deviceObject.power,
                             child: Text(
-                              'Disinfector Idle',
+                              'Ready to Disinfect',
                               style: TextStyle(
                                   fontSize: 20,
                                   color: deviceObject.motionDetected == false
@@ -614,7 +614,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 deviceObject.totalDuration.inSeconds);
             prefs.setInt('${deviceObject.ip}secondDuration',
                 deviceObject.secondDuration.inSeconds);
-            deviceObject.power = false;
             errorRemover = false;
             deviceObject.flare = 'off';
             deviceObject.elapsedTime = 0;
@@ -624,10 +623,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             deviceObject.time = Duration(minutes: 0);
             deviceObject.mainTime = Duration(minutes: 0);
             deviceObject.radialProgressAnimationController.dispose();
-            Future.delayed(const Duration(seconds: 2), () {
-              //deviceObject.motionDetected = false;
-              Navigator.pop(context);
-            });
+            deviceObject.power = false;
           }
           if (deviceObject.progressDegrees == 360) {
             prefs.setInt('${deviceObject.ip}totalDuration',
@@ -671,6 +667,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       if (mainTimer.tick > 40 &&
           mainTimer.tick < 60 &&
           widget.deviceObject.power == false) {
+        Navigator.pop(context);
+      }
+      if (widget.deviceObject.motionDetected == true &&
+          widget.deviceObject.power == false) {
+            widget.deviceObject.elapsedTime = 0;
+            widget.deviceObject.pause = false;
         Navigator.pop(context);
       }
       if (serverOnline == false || widget.deviceObject.clientError == true) {
