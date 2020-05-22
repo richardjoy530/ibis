@@ -212,6 +212,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         widget.deviceObject.temp == true) {
       widget.deviceObject.socket.write(65);
     }
+
     super.dispose();
   }
 

@@ -39,7 +39,7 @@ Future<void> wifi() async {
       print('Connected:$isConnected');
     }
   });
-
+  
   serverIp = await WiFiForIoTPlugin.getIP();
 }
 
