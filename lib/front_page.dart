@@ -70,6 +70,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           if (deviceObjectList[i].motionDetected == true &&
               deviceObjectList[i].power == true) {
             deviceObjectList[i].power = false;
+            deviceObjectList[i].pause = false;
+
             prefs.setInt('${deviceObjectList[i].ip}totalDuration',
                 deviceObjectList[i].totalDuration.inSeconds);
             prefs.setInt('${deviceObjectList[i].ip}secondDuration',
@@ -210,11 +212,11 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                         ? Text(deviceObjectList[index]
                                                     .offline ==
                                                 true
-                                            ? 'Device is Offline'
+                                            ? 'Device not Connected'
                                             : deviceObjectList[index]
                                                         .motionDetected ==
                                                     false
-                                                ? 'Device Idle'
+                                                ? 'Device Connected'
                                                 : 'Motion Detected : Tap to start again')
                                         : LinearPercentIndicator(
                                             lineHeight: 5.0,
