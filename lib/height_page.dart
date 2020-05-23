@@ -73,27 +73,30 @@ class _HeightPageState extends State<HeightPage> {
                                   HeightPainter(widget.deviceObject.height),
                             ),
                             Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Padding(
-                                  padding: const EdgeInsets.all(20),
+                                  padding: const EdgeInsets.only(top: 20),
                                   child: Listener(
                                     child: ClayContainer(
                                       color: upBGColor,
                                       spread: 0,
                                       borderRadius: 20,
                                       child: IconButton(
+                                        iconSize: 40.0,
                                         color: upArrowColor,
-                                        icon: Icon(Icons.arrow_upward),
+                                        icon: Icon(Icons.add),
                                         onPressed: () {},
                                       ),
                                     ),
                                     onPointerDown: (data) {
-                                      widget.deviceObject.socket.write('-3\r');
+                                      widget.deviceObject.socket
+                                            .write('-3\r');
                                       upBGColor = upArrowColor;
                                       upArrowColor = downBGColor;
                                       indicator = 1;
                                       if (widget.deviceObject.height != 100) {
+                                        
                                         tick();
                                       }
                                     },
@@ -114,30 +117,32 @@ class _HeightPageState extends State<HeightPage> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.all(20),
+                                  padding: const EdgeInsets.only(bottom: 20),
                                   child: ClayContainer(
                                     spread: 0,
                                     color: downBGColor,
-                                    borderRadius: 20,
+                                    customBorderRadius: BorderRadius.only(bottomLeft: Radius.circular(20.0),bottomRight: Radius.circular(20.0)),
                                     child: Listener(
                                       child: IconButton(
+                                        iconSize: 40.0,
                                         color: downArrowColor,
-                                        icon: Icon(Icons.arrow_downward),
+                                        icon: Icon(Icons.remove),
                                         onPressed: () {},
                                       ),
                                       onPointerDown: (data) {
                                         downBGColor = downArrowColor;
                                         downArrowColor = upBGColor;
                                         indicator = -1;
-                                        widget.deviceObject.socket
-                                            .write('-2\r');
+                                         widget.deviceObject.socket
+                                              .write('-2\r');
                                         if (widget.deviceObject.height != 0) {
+                                         
                                           tick();
                                         }
                                       },
                                       onPointerUp: (data) {
-                                        widget.deviceObject.socket
-                                            .write('-1\r');
+                                         widget.deviceObject.socket
+                                              .write('-1\r');
                                         setState(() {
                                           downArrowColor = Color(0xff02457a);
                                           downBGColor = Color(0xff5cbceb);
@@ -204,7 +209,7 @@ class _HeightPageState extends State<HeightPage> {
             ),
           ),
           Positioned(
-            top: 20,
+            top: 30,
             left: 0,
             child: Row(
               children: <Widget>[

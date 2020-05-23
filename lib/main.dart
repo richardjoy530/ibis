@@ -13,6 +13,7 @@ import 'package:wifi_iot/wifi_iot.dart';
 
 import 'data.dart';
 import 'front_page.dart';
+import 'loding.dart';
 
 int displayTime;
 SharedPreferences prefs;
@@ -161,7 +162,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'BalooTamma2',
       ),
-      home: FrontPage(),
+      home: Loding(),
     );
   }
 }
@@ -197,6 +198,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
     super.initState();
   }
 
@@ -211,6 +213,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         widget.deviceObject.temp == true) {
       widget.deviceObject.socket.write(65);
     }
+
     super.dispose();
   }
 
