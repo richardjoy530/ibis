@@ -90,13 +90,11 @@ class _HeightPageState extends State<HeightPage> {
                                       ),
                                     ),
                                     onPointerDown: (data) {
-                                      widget.deviceObject.socket
-                                            .write('-3\r');
+                                      widget.deviceObject.socket.write('-3\r');
                                       upBGColor = upArrowColor;
                                       upArrowColor = downBGColor;
                                       indicator = 1;
                                       if (widget.deviceObject.height != 100) {
-                                        
                                         tick();
                                       }
                                     },
@@ -121,7 +119,9 @@ class _HeightPageState extends State<HeightPage> {
                                   child: ClayContainer(
                                     spread: 0,
                                     color: downBGColor,
-                                    customBorderRadius: BorderRadius.only(bottomLeft: Radius.circular(20.0),bottomRight: Radius.circular(20.0)),
+                                    customBorderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(20.0),
+                                        bottomRight: Radius.circular(20.0)),
                                     child: Listener(
                                       child: IconButton(
                                         iconSize: 40.0,
@@ -133,16 +133,15 @@ class _HeightPageState extends State<HeightPage> {
                                         downBGColor = downArrowColor;
                                         downArrowColor = upBGColor;
                                         indicator = -1;
-                                         widget.deviceObject.socket
-                                              .write('-2\r');
+                                        widget.deviceObject.socket
+                                            .write('-2\r');
                                         if (widget.deviceObject.height != 0) {
-                                         
                                           tick();
                                         }
                                       },
                                       onPointerUp: (data) {
-                                         widget.deviceObject.socket
-                                              .write('-1\r');
+                                        widget.deviceObject.socket
+                                            .write('-1\r');
                                         setState(() {
                                           downArrowColor = Color(0xff02457a);
                                           downBGColor = Color(0xff5cbceb);
