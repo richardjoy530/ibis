@@ -73,18 +73,19 @@ class _HeightPageState extends State<HeightPage> {
                                   HeightPainter(widget.deviceObject.height),
                             ),
                             Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Padding(
-                                  padding: const EdgeInsets.all(20),
+                                  padding: const EdgeInsets.only(top: 20),
                                   child: Listener(
                                     child: ClayContainer(
                                       color: upBGColor,
                                       spread: 2,
-                                      borderRadius: 20,
+                                      customBorderRadius: BorderRadius.only(topLeft: Radius.circular(20.0),topRight: Radius.circular(20.0)),
                                       child: IconButton(
+                                        iconSize: 40.0,
                                         color: upArrowColor,
-                                        icon: Icon(Icons.arrow_upward),
+                                        icon: Icon(Icons.add),
                                         onPressed: () {},
                                       ),
                                     ),
@@ -118,15 +119,16 @@ class _HeightPageState extends State<HeightPage> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.all(20),
+                                  padding: const EdgeInsets.only(bottom: 20),
                                   child: ClayContainer(
                                     spread: 2,
                                     color: downBGColor,
-                                    borderRadius: 20,
+                                    customBorderRadius: BorderRadius.only(bottomLeft: Radius.circular(20.0),bottomRight: Radius.circular(20.0)),
                                     child: Listener(
                                       child: IconButton(
+                                        iconSize: 40.0,
                                         color: downArrowColor,
-                                        icon: Icon(Icons.arrow_downward),
+                                        icon: Icon(Icons.remove),
                                         onPressed: () {},
                                       ),
                                       onPointerDown: (data) {
@@ -211,7 +213,7 @@ class _HeightPageState extends State<HeightPage> {
             ),
           ),
           Positioned(
-            top: 20,
+            top: 30,
             left: 0,
             child: Row(
               children: <Widget>[
