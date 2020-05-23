@@ -90,7 +90,7 @@ void connect() async {
               offline: false,
               socket: clientSocket,
               ip: clientSocket.remoteAddress.address,
-              name: 'Device${clientSocket.remotePort}',
+              name: 'Device',
               mainTime: Duration(minutes: 0),
               time: Duration(minutes: 0)));
           DeviceObject temp = deviceObjectList.singleWhere(
@@ -99,8 +99,8 @@ void connect() async {
           ipList.add(clientSocket.remoteAddress.address);
           SharedPreferences.getInstance().then((prefs) {
             prefs.setStringList('iplist', ipList);
-            prefs.setString('${clientSocket.remoteAddress.address}name',
-                'Device${clientSocket.remotePort}');
+            prefs.setString(
+                '${clientSocket.remoteAddress.address}name', 'Device');
             prefs.setInt(
                 '${clientSocket.remoteAddress.address}totalDuration', 0);
             prefs.setInt(
@@ -643,7 +643,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         });
         if (deviceObject.progressDegrees == 360) {
           deviceObject.progressDegrees = 0;
-          Navigator.pop(context);
+          overOver(context);
         }
       });
   }
@@ -662,6 +662,35 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return f.format((seconds / 60).floor());
   }
 
+  Future<void> overOver(context) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            backgroundColor: Color(0xffffffff),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            title: Center(
+              child: Text(
+                'Finished and safe to Enter',
+                style: TextStyle(
+                    color: Color(0xff02457a), fontWeight: FontWeight.bold),
+              ),
+            ),
+            children: <Widget>[
+              SimpleDialogOption(
+                child: Center(child: Text('OK')),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   Future<void> mainTick() async {
     mainTimer = Timer.periodic(Duration(seconds: 1), (callback) {
       if (mainTimer.tick > 40 &&
@@ -671,8 +700,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       }
       if (widget.deviceObject.motionDetected == true &&
           widget.deviceObject.power == false) {
-            widget.deviceObject.elapsedTime = 0;
-            widget.deviceObject.pause = false;
+        widget.deviceObject.elapsedTime = 0;
+        widget.deviceObject.pause = false;
         Navigator.pop(context);
       }
       if (serverOnline == false || widget.deviceObject.clientError == true) {

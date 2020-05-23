@@ -18,9 +18,9 @@ class HeightPage extends StatefulWidget {
 
 class _HeightPageState extends State<HeightPage> {
   Color upArrowColor = Color(0xff02457a);
-  Color upBGColor = Color(0xff97cadb);
+  Color upBGColor = Color(0xff5cbceb);
   Color downArrowColor = Color(0xffd6e7ee);
-  Color downBGColor = Color(0xff97cadb);
+  Color downBGColor = Color(0xff5cbceb);
 
   Timer mainTimer;
   Timer timer;
@@ -80,7 +80,7 @@ class _HeightPageState extends State<HeightPage> {
                                   child: Listener(
                                     child: ClayContainer(
                                       color: upBGColor,
-                                      spread: 2,
+                                      spread: 0,
                                       borderRadius: 20,
                                       child: IconButton(
                                         color: upArrowColor,
@@ -89,22 +89,19 @@ class _HeightPageState extends State<HeightPage> {
                                       ),
                                     ),
                                     onPointerDown: (data) {
-                                      widget.deviceObject.socket
-                                            .write('-3\r');
+                                      widget.deviceObject.socket.write('-3\r');
                                       upBGColor = upArrowColor;
                                       upArrowColor = downBGColor;
                                       indicator = 1;
                                       if (widget.deviceObject.height != 100) {
-                                        
                                         tick();
                                       }
                                     },
                                     onPointerUp: (data) {
-                                      widget.deviceObject.socket
-                                            .write('-1\r');
+                                      widget.deviceObject.socket.write('-1\r');
                                       setState(() {
                                         upArrowColor = Color(0xff02457a);
-                                        upBGColor = Color(0xff97cadb);
+                                        upBGColor = Color(0xff5cbceb);
                                       });
                                       timer.cancel();
                                       if (indicator != 0) {
@@ -112,7 +109,6 @@ class _HeightPageState extends State<HeightPage> {
                                             '${widget.deviceObject.ip}height',
                                             widget.deviceObject.height.toInt());
                                         indicator = 0;
-                                        
                                       }
                                     },
                                   ),
@@ -120,7 +116,7 @@ class _HeightPageState extends State<HeightPage> {
                                 Padding(
                                   padding: const EdgeInsets.all(20),
                                   child: ClayContainer(
-                                    spread: 2,
+                                    spread: 0,
                                     color: downBGColor,
                                     borderRadius: 20,
                                     child: Listener(
@@ -133,19 +129,18 @@ class _HeightPageState extends State<HeightPage> {
                                         downBGColor = downArrowColor;
                                         downArrowColor = upBGColor;
                                         indicator = -1;
-                                         widget.deviceObject.socket
-                                              .write('-2\r');
+                                        widget.deviceObject.socket
+                                            .write('-2\r');
                                         if (widget.deviceObject.height != 0) {
-                                         
                                           tick();
                                         }
                                       },
                                       onPointerUp: (data) {
-                                         widget.deviceObject.socket
-                                              .write('-1\r');
+                                        widget.deviceObject.socket
+                                            .write('-1\r');
                                         setState(() {
                                           downArrowColor = Color(0xff02457a);
-                                          downBGColor = Color(0xff97cadb);
+                                          downBGColor = Color(0xff5cbceb);
                                         });
                                         timer.cancel();
                                         if (indicator != 0) {
@@ -154,7 +149,6 @@ class _HeightPageState extends State<HeightPage> {
                                               widget.deviceObject.height
                                                   .toInt());
                                           indicator = 0;
-                                         
                                         }
                                       },
                                     ),
@@ -173,41 +167,40 @@ class _HeightPageState extends State<HeightPage> {
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
+            child: Listener(
               child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: 70,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Color(0xff97cadb),
-                ),
-                child: ListTile(
-                  title: Text(
-                    'Confirm height ?',
-                    style: TextStyle(color: Color(0xff02457a)),
+                    //borderRadius: BorderRadius.circular(20),
+                    gradient: LinearGradient(
+                        colors: [Color(0xff009ce9), Color(0xff83caec)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight)),
+                child: Center(
+                  child: Text(
+                    'Confirm Height',
+                    style: TextStyle(fontSize: 24, color: Color(0xff02457a)),
                   ),
-                  trailing: IconButton(
-                      color: Color(0xff02457a),
-                      icon: Icon(Icons.check),
-                      onPressed: () {
-                        widget.deviceObject.progressDegrees = 0;
-                        if (widget.deviceObject.height.toInt() == 0) {
-                          widget.deviceObject.socket.write('0\r');
-                        } else {
-                          widget.deviceObject.socket.write('5\r');
-                        }
-                        prefs.setInt('${widget.deviceObject.ip}height',
-                            widget.deviceObject.height.toInt());
-                        widget.deviceObject.time = Duration(minutes: 0);
-                        widget.deviceObject.temp = true;
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  HomePage(widget.deviceObject)),
-                        );
-                      }),
                 ),
               ),
+              onPointerUp: (pointerUp) {
+                widget.deviceObject.progressDegrees = 0;
+                if (widget.deviceObject.height.toInt() == 0) {
+                  widget.deviceObject.socket.write('0\r');
+                } else {
+                  widget.deviceObject.socket.write('5\r');
+                }
+                prefs.setInt('${widget.deviceObject.ip}height',
+                    widget.deviceObject.height.toInt());
+                widget.deviceObject.time = Duration(minutes: 0);
+                widget.deviceObject.temp = true;
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => HomePage(widget.deviceObject)),
+                );
+              },
             ),
           ),
           Positioned(
@@ -269,7 +262,9 @@ class _HeightPageState extends State<HeightPage> {
 
   Future<void> mainTick() async {
     mainTimer = Timer.periodic(Duration(milliseconds: 1000), (callback) {
-      if (serverOnline == false || widget.deviceObject.clientError == true||widget.deviceObject.motionDetected==true) {
+      if (serverOnline == false ||
+          widget.deviceObject.clientError == true ||
+          widget.deviceObject.motionDetected == true) {
         Navigator.pop(context);
       }
     });

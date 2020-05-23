@@ -177,6 +177,10 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                           child: ListView.builder(
                               itemCount: deviceObjectList.length,
                               itemBuilder: (context, index) {
+                                if(deviceObjectList[index].name=='Device'){
+                                deviceObjectList[index].name='';
+                                nameIt(context,deviceObjectList[index]);
+                                }
                                 return Container(
                                   margin: EdgeInsets.all(10),
                                   decoration: BoxDecoration(
@@ -461,11 +465,13 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               SimpleDialogOption(
                 child: Text('OK'),
                 onPressed: () {
-                  deviceObject.name = nameController.text;
-                  prefs.setString(
-                      '${deviceObject.ip}name', nameController.text);
-                  nameController.text = '';
-                  Navigator.pop(context);
+                  if (nameController.text != '') {
+                    deviceObject.name = nameController.text;
+                    prefs.setString(
+                        '${deviceObject.ip}name', nameController.text);
+                    nameController.text = '';
+                    Navigator.pop(context);
+                  }
                 },
               ),
             ],
@@ -516,5 +522,11 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             ],
           );
         });
+  }
+
+  Future<void> nameIt(BuildContext context,DeviceObject deviceObject) async{
+    Future.delayed(Duration(milliseconds: 300),(){
+      setName(context, deviceObject);
+    });
   }
 }
