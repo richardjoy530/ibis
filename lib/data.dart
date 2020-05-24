@@ -137,7 +137,7 @@ class DatabaseHelper {
   // Insert Operation: Insert a Note object to database
   Future<int> insertRoom(String room) async {
     Database db = await this.database;
-    var result = await db.insert('Rooms',{'id':1,'roomName':'Test Room'});
+    var result = await db.insert('Rooms',{'id':1,'roomName':room});
     return result;
   }
 

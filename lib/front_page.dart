@@ -392,6 +392,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                         icon: Icon(Icons.check),
                         color: Colors.white,
                         onPressed: () {
+                          databaseHelper.insertRoom('myroom sdfsd');
+                          databaseHelper.getRoomMapList().then((value) => print(value));
                         },
                       ),
                     ),

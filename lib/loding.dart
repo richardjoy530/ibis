@@ -1,7 +1,9 @@
+import 'data.dart';
 import 'front_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'main.dart';
 
 class Loding extends StatefulWidget {
   @override
@@ -11,6 +13,7 @@ class Loding extends StatefulWidget {
 class _LodingState extends State<Loding> {
   @override
   void initState() {
+    databaseHelper = DatabaseHelper();
     redirect();
     super.initState();
   }
