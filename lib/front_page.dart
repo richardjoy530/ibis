@@ -9,7 +9,6 @@ import 'package:ibis/height_page.dart';
 import 'package:ibis/main.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:wifi_iot/wifi_iot.dart';
-import 'package:sqflite/sqflite.dart';
 
 import 'data.dart';
 
@@ -21,9 +20,8 @@ bool serverOnline = false;
 bool isEnabled = false;
 bool isConnected = false;
 String serverIp;
-int screenLengthConstant=0;
-int nameNumber=1;
-Database database;
+int screenLengthConstant = 0;
+int nameNumber = 1;
 
 final List<bool> isSelected = [false];
 Future<void> wifi() async {
@@ -43,7 +41,7 @@ Future<void> wifi() async {
       print('Connected:$isConnected');
     }
   });
-  
+
   serverIp = await WiFiForIoTPlugin.getIP();
 }
 
@@ -112,35 +110,10 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         }
       });
     });
-    databaseConnect();
     super.initState();
   }
 
-  Future<void> databaseConnect() async
-  {
-    var databasesPath = await getDatabasesPath();
-    String path = databasesPath+'/ibis.db';
-    print(path);
-    database = await openDatabase(path, version: 1,
-        onCreate: (Database db, int version) async {
-          // When creating the db, create the table
-          await db.execute('CREATE TABLE Rooms (id INTEGER NOT NULL , roomName TEXT)');
-        },singleInstance: true);
-    print('database:$database');
-    //await database.close();
-  }
-
-  Future<void> databaseInsertion() async
-  {
-    await database.transaction((txn) async {
-      int id1 = await txn.rawInsert(
-          'INSERT INTO Rooms(id, roomName) VALUES(1,"room1")');
-      print('inserted:$id1');
-      List list = await database.rawQuery('SELECT * FROM Rooms');
-      print('list:$list');
-
-    });
-  }
+  
 
   @override
   void dispose() {
@@ -152,7 +125,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+        body: Container(
           padding: EdgeInsets.only(top: 40),
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -208,9 +181,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                           child: ListView.builder(
                               itemCount: deviceObjectList.length,
                               itemBuilder: (context, index) {
-                                if(deviceObjectList[index].name=='Device'){
-                                deviceObjectList[index].name='';
-                                nameIt(context,deviceObjectList[index]);
+                                if (deviceObjectList[index].name == 'Device') {
+                                  deviceObjectList[index].name = '';
+                                  nameIt(context, deviceObjectList[index]);
                                 }
                                 return Container(
                                   margin: EdgeInsets.all(10),
@@ -324,119 +297,111 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     ),
             ],
           ),
-        
-      ),
-     floatingActionButton: Container(
-        padding: EdgeInsets.fromLTRB(25, 0, 0, 0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            FloatingActionButton.extended(
-              heroTag: 'hero1',
-              label: Text('Add Worker'),
-             // icon: Icon(Icons.add),
-              onPressed: ()
-              {
-
-              },
-            ),
-            FloatingActionButton.extended(
-              heroTag: 'hero2',
-              label: Text('Add Room'),
-             // icon: Icon(Icons.home),
-              onPressed: ()
-              {
-                addRooms();
-              },
-            )
-          ],
-        )
-      )
-    );
+        ),
+        floatingActionButton: Container(
+            padding: EdgeInsets.fromLTRB(25, 0, 0, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                FloatingActionButton.extended(
+                  heroTag: 'hero1',
+                  label: Text('Worker'),
+                  icon: Icon(Icons.add),
+                  // icon: Icon(Icons.add),
+                  onPressed: () {},
+                ),
+                FloatingActionButton.extended(
+                  heroTag: 'hero2',
+                  label: Text('Room'),
+                  icon: Icon(Icons.add),
+                  onPressed: () {
+                    nameNumber = 1;
+                    addRooms();
+                  },
+                )
+              ],
+            )));
   }
 
-  void addRooms() async
-  {
-    showDialog(context: context,
-        builder: (BuildContext context){
-          return StatefulBuilder(
-            builder: (context,setState){
-              return SimpleDialog(
-                title: Center(child: Text('Add Room',style: TextStyle(fontSize: 25,color: Colors.black),)),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20.0))
+  void addRooms() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return SimpleDialog(
+              title: Center(
+                child: Text(
+                  'Add Room',
+                  style: TextStyle(fontSize: 20, color: Color(0xff02457a),fontWeight: FontWeight.bold),
                 ),
-                children: <Widget>[
-
-                  SimpleDialogOption(
-                      child:Container(
-                        height: MediaQuery.of(context).size.height/(7-nameNumber+screenLengthConstant),
-                        width: 300,
-                        child: ListView.builder(
-                          itemCount: nameNumber,
-                          itemBuilder: (context,index)
-                          {
-                            return ListTile(
-                                title:TextField(
-                                  decoration: InputDecoration(
-                                    labelText: 'Name',
-                                    labelStyle: TextStyle(fontSize: 20,color: Colors.blue),
-
-                                  ),
-                                )
-                            );
-                          },
-                        ),
-                      )
-
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10.0),
+                ),
+              ),
+              children: <Widget>[
+                SimpleDialogOption(
+                  child: Container(
+                    height: MediaQuery.of(context).size.height /
+                        (7 - nameNumber + screenLengthConstant),
+                    width: MediaQuery.of(context).size.width*0.7,
+                    child: ListView.builder(
+                      itemCount: nameNumber,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: TextField(
+                            decoration: InputDecoration(
+                              labelText: 'Room Name',
+                              labelStyle:
+                                  TextStyle(fontSize: 20, color: Colors.blue),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                  SimpleDialogOption(
-                    child: ListTile(
-                      leading:Container(
-                        decoration: ShapeDecoration(
-                            shape: CircleBorder(),
-                            color: Colors.blue
-                        ),
-                        child:IconButton(
-                          icon: Icon(Icons.add),
-                          color:Colors.white,
-                          onPressed: ()
-                          {
-                            setState(() {
-                              nameNumber+=1;
-                              if(nameNumber>4)
-                              {
-                                screenLengthConstant+=1;
+                ),
+                SimpleDialogOption(
+                  child: ListTile(
+                    leading: Container(
+                      decoration: ShapeDecoration(
+                          shape: CircleBorder(), color: Colors.blue),
+                      child: IconButton(
+                        icon: Icon(Icons.add),
+                        color: Colors.white,
+                        onPressed: () {
+                          setState(
+                            () {
+                              nameNumber += 1;
+                              if (nameNumber > 4) {
+                                screenLengthConstant += 1;
                               }
-                            });
+                            },
+                          );
 
-                            print(nameNumber);
-
-                          },
-                        ),
-                      ),
-                      trailing:Container(
-                        decoration: ShapeDecoration(
-                            shape: CircleBorder(),
-                            color: Colors.blue
-                        ),
-                        child:IconButton(
-                          icon: Icon(Icons.check),
-                          color:Colors.white,
-                          onPressed: ()
-                          {
-                            databaseInsertion();
-                          },
-                        ),
+                          print(nameNumber);
+                        },
                       ),
                     ),
-                  )
-
-                ],
-              );
-            },
-          );
-        }
+                    trailing: Container(
+                      decoration: ShapeDecoration(
+                          shape: CircleBorder(), color: Colors.blue),
+                      child: IconButton(
+                        icon: Icon(Icons.check),
+                        color: Colors.white,
+                        onPressed: () {
+                        },
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
@@ -668,8 +633,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         });
   }
 
-  Future<void> nameIt(BuildContext context,DeviceObject deviceObject) async{
-    Future.delayed(Duration(milliseconds: 300),(){
+  Future<void> nameIt(BuildContext context, DeviceObject deviceObject) async {
+    Future.delayed(Duration(milliseconds: 300), () {
       setName(context, deviceObject);
     });
   }
