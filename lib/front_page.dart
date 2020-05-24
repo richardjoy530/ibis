@@ -24,7 +24,6 @@ String serverIp;
 int screenLengthConstant = 0;
 int nameNumber = 1;
 List<TextEditingController> roomNames = [];
-List<String> cText = [];
 final List<bool> isSelected = [false];
 Future<void> wifi() async {
   WiFiForIoTPlugin.isEnabled().then((val) {
@@ -700,6 +699,7 @@ class Rooms extends StatefulWidget {
 }
 
 class _RoomsState extends State<Rooms> {
+  List<String> cText = [];
   List<TextEditingController> roomNames = [];
   @override
   void initState() {
@@ -809,7 +809,6 @@ class _RoomsState extends State<Rooms> {
                               .getRoomMapList()
                               .then((value) => print(value));
                           nameNumber = 1;
-
                           Navigator.pop(context);
                         }
                       });
@@ -830,13 +829,14 @@ class Workers extends StatefulWidget {
   _WorkersState createState() => _WorkersState();
 }
 
-class _WorkersState extends State<Workers> {List<TextEditingController> roomNames = [];
+class _WorkersState extends State<Workers> {
+  List<String> cText = [];
+  List<TextEditingController> roomNames = [];
   @override
   void initState() {
     nameNumber = 1;
     roomNames.add(TextEditingController());
     cText.add('');
-    print('roomlist length:${roomNames.length}');
     super.initState();
   }
 
