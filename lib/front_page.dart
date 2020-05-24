@@ -763,13 +763,13 @@ class _RoomsState extends State<Rooms> {
                               }
                           });
                         },
-
                         decoration: InputDecoration(
                           labelText: 'Room Name',
                           counterText: cText[index],
                           counterStyle: TextStyle(color: Colors.red,fontSize: 15),
+                          border: OutlineInputBorder(borderSide: BorderSide(color:cText[index]==''?Colors.red:Colors.blue)),
                           labelStyle:
-                              TextStyle(fontSize: 20, color: Colors.blue),
+                              TextStyle(fontSize: 20, color:cText[index]=='Enter Name'?Colors.red:Colors.blue),
                         ),
                       ),
                     );
@@ -895,10 +895,26 @@ class _WorkersState extends State<Workers> {
                     return ListTile(
                       title: TextField(
                         controller: roomNames[index],
+                        onChanged: (stafData)
+                        {
+                          setState(() {
+                            if(roomNames[index].text.length==0)
+                            {
+                              cText[index]='Enter Name';
+                            }
+                            else
+                            {
+                              cText[index]='';
+                            }
+                          });
+                        },
                         decoration: InputDecoration(
+                          counterText: cText[index],
+                          counterStyle: TextStyle(color: Colors.red,fontSize: 15),
+                          border: OutlineInputBorder(borderSide: BorderSide(color:cText[index]==''?Colors.red:Colors.blue)),
                           labelText: 'Staff Name',
                           labelStyle:
-                              TextStyle(fontSize: 20, color: Colors.blue),
+                          TextStyle(fontSize: 20, color:cText[index]=='Enter Name'?Colors.red:Colors.blue),
                         ),
                       ),
                     );
