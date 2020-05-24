@@ -19,6 +19,7 @@ int displayTime;
 SharedPreferences prefs;
 String deviceName;
 int deviceHeight;
+DatabaseHelper databaseHelper;
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 final customColor = CustomSliderColors(

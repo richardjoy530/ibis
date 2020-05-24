@@ -1,8 +1,9 @@
+import 'data.dart';
 import 'front_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-
+import 'main.dart';
 
 class Loding extends StatefulWidget {
   @override
@@ -10,39 +11,18 @@ class Loding extends StatefulWidget {
 }
 
 class _LodingState extends State<Loding> {
-  Timer time, timer;
-  double per = 0;
   @override
   void initState() {
-    /*timer = Timer.periodic(Duration(milliseconds: 100), (timer) {
-      setState(() {
-        if (per < 1.0) {
-          if (per > 0.9) {
-            per = 1.0;
-          } else {
-            per += 0.05;
-          }
-        }
-      });
-    });*/
+    databaseHelper = DatabaseHelper();
     redirect();
     super.initState();
   }
 
   void redirect() {
-    time = Timer.periodic(Duration(seconds: 2), (timer) {
-      Navigator.pushReplacement(context,
-      MaterialPageRoute(builder: (context)=>FrontPage())
-      );
+    Future.delayed(Duration(seconds: 2), () {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => FrontPage()));
     });
-  }
-
-  @override
-  void dispose() {
-    print('Loding page disposed');
-    //timer.cancel();
-    time.cancel();
-    super.dispose();
   }
 
   @override
