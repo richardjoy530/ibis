@@ -54,14 +54,14 @@ class _ShowHistoryState extends State<ShowHistory> {
                                       fontSize: 25, color: Colors.blue))),
                           onTap: () {},
                           title: Text(
-                            'Richard',
+                            historyList[index].workerName,
                             style: TextStyle(
                                 fontSize: 20,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(
-                            'Started',
+                            historyList[index].state,
                             style:
                                 TextStyle(color: Colors.blueGrey, fontSize: 20),
                           ),
