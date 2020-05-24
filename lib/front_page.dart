@@ -750,8 +750,24 @@ class _RoomsState extends State<Rooms> {
                     return ListTile(
                       title: TextField(
                         controller: roomNames[index],
+                        onChanged: (data)
+                        {
+                          setState(() {
+                            if(roomNames[index].text.length==0)
+                              {
+                                cText[index]='Enter Name';
+                              }
+                            else
+                              {
+                                cText[index]='';
+                              }
+                          });
+                        },
+
                         decoration: InputDecoration(
                           labelText: 'Room Name',
+                          counterText: cText[index],
+                          counterStyle: TextStyle(color: Colors.red,fontSize: 15),
                           labelStyle:
                               TextStyle(fontSize: 20, color: Colors.blue),
                         ),
@@ -772,6 +788,7 @@ class _RoomsState extends State<Rooms> {
                     onPressed: () {
                       setState(
                         () {
+                          cText.add('');
                           roomNames.add(TextEditingController());
                           nameNumber += 1;
                           if (nameNumber > 4) {
