@@ -2,7 +2,6 @@ import 'front_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class Loding extends StatefulWidget {
   @override
