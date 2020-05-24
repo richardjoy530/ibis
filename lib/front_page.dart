@@ -706,7 +706,6 @@ class _RoomsState extends State<Rooms> {
     nameNumber = 1;
     roomNames.add(TextEditingController());
     cText.add('');
-    print('roomlist length:${roomNames.length}');
     super.initState();
   }
 
