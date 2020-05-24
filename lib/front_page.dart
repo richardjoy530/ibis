@@ -575,7 +575,6 @@ class _RoomsState extends State<Rooms> {
 
   @override
   void initState() {
-    // TODO: implement initState
     nameNumber = 1;
     roomNames.add(TextEditingController());
     print('roomlist length:${roomNames.length}');
@@ -584,12 +583,12 @@ class _RoomsState extends State<Rooms> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    roomNames.removeRange(0, roomNames.length);
-   /* for (var j = 0; j < roomNames.length; j++)
+   
+   for (var j = 0; j < roomNames.length; j++)
     {
-      //roomNames[j].dispose();
-    }*/
+      roomNames[j].dispose();
+    }
+     roomNames=[];
     super.dispose();
   }
 
@@ -601,6 +600,137 @@ class _RoomsState extends State<Rooms> {
           title: Center(
             child: Text(
               'Add Room',
+              style: TextStyle(fontSize: 20, color: Color(0xff02457a),fontWeight: FontWeight.bold),
+            ),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(10.0),
+            ),
+          ),
+          children: <Widget>[
+            SimpleDialogOption(
+              child: Container(
+                height: MediaQuery.of(context).size.height /
+                    (7 - nameNumber + screenLengthConstant),
+                width: MediaQuery.of(context).size.width*0.7,
+                child: ListView.builder(
+                  itemCount: nameNumber,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: TextField(
+                        controller: roomNames[index],
+                        decoration: InputDecoration(
+                          labelText: 'Room Name',
+                          hintText: 'Name of the room',
+                          counterText: roomNames[index].text.length<1?'Please Enter the Name':'',
+                          labelStyle:
+                          TextStyle(fontSize: 20, color: Colors.blue),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            SimpleDialogOption(
+              child: ListTile(
+                leading: Container(
+                  decoration: ShapeDecoration(
+                      shape: CircleBorder(), color: Colors.blue),
+                  child: IconButton(
+                    icon: Icon(Icons.add),
+                    color: Colors.white,
+                    onPressed: () {
+                      setState(
+                            () {
+                          roomNames.add(TextEditingController());
+                          nameNumber += 1;
+
+                          if (nameNumber > 4) {
+                            screenLengthConstant += 1;
+                          }
+                        },
+                      );
+
+                      print(nameNumber);
+                    },
+                  ),
+                ),
+                trailing: Container(
+                  decoration: ShapeDecoration(
+                      shape: CircleBorder(), color: Colors.blue),
+                  child: IconButton(
+                    icon: Icon(Icons.check),
+                    color: Colors.white,
+                    onPressed: () {
+                      int check=0,i;
+                      for(i=0;i<nameNumber;i++)
+                        {
+                          if(roomNames[i].text.length<1)
+                            {
+                              check+=1;
+                            }
+                        }
+                      if(check==0) {
+                        for (i = 0; i < nameNumber; i++) {
+                          if (roomNames[i].text.length > 0) {
+                            databaseHelper.insertRoom(roomNames[i].text);
+                          }
+                        }
+                        databaseHelper.getRoomMapList().then((value) =>
+                            print(value));
+                        nameNumber = 1;
+
+                        Navigator.pop(context);
+                      }
+
+                    },
+                  ),
+                ),
+              ),
+            )
+          ],
+        );
+      },
+    );
+  }
+}
+
+
+class Workers extends StatefulWidget {
+  @override
+  _WorkersState createState() => _WorkersState();
+}
+
+class _WorkersState extends State<Workers> {
+
+  @override
+  void initState() {
+    nameNumber = 1;
+    roomNames.add(TextEditingController());
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+   
+   for (var j = 0; j < roomNames.length; j++)
+    {
+      roomNames[j].dispose();
+    }
+     roomNames=[];
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return SimpleDialog(
+          title: Center(
+            child: Text(
+              'Add Staff',
               style: TextStyle(fontSize: 20, color: Color(0xff02457a),fontWeight: FontWeight.bold),
             ),
           ),
