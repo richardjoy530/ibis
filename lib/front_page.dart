@@ -120,24 +120,39 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   {
     var databasesPath = await getDatabasesPath();
     String path = databasesPath+'/ibis.db';
-    print(path);
-    database = await openDatabase(path, version: 1,
-        onCreate: (Database db, int version) async {
-          // When creating the db, create the table
-          await db.execute('CREATE TABLE Rooms (id INTEGER NOT NULL , roomName TEXT)');
-        },singleInstance: true);
-    print('database:$database');
+    //print(path);
+    if(database==null)
+      {
+        database = await openDatabase(path, version: 1,
+            onCreate: (Database db, int version) async {
+              // When creating the db, create the table
+              await db.execute('CREATE TABLE Rooms (id INTEGER NOT NULL , roomName TEXT)');
+            });
+      }
+    /*var version=await database.getVersion();
+    print('database version:$version');*/
     //await database.close();
   }
 
   Future<void> databaseInsertion() async
   {
+    //print('outside database inertion:$database');
+    if(database==null)
+      {
+        print('inside database inertion:$database');
+        var databasesPath = await getDatabasesPath();
+        String path = databasesPath+'/ibis.db';
+        database=await openDatabase(path);
+      }
     await database.transaction((txn) async {
       int id1 = await txn.rawInsert(
           'INSERT INTO Rooms(id, roomName) VALUES(1,"room1")');
       print('inserted:$id1');
-      List list = await database.rawQuery('SELECT * FROM Rooms');
-      print('list:$list');
+
+      List<Map> list = await database.rawQuery('SELECT * FROM Rooms');
+      print('list length:${list.length}');
+     // await database.close();
+
 
     });
   }
