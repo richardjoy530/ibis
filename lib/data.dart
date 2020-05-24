@@ -122,7 +122,7 @@ class DatabaseHelper {
 
   void _createDb(Database db, int newVersion) async {
     await db.execute(
-        'CREATE TABLE Rooms (id INTEGER NOT NULL , roomName TEXT)');
+        'CREATE TABLE Rooms (id INTEGER PRIMARY KEY AUTOINCREMENT , roomName TEXT)');
   }
 
   // Fetch Operation: Get all note objects from database
@@ -130,14 +130,14 @@ class DatabaseHelper {
     Database db = await this.database;
 
 //		var result = await db.rawQuery('SELECT * FROM $noteTable order by $colPriority ASC');
-    var result = await db.query('Rooms', orderBy: '$colId ASC');
+    var result = await db.query('Rooms');
     return result;
   }
 
   // Insert Operation: Insert a Note object to database
   Future<int> insertRoom(String room) async {
     Database db = await this.database;
-    var result = await db.insert('Rooms',{'id':1,'roomName':room});
+    var result = await db.insert('Rooms',{'roomName':room});
     return result;
   }
 

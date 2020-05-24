@@ -22,7 +22,7 @@ bool isConnected = false;
 String serverIp;
 int screenLengthConstant = 0;
 int nameNumber = 1;
-
+List<TextEditingController> roomNames=[];
 final List<bool> isSelected = [false];
 Future<void> wifi() async {
   WiFiForIoTPlugin.isEnabled().then((val) {
@@ -53,6 +53,7 @@ class FrontPage extends StatefulWidget {
 class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   Timer timer;
   TextEditingController nameController;
+
   String _friendlyName = 'Loading...';
 
   @override
@@ -315,97 +316,20 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   label: Text('Room'),
                   icon: Icon(Icons.add),
                   onPressed: () {
-                    nameNumber = 1;
-                    addRooms();
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                            return  Rooms();
+                        },
+                      );
+
+
                   },
                 )
               ],
             )));
   }
 
-  void addRooms() async {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return SimpleDialog(
-              title: Center(
-                child: Text(
-                  'Add Room',
-                  style: TextStyle(fontSize: 20, color: Color(0xff02457a),fontWeight: FontWeight.bold),
-                ),
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10.0),
-                ),
-              ),
-              children: <Widget>[
-                SimpleDialogOption(
-                  child: Container(
-                    height: MediaQuery.of(context).size.height /
-                        (7 - nameNumber + screenLengthConstant),
-                    width: MediaQuery.of(context).size.width*0.7,
-                    child: ListView.builder(
-                      itemCount: nameNumber,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: TextField(
-                            decoration: InputDecoration(
-                              labelText: 'Room Name',
-                              labelStyle:
-                                  TextStyle(fontSize: 20, color: Colors.blue),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                SimpleDialogOption(
-                  child: ListTile(
-                    leading: Container(
-                      decoration: ShapeDecoration(
-                          shape: CircleBorder(), color: Colors.blue),
-                      child: IconButton(
-                        icon: Icon(Icons.add),
-                        color: Colors.white,
-                        onPressed: () {
-                          setState(
-                            () {
-                              nameNumber += 1;
-                              if (nameNumber > 4) {
-                                screenLengthConstant += 1;
-                              }
-                            },
-                          );
-
-                          print(nameNumber);
-                        },
-                      ),
-                    ),
-                    trailing: Container(
-                      decoration: ShapeDecoration(
-                          shape: CircleBorder(), color: Colors.blue),
-                      child: IconButton(
-                        icon: Icon(Icons.check),
-                        color: Colors.white,
-                        onPressed: () {
-                          databaseHelper.insertRoom('myroom sdfsd');
-                          databaseHelper.getRoomMapList().then((value) => print(value));
-                        },
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
 
   void onMenuPressed(BuildContext context) {
     showModalBottomSheet(
@@ -639,5 +563,137 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     Future.delayed(Duration(milliseconds: 300), () {
       setName(context, deviceObject);
     });
+  }
+}
+
+class Rooms extends StatefulWidget {
+  @override
+  _RoomsState createState() => _RoomsState();
+}
+
+class _RoomsState extends State<Rooms> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    nameNumber = 1;
+    roomNames.add(TextEditingController());
+    print('roomlist length:${roomNames.length}');
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    roomNames.removeRange(0, roomNames.length);
+   /* for (var j = 0; j < roomNames.length; j++)
+    {
+      //roomNames[j].dispose();
+    }*/
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return SimpleDialog(
+          title: Center(
+            child: Text(
+              'Add Room',
+              style: TextStyle(fontSize: 20, color: Color(0xff02457a),fontWeight: FontWeight.bold),
+            ),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(10.0),
+            ),
+          ),
+          children: <Widget>[
+            SimpleDialogOption(
+              child: Container(
+                height: MediaQuery.of(context).size.height /
+                    (7 - nameNumber + screenLengthConstant),
+                width: MediaQuery.of(context).size.width*0.7,
+                child: ListView.builder(
+                  itemCount: nameNumber,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: TextField(
+                        controller: roomNames[index],
+                        decoration: InputDecoration(
+                          labelText: 'Room Name',
+                          hintText: 'Name of the room',
+                          counterText: roomNames[index].text.length<1?'Please Enter the Name':'',
+                          labelStyle:
+                          TextStyle(fontSize: 20, color: Colors.blue),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            SimpleDialogOption(
+              child: ListTile(
+                leading: Container(
+                  decoration: ShapeDecoration(
+                      shape: CircleBorder(), color: Colors.blue),
+                  child: IconButton(
+                    icon: Icon(Icons.add),
+                    color: Colors.white,
+                    onPressed: () {
+                      setState(
+                            () {
+                          roomNames.add(TextEditingController());
+                          nameNumber += 1;
+
+                          if (nameNumber > 4) {
+                            screenLengthConstant += 1;
+                          }
+                        },
+                      );
+
+                      print(nameNumber);
+                    },
+                  ),
+                ),
+                trailing: Container(
+                  decoration: ShapeDecoration(
+                      shape: CircleBorder(), color: Colors.blue),
+                  child: IconButton(
+                    icon: Icon(Icons.check),
+                    color: Colors.white,
+                    onPressed: () {
+                      int check=0,i;
+                      for(i=0;i<nameNumber;i++)
+                        {
+                          if(roomNames[i].text.length<1)
+                            {
+                              check+=1;
+                            }
+                        }
+                      if(check==0) {
+                        for (i = 0; i < nameNumber; i++) {
+                          if (roomNames[i].text.length > 0) {
+                            databaseHelper.insertRoom(roomNames[i].text);
+                          }
+                        }
+                        databaseHelper.getRoomMapList().then((value) =>
+                            print(value));
+                        nameNumber = 1;
+
+                        Navigator.pop(context);
+                      }
+
+                    },
+                  ),
+                ),
+              ),
+            )
+          ],
+        );
+      },
+    );
   }
 }
