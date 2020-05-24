@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-
 import 'front_page.dart';
 import 'main.dart' as main;
+import 'main.dart';
 
 class DeviceObject {
   bool temp;
@@ -62,6 +62,20 @@ class DeviceObject {
       if (this.offline == false) {
         if (String.fromCharCodes(onData).trim() == '1') {
           this.motionDetected = true;
+          databaseHelper.insertHistory(History(
+              roomName: room,
+              workerName: worker,
+              state: 'Motion Detected',
+              time: DateTime.now()));
+          historyList.add(
+            History(
+              roomName: room,
+              workerName: worker,
+              state: 'Motion Detected',
+              time: DateTime.now(),
+            ),
+          );
+
           main.notification('Motion was detected');
         }
       }
@@ -79,18 +93,36 @@ class DeviceObject {
         this.offline = true;
         if (this.power == true) {
           this.timer.cancel();
+          databaseHelper.insertHistory(History(
+              roomName: room,
+              workerName: worker,
+              state: 'Error',
+              time: DateTime.now()));
+          historyList.add(
+            History(
+              roomName: room,
+              workerName: worker,
+              state: 'Error',
+              time: DateTime.now(),
+            ),
+          );
         }
         this.power = false;
       });
   }
 }
 
+class History {
+  String roomName;
+  String workerName;
+  String state;
+  DateTime time;
+  History({this.roomName, this.state, this.time, this.workerName});
+}
 
 class DatabaseHelper {
   static DatabaseHelper _databaseHelper; // Singleton DatabaseHelper
   static Database _database; // Singleton Database
-
-  String colId = 'id';
 
   DatabaseHelper._createInstance(); // Named constructor to create instance of DatabaseHelper
 
@@ -116,28 +148,58 @@ class DatabaseHelper {
 
     // Open/create the database at a given path
     var notesDatabase =
-    await openDatabase(path, version: 1, onCreate: _createDb);
+        await openDatabase(path, version: 1, onCreate: _createDb);
     return notesDatabase;
   }
 
   void _createDb(Database db, int newVersion) async {
     await db.execute(
-        'CREATE TABLE Rooms (id INTEGER NOT NULL , roomName TEXT)');
-  }
-
-  // Fetch Operation: Get all note objects from database
-  Future<List<Map<String, dynamic>>> getRoomMapList() async {
-    Database db = await this.database;
-
-//		var result = await db.rawQuery('SELECT * FROM $noteTable order by $colPriority ASC');
-    var result = await db.query('Rooms', orderBy: '$colId ASC');
-    return result;
+        'CREATE TABLE Rooms (id INTEGER PRIMARY KEY AUTOINCREMENT , roomName TEXT)');
+    await db.execute(
+        'CREATE TABLE Workers (id INTEGER PRIMARY KEY AUTOINCREMENT , workerName TEXT)');
+    await db.execute(
+        'CREATE TABLE History (id INTEGER PRIMARY KEY AUTOINCREMENT , workerName TEXT , roomName TEXT , time TEXT, state TEXT)');
   }
 
   // Insert Operation: Insert a Note object to database
   Future<int> insertRoom(String room) async {
     Database db = await this.database;
-    var result = await db.insert('Rooms',{'id':1,'roomName':room});
+    var result = await db.insert('Rooms', {'roomName': room});
+    return result;
+  }
+
+  Future<int> insertWorker(String worker) async {
+    Database db = await this.database;
+    var result = await db.insert('Workers', {'workerName': worker});
+    return result;
+  }
+
+  Future<int> insertHistory(History history) async {
+    Database db = await this.database;
+    var result = await db.insert('History', {
+      'workerName': history.workerName,
+      'roomName': history.roomName,
+      'time': history.time.toIso8601String(),
+      'state': history.state
+    });
+    return result;
+  }
+
+  Future<List<Map<String, dynamic>>> getRoomMapList() async {
+    Database db = await this.database;
+    var result = await db.query('Rooms');
+    return result;
+  }
+
+  Future<List<Map<String, dynamic>>> getWorkerMapList() async {
+    Database db = await this.database;
+    var result = await db.query('Workers');
+    return result;
+  }
+
+  Future<List<Map<String, dynamic>>> getHistoryMapList() async {
+    Database db = await this.database;
+    var result = await db.query('History');
     return result;
   }
 
@@ -170,6 +232,5 @@ class DatabaseHelper {
   //   int result = Sqflite.firstIntValue(x);
   //   return result;
   // }
-
 
 }

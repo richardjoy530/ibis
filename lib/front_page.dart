@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_device_friendly_name/flutter_device_friendly_name.dart';
 import 'package:ibis/height_page.dart';
 import 'package:ibis/main.dart';
+import 'package:ibis/show_history.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 
@@ -97,6 +98,23 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   deviceObjectList[i].totalDuration.inSeconds);
               prefs.setInt('${deviceObjectList[i].ip}secondDuration',
                   deviceObjectList[i].secondDuration.inSeconds);
+              databaseHelper.insertHistory(
+                History(
+                  roomName: room,
+                  workerName: worker,
+                  state: 'Finished',
+                  time: DateTime.now(),
+                ),
+              );
+              historyList.add(
+                History(
+                  roomName: room,
+                  workerName: worker,
+                  state: 'Finished',
+                  time: DateTime.now(),
+                ),
+              );
+
               deviceObjectList[i].power = false;
               deviceObjectList[i].pause = false;
               deviceObjectList[i].flare = 'off';
@@ -113,8 +131,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     super.initState();
   }
 
-  
-
   @override
   void dispose() {
     nameController.dispose();
@@ -125,283 +141,526 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
-          padding: EdgeInsets.only(top: 40),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xffffffff), Color(0xffffffff)]),
-          ),
-          child: Column(
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 20),
-                      height: 30,
-                      width: 30,
-                      child: FlareActor(
-                        'assets/status.flr',
-                        animation: 'Connected',
+      body: Container(
+        padding: EdgeInsets.only(top: 40),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xffffffff), Color(0xffffffff)]),
+        ),
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    height: 30,
+                    width: 30,
+                    child: FlareActor(
+                      'assets/status.flr',
+                      animation: 'Connected',
+                    ),
+                  ),
+                ),
+                Expanded(child: Image.asset('images/razecov.jfif')),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  child: IconButton(
+                    icon: Icon(Icons.menu),
+                    color: Color(0xff019ae6),
+                    onPressed: () {
+                      onMenuPressed(context);
+                    },
+                  ),
+                )
+              ],
+            ),
+            serverOnline == true
+                ? deviceObjectList.length == 0
+                    ? Center(
+                        child: Container(
+                          margin: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              color: Color(0xffd6e7ee),
+                              borderRadius: BorderRadius.circular(20)),
+                          child: ListTile(
+                            leading: Icon(Icons.wifi_tethering),
+                            title: Text('Please connect your device!'),
+                          ),
+                        ),
+                      )
+                    : Expanded(
+                        child: ListView.builder(
+                            itemCount: deviceObjectList.length,
+                            itemBuilder: (context, index) {
+                              if (deviceObjectList[index].name == 'Device') {
+                                deviceObjectList[index].name = '';
+                                nameIt(context, deviceObjectList[index]);
+                              }
+                              return Container(
+                                margin: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    color: Color(0xffa9d5ea),
+                                    borderRadius: BorderRadius.circular(20)),
+                                child: ListTile(
+                                  leading: Icon(
+                                    deviceObjectList[index].offline == true
+                                        ? Icons.signal_wifi_off
+                                        : Icons.network_wifi,
+                                    color: Color(0xff019ae6),
+                                  ),
+                                  trailing:
+                                      deviceObjectList[index].motionDetected ==
+                                              true
+                                          ? Icon(
+                                              Icons.warning,
+                                              color: Color(0xff019ae6),
+                                            )
+                                          : IconButton(
+                                              icon: Icon(Icons.more_vert,
+                                                  color: Color(0xff019ae6)),
+                                              onPressed: () {
+                                                info(context,
+                                                    deviceObjectList[index]);
+                                              },
+                                            ),
+                                  title:
+                                      Text('${deviceObjectList[index].name}'),
+                                  subtitle: deviceObjectList[index].power ==
+                                          false
+                                      ? Text(deviceObjectList[index].offline ==
+                                              true
+                                          ? 'Device not Connected'
+                                          : deviceObjectList[index]
+                                                      .motionDetected ==
+                                                  false
+                                              ? 'Device Connected'
+                                              : 'Motion Detected : Tap to start again')
+                                      : LinearPercentIndicator(
+                                          lineHeight: 5.0,
+                                          animation: false,
+                                          animationDuration: 0,
+                                          backgroundColor: Color(0xffd6e7ee),
+                                          percent: deviceObjectList[index]
+                                              .linearProgressBarValue,
+                                          linearStrokeCap:
+                                              LinearStrokeCap.roundAll,
+                                          progressColor: Color(0xff019ae6),
+                                        ),
+                                  onTap: () {
+                                    if (deviceObjectList[index].offline ==
+                                        false) {
+                                      if (deviceObjectList[index].power ==
+                                          true) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => HomePage(
+                                                  deviceObjectList[index])),
+                                        );
+                                      } else {
+                                        deviceObjectList[index].motionDetected =
+                                            false;
+                                        deviceObjectList[index].time =
+                                            Duration(minutes: 0);
+                                        deviceObjectList[index]
+                                            .progressDegrees = 0;
+                                        if (rooms.length != 0) {
+                                          if (workers.length != 0) {
+                                            showRooms(context,
+                                                deviceObjectList[index]);
+                                          } else {
+                                            addWorker();
+                                          }
+                                        } else {
+                                          addRooms();
+                                        }
+                                      }
+                                    }
+                                  },
+                                  onLongPress: () {
+                                    setName(context, deviceObjectList[index]);
+                                  },
+                                ),
+                              );
+                            }),
+                      )
+                : Align(
+                    alignment: Alignment.center,
+                    child: AlertDialog(
+                      backgroundColor: Color(0xffffffff),
+                      shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(20.0))),
+                      title: Text(
+                        'Server is Offline',
+                        style: TextStyle(
+                            color: Color(0xff02457a),
+                            fontWeight: FontWeight.bold),
+                      ),
+                      content: IconButton(
+                        icon: Icon(
+                          Icons.refresh,
+                          color: Color(0xff019ae6),
+                        ),
+                        onPressed: () {
+                          connect();
+                        },
                       ),
                     ),
                   ),
-                  Expanded(child: Image.asset('images/razecov.jfif')),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20),
-                    child: IconButton(
-                      icon: Icon(Icons.menu),
-                      color: Color(0xff019ae6),
-                      onPressed: () {
-                        onMenuPressed(context);
-                      },
-                    ),
-                  )
-                ],
-              ),
-              serverOnline == true
-                  ? deviceObjectList.length == 0
-                      ? Center(
-                          child: Container(
-                            margin: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                color: Color(0xffd6e7ee),
-                                borderRadius: BorderRadius.circular(20)),
-                            child: ListTile(
-                              leading: Icon(Icons.wifi_tethering),
-                              title: Text('Please connect your device!'),
-                            ),
-                          ),
-                        )
-                      : Expanded(
-                          child: ListView.builder(
-                              itemCount: deviceObjectList.length,
-                              itemBuilder: (context, index) {
-                                if (deviceObjectList[index].name == 'Device') {
-                                  deviceObjectList[index].name = '';
-                                  nameIt(context, deviceObjectList[index]);
-                                }
-                                return Container(
-                                  margin: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      color: Color(0xffa9d5ea),
-                                      borderRadius: BorderRadius.circular(20)),
-                                  child: ListTile(
-                                    leading: Icon(
-                                      deviceObjectList[index].offline == true
-                                          ? Icons.signal_wifi_off
-                                          : Icons.network_wifi,
-                                      color: Color(0xff019ae6),
-                                    ),
-                                    trailing: deviceObjectList[index]
-                                                .motionDetected ==
-                                            true
-                                        ? Icon(
-                                            Icons.warning,
-                                            color: Color(0xff019ae6),
-                                          )
-                                        : IconButton(
-                                            icon: Icon(Icons.more_vert,
-                                                color: Color(0xff019ae6)),
-                                            onPressed: () {
-                                              info(context,
-                                                  deviceObjectList[index]);
-                                            },
-                                          ),
-                                    title:
-                                        Text('${deviceObjectList[index].name}'),
-                                    subtitle: deviceObjectList[index].power ==
-                                            false
-                                        ? Text(deviceObjectList[index]
-                                                    .offline ==
-                                                true
-                                            ? 'Device not Connected'
-                                            : deviceObjectList[index]
-                                                        .motionDetected ==
-                                                    false
-                                                ? 'Device Connected'
-                                                : 'Motion Detected : Tap to start again')
-                                        : LinearPercentIndicator(
-                                            lineHeight: 5.0,
-                                            animation: false,
-                                            animationDuration: 0,
-                                            backgroundColor: Color(0xffd6e7ee),
-                                            percent: deviceObjectList[index]
-                                                .linearProgressBarValue,
-                                            linearStrokeCap:
-                                                LinearStrokeCap.roundAll,
-                                            progressColor: Color(0xff019ae6),
-                                          ),
-                                    onTap: () {
-                                      if (deviceObjectList[index].offline ==
-                                          false) {
-                                        if (deviceObjectList[index].power ==
-                                            true) {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => HomePage(
-                                                    deviceObjectList[index])),
-                                          );
-                                        } else {
-                                          deviceObjectList[index]
-                                              .motionDetected = false;
-                                          deviceObjectList[index].time =
-                                              Duration(minutes: 0);
-                                          deviceObjectList[index]
-                                              .progressDegrees = 0;
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    HeightPage(deviceObjectList[
-                                                        index])),
-                                          );
-                                        }
-                                      }
-                                    },
-                                    onLongPress: () {
-                                      setName(context, deviceObjectList[index]);
-                                    },
-                                  ),
-                                );
-                              }),
-                        )
-                  : Align(
-                      alignment: Alignment.center,
-                      child: AlertDialog(
-                        backgroundColor: Color(0xffffffff),
-                        shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20.0))),
-                        title: Text(
-                          'Server is Offline',
-                          style: TextStyle(
-                              color: Color(0xff02457a),
-                              fontWeight: FontWeight.bold),
-                        ),
-                        content: IconButton(
-                          icon: Icon(
-                            Icons.refresh,
-                            color: Color(0xff019ae6),
-                          ),
-                          onPressed: () {
-                            connect();
-                          },
-                        ),
-                      ),
-                    ),
-            ],
-          ),
+          ],
         ),
-        floatingActionButton: Container(
-            padding: EdgeInsets.fromLTRB(25, 0, 0, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                FloatingActionButton.extended(
-                  heroTag: 'hero1',
-                  label: Text('Worker'),
-                  icon: Icon(Icons.add),
-                  // icon: Icon(Icons.add),
-                  onPressed: () {},
-                ),
-                FloatingActionButton.extended(
-                  heroTag: 'hero2',
-                  label: Text('Room'),
-                  icon: Icon(Icons.add),
-                  onPressed: () {
-                    nameNumber = 1;
-                    addRooms();
-                  },
-                )
-              ],
-            )));
+      ),
+      floatingActionButton: Container(
+        padding: EdgeInsets.fromLTRB(25, 0, 0, 0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            FloatingActionButton.extended(
+              heroTag: 'hero1',
+              label: Text('Worker'),
+              icon: Icon(Icons.add),
+              onPressed: () {
+                addWorker();
+              },
+            ),
+            FloatingActionButton.extended(
+              heroTag: 'hero2',
+              label: Text('Room'),
+              icon: Icon(Icons.add),
+              onPressed: () {
+                addRooms();
+              },
+            )
+          ],
+        ),
+      ),
+    );
   }
 
-  void addRooms() async {
+  void addRooms1() async {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return SimpleDialog(
-              title: Center(
-                child: Text(
-                  'Add Room',
-                  style: TextStyle(fontSize: 20, color: Color(0xff02457a),fontWeight: FontWeight.bold),
+        return SimpleDialog(
+          title: Center(
+            child: Text(
+              'Add Room',
+              style: TextStyle(
+                  fontSize: 20,
+                  color: Color(0xff02457a),
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(10.0),
+            ),
+          ),
+          children: <Widget>[
+            SimpleDialogOption(
+              child: Container(
+                height: MediaQuery.of(context).size.height /
+                    (7 - nameNumber + screenLengthConstant),
+                width: MediaQuery.of(context).size.width * 0.7,
+                child: ListView.builder(
+                  itemCount: nameNumber,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: TextField(
+                        decoration: InputDecoration(
+                          labelText: 'Room Name',
+                          labelStyle:
+                              TextStyle(fontSize: 20, color: Colors.blue),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10.0),
+            ),
+            SimpleDialogOption(
+              child: ListTile(
+                leading: Container(
+                  decoration: ShapeDecoration(
+                      shape: CircleBorder(), color: Colors.blue),
+                  child: IconButton(
+                    icon: Icon(Icons.add),
+                    color: Colors.white,
+                    onPressed: () {
+                      setState(
+                        () {
+                          nameNumber += 1;
+                          if (nameNumber > 4) {
+                            screenLengthConstant += 1;
+                          }
+                        },
+                      );
+
+                      print(nameNumber);
+                    },
+                  ),
+                ),
+                trailing: Container(
+                  decoration: ShapeDecoration(
+                      shape: CircleBorder(), color: Colors.blue),
+                  child: IconButton(
+                    icon: Icon(Icons.check),
+                    color: Colors.white,
+                    onPressed: () {
+                      databaseHelper.insertRoom('myroom sdfsd');
+                      databaseHelper
+                          .getRoomMapList()
+                          .then((value) => print(value));
+                      nameNumber = 1;
+                    },
+                  ),
                 ),
               ),
-              children: <Widget>[
-                SimpleDialogOption(
-                  child: Container(
-                    height: MediaQuery.of(context).size.height /
-                        (7 - nameNumber + screenLengthConstant),
-                    width: MediaQuery.of(context).size.width*0.7,
-                    child: ListView.builder(
-                      itemCount: nameNumber,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: TextField(
-                            decoration: InputDecoration(
-                              labelText: 'Room Name',
-                              labelStyle:
-                                  TextStyle(fontSize: 20, color: Colors.blue),
-                            ),
-                          ),
-                        );
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> addRooms() async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            backgroundColor: Color(0xffffffff),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            title: Text(
+              'Add Room',
+              style: TextStyle(
+                  color: Color(0xff02457a), fontWeight: FontWeight.bold),
+            ),
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(
+                      hintText: 'Enter room name', border: InputBorder.none),
+                  onSubmitted: (value) {
+                    if (nameController.text != '') {
+                      databaseHelper.insertRoom(value);
+                      rooms.add(value);
+                      nameController.text = '';
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
+              ),
+              SimpleDialogOption(
+                child: ListTile(
+                  leading: Container(
+                    decoration: ShapeDecoration(
+                        shape: CircleBorder(), color: Colors.blue),
+                    child: IconButton(
+                      icon: Icon(Icons.add),
+                      color: Colors.white,
+                      onPressed: () {
+                        if (nameController.text != '') {
+                          databaseHelper.insertRoom(nameController.text);
+                          rooms.add(nameController.text);
+                          nameController.text = '';
+                          Navigator.pop(context);
+                          addRooms();
+                        }
+                      },
+                    ),
+                  ),
+                  trailing: Container(
+                    decoration: ShapeDecoration(
+                        shape: CircleBorder(), color: Colors.blue),
+                    child: IconButton(
+                      icon: Icon(Icons.check),
+                      color: Colors.white,
+                      onPressed: () {
+                        if (nameController.text != '') {
+                          databaseHelper.insertRoom(nameController.text);
+                          rooms.add(nameController.text);
+                          Navigator.pop(context);
+                        }
                       },
                     ),
                   ),
                 ),
-                SimpleDialogOption(
-                  child: ListTile(
-                    leading: Container(
-                      decoration: ShapeDecoration(
-                          shape: CircleBorder(), color: Colors.blue),
-                      child: IconButton(
-                        icon: Icon(Icons.add),
-                        color: Colors.white,
-                        onPressed: () {
-                          setState(
-                            () {
-                              nameNumber += 1;
-                              if (nameNumber > 4) {
-                                screenLengthConstant += 1;
-                              }
-                            },
-                          );
+              )
+            ],
+          );
+        });
+  }
 
-                          print(nameNumber);
-                        },
-                      ),
-                    ),
-                    trailing: Container(
-                      decoration: ShapeDecoration(
-                          shape: CircleBorder(), color: Colors.blue),
-                      child: IconButton(
-                        icon: Icon(Icons.check),
-                        color: Colors.white,
-                        onPressed: () {
-                          databaseHelper.insertRoom('myroom sdfsd');
-                          databaseHelper.getRoomMapList().then((value) => print(value));
-                        },
-                      ),
+  Future<void> addWorker() async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            backgroundColor: Color(0xffffffff),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            title: Text(
+              'Add Room',
+              style: TextStyle(
+                  color: Color(0xff02457a), fontWeight: FontWeight.bold),
+            ),
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(
+                      hintText: 'Enter room name', border: InputBorder.none),
+                  onSubmitted: (value) {
+                    if (nameController.text != '') {
+                      databaseHelper.insertWorker(value);
+                      workers.add(value);
+
+                      nameController.text = '';
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
+              ),
+              SimpleDialogOption(
+                child: ListTile(
+                  leading: Container(
+                    decoration: ShapeDecoration(
+                        shape: CircleBorder(), color: Colors.blue),
+                    child: IconButton(
+                      icon: Icon(Icons.add),
+                      color: Colors.white,
+                      onPressed: () {
+                        if (nameController.text != '') {
+                          databaseHelper.insertWorker(nameController.text);
+                          workers.add(nameController.text);
+
+                          nameController.text = '';
+                          Navigator.pop(context);
+                          addRooms();
+                        }
+                      },
                     ),
                   ),
-                )
-              ],
-            );
-          },
+                  trailing: Container(
+                    decoration: ShapeDecoration(
+                        shape: CircleBorder(), color: Colors.blue),
+                    child: IconButton(
+                      icon: Icon(Icons.check),
+                      color: Colors.white,
+                      onPressed: () {
+                        if (nameController.text != '') {
+                          databaseHelper.insertWorker(nameController.text);
+                          workers.add(nameController.text);
+                          Navigator.pop(context);
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              )
+            ],
+          );
+        });
+  }
+
+  Future<void> showRooms(context, DeviceObject deviceObject) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Text(
+            'Select a Room',
+            style:
+                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
+          ),
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: List.generate(
+                rooms.length,
+                (index) {
+                  return SimpleDialogOption(
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.label_outline,
+                      ),
+                      title: Text(rooms[index],
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold)),
+                    ),
+                    onPressed: () {
+                      room = rooms[index];
+                      Navigator.pop(context);
+                      showWorkers(context, deviceObject);
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showWorkers(context, DeviceObject deviceObject) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Text(
+            'Select a Staff',
+            style:
+                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
+          ),
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: List.generate(
+                workers.length,
+                (index) {
+                  return SimpleDialogOption(
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.label_outline,
+                      ),
+                      title: Text(workers[index],
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold)),
+                    ),
+                    onPressed: () {
+                      worker = workers[index];
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => HeightPage(deviceObject)),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
         );
       },
     );
@@ -460,7 +719,14 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     Icons.info_outline,
                     color: Color(0xff02457a),
                   ),
-                  title: Text('About')),
+                  title: Text('History'),
+                  onTap: (){
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ShowHistory()),
+                      );
+                  },),
             ],
           );
         });

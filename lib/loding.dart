@@ -1,3 +1,5 @@
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'data.dart';
 import 'front_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,9 +15,37 @@ class Loding extends StatefulWidget {
 class _LodingState extends State<Loding> {
   @override
   void initState() {
-    databaseHelper = DatabaseHelper();
+    load();
     redirect();
     super.initState();
+  }
+
+  load() async {
+    prefs = await SharedPreferences.getInstance();
+    databaseHelper = DatabaseHelper();
+    databaseHelper.getRoomMapList().then(
+      (value) {
+        for (var map in value) {
+          rooms.add(map['roomName']);
+        }
+      },
+    );
+    databaseHelper.getHistoryMapList().then((value) {
+      for (var map in value) {
+        workers.add(map['workerName']);
+      }
+    });
+    databaseHelper.getHistoryMapList().then((value) {
+      for (var map in value) {
+        historyList.add(
+          History(
+              roomName: map['roomName'],
+              workerName: map['workerName'],
+              time: DateTime.parse(map['time']),
+              state: map['state']),
+        );
+      }
+    });
   }
 
   void redirect() {
