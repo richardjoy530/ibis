@@ -2,7 +2,7 @@ import 'front_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:percent_indicator/linear_percent_indicator.dart';
+
 
 class Loding extends StatefulWidget {
   @override
@@ -14,7 +14,7 @@ class _LodingState extends State<Loding> {
   double per = 0;
   @override
   void initState() {
-    timer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+    /*timer = Timer.periodic(Duration(milliseconds: 100), (timer) {
       setState(() {
         if (per < 1.0) {
           if (per > 0.9) {
@@ -24,7 +24,7 @@ class _LodingState extends State<Loding> {
           }
         }
       });
-    });
+    });*/
     redirect();
     super.initState();
   }
@@ -40,7 +40,7 @@ class _LodingState extends State<Loding> {
   @override
   void dispose() {
     print('Loding page disposed');
-    timer.cancel();
+    //timer.cancel();
     time.cancel();
     super.dispose();
   }
