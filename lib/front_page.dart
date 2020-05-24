@@ -802,11 +802,9 @@ class _RoomsState extends State<Rooms> {
                           for (i = 0; i < nameNumber; i++) {
                             if (roomNames[i].text.length > 0) {
                               databaseHelper.insertRoom(roomNames[i].text);
+                              rooms.add(roomNames[i].text);
                             }
                           }
-                          databaseHelper
-                              .getRoomMapList()
-                              .then((value) => print(value));
                           nameNumber = 1;
                           Navigator.pop(context);
                         }
@@ -856,7 +854,7 @@ class _WorkersState extends State<Workers> {
         return SimpleDialog(
           title: Center(
             child: Text(
-              'Add Room',
+              'Add Staff',
               style: TextStyle(
                   fontSize: 20,
                   color: Color(0xff02457a),
@@ -881,7 +879,7 @@ class _WorkersState extends State<Workers> {
                       title: TextField(
                         controller: roomNames[index],
                         decoration: InputDecoration(
-                          labelText: 'Room Name',
+                          labelText: 'Staff Name',
                           labelStyle:
                               TextStyle(fontSize: 20, color: Colors.blue),
                         ),
@@ -931,12 +929,11 @@ class _WorkersState extends State<Workers> {
                         if (check == 0) {
                           for (i = 0; i < nameNumber; i++) {
                             if (roomNames[i].text.length > 0) {
-                              databaseHelper.insertRoom(roomNames[i].text);
+                              databaseHelper.insertWorker(roomNames[i].text);
+                              workers.add(roomNames[i].text);
+
                             }
                           }
-                          databaseHelper
-                              .getRoomMapList()
-                              .then((value) => print(value));
                           nameNumber = 1;
 
                           Navigator.pop(context);
