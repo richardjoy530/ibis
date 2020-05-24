@@ -155,8 +155,6 @@ class DatabaseHelper {
   void _createDb(Database db, int newVersion) async {
     await db.execute(
         'CREATE TABLE Rooms (id INTEGER PRIMARY KEY AUTOINCREMENT , roomName TEXT)');
-<<<<<<< HEAD
-=======
     await db.execute(
         'CREATE TABLE Workers (id INTEGER PRIMARY KEY AUTOINCREMENT , workerName TEXT)');
     await db.execute(
@@ -185,7 +183,6 @@ class DatabaseHelper {
       'state': history.state
     });
     return result;
->>>>>>> aa668c34af8ef082610e2f3ea4deae7acd92bb72
   }
 
   Future<List<Map<String, dynamic>>> getRoomMapList() async {
@@ -194,24 +191,15 @@ class DatabaseHelper {
     return result;
   }
 
-<<<<<<< HEAD
-//		var result = await db.rawQuery('SELECT * FROM $noteTable order by $colPriority ASC');
-    var result = await db.query('Rooms');
-=======
   Future<List<Map<String, dynamic>>> getWorkerMapList() async {
     Database db = await this.database;
     var result = await db.query('Workers');
->>>>>>> aa668c34af8ef082610e2f3ea4deae7acd92bb72
     return result;
   }
 
   Future<List<Map<String, dynamic>>> getHistoryMapList() async {
     Database db = await this.database;
-<<<<<<< HEAD
-    var result = await db.insert('Rooms',{'roomName':room});
-=======
     var result = await db.query('History');
->>>>>>> aa668c34af8ef082610e2f3ea4deae7acd92bb72
     return result;
   }
 
