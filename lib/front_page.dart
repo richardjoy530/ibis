@@ -22,7 +22,8 @@ bool isConnected = false;
 String serverIp;
 int screenLengthConstant = 0;
 int nameNumber = 1;
-List<TextEditingController> roomNames=[];
+List<TextEditingController> roomNames = [];
+List<String> cText = [];
 final List<bool> isSelected = [false];
 Future<void> wifi() async {
   WiFiForIoTPlugin.isEnabled().then((val) {
@@ -113,8 +114,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     });
     super.initState();
   }
-
-  
 
   @override
   void dispose() {
@@ -316,20 +315,17 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   label: Text('Room'),
                   icon: Icon(Icons.add),
                   onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                            return  Rooms();
-                        },
-                      );
-
-
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Rooms();
+                      },
+                    );
                   },
                 )
               ],
             )));
   }
-
 
   void onMenuPressed(BuildContext context) {
     showModalBottomSheet(
@@ -572,23 +568,23 @@ class Rooms extends StatefulWidget {
 }
 
 class _RoomsState extends State<Rooms> {
-
+  List<TextEditingController> roomNames = [];
   @override
   void initState() {
     nameNumber = 1;
     roomNames.add(TextEditingController());
+    cText.add('');
     print('roomlist length:${roomNames.length}');
     super.initState();
   }
 
   @override
   void dispose() {
-   
-   for (var j = 0; j < roomNames.length; j++)
-    {
+    for (var j = 0; j < roomNames.length; j++) {
       roomNames[j].dispose();
     }
-     roomNames=[];
+    cText = [];
+    roomNames = [];
     super.dispose();
   }
 
@@ -600,7 +596,10 @@ class _RoomsState extends State<Rooms> {
           title: Center(
             child: Text(
               'Add Room',
-              style: TextStyle(fontSize: 20, color: Color(0xff02457a),fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 20,
+                  color: Color(0xff02457a),
+                  fontWeight: FontWeight.bold),
             ),
           ),
           shape: RoundedRectangleBorder(
@@ -613,19 +612,28 @@ class _RoomsState extends State<Rooms> {
               child: Container(
                 height: MediaQuery.of(context).size.height /
                     (7 - nameNumber + screenLengthConstant),
-                width: MediaQuery.of(context).size.width*0.7,
+                width: MediaQuery.of(context).size.width * 0.7,
                 child: ListView.builder(
                   itemCount: nameNumber,
                   itemBuilder: (context, index) {
                     return ListTile(
                       title: TextField(
                         controller: roomNames[index],
+                        onChanged: (data) {
+                          setState(() {
+                            if (roomNames[index].text.length > 0) {
+                              cText[index] = '';
+                            } else {
+                              cText[index] = 'Enter the Name';
+                            }
+                          });
+                        },
                         decoration: InputDecoration(
                           labelText: 'Room Name',
-                          hintText: 'Name of the room',
-                          counterText: roomNames[index].text.length<1?'Please Enter the Name':'',
+                          counterText: cText[index],
+                          counterStyle: TextStyle(color: Colors.red),
                           labelStyle:
-                          TextStyle(fontSize: 20, color: Colors.blue),
+                              TextStyle(fontSize: 20, color: Colors.blue),
                         ),
                       ),
                     );
@@ -643,8 +651,9 @@ class _RoomsState extends State<Rooms> {
                     color: Colors.white,
                     onPressed: () {
                       setState(
-                            () {
+                        () {
                           roomNames.add(TextEditingController());
+                          cText.add('');
                           nameNumber += 1;
 
                           if (nameNumber > 4) {
@@ -664,27 +673,27 @@ class _RoomsState extends State<Rooms> {
                     icon: Icon(Icons.check),
                     color: Colors.white,
                     onPressed: () {
-                      int check=0,i;
-                      for(i=0;i<nameNumber;i++)
-                        {
-                          if(roomNames[i].text.length<1)
-                            {
-                              check+=1;
-                            }
-                        }
-                      if(check==0) {
+                      setState(() {
+                        int check = 0, i;
                         for (i = 0; i < nameNumber; i++) {
-                          if (roomNames[i].text.length > 0) {
-                            databaseHelper.insertRoom(roomNames[i].text);
+                          if (roomNames[i].text.length < 1) {
+                            check += 1;
                           }
                         }
-                        databaseHelper.getRoomMapList().then((value) =>
-                            print(value));
-                        nameNumber = 1;
+                        if (check == 0) {
+                          for (i = 0; i < nameNumber; i++) {
+                            if (roomNames[i].text.length > 0) {
+                              databaseHelper.insertRoom(roomNames[i].text);
+                            }
+                          }
+                          databaseHelper
+                              .getRoomMapList()
+                              .then((value) => print(value));
+                          nameNumber = 1;
 
-                        Navigator.pop(context);
-                      }
-
+                          Navigator.pop(context);
+                        }
+                      });
                     },
                   ),
                 ),
@@ -697,14 +706,12 @@ class _RoomsState extends State<Rooms> {
   }
 }
 
-
 class Workers extends StatefulWidget {
   @override
   _WorkersState createState() => _WorkersState();
 }
 
 class _WorkersState extends State<Workers> {
-
   @override
   void initState() {
     nameNumber = 1;
@@ -714,12 +721,10 @@ class _WorkersState extends State<Workers> {
 
   @override
   void dispose() {
-   
-   for (var j = 0; j < roomNames.length; j++)
-    {
+    for (var j = 0; j < roomNames.length; j++) {
       roomNames[j].dispose();
     }
-     roomNames=[];
+    roomNames = [];
     super.dispose();
   }
 
@@ -731,7 +736,10 @@ class _WorkersState extends State<Workers> {
           title: Center(
             child: Text(
               'Add Staff',
-              style: TextStyle(fontSize: 20, color: Color(0xff02457a),fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 20,
+                  color: Color(0xff02457a),
+                  fontWeight: FontWeight.bold),
             ),
           ),
           shape: RoundedRectangleBorder(
@@ -744,7 +752,7 @@ class _WorkersState extends State<Workers> {
               child: Container(
                 height: MediaQuery.of(context).size.height /
                     (7 - nameNumber + screenLengthConstant),
-                width: MediaQuery.of(context).size.width*0.7,
+                width: MediaQuery.of(context).size.width * 0.7,
                 child: ListView.builder(
                   itemCount: nameNumber,
                   itemBuilder: (context, index) {
@@ -754,9 +762,11 @@ class _WorkersState extends State<Workers> {
                         decoration: InputDecoration(
                           labelText: 'Room Name',
                           hintText: 'Name of the room',
-                          counterText: roomNames[index].text.length<1?'Please Enter the Name':'',
+                          counterText: roomNames[index].text.length < 1
+                              ? 'Please Enter the Name'
+                              : '',
                           labelStyle:
-                          TextStyle(fontSize: 20, color: Colors.blue),
+                              TextStyle(fontSize: 20, color: Colors.blue),
                         ),
                       ),
                     );
@@ -774,7 +784,7 @@ class _WorkersState extends State<Workers> {
                     color: Colors.white,
                     onPressed: () {
                       setState(
-                            () {
+                        () {
                           roomNames.add(TextEditingController());
                           nameNumber += 1;
 
@@ -795,27 +805,25 @@ class _WorkersState extends State<Workers> {
                     icon: Icon(Icons.check),
                     color: Colors.white,
                     onPressed: () {
-                      int check=0,i;
-                      for(i=0;i<nameNumber;i++)
-                        {
-                          if(roomNames[i].text.length<1)
-                            {
-                              check+=1;
-                            }
+                      int check = 0, i;
+                      for (i = 0; i < nameNumber; i++) {
+                        if (roomNames[i].text.length < 1) {
+                          check += 1;
                         }
-                      if(check==0) {
+                      }
+                      if (check == 0) {
                         for (i = 0; i < nameNumber; i++) {
                           if (roomNames[i].text.length > 0) {
                             databaseHelper.insertRoom(roomNames[i].text);
                           }
                         }
-                        databaseHelper.getRoomMapList().then((value) =>
-                            print(value));
+                        databaseHelper
+                            .getRoomMapList()
+                            .then((value) => print(value));
                         nameNumber = 1;
 
                         Navigator.pop(context);
                       }
-
                     },
                   ),
                 ),
