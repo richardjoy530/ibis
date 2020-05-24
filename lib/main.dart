@@ -20,6 +20,11 @@ SharedPreferences prefs;
 String deviceName;
 int deviceHeight;
 DatabaseHelper databaseHelper;
+String room = '';
+String worker = '';
+List<History> historyList = [];
+List<String> rooms = [];
+List<String> workers = [];
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 final customColor = CustomSliderColors(
@@ -40,7 +45,6 @@ void main() {
 }
 
 Future<void> getIpList() async {
-  prefs = await SharedPreferences.getInstance();
   ipList = (prefs.getStringList('iplist')) ?? [];
   for (var eachIp in ipList) {
     deviceName = prefs.getString('${eachIp}name');
@@ -489,6 +493,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           MediaQuery.of(context).size.width / 3 &&
                       onTapUpDetails.localPosition.dx <
                           MediaQuery.of(context).size.width * 2 / 3) {
+                    // Start
                     deviceObject.flare = 'on';
                     deviceObject.temp = false;
                     deviceObject.socket
@@ -499,10 +504,41 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     startTimer(deviceObject);
                     runAnimation(deviceObject: deviceObject);
                     deviceObject.radialProgressAnimationController.forward();
+                    databaseHelper.insertHistory(History(
+                        roomName: room,
+                        workerName: worker,
+                        state: 'Started',
+                        time: DateTime.now()));
+                    historyList.add(
+                      History(
+                        roomName: room,
+                        workerName: worker,
+                        state: 'Started',
+                        time: DateTime.now(),
+                      ),
+                    );
                   } else if (deviceObject.power == true &&
                       onTapUpDetails.localPosition.dx <
                           MediaQuery.of(context).size.width / 2) {
+                    //Stop
                     print('stop');
+                    databaseHelper.insertHistory(
+                      History(
+                        roomName: room,
+                        workerName: worker,
+                        state: 'Stopped',
+                        time: DateTime.now(),
+                      ),
+                    );
+                    historyList.add(
+                      History(
+                        roomName: room,
+                        workerName: worker,
+                        state: 'Stopped',
+                        time: DateTime.now(),
+                      ),
+                    );
+
                     prefs.setInt('${deviceObject.ip}totalDuration',
                         deviceObject.totalDuration.inSeconds);
                     prefs.setInt('${deviceObject.ip}secondDuration',
@@ -524,6 +560,21 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           MediaQuery.of(context).size.width / 2) {
                     print('Pause/Play');
                     if (deviceObject.pause == false) {
+                      //Pause
+                      databaseHelper.insertHistory(History(
+                          roomName: room,
+                          workerName: worker,
+                          state: 'Paused',
+                          time: DateTime.now()));
+                      historyList.add(
+                        History(
+                          roomName: room,
+                          workerName: worker,
+                          state: 'Paused',
+                          time: DateTime.now(),
+                        ),
+                      );
+
                       prefs.setInt('${deviceObject.ip}totalDuration',
                           deviceObject.totalDuration.inSeconds);
                       prefs.setInt('${deviceObject.ip}secondDuration',
@@ -534,6 +585,21 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       deviceObject.socket.write('h');
                       deviceObject.radialProgressAnimationController.stop();
                     } else {
+                      //Play
+                      databaseHelper.insertHistory(History(
+                          roomName: room,
+                          workerName: worker,
+                          state: 'Resumed',
+                          time: DateTime.now()));
+                      historyList.add(
+                        History(
+                          roomName: room,
+                          workerName: worker,
+                          state: 'Resumed',
+                          time: DateTime.now(),
+                        ),
+                      );
+
                       deviceObject.pause = false;
                       startTimer(deviceObject);
                       deviceObject.flare = 'play';
@@ -630,6 +696,20 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             deviceObject.power = false;
           }
           if (deviceObject.progressDegrees == 360) {
+            databaseHelper.insertHistory(History(
+                roomName: room,
+                workerName: worker,
+                state: 'Finished',
+                time: DateTime.now()));
+            historyList.add(
+              History(
+                roomName: room,
+                workerName: worker,
+                state: 'Finished',
+                time: DateTime.now(),
+              ),
+            );
+
             prefs.setInt('${deviceObject.ip}totalDuration',
                 deviceObject.totalDuration.inSeconds);
             prefs.setInt('${deviceObject.ip}secondDuration',

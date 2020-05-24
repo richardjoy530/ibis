@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_device_friendly_name/flutter_device_friendly_name.dart';
 import 'package:ibis/height_page.dart';
 import 'package:ibis/main.dart';
+import 'package:ibis/show_history.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 
@@ -99,6 +100,23 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   deviceObjectList[i].totalDuration.inSeconds);
               prefs.setInt('${deviceObjectList[i].ip}secondDuration',
                   deviceObjectList[i].secondDuration.inSeconds);
+              databaseHelper.insertHistory(
+                History(
+                  roomName: room,
+                  workerName: worker,
+                  state: 'Finished',
+                  time: DateTime.now(),
+                ),
+              );
+              historyList.add(
+                History(
+                  roomName: room,
+                  workerName: worker,
+                  state: 'Finished',
+                  time: DateTime.now(),
+                ),
+              );
+
               deviceObjectList[i].power = false;
               deviceObjectList[i].pause = false;
               deviceObjectList[i].flare = 'off';
@@ -125,206 +143,313 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
-          padding: EdgeInsets.only(top: 40),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xffffffff), Color(0xffffffff)]),
-          ),
-          child: Column(
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 20),
-                      height: 30,
-                      width: 30,
-                      child: FlareActor(
-                        'assets/status.flr',
-                        animation: 'Connected',
+      body: Container(
+        padding: EdgeInsets.only(top: 40),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xffffffff), Color(0xffffffff)]),
+        ),
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    height: 30,
+                    width: 30,
+                    child: FlareActor(
+                      'assets/status.flr',
+                      animation: 'Connected',
+                    ),
+                  ),
+                ),
+                Expanded(child: Image.asset('images/razecov.jfif')),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  child: IconButton(
+                    icon: Icon(Icons.menu),
+                    color: Color(0xff019ae6),
+                    onPressed: () {
+                      onMenuPressed(context);
+                    },
+                  ),
+                )
+              ],
+            ),
+            serverOnline == true
+                ? deviceObjectList.length == 0
+                    ? Center(
+                        child: Container(
+                          margin: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              color: Color(0xffd6e7ee),
+                              borderRadius: BorderRadius.circular(20)),
+                          child: ListTile(
+                            leading: Icon(Icons.wifi_tethering),
+                            title: Text('Please connect your device!'),
+                          ),
+                        ),
+                      )
+                    : Expanded(
+                        child: ListView.builder(
+                            itemCount: deviceObjectList.length,
+                            itemBuilder: (context, index) {
+                              if (deviceObjectList[index].name == 'Device') {
+                                deviceObjectList[index].name = '';
+                                nameIt(context, deviceObjectList[index]);
+                              }
+                              return Container(
+                                margin: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    color: Color(0xffa9d5ea),
+                                    borderRadius: BorderRadius.circular(20)),
+                                child: ListTile(
+                                  leading: Icon(
+                                    deviceObjectList[index].offline == true
+                                        ? Icons.signal_wifi_off
+                                        : Icons.network_wifi,
+                                    color: Color(0xff019ae6),
+                                  ),
+                                  trailing:
+                                      deviceObjectList[index].motionDetected ==
+                                              true
+                                          ? Icon(
+                                              Icons.warning,
+                                              color: Color(0xff019ae6),
+                                            )
+                                          : IconButton(
+                                              icon: Icon(Icons.more_vert,
+                                                  color: Color(0xff019ae6)),
+                                              onPressed: () {
+                                                info(context,
+                                                    deviceObjectList[index]);
+                                              },
+                                            ),
+                                  title:
+                                      Text('${deviceObjectList[index].name}'),
+                                  subtitle: deviceObjectList[index].power ==
+                                          false
+                                      ? Text(deviceObjectList[index].offline ==
+                                              true
+                                          ? 'Device not Connected'
+                                          : deviceObjectList[index]
+                                                      .motionDetected ==
+                                                  false
+                                              ? 'Device Connected'
+                                              : 'Motion Detected : Tap to start again')
+                                      : LinearPercentIndicator(
+                                          lineHeight: 5.0,
+                                          animation: false,
+                                          animationDuration: 0,
+                                          backgroundColor: Color(0xffd6e7ee),
+                                          percent: deviceObjectList[index]
+                                              .linearProgressBarValue,
+                                          linearStrokeCap:
+                                              LinearStrokeCap.roundAll,
+                                          progressColor: Color(0xff019ae6),
+                                        ),
+                                  onTap: () {
+                                    if (deviceObjectList[index].offline ==
+                                        false) {
+                                      if (deviceObjectList[index].power ==
+                                          true) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => HomePage(
+                                                  deviceObjectList[index])),
+                                        );
+                                      } else {
+                                        deviceObjectList[index].motionDetected =
+                                            false;
+                                        deviceObjectList[index].time =
+                                            Duration(minutes: 0);
+                                        deviceObjectList[index]
+                                            .progressDegrees = 0;
+                                        if (rooms.length != 0) {
+                                          if (workers.length != 0) {
+                                            showRooms(context,
+                                                deviceObjectList[index]);
+                                          } else {
+                                            addWorker();
+                                          }
+                                        } else {
+                                          addRooms();
+                                        }
+                                      }
+                                    }
+                                  },
+                                  onLongPress: () {
+                                    setName(context, deviceObjectList[index]);
+                                  },
+                                ),
+                              );
+                            }),
+                      )
+                : Align(
+                    alignment: Alignment.center,
+                    child: AlertDialog(
+                      backgroundColor: Color(0xffffffff),
+                      shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(20.0))),
+                      title: Text(
+                        'Server is Offline',
+                        style: TextStyle(
+                            color: Color(0xff02457a),
+                            fontWeight: FontWeight.bold),
+                      ),
+                      content: IconButton(
+                        icon: Icon(
+                          Icons.refresh,
+                          color: Color(0xff019ae6),
+                        ),
+                        onPressed: () {
+                          connect();
+                        },
                       ),
                     ),
                   ),
-                  Expanded(child: Image.asset('images/razecov.jfif')),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20),
-                    child: IconButton(
-                      icon: Icon(Icons.menu),
-                      color: Color(0xff019ae6),
-                      onPressed: () {
-                        onMenuPressed(context);
-                      },
-                    ),
-                  )
-                ],
-              ),
-              serverOnline == true
-                  ? deviceObjectList.length == 0
-                      ? Center(
-                          child: Container(
-                            margin: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                color: Color(0xffd6e7ee),
-                                borderRadius: BorderRadius.circular(20)),
-                            child: ListTile(
-                              leading: Icon(Icons.wifi_tethering),
-                              title: Text('Please connect your device!'),
-                            ),
-                          ),
-                        )
-                      : Expanded(
-                          child: ListView.builder(
-                              itemCount: deviceObjectList.length,
-                              itemBuilder: (context, index) {
-                                if (deviceObjectList[index].name == 'Device') {
-                                  deviceObjectList[index].name = '';
-                                  nameIt(context, deviceObjectList[index]);
-                                }
-                                return Container(
-                                  margin: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      color: Color(0xffa9d5ea),
-                                      borderRadius: BorderRadius.circular(20)),
-                                  child: ListTile(
-                                    leading: Icon(
-                                      deviceObjectList[index].offline == true
-                                          ? Icons.signal_wifi_off
-                                          : Icons.network_wifi,
-                                      color: Color(0xff019ae6),
-                                    ),
-                                    trailing: deviceObjectList[index]
-                                                .motionDetected ==
-                                            true
-                                        ? Icon(
-                                            Icons.warning,
-                                            color: Color(0xff019ae6),
-                                          )
-                                        : IconButton(
-                                            icon: Icon(Icons.more_vert,
-                                                color: Color(0xff019ae6)),
-                                            onPressed: () {
-                                              info(context,
-                                                  deviceObjectList[index]);
-                                            },
-                                          ),
-                                    title:
-                                        Text('${deviceObjectList[index].name}'),
-                                    subtitle: deviceObjectList[index].power ==
-                                            false
-                                        ? Text(deviceObjectList[index]
-                                                    .offline ==
-                                                true
-                                            ? 'Device not Connected'
-                                            : deviceObjectList[index]
-                                                        .motionDetected ==
-                                                    false
-                                                ? 'Device Connected'
-                                                : 'Motion Detected : Tap to start again')
-                                        : LinearPercentIndicator(
-                                            lineHeight: 5.0,
-                                            animation: false,
-                                            animationDuration: 0,
-                                            backgroundColor: Color(0xffd6e7ee),
-                                            percent: deviceObjectList[index]
-                                                .linearProgressBarValue,
-                                            linearStrokeCap:
-                                                LinearStrokeCap.roundAll,
-                                            progressColor: Color(0xff019ae6),
-                                          ),
-                                    onTap: () {
-                                      if (deviceObjectList[index].offline ==
-                                          false) {
-                                        if (deviceObjectList[index].power ==
-                                            true) {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => HomePage(
-                                                    deviceObjectList[index])),
-                                          );
-                                        } else {
-                                          deviceObjectList[index]
-                                              .motionDetected = false;
-                                          deviceObjectList[index].time =
-                                              Duration(minutes: 0);
-                                          deviceObjectList[index]
-                                              .progressDegrees = 0;
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    HeightPage(deviceObjectList[
-                                                        index])),
-                                          );
-                                        }
-                                      }
-                                    },
-                                    onLongPress: () {
-                                      setName(context, deviceObjectList[index]);
-                                    },
-                                  ),
-                                );
-                              }),
-                        )
-                  : Align(
-                      alignment: Alignment.center,
-                      child: AlertDialog(
-                        backgroundColor: Color(0xffffffff),
-                        shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20.0))),
-                        title: Text(
-                          'Server is Offline',
-                          style: TextStyle(
-                              color: Color(0xff02457a),
-                              fontWeight: FontWeight.bold),
-                        ),
-                        content: IconButton(
-                          icon: Icon(
-                            Icons.refresh,
-                            color: Color(0xff019ae6),
-                          ),
-                          onPressed: () {
-                            connect();
-                          },
-                        ),
-                      ),
-                    ),
-            ],
-          ),
+          ],
         ),
-        floatingActionButton: Container(
-            padding: EdgeInsets.fromLTRB(25, 0, 0, 0),
-            child: Row(
+      ),
+      floatingActionButton: Container(
+        padding: EdgeInsets.fromLTRB(25, 0, 0, 0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            FloatingActionButton.extended(
+              heroTag: 'hero1',
+              label: Text('Worker'),
+              icon: Icon(Icons.add),
+              onPressed: () {
+                addWorker();
+              },
+            ),
+            FloatingActionButton.extended(
+              heroTag: 'hero2',
+              label: Text('Room'),
+              icon: Icon(Icons.add),
+              onPressed: () {
+                addRooms();
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> addRooms() async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Rooms();
+        });
+  }
+
+  Future<void> addWorker() async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Workers();
+        });
+  }
+
+  Future<void> showRooms(context, DeviceObject deviceObject) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Text(
+            'Select a Room',
+            style:
+                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
+          ),
+          children: <Widget>[
+            Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                FloatingActionButton.extended(
-                  heroTag: 'hero1',
-                  label: Text('Worker'),
-                  icon: Icon(Icons.add),
-                  // icon: Icon(Icons.add),
-                  onPressed: () {},
-                ),
-                FloatingActionButton.extended(
-                  heroTag: 'hero2',
-                  label: Text('Room'),
-                  icon: Icon(Icons.add),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return Rooms();
-                      },
-                    );
-                  },
-                )
-              ],
-            )));
+              children: List.generate(
+                rooms.length,
+                (index) {
+                  return SimpleDialogOption(
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.label_outline,
+                      ),
+                      title: Text(rooms[index],
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold)),
+                    ),
+                    onPressed: () {
+                      room = rooms[index];
+                      Navigator.pop(context);
+                      showWorkers(context, deviceObject);
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showWorkers(context, DeviceObject deviceObject) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Text(
+            'Select a Staff',
+            style:
+                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
+          ),
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: List.generate(
+                workers.length,
+                (index) {
+                  return SimpleDialogOption(
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.label_outline,
+                      ),
+                      title: Text(workers[index],
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold)),
+                    ),
+                    onPressed: () {
+                      worker = workers[index];
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => HeightPage(deviceObject)),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void onMenuPressed(BuildContext context) {
@@ -376,11 +501,18 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 },
               ),
               ListTile(
-                  leading: Icon(
-                    Icons.info_outline,
-                    color: Color(0xff02457a),
-                  ),
-                  title: Text('About')),
+                leading: Icon(
+                  Icons.info_outline,
+                  color: Color(0xff02457a),
+                ),
+                title: Text('History'),
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => ShowHistory()),
+                  );
+                },
+              ),
             ],
           );
         });
@@ -619,19 +751,8 @@ class _RoomsState extends State<Rooms> {
                     return ListTile(
                       title: TextField(
                         controller: roomNames[index],
-                        onChanged: (data) {
-                          setState(() {
-                            if (roomNames[index].text.length > 0) {
-                              cText[index] = '';
-                            } else {
-                              cText[index] = 'Enter the Name';
-                            }
-                          });
-                        },
                         decoration: InputDecoration(
                           labelText: 'Room Name',
-                          counterText: cText[index],
-                          counterStyle: TextStyle(color: Colors.red),
                           labelStyle:
                               TextStyle(fontSize: 20, color: Colors.blue),
                         ),
@@ -653,9 +774,7 @@ class _RoomsState extends State<Rooms> {
                       setState(
                         () {
                           roomNames.add(TextEditingController());
-                          cText.add('');
                           nameNumber += 1;
-
                           if (nameNumber > 4) {
                             screenLengthConstant += 1;
                           }
@@ -711,11 +830,13 @@ class Workers extends StatefulWidget {
   _WorkersState createState() => _WorkersState();
 }
 
-class _WorkersState extends State<Workers> {
+class _WorkersState extends State<Workers> {List<TextEditingController> roomNames = [];
   @override
   void initState() {
     nameNumber = 1;
     roomNames.add(TextEditingController());
+    cText.add('');
+    print('roomlist length:${roomNames.length}');
     super.initState();
   }
 
@@ -724,6 +845,7 @@ class _WorkersState extends State<Workers> {
     for (var j = 0; j < roomNames.length; j++) {
       roomNames[j].dispose();
     }
+    cText = [];
     roomNames = [];
     super.dispose();
   }
@@ -735,7 +857,7 @@ class _WorkersState extends State<Workers> {
         return SimpleDialog(
           title: Center(
             child: Text(
-              'Add Staff',
+              'Add Room',
               style: TextStyle(
                   fontSize: 20,
                   color: Color(0xff02457a),
@@ -761,10 +883,6 @@ class _WorkersState extends State<Workers> {
                         controller: roomNames[index],
                         decoration: InputDecoration(
                           labelText: 'Room Name',
-                          hintText: 'Name of the room',
-                          counterText: roomNames[index].text.length < 1
-                              ? 'Please Enter the Name'
-                              : '',
                           labelStyle:
                               TextStyle(fontSize: 20, color: Colors.blue),
                         ),
@@ -787,7 +905,6 @@ class _WorkersState extends State<Workers> {
                         () {
                           roomNames.add(TextEditingController());
                           nameNumber += 1;
-
                           if (nameNumber > 4) {
                             screenLengthConstant += 1;
                           }
@@ -805,25 +922,27 @@ class _WorkersState extends State<Workers> {
                     icon: Icon(Icons.check),
                     color: Colors.white,
                     onPressed: () {
-                      int check = 0, i;
-                      for (i = 0; i < nameNumber; i++) {
-                        if (roomNames[i].text.length < 1) {
-                          check += 1;
-                        }
-                      }
-                      if (check == 0) {
+                      setState(() {
+                        int check = 0, i;
                         for (i = 0; i < nameNumber; i++) {
-                          if (roomNames[i].text.length > 0) {
-                            databaseHelper.insertRoom(roomNames[i].text);
+                          if (roomNames[i].text.length < 1) {
+                            check += 1;
                           }
                         }
-                        databaseHelper
-                            .getRoomMapList()
-                            .then((value) => print(value));
-                        nameNumber = 1;
+                        if (check == 0) {
+                          for (i = 0; i < nameNumber; i++) {
+                            if (roomNames[i].text.length > 0) {
+                              databaseHelper.insertRoom(roomNames[i].text);
+                            }
+                          }
+                          databaseHelper
+                              .getRoomMapList()
+                              .then((value) => print(value));
+                          nameNumber = 1;
 
-                        Navigator.pop(context);
-                      }
+                          Navigator.pop(context);
+                        }
+                      });
                     },
                   ),
                 ),
@@ -833,5 +952,4 @@ class _WorkersState extends State<Workers> {
         );
       },
     );
-  }
-}
+  }}

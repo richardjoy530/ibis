@@ -82,6 +82,9 @@ class _HeightPageState extends State<HeightPage> {
                                       color: upBGColor,
                                       spread: 0,
                                       borderRadius: 20,
+                                      customBorderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(20.0),
+                                        topRight: Radius.circular(20.0)),
                                       child: IconButton(
                                         iconSize: 40.0,
                                         color: upArrowColor,
