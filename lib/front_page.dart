@@ -23,6 +23,7 @@ String serverIp;
 int screenLengthConstant = 0;
 int nameNumber = 1;
 List<TextEditingController> roomNames=[];
+List<String> cText=[];
 final List<bool> isSelected = [false];
 Future<void> wifi() async {
   WiFiForIoTPlugin.isEnabled().then((val) {
@@ -578,6 +579,7 @@ class _RoomsState extends State<Rooms> {
     // TODO: implement initState
     nameNumber = 1;
     roomNames.add(TextEditingController());
+    cText.add('');
     print('roomlist length:${roomNames.length}');
     super.initState();
   }
@@ -586,6 +588,7 @@ class _RoomsState extends State<Rooms> {
   void dispose() {
     // TODO: implement dispose
     roomNames.removeRange(0, roomNames.length);
+    cText.removeRange(0, cText.length);
    /* for (var j = 0; j < roomNames.length; j++)
     {
       //roomNames[j].dispose();
@@ -621,10 +624,24 @@ class _RoomsState extends State<Rooms> {
                     return ListTile(
                       title: TextField(
                         controller: roomNames[index],
+                        onChanged: (data){
+                          setState(() {
+                            if(roomNames[index].text.length>0)
+                              {
+                                cText[index]='';
+                              }
+                            else
+                              {
+                                cText[index]='Enter the Name';
+                              }
+
+                          });
+                        },
                         decoration: InputDecoration(
                           labelText: 'Room Name',
                           hintText: 'Name of the room',
-                          counterText: roomNames[index].text.length<1?'Please Enter the Name':'',
+                          counterText: cText[index],
+                          counterStyle: TextStyle(color: Colors.red),
                           labelStyle:
                           TextStyle(fontSize: 20, color: Colors.blue),
                         ),
@@ -643,9 +660,10 @@ class _RoomsState extends State<Rooms> {
                     icon: Icon(Icons.add),
                     color: Colors.white,
                     onPressed: () {
-                      setState(
-                            () {
+                      setState(() {
+
                           roomNames.add(TextEditingController());
+                          cText.add('');
                           nameNumber += 1;
 
                           if (nameNumber > 4) {
@@ -665,26 +683,30 @@ class _RoomsState extends State<Rooms> {
                     icon: Icon(Icons.check),
                     color: Colors.white,
                     onPressed: () {
-                      int check=0,i;
-                      for(i=0;i<nameNumber;i++)
+                      setState(() {
+                        int check=0,i;
+                        for(i=0;i<nameNumber;i++)
                         {
                           if(roomNames[i].text.length<1)
-                            {
-                              check+=1;
-                            }
-                        }
-                      if(check==0) {
-                        for (i = 0; i < nameNumber; i++) {
-                          if (roomNames[i].text.length > 0) {
-                            databaseHelper.insertRoom(roomNames[i].text);
+                          {
+                            check+=1;
                           }
                         }
-                        databaseHelper.getRoomMapList().then((value) =>
-                            print(value));
-                        nameNumber = 1;
+                        if(check==0) {
+                          for (i = 0; i < nameNumber; i++) {
+                            if (roomNames[i].text.length > 0) {
+                              databaseHelper.insertRoom(roomNames[i].text);
+                            }
+                          }
+                          databaseHelper.getRoomMapList().then((value) =>
+                              print(value));
+                          nameNumber = 1;
 
-                        Navigator.pop(context);
-                      }
+                          Navigator.pop(context);
+                        }
+
+                      });
+
 
                     },
                   ),
