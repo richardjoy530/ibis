@@ -10,6 +10,7 @@ import 'package:ibis/main.dart';
 import 'package:ibis/show_history.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:wifi_iot/wifi_iot.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'data.dart';
 
@@ -1012,6 +1013,14 @@ class _RoomsState extends State<Rooms> {
                             }
                           }
                           nameNumber = 1;
+                          Fluttertoast.showToast(
+                              msg: 'Successfully Added',
+                            gravity: ToastGravity.CENTER,
+                            toastLength: Toast.LENGTH_SHORT,
+                            backgroundColor: Colors.blue,
+                            fontSize: 16.0,
+
+                          );
                           Navigator.pop(context);
                         }
                       });
@@ -1176,7 +1185,14 @@ class _WorkersState extends State<Workers> {
                             }
                           }
                           nameNumber = 1;
+                          Fluttertoast.showToast(
+                            msg: 'Successfully Added',
+                            gravity: ToastGravity.CENTER,
+                            toastLength: Toast.LENGTH_SHORT,
+                            backgroundColor: Colors.blue,
+                            fontSize: 16.0,
 
+                          );
                           Navigator.pop(context);
                         }
                       });
