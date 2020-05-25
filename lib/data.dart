@@ -215,5 +215,4 @@ class DatabaseHelper {
         await db.rawDelete('DELETE FROM Workers WHERE workerName = "$worker"');
     return result;
   }
-
 }

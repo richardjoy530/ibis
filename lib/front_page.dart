@@ -279,10 +279,10 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                             showRooms(context,
                                                 deviceObjectList[index]);
                                           } else {
-                                            addWorker();
+                                            addWorker(context);
                                           }
                                         } else {
-                                          addRooms();
+                                          addRooms(context);
                                         }
                                       }
                                     }
@@ -331,7 +331,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               label: Text('Worker'),
               icon: Icon(Icons.add),
               onPressed: () {
-                addWorker();
+                addWorker(context);
               },
             ),
             FloatingActionButton.extended(
@@ -339,7 +339,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               label: Text('Room'),
               icon: Icon(Icons.add),
               onPressed: () {
-                addRooms();
+                addRooms(context);
               },
             )
           ],
@@ -348,7 +348,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     );
   }
 
-  Future<void> addRooms() async {
+  Future<void> addRooms(BuildContext context) async {
     await showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -356,7 +356,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         });
   }
 
-  Future<void> addWorker() async {
+  Future<void> addWorker(BuildContext context) async {
     await showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -845,7 +845,7 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
                 label: Text('Staff'),
                 icon: Icon(Icons.add),
                 onPressed: () {
-                  //addWorker();
+                  FrontPageState().addWorker(context);
                 },
               ),
               FloatingActionButton.extended(
@@ -853,7 +853,7 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
                 label: Text('Room'),
                 icon: Icon(Icons.add),
                 onPressed: () {
-                  //addRooms();
+                  FrontPageState().addRooms(context);
                 },
               )
             ],
