@@ -485,7 +485,10 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.view_list, color: Color(0xff02457a),),
+                leading: Icon(
+                  Icons.view_list,
+                  color: Color(0xff02457a),
+                ),
                 title: Text('Show Rooms/Staffs'),
                 onTap: () {
                   Navigator.push(
@@ -742,7 +745,8 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
                       padding: const EdgeInsets.all(5.0),
                       child: Text(
                         'Rooms',
-                        style: TextStyle(fontSize: 20,  color: Color(0xff02457a)),
+                        style:
+                            TextStyle(fontSize: 20, color: Color(0xff02457a)),
                       ),
                     ),
                     Expanded(
@@ -758,11 +762,14 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10.0))),
                             child: ListTile(
-                              title: Text('${rooms[index]}',style: TextStyle( color: Color(0xff02457a))),
+                              title: Text('${rooms[index]}',
+                                  style: TextStyle(color: Color(0xff02457a))),
                               trailing: IconButton(
-                                icon: Icon(Icons.delete, color: Color(0xff02457a)),
+                                icon: Icon(Icons.delete,
+                                    color: Color(0xff02457a)),
                                 onPressed: () {
                                   setState(() {
+                                    databaseHelper.deleteRoom(rooms[index]);
                                     rooms.removeAt(index);
                                   });
                                 },
@@ -786,7 +793,8 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
                     Padding(
                       padding: const EdgeInsets.all(5.0),
                       child: Text('Staffs',
-                          style: TextStyle(fontSize: 20,  color: Color(0xff02457a))),
+                          style: TextStyle(
+                              fontSize: 20, color: Color(0xff02457a))),
                     ),
                     Expanded(
                         child: Container(
@@ -801,11 +809,16 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10.0))),
                             child: ListTile(
-                              title: Text('${workers[index]}',style: TextStyle( color: Color(0xff02457a)),),
+                              title: Text(
+                                '${workers[index]}',
+                                style: TextStyle(color: Color(0xff02457a)),
+                              ),
                               trailing: IconButton(
-                                icon: Icon(Icons.delete, color: Color(0xff02457a)),
+                                icon: Icon(Icons.delete,
+                                    color: Color(0xff02457a)),
                                 onPressed: () {
                                   setState(() {
+                                    databaseHelper.deleteWorker(workers[index]);
                                     workers.removeAt(index);
                                   });
                                 },
@@ -822,30 +835,29 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
           ),
         ),
         floatingActionButton: Container(
-        padding: EdgeInsets.fromLTRB(25, 0, 0, 0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            FloatingActionButton.extended(
-              heroTag: 'hero1',
-              label: Text('Staff'),
-              icon: Icon(Icons.add),
-              onPressed: () {
-                //addWorker();
-              },
-            ),
-            FloatingActionButton.extended(
-              heroTag: 'hero2',
-              label: Text('Room'),
-              icon: Icon(Icons.add),
-              onPressed: () {
-                //addRooms();
-              },
-            )
-          ],
+          padding: EdgeInsets.fromLTRB(25, 0, 0, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              FloatingActionButton.extended(
+                heroTag: 'hero1',
+                label: Text('Staff'),
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  //addWorker();
+                },
+              ),
+              FloatingActionButton.extended(
+                heroTag: 'hero2',
+                label: Text('Room'),
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  //addRooms();
+                },
+              )
+            ],
+          ),
         ),
-      ),
-    
       ),
     );
   }

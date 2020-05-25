@@ -206,13 +206,13 @@ class DatabaseHelper {
   Future<int> deleteRoom(String room) async {
     var db = await this.database;
     int result =
-        await db.rawDelete('DELETE FROM Rooms WHERE roomName = $room');
+        await db.rawDelete('DELETE FROM Rooms WHERE roomName = "$room"');
     return result;
   }
   Future<int> deleteWorker(String worker) async {
     var db = await this.database;
     int result =
-        await db.rawDelete('DELETE FROM Rooms WHERE workerName = $worker');
+        await db.rawDelete('DELETE FROM Workers WHERE workerName = "$worker"');
     return result;
   }
 
