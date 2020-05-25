@@ -58,7 +58,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   String _friendlyName = 'Loading...';
   ScrollController scrollController = ScrollController();
 
-
   @override
   void initState() {
     FlutterDeviceFriendlyName.friendlyName.then((x) {
@@ -198,8 +197,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       )
                     : Expanded(
                         child: ListView.builder(
-                          physics: BouncingScrollPhysics(),
-                      controller: scrollController,
+                            physics: BouncingScrollPhysics(),
+                            controller: scrollController,
                             itemCount: deviceObjectList.length,
                             itemBuilder: (context, index) {
                               if (deviceObjectList[index].name == 'Device') {
@@ -754,26 +753,45 @@ class _RoomsState extends State<Rooms> {
                     return ListTile(
                       title: TextField(
                         controller: roomNames[index],
-                        onChanged: (data)
-                        {
+                        onChanged: (data) {
                           setState(() {
-                            if(roomNames[index].text.length==0)
-                              {
-                                cText[index]='Enter Name';
-                              }
-                            else
-                              {
-                                cText[index]='';
-                              }
+                            if (roomNames[index].text.length == 0) {
+                              cText[index] = 'Enter Name';
+                            } else {
+                              cText[index] = '';
+                            }
                           });
                         },
                         decoration: InputDecoration(
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red),
+                          ),
                           labelText: 'Room Name',
                           counterText: cText[index],
-                          counterStyle: TextStyle(color: Colors.red,fontSize: 15),
-                          border: OutlineInputBorder(borderSide: BorderSide(color:cText[index]==''?Colors.red:Colors.blue)),
-                          labelStyle:
-                              TextStyle(fontSize: 20, color:cText[index]=='Enter Name'?Colors.red:Colors.blue),
+                          counterStyle:
+                              TextStyle(color: Colors.red, fontSize: 15),
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: cText[index] == ''
+                                      ? Colors.red
+                                      : Colors.blue)),
+                          labelStyle: TextStyle(
+                              fontSize: 20,
+                              color: cText[index] == 'Enter Name'
+                                  ? Colors.red
+                                  : Colors.blue),
                         ),
                       ),
                     );
@@ -899,26 +917,45 @@ class _WorkersState extends State<Workers> {
                     return ListTile(
                       title: TextField(
                         controller: roomNames[index],
-                        onChanged: (stafData)
-                        {
+                        onChanged: (stafData) {
                           setState(() {
-                            if(roomNames[index].text.length==0)
-                            {
-                              cText[index]='Enter Name';
-                            }
-                            else
-                            {
-                              cText[index]='';
+                            if (roomNames[index].text.length == 0) {
+                              cText[index] = 'Enter Name';
+                            } else {
+                              cText[index] = '';
                             }
                           });
                         },
                         decoration: InputDecoration(
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red),
+                          ),
                           counterText: cText[index],
-                          counterStyle: TextStyle(color: Colors.red,fontSize: 15),
-                          border: OutlineInputBorder(borderSide: BorderSide(color:cText[index]==''?Colors.red:Colors.blue)),
+                          counterStyle:
+                              TextStyle(color: Colors.red, fontSize: 15),
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: cText[index] == ''
+                                      ? Colors.red
+                                      : Colors.blue)),
                           labelText: 'Staff Name',
-                          labelStyle:
-                          TextStyle(fontSize: 20, color:cText[index]=='Enter Name'?Colors.red:Colors.blue),
+                          labelStyle: TextStyle(
+                              fontSize: 20,
+                              color: cText[index] == 'Enter Name'
+                                  ? Colors.red
+                                  : Colors.blue),
                         ),
                       ),
                     );
@@ -937,6 +974,7 @@ class _WorkersState extends State<Workers> {
                     onPressed: () {
                       setState(
                         () {
+                          cText.add('');
                           roomNames.add(TextEditingController());
                           nameNumber += 1;
                           if (nameNumber > 4) {
@@ -968,7 +1006,6 @@ class _WorkersState extends State<Workers> {
                             if (roomNames[i].text.length > 0) {
                               databaseHelper.insertWorker(roomNames[i].text);
                               workers.add(roomNames[i].text);
-
                             }
                           }
                           nameNumber = 1;
@@ -985,4 +1022,5 @@ class _WorkersState extends State<Workers> {
         );
       },
     );
-  }}
+  }
+}
