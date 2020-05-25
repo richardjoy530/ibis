@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:wifi_iot/wifi_iot.dart';
+import 'package:dots_indicator/dots_indicator.dart';
 
 import 'data.dart';
 import 'front_page.dart';
@@ -25,6 +26,10 @@ String worker = '';
 List<History> historyList = [];
 List<String> rooms = [];
 List<String> workers = [];
+bool animationChecking=false;
+String animationText='';
+int dotTimer=0;
+double dot=0.0;
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 final customColor = CustomSliderColors(
@@ -184,6 +189,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Timer mainTimer;
   bool play = false;
   bool errorRemover = false;
+  Timer animationTimer;
   @override
   void initState() {
     errorRemover = false;
@@ -203,7 +209,40 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    animationTimer=Timer.periodic(Duration(milliseconds: 100), (timer) {
+      dotTimer+=1;
+      setState(() {
+        if(dotTimer%10==0)
+        {
+           dotTimer=0;
+           if(dot>1)
+             {
+               dot=0;
+             }
+           else
+             {
+             dot+=1;
+           }
+        }
+        if(widget.deviceObject.power==true && widget.deviceObject.pause==false)
+        {
+          animationChecking=true;
+          animationText='Disinfecting';
+        }
+        if(widget.deviceObject.pause==true)
+        {
+          animationText='Paused';
+          animationChecking=false;
+        }
+        if(widget.deviceObject.power==false && widget.deviceObject.pause==false)
+        {
+          animationText='Ready to Disinfect';
+          animationChecking=false;
+        }
 
+      });
+
+    });
     super.initState();
   }
 
@@ -218,7 +257,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         widget.deviceObject.temp == true) {
       widget.deviceObject.socket.write(65);
     }
-
+    animationTimer.cancel();
     super.dispose();
   }
 
@@ -295,6 +334,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   startTimer(DeviceObject deviceObject) {
     deviceObject.timer = Timer.periodic(Duration(seconds: 1), (timer) {
+
       if (deviceObject.pause == false) {
         deviceObject.elapsedTime++;
         deviceObject.totalDuration =
@@ -402,17 +442,32 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Visibility(
-                            visible: !deviceObject.power,
-                            child: Text(
-                              'Ready to Disinfect',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: deviceObject.motionDetected == false
-                                      ? Colors.black
-                                      : Colors.red),
-                            ),
-                          ),
+                             Center(
+                               child: Row(
+                                 children: <Widget>[
+                                   Text(
+                                    '$animationText',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        color: deviceObject.motionDetected == false
+                                            ? Colors.black
+                                            : Colors.red),
+                                    ),
+                                   Visibility(
+                                     visible: animationChecking,
+                                     child: new DotsIndicator(
+                                       dotsCount: 3,
+                                       position: dot,
+                                       decorator: DotsDecorator(
+                                         size: const Size.square(9.0),
+                                         activeSize: const Size(18.0, 9.0),
+                                         activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+                                       ),
+                                     ),
+                                   )
+                                 ],
+                               ),
+                             ),
                           Text(
                             '${getMinuets(((deviceObject.time.inSeconds) - deviceObject.elapsedTime).round())}'
                             ':${getSeconds(((deviceObject.time.inSeconds) - deviceObject.elapsedTime).round())}',
