@@ -30,7 +30,7 @@ class _LodingState extends State<Loding> {
         }
       },
     );
-    databaseHelper.getHistoryMapList().then((value) {
+    databaseHelper.getWorkerMapList().then((value) {
       for (var map in value) {
         workers.add(map['workerName']);
       }
