@@ -55,6 +55,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   Timer timer;
   TextEditingController nameController;
   String _friendlyName = 'Loading...';
+  ScrollController scrollController = ScrollController();
+
 
   @override
   void initState() {
@@ -195,6 +197,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       )
                     : Expanded(
                         child: ListView.builder(
+                          physics: BouncingScrollPhysics(),
+                      controller: scrollController,
                             itemCount: deviceObjectList.length,
                             itemBuilder: (context, index) {
                               if (deviceObjectList[index].name == 'Device') {

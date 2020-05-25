@@ -507,13 +507,13 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     databaseHelper.insertHistory(History(
                         roomName: room,
                         workerName: worker,
-                        state: 'Started',
+                        state: 'Started with ${deviceObject.time.inMinutes} mins',
                         time: DateTime.now()));
                     historyList.add(
                       History(
                         roomName: room,
                         workerName: worker,
-                        state: 'Started',
+                        state: 'Started with ${deviceObject.time.inMinutes} mins',
                         time: DateTime.now(),
                       ),
                     );

@@ -96,13 +96,13 @@ class DeviceObject {
           databaseHelper.insertHistory(History(
               roomName: room,
               workerName: worker,
-              state: 'Error',
+              state: 'Error : Device disconnected',
               time: DateTime.now()));
           historyList.add(
             History(
               roomName: room,
               workerName: worker,
-              state: 'Error',
+              state: 'Error : Device disconnected',
               time: DateTime.now(),
             ),
           );
@@ -202,35 +202,5 @@ class DatabaseHelper {
     var result = await db.query('History');
     return result;
   }
-
-  // Update Operation: Update a Note object and save it to database
-  // Future<int> updateNote(Note note) async {
-  //   var db = await this.database;
-  //   var result = await db.update(noteTable, note.toMap(),
-  //       where: '$colId = ?', whereArgs: [note.id]);
-  //   return result;
-  // }
-
-  // Delete Operation: Delete a Note object from database
-  // Future<int> deleteNote(int id) async {
-  //   var db = await this.database;
-  //   int result =
-  //   await db.rawDelete('DELETE FROM $noteTable WHERE $colId = $id');
-  //   return result;
-  // }
-
-  // Future<int> deleteAllNote() async {
-  //   var db = await this.database;
-  //   return await db.rawDelete('DELETE FROM $noteTable');
-  // }
-
-  // Get number of Note objects in database
-  // Future<int> getCount() async {
-  //   Database db = await this.database;
-  //   List<Map<String, dynamic>> x =
-  //   await db.rawQuery('SELECT COUNT (*) from $noteTable');
-  //   int result = Sqflite.firstIntValue(x);
-  //   return result;
-  // }
 
 }
