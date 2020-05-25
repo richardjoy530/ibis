@@ -1018,7 +1018,9 @@ class _RoomsState extends State<Rooms> {
                             gravity: ToastGravity.CENTER,
                             toastLength: Toast.LENGTH_SHORT,
                             backgroundColor: Colors.blue,
+                            textColor: Colors.white,
                             fontSize: 16.0,
+
 
                           );
                           Navigator.pop(context);
@@ -1190,6 +1192,7 @@ class _WorkersState extends State<Workers> {
                             gravity: ToastGravity.CENTER,
                             toastLength: Toast.LENGTH_SHORT,
                             backgroundColor: Colors.blue,
+                            textColor: Colors.white,
                             fontSize: 16.0,
 
                           );
