@@ -443,7 +443,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                              Center(
-                               child: Row(
+                               child: Column(
                                  children: <Widget>[
                                    Text(
                                     '$animationText',
