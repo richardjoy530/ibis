@@ -761,7 +761,11 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
                               title: Text('${rooms[index]}',style: TextStyle( color: Color(0xff02457a))),
                               trailing: IconButton(
                                 icon: Icon(Icons.delete, color: Color(0xff02457a)),
-                                onPressed: () {},
+                                onPressed: () {
+                                  setState(() {
+                                    rooms.removeAt(index);
+                                  });
+                                },
                               ),
                             ),
                           );
@@ -800,7 +804,11 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
                               title: Text('${workers[index]}',style: TextStyle( color: Color(0xff02457a)),),
                               trailing: IconButton(
                                 icon: Icon(Icons.delete, color: Color(0xff02457a)),
-                                onPressed: () {},
+                                onPressed: () {
+                                  setState(() {
+                                    workers.removeAt(index);
+                                  });
+                                },
                               ),
                             ),
                           );
