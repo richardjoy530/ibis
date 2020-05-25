@@ -731,6 +731,7 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
         ),
         body: Container(
           color: Colors.blue[900],
+
           padding: EdgeInsets.all(10.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
