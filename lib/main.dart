@@ -562,13 +562,15 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     databaseHelper.insertHistory(History(
                         roomName: room,
                         workerName: worker,
-                        state: 'Started with ${deviceObject.time.inMinutes} mins',
+                        state:
+                            'Started with ${deviceObject.time.inMinutes} mins',
                         time: DateTime.now()));
                     historyList.add(
                       History(
                         roomName: room,
                         workerName: worker,
-                        state: 'Started with ${deviceObject.time.inMinutes} mins',
+                        state:
+                            'Started with ${deviceObject.time.inMinutes} mins',
                         time: DateTime.now(),
                       ),
                     );
@@ -576,40 +578,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       onTapUpDetails.localPosition.dx <
                           MediaQuery.of(context).size.width / 2) {
                     //Stop
-                    print('stop');
-                    databaseHelper.insertHistory(
-                      History(
-                        roomName: room,
-                        workerName: worker,
-                        state: 'Stopped',
-                        time: DateTime.now(),
-                      ),
-                    );
-                    historyList.add(
-                      History(
-                        roomName: room,
-                        workerName: worker,
-                        state: 'Stopped',
-                        time: DateTime.now(),
-                      ),
-                    );
-
-                    prefs.setInt('${deviceObject.ip}totalDuration',
-                        deviceObject.totalDuration.inSeconds);
-                    prefs.setInt('${deviceObject.ip}secondDuration',
-                        deviceObject.secondDuration.inSeconds);
-                    deviceObject.pause = false;
-                    errorRemover = false;
-                    deviceObject.elapsedTime = 0;
-                    deviceObject.flare = 'off';
-                    destroyAnimation(deviceObject);
-                    deviceObject.socket.write('s');
-                    deviceObject.power = false;
-                    deviceObject.time = Duration(minutes: 0);
-                    deviceObject.mainTime = Duration(minutes: 0);
-                    deviceObject.timer.cancel();
-                    deviceObject.progressDegrees = 0;
-                    Navigator.pop(context);
+                    confirmStop(context,deviceObject);
                   } else if (deviceObject.power == true &&
                       onTapUpDetails.localPosition.dx >
                           MediaQuery.of(context).size.width / 2) {
@@ -819,9 +788,83 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
             children: <Widget>[
               SimpleDialogOption(
-                child: Center(child: Text('OK')),
+                child: Center(child: Text('Exit')),
                 onPressed: () {
                   Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+              ),
+              SimpleDialogOption(
+                child: Center(child: Text('Continue')),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  Future<void> confirmStop(context, DeviceObject deviceObject) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            backgroundColor: Color(0xffffffff),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            title: Center(
+              child: Text(
+                'Are you sure',
+                style: TextStyle(
+                    color: Color(0xff02457a), fontWeight: FontWeight.bold),
+              ),
+            ),
+            children: <Widget>[
+              SimpleDialogOption(
+                child: Center(child: Text('YES')),
+                onPressed: () {
+                  print('stop');
+                  databaseHelper.insertHistory(
+                    History(
+                      roomName: room,
+                      workerName: worker,
+                      state: 'Stopped',
+                      time: DateTime.now(),
+                    ),
+                  );
+                  historyList.add(
+                    History(
+                      roomName: room,
+                      workerName: worker,
+                      state: 'Stopped',
+                      time: DateTime.now(),
+                    ),
+                  );
+
+                  prefs.setInt('${deviceObject.ip}totalDuration',
+                      deviceObject.totalDuration.inSeconds);
+                  prefs.setInt('${deviceObject.ip}secondDuration',
+                      deviceObject.secondDuration.inSeconds);
+                  deviceObject.pause = false;
+                  errorRemover = false;
+                  deviceObject.elapsedTime = 0;
+                  deviceObject.flare = 'off';
+                  destroyAnimation(deviceObject);
+                  deviceObject.socket.write('s');
+                  deviceObject.power = false;
+                  deviceObject.time = Duration(minutes: 0);
+                  deviceObject.mainTime = Duration(minutes: 0);
+                  deviceObject.timer.cancel();
+                  deviceObject.progressDegrees = 0;
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+              ),
+              SimpleDialogOption(
+                child: Center(child: Text('NO')),
+                onPressed: () {
                   Navigator.pop(context);
                 },
               ),
