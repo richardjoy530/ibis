@@ -13,6 +13,7 @@ import 'package:wifi_iot/wifi_iot.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'data.dart';
+import 'show_rooms_workers.dart';
 
 List<DeviceObject> deviceObjectList = [];
 List<String> ipList = [];
@@ -375,7 +376,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           title: Text(
             'Select a Room',
             style:
-                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
+                TextStyle(color:  Color(0xff02457a), fontWeight: FontWeight.bold),
           ),
           children: <Widget>[
             Column(
@@ -384,14 +385,22 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 rooms.length,
                 (index) {
                   return SimpleDialogOption(
-                    child: ListTile(
-                      leading: Icon(
-                        Icons.label_outline,
+                    child: Container(
+                      decoration: BoxDecoration(
+                                            border: Border.all(color: Colors.blue),
+
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      title: Text(rooms[index],
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold)),
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.label_outline,
+                          color:  Color(0xff02457a),
+                        ),
+                        title: Text(rooms[index],
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold)),
+                      ),
                     ),
                     onPressed: () {
                       room = rooms[index];
@@ -419,7 +428,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           title: Text(
             'Select a Staff',
             style:
-                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
+                TextStyle(color: Color(0xff02457a), fontWeight: FontWeight.bold),
           ),
           children: <Widget>[
             Column(
@@ -428,14 +437,23 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 workers.length,
                 (index) {
                   return SimpleDialogOption(
-                    child: ListTile(
-                      leading: Icon(
-                        Icons.label_outline,
+                    child: Container(
+                       decoration: BoxDecoration(
+                                            border: Border.all(color: Colors.blue),
+
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      title: Text(workers[index],
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold)),
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.label_outline,
+                                                    color:  Color(0xff02457a),
+
+                        ),
+                        title: Text(workers[index],
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold)),
+                      ),
                     ),
                     onPressed: () {
                       worker = workers[index];
@@ -710,166 +728,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   }
 }
 
-class ShowRoomsStaffs extends StatefulWidget {
-  @override
-  _ShowRoomsStaffsState createState() => _ShowRoomsStaffsState();
-}
-
-class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: Text('Staffs/Workers'),
-        ),
-        body: Container(
-          color: Colors.blue[900],
-
-          padding: EdgeInsets.all(10.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Container(
-                height: MediaQuery.of(context).size.height / 2.5,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: Colors.blue[600],
-                    border: Border.all(color: Colors.blue),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Text(
-                        'Rooms',
-                        style:
-                            TextStyle(fontSize: 20, color: Color(0xff02457a)),
-                      ),
-                    ),
-                    Expanded(
-                        child: Container(
-                      padding: EdgeInsets.all(10.0),
-                      child: ListView.builder(
-                        itemCount: rooms.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            margin: EdgeInsets.all(5.0),
-                            decoration: BoxDecoration(
-                              color: Colors.blue[300],
-                                border: Border.all(color: Colors.blue),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0))),
-                            child: ListTile(
-                              title: Text('${rooms[index]}',
-                                  style: TextStyle(color: Color(0xff02457a))),
-                              trailing: IconButton(
-                                icon: Icon(Icons.delete,
-                                    color: Color(0xff02457a)),
-                                onPressed: () {
-                                  setState(() {
-                                    databaseHelper.deleteRoom(rooms[index]);
-                                    rooms.removeAt(index);
-                                  });
-                                },
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ))
-                  ],
-                ),
-              ),
-              Container(
-                height: MediaQuery.of(context).size.height / 2.5,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: Colors.blue[600],
-                    border: Border.all(color: Colors.blue),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Text('Staffs',
-                          style: TextStyle(
-                              fontSize: 20, color: Color(0xff02457a))),
-                    ),
-                    Expanded(
-                        child: Container(
-                      padding: EdgeInsets.all(10.0),
-                      child: ListView.builder(
-                        itemCount: workers.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            margin: EdgeInsets.all(5.0),
-                            decoration: BoxDecoration(
-                              color: Colors.blue[300],
-                                border: Border.all(color: Colors.blue),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0))),
-                            child: ListTile(
-                              title: Text(
-                                '${workers[index]}',
-                                style: TextStyle(color: Color(0xff02457a)),
-                              ),
-                              trailing: IconButton(
-                                icon: Icon(Icons.delete,
-                                    color: Color(0xff02457a)),
-                                onPressed: () {
-                                  setState(() {
-                                    databaseHelper.deleteWorker(workers[index]);
-                                    workers.removeAt(index);
-                                  });
-                                },
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ))
-                  ],
-                ),
-              )
-            ],
-          ),
-        ),
-        floatingActionButton: Container(
-          padding: EdgeInsets.fromLTRB(25, 0, 0, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              FloatingActionButton.extended(
-                heroTag: 'hero1',
-                label: Text('Staff'),
-                icon: Icon(Icons.add),
-                onPressed: () {
-                  FrontPageState().addWorker(context);
-                },
-              ),
-              FloatingActionButton.extended(
-                heroTag: 'hero2',
-                label: Text('Room'),
-                icon: Icon(Icons.add),
-                onPressed: () {
-                  FrontPageState().addRooms(context);
-                },
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class Rooms extends StatefulWidget {
   @override
   _RoomsState createState() => _RoomsState();
@@ -1020,14 +878,12 @@ class _RoomsState extends State<Rooms> {
                           }
                           nameNumber = 1;
                           Fluttertoast.showToast(
-                              msg: 'Successfully Added',
+                            msg: 'Successfully Added',
                             gravity: ToastGravity.CENTER,
                             toastLength: Toast.LENGTH_SHORT,
                             backgroundColor: Colors.blue,
                             textColor: Colors.white,
                             fontSize: 16.0,
-
-
                           );
                           Navigator.pop(context);
                         }
@@ -1200,7 +1056,6 @@ class _WorkersState extends State<Workers> {
                             backgroundColor: Colors.blue,
                             textColor: Colors.white,
                             fontSize: 16.0,
-
                           );
                           Navigator.pop(context);
                         }
