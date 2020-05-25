@@ -730,6 +730,7 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
           title: Text('Staffs/Workers'),
         ),
         body: Container(
+          color: Colors.blue[900],
           padding: EdgeInsets.all(10.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -738,6 +739,7 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
                 height: MediaQuery.of(context).size.height / 2.5,
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
+                  color: Colors.blue[600],
                     border: Border.all(color: Colors.blue),
                     borderRadius: BorderRadius.all(Radius.circular(10.0))),
                 child: Column(
@@ -759,6 +761,7 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
                           return Container(
                             margin: EdgeInsets.all(5.0),
                             decoration: BoxDecoration(
+                              color: Colors.blue[300],
                                 border: Border.all(color: Colors.blue),
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10.0))),
@@ -787,6 +790,7 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
                 height: MediaQuery.of(context).size.height / 2.5,
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
+                  color: Colors.blue[600],
                     border: Border.all(color: Colors.blue),
                     borderRadius: BorderRadius.all(Radius.circular(10.0))),
                 child: Column(
@@ -806,6 +810,7 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
                           return Container(
                             margin: EdgeInsets.all(5.0),
                             decoration: BoxDecoration(
+                              color: Colors.blue[300],
                                 border: Border.all(color: Colors.blue),
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10.0))),
