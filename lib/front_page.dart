@@ -485,6 +485,16 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 },
               ),
               ListTile(
+                leading: Icon(Icons.view_list),
+                title: Text('Show Rooms/Staffs'),
+                onTap: ()
+                {
+                  Navigator.push(context,
+                  MaterialPageRoute(builder: (context)=>ShowRoomsStaffs())
+                  );
+                },
+              ),
+              ListTile(
                 leading: Icon(
                   isEnabled == true
                       ? Icons.signal_wifi_4_bar
@@ -695,6 +705,132 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     });
   }
 }
+
+class ShowRoomsStaffs extends StatefulWidget {
+  @override
+  _ShowRoomsStaffsState createState() => _ShowRoomsStaffsState();
+}
+
+class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: ()
+            {
+              Navigator.pop(context);
+            },
+          ),
+          title: Text('Staffs/Workers'),
+
+        ),
+        body: Container(
+          padding: EdgeInsets.all(10.0),
+            child:Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Container(
+                  height: MediaQuery.of(context).size.height/2.5,
+                  width: MediaQuery.of(context).size.width,
+                  decoration:BoxDecoration(
+                    border: Border.all(color:Colors.blue),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0))
+                  ),
+                  child: Column(
+                    
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Text('Rooms',style: TextStyle(fontSize: 20,color: Colors.black),),
+                      ),
+                      Expanded(
+                      child:Container(
+                        padding: EdgeInsets.all(10.0),
+                        child:ListView.builder(
+                        itemCount: rooms.length,
+                        itemBuilder: (context,index){
+                          return Container(
+                            padding: EdgeInsets.all(5.0),
+                            decoration: BoxDecoration(
+                              border: Border.all(color:Colors.blue),
+                              borderRadius:BorderRadius.all(Radius.circular(10.0))
+                            ),
+                            child: ListTile(
+                              title: Text('${rooms[index]}'),
+                              trailing: IconButton(
+                                icon:Icon(Icons.delete),
+                                onPressed: ()
+                                {
+
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      )
+                )
+
+
+                    ],
+                  ),
+
+                ),
+                Container(
+                  height: MediaQuery.of(context).size.height/2.5,
+                  width: MediaQuery.of(context).size.width,
+                  decoration:BoxDecoration(
+                      border: Border.all(color:Colors.blue),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0))
+                ),
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Text('Staffs',style: TextStyle(fontSize: 20,color: Colors.black)),
+                      ),
+                      Expanded(
+                          child:Container(
+                            padding: EdgeInsets.all(10.0),
+                            child:ListView.builder(
+                              itemCount: worker.length,
+                              itemBuilder: (context,index){
+                                return Container(
+                                  padding: EdgeInsets.all(5.0),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color:Colors.blue),
+                                      borderRadius:BorderRadius.all(Radius.circular(10.0))
+                                  ),
+                                  child: ListTile(
+                                    title: Text('${worker[index]}'),
+                                    trailing: IconButton(
+                                      icon:Icon(Icons.delete),
+                                      onPressed: ()
+                                      {
+
+                                      },
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+
+    );
+  }
+}
+
 
 class Rooms extends StatefulWidget {
   @override
