@@ -13,23 +13,8 @@ import 'package:wifi_iot/wifi_iot.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 
 import 'data.dart';
-import 'front_page.dart';
 import 'loding.dart';
 
-int displayTime;
-SharedPreferences prefs;
-String deviceName;
-int deviceHeight;
-DatabaseHelper databaseHelper;
-String room = '';
-String worker = '';
-List<History> historyList = [];
-List<String> rooms = [];
-List<String> workers = [];
-bool animationChecking=false;
-String animationText='';
-int dotTimer=0;
-double dot=0.0;
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 final customColor = CustomSliderColors(
@@ -209,39 +194,30 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
-    animationTimer=Timer.periodic(Duration(milliseconds: 100), (timer) {
-      dotTimer+=1;
+    animationTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+      dotTimer += 1;
       setState(() {
-        if(dotTimer%10==0)
-        {
-           dotTimer=0;
-           if(dot>1)
-             {
-               dot=0;
-             }
-           else
-             {
-             dot+=1;
-           }
+        if (dotTimer % 10 == 0) {
+          dotTimer = 0;
+          if (dot > 1) {
+            dot = 0;
+          } else {
+            dot += 1;
+          }
         }
-        if(widget.deviceObject.power==true && widget.deviceObject.pause==false)
-        {
-          animationChecking=true;
-          animationText='Disinfecting';
+        if (widget.deviceObject.power == true &&
+            widget.deviceObject.pause == false) {
+          animationChecking = true;
+          animationText = 'Disinfecting';
+        } else if (widget.deviceObject.pause == true) {
+          animationText = 'Paused';
+          animationChecking = false;
+        } else if (widget.deviceObject.power == false &&
+            widget.deviceObject.pause == false) {
+          animationText = 'Ready to Disinfect';
+          animationChecking = false;
         }
-        if(widget.deviceObject.pause==true)
-        {
-          animationText='Paused';
-          animationChecking=false;
-        }
-        if(widget.deviceObject.power==false && widget.deviceObject.pause==false)
-        {
-          animationText='Ready to Disinfect';
-          animationChecking=false;
-        }
-
       });
-
     });
     super.initState();
   }
@@ -334,7 +310,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   startTimer(DeviceObject deviceObject) {
     deviceObject.timer = Timer.periodic(Duration(seconds: 1), (timer) {
-
       if (deviceObject.pause == false) {
         deviceObject.elapsedTime++;
         deviceObject.totalDuration =
@@ -442,32 +417,35 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                             Center(
-                               child: Column(
-                                 children: <Widget>[
-                                   Text(
-                                    '$animationText',
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        color: deviceObject.motionDetected == false
-                                            ? Colors.black
-                                            : Colors.red),
+                          Center(
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                  '$animationText',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      color:
+                                          deviceObject.motionDetected == false
+                                              ? Colors.black
+                                              : Colors.red),
+                                ),
+                                Visibility(
+                                  visible: animationChecking,
+                                  child: new DotsIndicator(
+                                    dotsCount: 3,
+                                    position: dot,
+                                    decorator: DotsDecorator(
+                                      size: const Size.square(9.0),
+                                      activeSize: const Size(18.0, 9.0),
+                                      activeShape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0)),
                                     ),
-                                   Visibility(
-                                     visible: animationChecking,
-                                     child: new DotsIndicator(
-                                       dotsCount: 3,
-                                       position: dot,
-                                       decorator: DotsDecorator(
-                                         size: const Size.square(9.0),
-                                         activeSize: const Size(18.0, 9.0),
-                                         activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-                                       ),
-                                     ),
-                                   )
-                                 ],
-                               ),
-                             ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
                           Text(
                             '${getMinuets(((deviceObject.time.inSeconds) - deviceObject.elapsedTime).round())}'
                             ':${getSeconds(((deviceObject.time.inSeconds) - deviceObject.elapsedTime).round())}',
@@ -578,7 +556,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       onTapUpDetails.localPosition.dx <
                           MediaQuery.of(context).size.width / 2) {
                     //Stop
-                    confirmStop(context,deviceObject);
+                    confirmStop(context, deviceObject);
                   } else if (deviceObject.power == true &&
                       onTapUpDetails.localPosition.dx >
                           MediaQuery.of(context).size.width / 2) {
@@ -720,11 +698,14 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             deviceObject.power = false;
           }
           if (deviceObject.progressDegrees == 360) {
-            databaseHelper.insertHistory(History(
+            databaseHelper.insertHistory(
+              History(
                 roomName: room,
                 workerName: worker,
                 state: 'Finished',
-                time: DateTime.now()));
+                time: DateTime.now(),
+              ),
+            );
             historyList.add(
               History(
                 roomName: room,
@@ -772,6 +753,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Future<void> overOver(context) async {
     await showDialog(
+            barrierDismissible: false,
+
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(
@@ -807,6 +790,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Future<void> confirmStop(context, DeviceObject deviceObject) async {
     await showDialog(
+            barrierDismissible: false,
+
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(

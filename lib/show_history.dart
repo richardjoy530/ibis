@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ibis/main.dart';
+import 'data.dart';
 import 'package:intl/intl.dart';
 
 class ShowHistory extends StatefulWidget {

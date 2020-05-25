@@ -5,7 +5,6 @@ import 'front_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'main.dart';
 
 class Loding extends StatefulWidget {
   @override

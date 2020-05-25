@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:flare_flutter/flare_actor.dart';
@@ -15,18 +14,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'data.dart';
 import 'show_rooms_workers.dart';
 
-List<DeviceObject> deviceObjectList = [];
-List<String> ipList = [];
-List<Socket> sockets = [];
-ServerSocket serverSocket;
-bool serverOnline = false;
-bool isEnabled = false;
-bool isConnected = false;
-String serverIp;
-int screenLengthConstant = 0;
-int nameNumber = 1;
-List<TextEditingController> roomNames = [];
-final List<bool> isSelected = [false];
+
 Future<void> wifi() async {
   WiFiForIoTPlugin.isEnabled().then((val) {
     if (val != null) {
@@ -510,7 +498,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 ),
                 title: Text('Show Rooms/Staffs'),
                 onTap: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) => ShowRoomsStaffs()));

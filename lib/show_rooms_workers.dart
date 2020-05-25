@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'front_page.dart';
-import 'main.dart';
+import 'data.dart';
 
 class ShowRoomsStaffs extends StatefulWidget {
   @override

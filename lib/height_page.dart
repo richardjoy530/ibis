@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:ibis/height_bar.dart';
 
 import 'data.dart';
-import 'front_page.dart';
 import 'main.dart';
 
 class HeightPage extends StatefulWidget {
