@@ -225,6 +225,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void dispose() {
     if (widget.deviceObject.power == true) {
+      widget.deviceObject.radialProgressAnimationController.stop();
+
       widget.deviceObject.radialProgressAnimationController.dispose();
     }
     mainTimer.cancel();
@@ -234,6 +236,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       widget.deviceObject.socket.write(65);
     }
     animationTimer.cancel();
+    connectionError = false;
     super.dispose();
   }
 
@@ -476,7 +479,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       onChange: (double value) {
                         displayTime = value.floor();
                         if (deviceObject.power == false &&
-                            errorRemover == true) {
+                            errorRemover == true &&
+                            isConnected == true &&
+                            widget.deviceObject.clientError == false) {
                           setState(() {
                             deviceObject.mainTime = Duration(
                                 minutes:
@@ -738,7 +743,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   destroyAnimation(DeviceObject deviceObject) {
-    deviceObject.radialProgressAnimationController.dispose();
+    if (deviceObject.power == true) {
+      deviceObject.radialProgressAnimationController.dispose();
+      deviceObject.power = false;
+    }
   }
 
   getSeconds(int seconds) {
@@ -753,8 +761,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Future<void> overOver(context) async {
     await showDialog(
-            barrierDismissible: false,
-
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(
@@ -790,8 +797,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Future<void> confirmStop(context, DeviceObject deviceObject) async {
     await showDialog(
-            barrierDismissible: false,
-
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(
@@ -860,6 +866,22 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Future<void> mainTick() async {
     mainTimer = Timer.periodic(Duration(seconds: 1), (callback) {
+      WiFiForIoTPlugin.getIP().then((value) {
+        if (value != serverIp && connectionError == false) {
+          connectionError = true;
+          widget.deviceObject.motionDetected = false;
+          widget.deviceObject.flare = 'off';
+          widget.deviceObject.offline = true;
+          widget.deviceObject.pause = false;
+          widget.deviceObject.progressDegrees = 0;
+          widget.deviceObject.elapsedTime = 0;
+          print('off');
+          widget.deviceObject.timer.cancel();
+          destroyAnimation(widget.deviceObject);
+          errorRemover = false;
+          Navigator.pop(context);
+        }
+      });
       if (mainTimer.tick > 40 &&
           mainTimer.tick < 60 &&
           widget.deviceObject.power == false) {
@@ -871,10 +893,20 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         widget.deviceObject.pause = false;
         Navigator.pop(context);
       }
-      if (serverOnline == false || widget.deviceObject.clientError == true) {
-        if (widget.deviceObject.power == true) {
-          destroyAnimation(widget.deviceObject);
-        }
+      if ((serverOnline == false || widget.deviceObject.clientError == true) &&
+          connectionError == false) {
+        connectionError = true;
+
+        widget.deviceObject.motionDetected = false;
+        widget.deviceObject.flare = 'off';
+        widget.deviceObject.offline = true;
+        widget.deviceObject.pause = false;
+        widget.deviceObject.progressDegrees = 0;
+        widget.deviceObject.elapsedTime = 0;
+        print('off');
+        widget.deviceObject.timer.cancel();
+        destroyAnimation(widget.deviceObject);
+        errorRemover = false;
         Navigator.pop(context);
       }
     });

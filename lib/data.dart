@@ -10,6 +10,7 @@ import 'package:sqflite/sqflite.dart';
 import 'main.dart' as main;
 
 int displayTime;
+bool connectionError = false;
 SharedPreferences prefs;
 String deviceName;
 int deviceHeight;
@@ -29,6 +30,7 @@ List<Socket> sockets = [];
 ServerSocket serverSocket;
 bool serverOnline = false;
 bool isEnabled = false;
+Timer wifiTimer;
 bool isConnected = false;
 String serverIp;
 int screenLengthConstant = 0;
@@ -84,8 +86,13 @@ class DeviceObject {
   void run() {
     socket.listen((onData) {
       print([socket.remotePort, onData]);
+      if (String.fromCharCodes(onData).trim() == '1') {
+        print('recived');
+      }
       if (this.offline == false) {
-        if (String.fromCharCodes(onData).trim() == '1') {
+        if (onData[0] == 50) {
+          print([socket.remotePort, onData]);
+
           this.motionDetected = true;
           databaseHelper.insertHistory(History(
               roomName: room,
@@ -108,11 +115,14 @@ class DeviceObject {
       ..onError((handleError) {
         print('Client Error : ${handleError.toString()}');
         serverOnline = false;
+        this.linearProgressBarValue = 0.0;
+
         serverSocket.close();
         this.clientError = true;
         this.socket.close();
       })
       ..onDone(() {
+        this.linearProgressBarValue = 0.0;
         this.socket.close();
         this.clientError = true;
         this.offline = true;
@@ -132,7 +142,6 @@ class DeviceObject {
             ),
           );
         }
-        this.power = false;
       });
   }
 }
@@ -234,6 +243,7 @@ class DatabaseHelper {
         await db.rawDelete('DELETE FROM Rooms WHERE roomName = "$room"');
     return result;
   }
+
   Future<int> deleteWorker(String worker) async {
     var db = await this.database;
     int result =

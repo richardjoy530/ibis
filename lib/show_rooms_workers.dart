@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wifi_iot/wifi_iot.dart';
 
 import 'front_page.dart';
 import 'data.dart';
@@ -9,6 +10,12 @@ class ShowRoomsStaffs extends StatefulWidget {
 }
 
 class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
+  @override
+  void initState() {
+    super.initState();
+    WiFiForIoTPlugin.getBSSID().then((value) => print(value));
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

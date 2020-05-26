@@ -193,7 +193,7 @@ class _HeightPageState extends State<HeightPage> {
               onPointerUp: (pointerUp) {
                 widget.deviceObject.progressDegrees = 0;
                 if (widget.deviceObject.height.toInt() == 0) {
-                  widget.deviceObject.socket.write('0\r');
+                  widget.deviceObject.socket.write('5\r');
                 } else {
                   widget.deviceObject.socket.write('5\r');
                 }
@@ -201,6 +201,7 @@ class _HeightPageState extends State<HeightPage> {
                     widget.deviceObject.height.toInt());
                 widget.deviceObject.time = Duration(minutes: 0);
                 widget.deviceObject.temp = true;
+                widget.deviceObject.elapsedTime=0;
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
