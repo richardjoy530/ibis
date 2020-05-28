@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:clay_containers/clay_containers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ibis/height_bar.dart';
 
 import 'data.dart';
 import 'main.dart';
@@ -66,11 +65,13 @@ class _HeightPageState extends State<HeightPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
-                            CustomPaint(
-                              child: Text(''),
-                              painter:
-                                  HeightPainter(widget.deviceObject.height),
-                            ),
+                            //This was a great animation/mechanism that 
+                            //ive worked soo much. and at last they changed their plan
+                            // CustomPaint(
+                            //   child: Text(''),
+                            //   painter:
+                            //       HeightPainter(widget.deviceObject.height),
+                            // ),
                             Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
@@ -85,7 +86,7 @@ class _HeightPageState extends State<HeightPage> {
                                         topLeft: Radius.circular(20.0),
                                         topRight: Radius.circular(20.0)),
                                       child: IconButton(
-                                        iconSize: 40.0,
+                                        iconSize: 50.0,
                                         color: upArrowColor,
                                         icon: Icon(Icons.add),
                                         onPressed: () {},
@@ -126,7 +127,7 @@ class _HeightPageState extends State<HeightPage> {
                                         bottomRight: Radius.circular(20.0)),
                                     child: Listener(
                                       child: IconButton(
-                                        iconSize: 40.0,
+                                        iconSize: 50.0,
                                         color: downArrowColor,
                                         icon: Icon(Icons.remove),
                                         onPressed: () {},

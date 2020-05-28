@@ -290,12 +290,27 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     title: Align(
                         alignment: Alignment.center,
                         child: Text('Motion Detected')),
-                    content: Icon(
-                      Icons.warning,
-                      color: Color(0xff02457a),
-                      size: 50,
+                    content: Column(
+                      children: <Widget>[
+                        Icon(
+                          Icons.warning,
+                          color: Color(0xff02457a),
+                          size: 50,
+                        ),
+                        Center(
+                          child: RaisedButton(
+                            color: Color(0xffd6e7ee),
+                            child: Center(
+                              child: Text('OK'),
+                            ),
+                            onPressed: () {
+                              widget.deviceObject.socket.write('d\r');
+                              widget.deviceObject.motionDetected = false;
+                            },
+                          ),
+                        )
+                      ],
                     ),
-                    backgroundColor: Color(0xff97cadb),
                   )
                 : Expanded(child: tabView(context, widget.deviceObject))
           ],
@@ -696,7 +711,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             deviceObject.pause = false;
             deviceObject.time = Duration(minutes: 0);
             deviceObject.mainTime = Duration(minutes: 0);
-            deviceObject.radialProgressAnimationController.dispose();
             deviceObject.power = false;
           }
           if (deviceObject.progressDegrees == 360) {
@@ -770,7 +784,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
             title: Center(
               child: Text(
-                'Continue Disinfecting?',
+                'Disinfect Again?',
                 style: TextStyle(
                     color: Color(0xff02457a), fontWeight: FontWeight.bold),
               ),
@@ -849,7 +863,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   deviceObject.elapsedTime = 0;
                   deviceObject.flare = 'off';
                   print('state5');
-
                   destroyAnimation(deviceObject);
                   deviceObject.socket.write('s');
                   deviceObject.power = false;
@@ -898,18 +911,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             }
           },
         );
-        if(widget.deviceObject.socket==null){
-                    Navigator.pop(context);
+        if (widget.deviceObject.socket == null) {
+          Navigator.pop(context);
         }
         if (mainTimer.tick > 40 &&
             mainTimer.tick < 60 &&
             widget.deviceObject.power == false) {
-          Navigator.pop(context);
-        }
-        if (widget.deviceObject.motionDetected == true &&
-            widget.deviceObject.power == false) {
-          widget.deviceObject.elapsedTime = 0;
-          widget.deviceObject.pause = false;
           Navigator.pop(context);
         }
         if ((serverOnline == false ||

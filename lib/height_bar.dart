@@ -55,26 +55,27 @@ class HeightPainter extends CustomPainter {
     //canvas.drawLine(center, Offset(size.width / 2, heightIn100), progressPaint);
     canvas.drawRRect(
         RRect.fromRectAndRadius(
-            Rect.fromLTWH(-(width / 2) + size.width / 2,
-                -(height / 2) + size.height / 2, width, height),
-            Radius.circular(20)),
+          Rect.fromLTWH(-(width / 2) + size.width / 2,
+              -(height / 2) + size.height / 2, width, height),
+          Radius.circular(20),
+        ),
         outlinePaint);
     var temp = 35;
     for (int i = 0; i < 10; i++) {
       if ((heightIn100 / 10).floor() >= i) {
         canvas.drawRRect(
-            RRect.fromRectAndRadius(
-                Rect.fromLTRB(
-                    5 + (-(width / 2) + size.width / 2),
-                    (heightIn100 / 10).floor() <= i
-                        ? -(heightIn100).remainder(10) * 3 +
-                            (height / 2) -
-                            temp * i
-                        : (height / 2) - 30 - temp * i,
-                    (-(width / 2) + size.width / 2) + width - 5,
-                    (height / 2) - temp * i),
-                Radius.circular(10)),
-            progressPaint..color = barColors[9 - i]);
+          RRect.fromRectAndRadius(
+            Rect.fromLTRB(
+                5 + (-(width / 2) + size.width / 2),
+                (heightIn100 / 10).floor() <= i
+                    ? -(heightIn100).remainder(10) * 3 + (height / 2) - temp * i
+                    : (height / 2) - 30 - temp * i,
+                (-(width / 2) + size.width / 2) + width - 5,
+                (height / 2) - temp * i),
+            Radius.circular(10),
+          ),
+          progressPaint..color = barColors[9 - i],
+        );
       }
     }
   }
