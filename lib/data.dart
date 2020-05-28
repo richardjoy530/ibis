@@ -29,6 +29,7 @@ List<String> ipList = [];
 List<Socket> sockets = [];
 ServerSocket serverSocket;
 bool serverOnline = false;
+bool animationRunning = false;
 bool isEnabled = false;
 Timer wifiTimer;
 bool isConnected = false;
@@ -86,12 +87,12 @@ class DeviceObject {
   void run() {
     socket.listen((onData) {
       print([socket.remotePort, onData]);
-      if (String.fromCharCodes(onData).trim() == '1') {
-        print('recived');
-      }
+      if (String.fromCharCodes(onData).trim() == '1') {}
       if (this.offline == false) {
         if (onData[0] == 50) {
-          print([socket.remotePort, onData]);
+          print(
+            [socket.remotePort, onData],
+          );
 
           this.motionDetected = true;
           databaseHelper.insertHistory(History(
@@ -112,37 +113,45 @@ class DeviceObject {
         }
       }
     })
-      ..onError((handleError) {
-        print('Client Error : ${handleError.toString()}');
-        serverOnline = false;
-        this.linearProgressBarValue = 0.0;
+      ..onError(
+        (handleError) {
+          print('Client Error : ${handleError.toString()}');
+          serverOnline = false;
+          this.linearProgressBarValue = 0.0;
+          serverSocket.close();
+          this.clientError = true;
+          this.socket.close();
+        },
+      )
+      ..onDone(
+        () {
+                    print('Client onDone');
 
-        serverSocket.close();
-        this.clientError = true;
-        this.socket.close();
-      })
-      ..onDone(() {
-        this.linearProgressBarValue = 0.0;
-        this.socket.close();
-        this.clientError = true;
-        this.offline = true;
-        if (this.power == true) {
-          this.timer.cancel();
-          databaseHelper.insertHistory(History(
-              roomName: room,
-              workerName: worker,
-              state: 'Error : Device disconnected',
-              time: DateTime.now()));
-          historyList.add(
-            History(
-              roomName: room,
-              workerName: worker,
-              state: 'Error : Device disconnected',
-              time: DateTime.now(),
-            ),
-          );
-        }
-      });
+          this.linearProgressBarValue = 0.0;
+          this.socket.close();
+          this.clientError = true;
+          this.offline = true;
+          if (this.power == true) {
+            this.timer.cancel();
+            databaseHelper.insertHistory(
+              History(
+                roomName: room,
+                workerName: worker,
+                state: 'Error : Device disconnected',
+                time: DateTime.now(),
+              ),
+            );
+            historyList.add(
+              History(
+                roomName: room,
+                workerName: worker,
+                state: 'Error : Device disconnected',
+                time: DateTime.now(),
+              ),
+            );
+          }
+        },
+      );
   }
 }
 

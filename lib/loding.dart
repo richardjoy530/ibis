@@ -14,9 +14,14 @@ class Loding extends StatefulWidget {
 class _LodingState extends State<Loding> {
   @override
   void initState() {
-    wifiTimer = Timer.periodic(Duration(seconds: 3), (data){
-      wifi();
-    });
+    wifiTimer = Timer.periodic(
+      Duration(seconds: 3),
+      (data) {
+        if (serverOnline == false) {
+          wifi();
+        }
+      },
+    );
     wifi();
     load();
     redirect();

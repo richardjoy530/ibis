@@ -65,10 +65,6 @@ Future<void> notification(String message) async {
 }
 
 void connect() async {
-  if (isEnabled == false) {
-    WiFiForIoTPlugin.setEnabled(true);
-    isEnabled = true;
-  }
   ServerSocket.bind('0.0.0.0', 4042)
     ..then((sock) {
       serverSocket = sock;
@@ -178,6 +174,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     errorRemover = false;
+    connectionError = true;
 
     temp = 1;
     mainTick();
@@ -224,11 +221,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    if (widget.deviceObject.power == true) {
-      widget.deviceObject.radialProgressAnimationController.stop();
-
-      widget.deviceObject.radialProgressAnimationController.dispose();
-    }
+    destroyAnimation(widget.deviceObject);
     mainTimer.cancel();
     if (widget.deviceObject.power == false &&
         widget.deviceObject.clientError == false &&
@@ -679,6 +672,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         duration: Duration(
             seconds: deviceObject.time.inSeconds -
                 (deviceObject.timer != null ? deviceObject.timer.tick : 0)));
+    animationRunning = true;
+
     deviceObject.progressAnimation = Tween(begin: begin, end: end).animate(
         CurvedAnimation(
             parent: deviceObject.radialProgressAnimationController,
@@ -693,6 +688,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 deviceObject.secondDuration.inSeconds);
             errorRemover = false;
             deviceObject.flare = 'off';
+            print('state3');
+
             deviceObject.elapsedTime = 0;
             deviceObject.radialProgressAnimationController.stop();
             deviceObject.timer.cancel();
@@ -730,6 +727,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             deviceObject.timer.cancel();
             deviceObject.pause = false;
             deviceObject.flare = 'off';
+            print('state4');
+
             deviceObject.elapsedTime = 0;
             deviceObject.time = Duration(minutes: 0);
             deviceObject.mainTime = Duration(minutes: 0);
@@ -743,9 +742,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   destroyAnimation(DeviceObject deviceObject) {
-    if (deviceObject.power == true) {
+    if (animationRunning == true) {
       deviceObject.radialProgressAnimationController.dispose();
-      deviceObject.power = false;
+      animationRunning = false;
     }
   }
 
@@ -771,22 +770,29 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
             title: Center(
               child: Text(
-                'Finished and safe to Enter',
+                'Continue Disinfecting?',
                 style: TextStyle(
                     color: Color(0xff02457a), fontWeight: FontWeight.bold),
               ),
             ),
             children: <Widget>[
               SimpleDialogOption(
-                child: Center(child: Text('Exit')),
+                child: Center(child: Text('No')),
                 onPressed: () {
+                  widget.deviceObject.clientError = false;
+
+                  widget.deviceObject.socket.write('n\r');
                   Navigator.pop(context);
                   Navigator.pop(context);
                 },
               ),
               SimpleDialogOption(
-                child: Center(child: Text('Continue')),
+                child: Center(child: Text('yes')),
                 onPressed: () {
+                  widget.deviceObject.clientError = false;
+
+                  widget.deviceObject.socket.write('y\r');
+                  errorRemover = true;
                   Navigator.pop(context);
                 },
               ),
@@ -842,6 +848,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   errorRemover = false;
                   deviceObject.elapsedTime = 0;
                   deviceObject.flare = 'off';
+                  print('state5');
+
                   destroyAnimation(deviceObject);
                   deviceObject.socket.write('s');
                   deviceObject.power = false;
@@ -865,50 +873,67 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> mainTick() async {
-    mainTimer = Timer.periodic(Duration(seconds: 1), (callback) {
-      WiFiForIoTPlugin.getIP().then((value) {
-        if (value != serverIp && connectionError == false) {
+    mainTimer = Timer.periodic(
+      Duration(seconds: 1),
+      (callback) {
+        WiFiForIoTPlugin.getIP().then(
+          (value) {
+            if (value != serverIp && connectionError == false) {
+              connectionError = true;
+              widget.deviceObject.motionDetected = false;
+              widget.deviceObject.flare = 'off';
+              print('state6');
+
+              widget.deviceObject.offline = true;
+              widget.deviceObject.pause = false;
+              widget.deviceObject.power = false;
+
+              widget.deviceObject.progressDegrees = 0;
+              widget.deviceObject.elapsedTime = 0;
+              print('off1');
+              widget.deviceObject.timer.cancel();
+              destroyAnimation(widget.deviceObject);
+              errorRemover = false;
+              Navigator.pop(context);
+            }
+          },
+        );
+        if(widget.deviceObject.socket==null){
+                    Navigator.pop(context);
+        }
+        if (mainTimer.tick > 40 &&
+            mainTimer.tick < 60 &&
+            widget.deviceObject.power == false) {
+          Navigator.pop(context);
+        }
+        if (widget.deviceObject.motionDetected == true &&
+            widget.deviceObject.power == false) {
+          widget.deviceObject.elapsedTime = 0;
+          widget.deviceObject.pause = false;
+          Navigator.pop(context);
+        }
+        if ((serverOnline == false ||
+                widget.deviceObject.clientError == true) &&
+            connectionError == false) {
           connectionError = true;
           widget.deviceObject.motionDetected = false;
           widget.deviceObject.flare = 'off';
+          print('state7');
           widget.deviceObject.offline = true;
           widget.deviceObject.pause = false;
           widget.deviceObject.progressDegrees = 0;
           widget.deviceObject.elapsedTime = 0;
-          print('off');
-          widget.deviceObject.timer.cancel();
+          print('off2');
+          if (widget.deviceObject.timer != null) {
+            widget.deviceObject.timer.cancel();
+          }
           destroyAnimation(widget.deviceObject);
+          widget.deviceObject.power = false;
+
           errorRemover = false;
           Navigator.pop(context);
         }
-      });
-      if (mainTimer.tick > 40 &&
-          mainTimer.tick < 60 &&
-          widget.deviceObject.power == false) {
-        Navigator.pop(context);
-      }
-      if (widget.deviceObject.motionDetected == true &&
-          widget.deviceObject.power == false) {
-        widget.deviceObject.elapsedTime = 0;
-        widget.deviceObject.pause = false;
-        Navigator.pop(context);
-      }
-      if ((serverOnline == false || widget.deviceObject.clientError == true) &&
-          connectionError == false) {
-        connectionError = true;
-
-        widget.deviceObject.motionDetected = false;
-        widget.deviceObject.flare = 'off';
-        widget.deviceObject.offline = true;
-        widget.deviceObject.pause = false;
-        widget.deviceObject.progressDegrees = 0;
-        widget.deviceObject.elapsedTime = 0;
-        print('off');
-        widget.deviceObject.timer.cancel();
-        destroyAnimation(widget.deviceObject);
-        errorRemover = false;
-        Navigator.pop(context);
-      }
-    });
+      },
+    );
   }
 }

@@ -69,9 +69,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         setState(
           () {
             for (var i = 0; i < deviceObjectList.length; i++) {
-              if ((deviceObjectList[i].motionDetected == true &&
-                      deviceObjectList[i].power == true) ||
-                  deviceObjectList[i].clientError == true) {
+              if ((deviceObjectList[i].motionDetected == true||deviceObjectList[i].clientError == true)&&deviceObjectList[i].power == true) {
                 deviceObjectList[i].power = false;
                 deviceObjectList[i].pause = false;
 
@@ -79,6 +77,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     deviceObjectList[i].totalDuration.inSeconds);
                 prefs.setInt('${deviceObjectList[i].ip}secondDuration',
                     deviceObjectList[i].secondDuration.inSeconds);
+                    print('state1');
                 deviceObjectList[i].flare = 'off';
                 deviceObjectList[i].timer.cancel();
                 deviceObjectList[i].elapsedTime = 0;
@@ -120,6 +119,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 
                   deviceObjectList[i].pause = false;
                   deviceObjectList[i].flare = 'off';
+                                      print('state2');
+
                   deviceObjectList[i].timer.cancel();
                   deviceObjectList[i].elapsedTime = 0;
                   deviceObjectList[i].time = Duration(minutes: 0);
@@ -262,6 +263,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                         false) {
                                       if (deviceObjectList[index].power ==
                                           true) {
+                                            deviceObjectList[index].clientError = false;
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -329,7 +331,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           children: <Widget>[
             FloatingActionButton.extended(
               heroTag: 'hero1',
-              label: Text('Worker'),
+              label: Text('Staff'),
               icon: Icon(Icons.add),
               onPressed: () {
                 addWorker(context);
@@ -453,6 +455,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       ),
                     ),
                     onPressed: () {
+                      deviceObject.clientError = false;
                       worker = workers[index];
                       Navigator.pushReplacement(
                         context,

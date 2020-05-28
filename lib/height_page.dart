@@ -202,6 +202,9 @@ class _HeightPageState extends State<HeightPage> {
                 widget.deviceObject.time = Duration(minutes: 0);
                 widget.deviceObject.temp = true;
                 widget.deviceObject.elapsedTime=0;
+                                      widget.deviceObject.clientError = false;
+                                       isConnected = true;
+
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
