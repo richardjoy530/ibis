@@ -1,4 +1,4 @@
-package com.richard.ibis
+package com.ibis.razecov
 import android.os.Build
 import android.os.Bundle
 import androidx.annotation.NonNull
@@ -9,7 +9,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugins.GeneratedPluginRegistrant
 
 class MainActivity: FlutterActivity() {
-    private val channel = "com.richard.ibis/ibis"
+    private val channel = "com.ibis.razecov/ibis"
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
