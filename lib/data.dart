@@ -60,6 +60,7 @@ class DeviceObject {
   Duration time;
   Timer timer;
   bool motionDetected;
+  bool earlyMotionDetection;
   double height;
   DeviceObject({
     this.temp,
@@ -83,11 +84,15 @@ class DeviceObject {
     this.pause = false,
     this.totalDuration,
     this.secondDuration,
+    this.earlyMotionDetection=false,
   });
   void run() {
     socket.listen((onData) {
       print([socket.remotePort, onData]);
-      if (String.fromCharCodes(onData).trim() == '1') {}
+      if (String.fromCharCodes(onData).trim() == 'm') {
+        //this.motionDetected=true;
+        this.earlyMotionDetection=true;
+      }
       if (this.offline == false) {
         if (onData[0] == 50) {
           print(
