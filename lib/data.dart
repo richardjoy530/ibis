@@ -62,6 +62,7 @@ class DeviceObject {
   bool motionDetected;
   bool earlyMotionDetection;
   double height;
+  String earlyMotionDetectionTime;
   DeviceObject({
     this.temp,
     this.flare = 'off',
@@ -85,14 +86,24 @@ class DeviceObject {
     this.totalDuration,
     this.secondDuration,
     this.earlyMotionDetection=false,
+    this.earlyMotionDetectionTime='',
   });
   void run() {
     socket.listen((onData) {
       print([socket.remotePort, onData]);
-      if (String.fromCharCodes(onData).trim() == 'm') {
-        //this.motionDetected=true;
-        this.earlyMotionDetection=true;
-      }
+      if(onData.length==5)
+        {
+          String chdata=String.fromCharCode(onData[0]);
+          if(chdata=='m')
+            {
+              String data1=String.fromCharCode(onData[1]);
+              String data2=String.fromCharCode(onData[2]);
+              String com=data1+data2;
+              this.earlyMotionDetectionTime=com;
+              this.earlyMotionDetection=true;
+            }
+        }
+
       if (this.offline == false) {
         if (onData[0] == 50) {
           print(

@@ -783,14 +783,13 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             title: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      'Motion detected while disconnected',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ],
+                Text(
+                  'Motion detected while disconnected ',
+                  style: TextStyle(fontSize: 20),
+                ),
+                Text(
+                  '@ ${deviceObject.earlyMotionDetectionTime}Min Before',
+                  style: TextStyle(fontSize: 20),
                 ),
                 Icon(Icons.warning, color: Color(0xff02457a))
               ],
