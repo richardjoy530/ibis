@@ -20,11 +20,11 @@ class _LodingState extends State<Loding> {
       Duration(seconds: 3),
       (data) {
         if (serverOnline == false) {
-          wifi();
+          //wifi();
         }
       },
     );
-    wifi();
+    //wifi();
     load();
     redirect();
     super.initState();
