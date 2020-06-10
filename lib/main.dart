@@ -412,7 +412,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             children: <Widget>[
               FlareActor(
                 'assets/breathing.flr',
-                animation: deviceObject.power == true ? 'off' : 'breath',
+                animation: deviceObject.power == true&&deviceObject.pause==false ? 'off' : 'breath',
               ),
               CustomPaint(
                 child: Container(
@@ -527,38 +527,65 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-          child: Container(
-            height: 100,
-            child: GestureDetector(
-              onTapUp: (onTapUpDetails) {
-                setState(
-                  () {
-                    if (deviceObject.time.inMinutes > 0 &&
-                        deviceObject.power == false &&
-                        onTapUpDetails.localPosition.dx >
-                            MediaQuery.of(context).size.width / 3 &&
-                        onTapUpDetails.localPosition.dx <
-                            MediaQuery.of(context).size.width * 2 / 3) {
-                      start(deviceObject);
-                    } else if (deviceObject.power == true &&
-                        onTapUpDetails.localPosition.dx <
-                            MediaQuery.of(context).size.width / 2) {
-                      //Stop
-                      confirmStop(context, deviceObject);
-                    } else if (deviceObject.power == true &&
-                        onTapUpDetails.localPosition.dx >
-                            MediaQuery.of(context).size.width / 2) {
-                      playPause(deviceObject);
-                    }
-                  },
-                );
-              },
-              child: FlareActor('assets/playpausepower.flr',
-                  animation: deviceObject.flare),
-            ),
-          ),
+        Container(
+          margin: EdgeInsets.only(bottom: 50),
+          height: 100,
+          child: deviceObject.power == false
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    RaisedButton(
+                      child: Container(
+                          margin: EdgeInsets.all(20),
+                          child: Text(
+                            'Start',
+                            style: TextStyle(fontSize: 20,color: Color(0xff02457a)),
+                          )),
+                      onPressed: () {
+                        start(deviceObject);
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      color: Color(0xff5cbceb),
+                    ),
+                  ],
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    RaisedButton(
+                      child: Container(
+                          margin: EdgeInsets.all(20),
+                          child: Text(
+                            'Stop',
+                            style: TextStyle(fontSize: 20,color: Color(0xff02457a)),
+                          )),
+                      onPressed: () {
+                        confirmStop(context, deviceObject);
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      color: Color(0xff5cbceb),
+                    ),
+                    RaisedButton(
+                      child: Container(
+                          margin: EdgeInsets.all(20),
+                          child: Text(
+                            deviceObject.pause == true ? 'Play' : 'Pause',
+                            style: TextStyle(fontSize: 20,color: Color(0xff02457a)),
+                          )),
+                      onPressed: () {
+                        playPause(deviceObject);
+                      },
+                      color: Color(0xff5cbceb),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    )
+                  ],
+                ),
         )
       ],
     );

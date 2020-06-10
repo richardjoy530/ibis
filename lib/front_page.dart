@@ -69,7 +69,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         setState(
           () {
             for (var i = 0; i < deviceObjectList.length; i++) {
-              if ((deviceObjectList[i].motionDetected == true||deviceObjectList[i].clientError == true)&&deviceObjectList[i].power == true) {
+              if ((deviceObjectList[i].motionDetected == true ||
+                      deviceObjectList[i].clientError == true) &&
+                  deviceObjectList[i].power == true) {
                 deviceObjectList[i].power = false;
                 deviceObjectList[i].pause = false;
 
@@ -77,7 +79,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     deviceObjectList[i].totalDuration.inSeconds);
                 prefs.setInt('${deviceObjectList[i].ip}secondDuration',
                     deviceObjectList[i].secondDuration.inSeconds);
-                    print('state1');
+                print('state1');
                 deviceObjectList[i].flare = 'off';
                 deviceObjectList[i].timer.cancel();
                 deviceObjectList[i].elapsedTime = 0;
@@ -119,7 +121,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 
                   deviceObjectList[i].pause = false;
                   deviceObjectList[i].flare = 'off';
-                                      print('state2');
+                  print('state2');
 
                   deviceObjectList[i].timer.cancel();
                   deviceObjectList[i].elapsedTime = 0;
@@ -208,20 +210,23 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                 deviceObjectList[index].name = '';
                                 nameIt(context, deviceObjectList[index]);
                               }
-                              return Container(
-                                margin: EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                    color: Color(0xffa9d5ea),
-                                    borderRadius: BorderRadius.circular(20)),
-                                child: ListTile(
-                                  leading: Icon(
-                                    deviceObjectList[index].offline == true
-                                        ? Icons.signal_wifi_off
-                                        : Icons.network_wifi,
-                                    color: Color(0xff019ae6),
-                                  ),
-                                  trailing:
-                                      deviceObjectList[index].motionDetected ==
+                              return Column(
+                                children: <Widget>[
+                                  Container(
+                                    margin: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                        color: Color(0xffa9d5ea),
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    child: ListTile(
+                                      leading: Icon(
+                                        deviceObjectList[index].offline == true
+                                            ? Icons.signal_wifi_off
+                                            : Icons.network_wifi,
+                                        color: Color(0xff019ae6),
+                                      ),
+                                      trailing: deviceObjectList[index]
+                                                  .motionDetected ==
                                               true
                                           ? Icon(
                                               Icons.warning,
@@ -235,65 +240,108 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                     deviceObjectList[index]);
                                               },
                                             ),
-                                  title:
-                                      Text('${deviceObjectList[index].name}'),
-                                  subtitle: deviceObjectList[index].power ==
-                                          false
-                                      ? Text(deviceObjectList[index].offline ==
-                                              true
-                                          ? 'Device not Connected'
-                                          : deviceObjectList[index]
-                                                      .motionDetected ==
-                                                  false
-                                              ? 'Device Connected'
-                                              : 'Motion Detected : Tap to start again')
-                                      : LinearPercentIndicator(
-                                          lineHeight: 5.0,
-                                          animation: false,
-                                          animationDuration: 0,
-                                          backgroundColor: Color(0xffd6e7ee),
-                                          percent: deviceObjectList[index]
-                                              .linearProgressBarValue,
-                                          linearStrokeCap:
-                                              LinearStrokeCap.roundAll,
-                                          progressColor: Color(0xff019ae6),
-                                        ),
-                                  onTap: () {
-                                    if (deviceObjectList[index].offline ==
-                                        false) {
-                                      if (deviceObjectList[index].power ==
-                                          true) {
-                                            deviceObjectList[index].clientError = false;
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => HomePage(
-                                                  deviceObjectList[index])),
-                                        );
-                                      } else {
-                                        deviceObjectList[index].motionDetected =
-                                            false;
-                                        deviceObjectList[index].time =
-                                            Duration(minutes: 0);
-                                        deviceObjectList[index]
-                                            .progressDegrees = 0;
-                                        if (rooms.length != 0) {
-                                          if (workers.length != 0) {
-                                            showRooms(context,
-                                                deviceObjectList[index]);
+                                      title: Text(
+                                          '${deviceObjectList[index].name}'),
+                                      subtitle: deviceObjectList[index].power ==
+                                              false
+                                          ? Text(deviceObjectList[index]
+                                                      .offline ==
+                                                  true
+                                              ? 'Device not Connected'
+                                              : deviceObjectList[index]
+                                                          .motionDetected ==
+                                                      false
+                                                  ? 'Device Connected'
+                                                  : 'Motion Detected : Tap to start again')
+                                          : LinearPercentIndicator(
+                                              lineHeight: 5.0,
+                                              animation: false,
+                                              animationDuration: 0,
+                                              backgroundColor:
+                                                  Color(0xffd6e7ee),
+                                              percent: deviceObjectList[index]
+                                                  .linearProgressBarValue,
+                                              linearStrokeCap:
+                                                  LinearStrokeCap.roundAll,
+                                              progressColor: Color(0xff019ae6),
+                                            ),
+                                      onTap: () {
+                                        if (deviceObjectList[index].offline ==
+                                            false) {
+                                          if (deviceObjectList[index].power ==
+                                              true) {
+                                            deviceObjectList[index]
+                                                .clientError = false;
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      HomePage(deviceObjectList[
+                                                          index])),
+                                            );
                                           } else {
-                                            addWorker(context);
+                                            deviceObjectList[index]
+                                                .motionDetected = false;
+                                            deviceObjectList[index].time =
+                                                Duration(minutes: 0);
+                                            deviceObjectList[index]
+                                                .progressDegrees = 0;
+                                            if (rooms.length != 0) {
+                                              if (workers.length != 0) {
+                                                showRooms(context,
+                                                    deviceObjectList[index]);
+                                              } else {
+                                                addWorker(context);
+                                              }
+                                            } else {
+                                              addRooms(context);
+                                            }
                                           }
-                                        } else {
-                                          addRooms(context);
                                         }
-                                      }
-                                    }
-                                  },
-                                  onLongPress: () {
-                                    setName(context, deviceObjectList[index]);
-                                  },
-                                ),
+                                      },
+                                      onLongPress: () {
+                                        setName(
+                                            context, deviceObjectList[index]);
+                                      },
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        top: 10,
+                                        left: 20,
+                                        right: 20,
+                                        bottom: 10),
+                                    decoration: BoxDecoration(
+                                        color: Color(0xffa9d5ea),
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    child: ListTile(
+                                      leading: Icon(
+                                        Icons.adjust,
+                                        color: Color(0xff019ae6),
+                                      ),
+                                      title: Text('Adjust Height'),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        top: 10,
+                                        left: 30,
+                                        right: 30,
+                                        bottom: 10),
+                                    decoration: BoxDecoration(
+                                        color: Color(0xffa9d5ea),
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    child: ListTile(
+                                      leading: Icon(
+                                        Icons.adjust,
+                                        color: Color(0xff019ae6),
+                                      ),
+                                      title: Text('Adjust Height'),
+                                    ),
+                                  )
+                                ],
                               );
                             }),
                       )
