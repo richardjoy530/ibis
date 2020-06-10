@@ -210,14 +210,15 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                 deviceObjectList[index].name = '';
                                 nameIt(context, deviceObjectList[index]);
                               }
-                              if (deviceObjectList[index]
-                                      .earlyMotionDetection ==
-                                  true) {
-                                deviceObjectList[index].earlyMotionDetection =
-                                    false;
-                                earlyMotionDetection(
-                                    context, deviceObjectList[index]);
+                              if (deviceObjectList[index].earlyMotionDetection == true) {
+                                deviceObjectList[index].earlyMotionDetection =false;
+                                earlyMotionDetection(context, deviceObjectList[index]);
                               }
+                              if(deviceObjectList[index].completedStatus==true)
+                                {
+                                  deviceObjectList[index].completedStatus=false;
+                                  completedPop(context, deviceObjectList[index]);
+                                }
                               return Column(
                                 children: <Widget>[
                                   Container(
@@ -784,16 +785,38 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             title: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      'Motion detected while disconnected',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ],
+                Text(
+                  'Motion detected while disconnected ',
+                  style: TextStyle(fontSize: 20),
+                ),
+                Text(
+                  '@ ${deviceObject.earlyMotionDetectionTime}Min Before',
+                  style: TextStyle(fontSize: 20),
                 ),
                 Icon(Icons.warning, color: Color(0xff02457a))
+              ],
+            ),
+          );
+        });
+  }
+
+  Future<void> showingCompletedPop(context, DeviceObject deviceObject) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            titlePadding: EdgeInsets.all(25),
+            title: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  '${deviceObject.name} Completed The Work',
+                  style: TextStyle(fontSize: 20),
+                ),
+
+
               ],
             ),
           );
@@ -849,6 +872,13 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
       BuildContext context, DeviceObject deviceObject) async {
     Future.delayed(Duration(milliseconds: 300), () {
       showingMotion(context, deviceObject);
+    });
+  }
+
+  Future<void> completedPop(
+      BuildContext context, DeviceObject deviceObject) async {
+    Future.delayed(Duration(milliseconds: 300), () {
+      showingCompletedPop(context, deviceObject);
     });
   }
 
