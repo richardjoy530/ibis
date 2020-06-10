@@ -873,6 +873,7 @@ class _RoomsState extends State<Rooms> {
                         for (i = 0; i < nameNumber; i++) {
                           if (roomNames[i].text.length < 1) {
                             check += 1;
+                            cText[i]='Enter Name';
                           }
                         }
                         if (check == 0) {
@@ -1045,6 +1046,7 @@ class _WorkersState extends State<Workers> {
                         for (i = 0; i < nameNumber; i++) {
                           if (roomNames[i].text.length < 1) {
                             check += 1;
+                            cText[i]='Enter Name';
                           }
                         }
                         if (check == 0) {
