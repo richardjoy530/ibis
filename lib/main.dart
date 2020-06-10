@@ -25,7 +25,7 @@ final customColor = CustomSliderColors(
       Color(0xff00477d),
       Color(0xff008bc0),
       Color(0xff97cadb),
-    ]);
+    ],);
 var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
 var initializationSettingsIOS = IOSInitializationSettings();
 var initializationSettings = InitializationSettings(
@@ -471,7 +471,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               deviceObject.power == false
                   ? SleekCircularSlider(
                       min: 0,
-                      max: 20,
+                      max: 21,
                       initialValue: 0,
                       appearance: CircularSliderAppearance(
                           animationEnabled: false,
@@ -532,97 +532,100 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             height: 100,
             child: GestureDetector(
               onTapUp: (onTapUpDetails) {
-                setState(() {
-                  if (deviceObject.time.inMinutes > 0 &&
-                      deviceObject.power == false &&
-                      onTapUpDetails.localPosition.dx >
-                          MediaQuery.of(context).size.width / 3 &&
-                      onTapUpDetails.localPosition.dx <
-                          MediaQuery.of(context).size.width * 2 / 3) {
-                    // Start
-                    deviceObject.flare = 'on';
-                    deviceObject.temp = false;
-                    deviceObject.socket
-                        .writeln(deviceObject.time.inMinutes.round());
-                    deviceObject.elapsedTime = 0;
-                    deviceObject.progressDegrees = 0;
-                    deviceObject.power = true;
-                    startTimer(deviceObject);
-                    runAnimation(deviceObject: deviceObject);
-                    deviceObject.radialProgressAnimationController.forward();
-                    databaseHelper.insertHistory(History(
-                        roomName: room,
-                        workerName: worker,
-                        state:
-                            'Started with ${deviceObject.time.inMinutes} mins',
-                        time: DateTime.now()));
-                    historyList.add(
-                      History(
-                        roomName: room,
-                        workerName: worker,
-                        state:
-                            'Started with ${deviceObject.time.inMinutes} mins',
-                        time: DateTime.now(),
-                      ),
-                    );
-                  } else if (deviceObject.power == true &&
-                      onTapUpDetails.localPosition.dx <
-                          MediaQuery.of(context).size.width / 2) {
-                    //Stop
-                    confirmStop(context, deviceObject);
-                  } else if (deviceObject.power == true &&
-                      onTapUpDetails.localPosition.dx >
-                          MediaQuery.of(context).size.width / 2) {
-                    print('Pause/Play');
-                    if (deviceObject.pause == false) {
-                      //Pause
-                      databaseHelper.insertHistory(History(
-                          roomName: room,
-                          workerName: worker,
-                          state: 'Paused',
-                          time: DateTime.now()));
-                      historyList.add(
-                        History(
-                          roomName: room,
-                          workerName: worker,
-                          state: 'Paused',
-                          time: DateTime.now(),
-                        ),
-                      );
-
-                      prefs.setInt('${deviceObject.ip}totalDuration',
-                          deviceObject.totalDuration.inSeconds);
-                      prefs.setInt('${deviceObject.ip}secondDuration',
-                          deviceObject.secondDuration.inSeconds);
-                      deviceObject.flare = 'pause';
-                      deviceObject.pause = true;
-                      deviceObject.timer.cancel();
-                      deviceObject.socket.write('h');
-                      deviceObject.radialProgressAnimationController.stop();
-                    } else {
-                      //Play
-                      databaseHelper.insertHistory(History(
-                          roomName: room,
-                          workerName: worker,
-                          state: 'Resumed',
-                          time: DateTime.now()));
-                      historyList.add(
-                        History(
-                          roomName: room,
-                          workerName: worker,
-                          state: 'Resumed',
-                          time: DateTime.now(),
-                        ),
-                      );
-
-                      deviceObject.pause = false;
+                setState(
+                  () {
+                    if (deviceObject.time.inMinutes > 0 &&
+                        deviceObject.power == false &&
+                        onTapUpDetails.localPosition.dx >
+                            MediaQuery.of(context).size.width / 3 &&
+                        onTapUpDetails.localPosition.dx <
+                            MediaQuery.of(context).size.width * 2 / 3) {
+                      // Start
+                      deviceObject.flare = 'on';
+                      deviceObject.temp = false;
+                      deviceObject.socket
+                          .writeln(deviceObject.time.inMinutes.round());
+                      deviceObject.elapsedTime = 0;
+                      deviceObject.progressDegrees = 0;
+                      deviceObject.power = true;
                       startTimer(deviceObject);
-                      deviceObject.flare = 'play';
-                      deviceObject.socket.write('p');
+                      runAnimation(deviceObject: deviceObject);
                       deviceObject.radialProgressAnimationController.forward();
+                      databaseHelper.insertHistory(History(
+                          roomName: room,
+                          workerName: worker,
+                          state:
+                              'Started with ${deviceObject.time.inMinutes} mins',
+                          time: DateTime.now()));
+                      historyList.add(
+                        History(
+                          roomName: room,
+                          workerName: worker,
+                          state:
+                              'Started with ${deviceObject.time.inMinutes} mins',
+                          time: DateTime.now(),
+                        ),
+                      );
+                    } else if (deviceObject.power == true &&
+                        onTapUpDetails.localPosition.dx <
+                            MediaQuery.of(context).size.width / 2) {
+                      //Stop
+                      confirmStop(context, deviceObject);
+                    } else if (deviceObject.power == true &&
+                        onTapUpDetails.localPosition.dx >
+                            MediaQuery.of(context).size.width / 2) {
+                      print('Pause/Play');
+                      if (deviceObject.pause == false) {
+                        //Pause
+                        databaseHelper.insertHistory(History(
+                            roomName: room,
+                            workerName: worker,
+                            state: 'Paused',
+                            time: DateTime.now()));
+                        historyList.add(
+                          History(
+                            roomName: room,
+                            workerName: worker,
+                            state: 'Paused',
+                            time: DateTime.now(),
+                          ),
+                        );
+
+                        prefs.setInt('${deviceObject.ip}totalDuration',
+                            deviceObject.totalDuration.inSeconds);
+                        prefs.setInt('${deviceObject.ip}secondDuration',
+                            deviceObject.secondDuration.inSeconds);
+                        deviceObject.flare = 'pause';
+                        deviceObject.pause = true;
+                        deviceObject.timer.cancel();
+                        deviceObject.socket.write('h');
+                        deviceObject.radialProgressAnimationController.stop();
+                      } else {
+                        //Play
+                        databaseHelper.insertHistory(History(
+                            roomName: room,
+                            workerName: worker,
+                            state: 'Resumed',
+                            time: DateTime.now()));
+                        historyList.add(
+                          History(
+                            roomName: room,
+                            workerName: worker,
+                            state: 'Resumed',
+                            time: DateTime.now(),
+                          ),
+                        );
+
+                        deviceObject.pause = false;
+                        startTimer(deviceObject);
+                        deviceObject.flare = 'play';
+                        deviceObject.socket.write('p');
+                        deviceObject.radialProgressAnimationController
+                            .forward();
+                      }
                     }
-                  }
-                });
+                  },
+                );
               },
               child: FlareActor('assets/playpausepower.flr',
                   animation: deviceObject.flare),
@@ -647,34 +650,36 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     } else if (value == 5) {
       temp = 5;
     } else if (value == 6) {
-      temp = 7;
+      temp = 6;
     } else if (value == 7) {
-      temp = 8;
+      temp = 7;
     } else if (value == 8) {
-      temp = 9;
+      temp = 8;
     } else if (value == 9) {
-      temp = 10;
+      temp = 9;
     } else if (value == 10) {
-      temp = 15;
+      temp = 10;
     } else if (value == 11) {
-      temp = 20;
+      temp = 15;
     } else if (value == 12) {
-      temp = 25;
+      temp = 20;
     } else if (value == 13) {
-      temp = 30;
+      temp = 25;
     } else if (value == 14) {
-      temp = 35;
+      temp = 30;
     } else if (value == 15) {
-      temp = 40;
+      temp = 35;
     } else if (value == 16) {
-      temp = 45;
+      temp = 40;
     } else if (value == 17) {
-      temp = 50;
+      temp = 45;
     } else if (value == 18) {
-      temp = 55;
+      temp = 50;
     } else if (value == 19) {
-      temp = 60;
+      temp = 55;
     } else if (value == 20) {
+      temp = 60;
+    } else if (value == 21) {
       temp = 60;
     }
     return temp;
@@ -784,22 +789,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
             title: Center(
               child: Text(
-                'Disinfect Again?',
+                'Disinfect Again ?',
                 style: TextStyle(
                     color: Color(0xff02457a), fontWeight: FontWeight.bold),
               ),
             ),
             children: <Widget>[
-              SimpleDialogOption(
-                child: Center(child: Text('No')),
-                onPressed: () {
-                  widget.deviceObject.clientError = false;
-
-                  widget.deviceObject.socket.write('n\r');
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                },
-              ),
               SimpleDialogOption(
                 child: Center(child: Text('yes')),
                 onPressed: () {
@@ -807,6 +802,16 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                   widget.deviceObject.socket.write('y\r');
                   errorRemover = true;
+                  Navigator.pop(context);
+                },
+              ),
+              SimpleDialogOption(
+                child: Center(child: Text('No')),
+                onPressed: () {
+                  widget.deviceObject.clientError = false;
+
+                  widget.deviceObject.socket.write('n\r');
+                  Navigator.pop(context);
                   Navigator.pop(context);
                 },
               ),
@@ -827,7 +832,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
             title: Center(
               child: Text(
-                'Are you sure',
+                'Are you sure ?',
                 style: TextStyle(
                     color: Color(0xff02457a), fontWeight: FontWeight.bold),
               ),
@@ -912,11 +917,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           },
         );
         if (widget.deviceObject.socket == null) {
-          Navigator.pop(context);
-        }
-        if (mainTimer.tick > 40 &&
-            mainTimer.tick < 60 &&
-            widget.deviceObject.power == false) {
           Navigator.pop(context);
         }
         if ((serverOnline == false ||

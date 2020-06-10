@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wakelock/wakelock.dart';
 
 import 'data.dart';
 import 'front_page.dart';
@@ -14,6 +15,7 @@ class Loding extends StatefulWidget {
 class _LodingState extends State<Loding> {
   @override
   void initState() {
+    Wakelock.enable();
     wifiTimer = Timer.periodic(
       Duration(seconds: 3),
       (data) {

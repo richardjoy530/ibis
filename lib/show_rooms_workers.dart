@@ -20,26 +20,39 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: Text('Staffs/Workers'),
-        ),
         body: Container(
           padding: EdgeInsets.all(10.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Container(
+                child: Row(
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back_ios,
+                        color: Color(0xff02457a),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    Text(
+                      'Rooms and Staff details',
+                      style: TextStyle(
+                        fontSize: 24,
+                        color: Color(0xff02457a),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Container(
                 height: MediaQuery.of(context).size.height / 2.5,
                 width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.blue),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                // decoration: BoxDecoration(
+                //     border: Border.all(color: Colors.blue),
+                //     borderRadius: BorderRadius.all(Radius.circular(10.0))),
                 child: Column(
                   children: <Widget>[
                     Padding(
@@ -51,46 +64,52 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
                       ),
                     ),
                     Expanded(
-                        child: Container(
-                      padding: EdgeInsets.all(10.0),
-                      child: ListView.builder(
-                        itemCount: rooms.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            margin: EdgeInsets.all(5.0),
-                            decoration: BoxDecoration(
-                                color: Color(0xffa9d5ea),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0))),
-                            child: ListTile(
-                              leading: Icon(Icons.crop_portrait,
-                                  color: Color(0xff02457a)),
-                              title: Text('${rooms[index]}',
-                                  style: TextStyle(color: Color(0xff02457a))),
-                              trailing: IconButton(
-                                icon: Icon(Icons.delete,
+                      child: Container(
+                        padding: EdgeInsets.all(10.0),
+                        child: ListView.builder(
+                          itemCount: rooms.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              margin: EdgeInsets.all(5.0),
+                              decoration: BoxDecoration(
+                                  color: Color(0xffa9d5ea),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10.0))),
+                              child: ListTile(
+                                leading: Icon(Icons.crop_portrait,
                                     color: Color(0xff02457a)),
-                                onPressed: () {
-                                  setState(() {
-                                    databaseHelper.deleteRoom(rooms[index]);
-                                    rooms.removeAt(index);
-                                  });
-                                },
+                                title: Text('${rooms[index]}',
+                                    style: TextStyle(color: Color(0xff02457a))),
+                                trailing: IconButton(
+                                  icon: Icon(Icons.delete,
+                                      color: Color(0xff02457a)),
+                                  onPressed: () {
+                                    setState(() {
+                                      databaseHelper.deleteRoom(rooms[index]);
+                                      rooms.removeAt(index);
+                                    });
+                                  },
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
-                    ))
+                    )
                   ],
                 ),
+              ),
+              Divider(
+                height: 0,
+                thickness: 2,
+                color: Color(0xffa9d5ea),
               ),
               Container(
                 height: MediaQuery.of(context).size.height / 2.5,
                 width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.blue),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                // decoration: BoxDecoration(
+                //     border: Border.all(color: Colors.blue),
+                //     borderRadius: BorderRadius.all(Radius.circular(10.0))),
                 child: Column(
                   children: <Widget>[
                     Padding(
