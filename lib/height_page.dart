@@ -91,7 +91,9 @@ class _HeightPageState extends State<HeightPage> {
                           onPointerDown: (data) {
                             widget.deviceObject.socket.write('-3\r');
                             upBGColor = upArrowColor;
-                            flare = 'up';
+                            setState(() {
+                              flare = 'up';
+                            });
                             upArrowColor = downBGColor;
                             indicator = 1;
                             if (widget.deviceObject.height != 100) {
@@ -100,7 +102,9 @@ class _HeightPageState extends State<HeightPage> {
                           },
                           onPointerUp: (data) {
                             widget.deviceObject.socket.write('-1\r');
-                            flare = 'idle';
+                            setState(() {
+                              flare = 'idle';
+                            });
                             setState(() {
                               upArrowColor = Color(0xff02457a);
                               upBGColor = Color(0xff5cbceb);
@@ -132,7 +136,9 @@ class _HeightPageState extends State<HeightPage> {
                             onPointerDown: (data) {
                               downBGColor = downArrowColor;
                               downArrowColor = upBGColor;
-                              flare = 'down';
+                              setState(() {
+                                flare = 'down';
+                              });
 
                               indicator = -1;
                               widget.deviceObject.socket.write('-2\r');
@@ -142,9 +148,9 @@ class _HeightPageState extends State<HeightPage> {
                             },
                             onPointerUp: (data) {
                               widget.deviceObject.socket.write('-1\r');
-                              flare = 'idle';
 
                               setState(() {
+                                flare = 'idle';
                                 downArrowColor = Color(0xff02457a);
                                 downBGColor = Color(0xff5cbceb);
                               });

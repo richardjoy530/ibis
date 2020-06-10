@@ -18,14 +18,15 @@ import 'loding.dart';
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 final customColor = CustomSliderColors(
-    progressBarColor: Color(0xffd6e7ee),
-    hideShadow: true,
-    trackColor: Color(0xffffffff),
-    progressBarColors: [
-      Color(0xff00477d),
-      Color(0xff008bc0),
-      Color(0xff97cadb),
-    ],);
+  progressBarColor: Color(0xffd6e7ee),
+  hideShadow: true,
+  trackColor: Color(0xffffffff),
+  progressBarColors: [
+    Color(0xff00477d),
+    Color(0xff008bc0),
+    Color(0xff97cadb),
+  ],
+);
 var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
 var initializationSettingsIOS = IOSInitializationSettings();
 var initializationSettings = InitializationSettings(
@@ -540,32 +541,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             MediaQuery.of(context).size.width / 3 &&
                         onTapUpDetails.localPosition.dx <
                             MediaQuery.of(context).size.width * 2 / 3) {
-                      // Start
-                      deviceObject.flare = 'on';
-                      deviceObject.temp = false;
-                      deviceObject.socket
-                          .writeln(deviceObject.time.inMinutes.round());
-                      deviceObject.elapsedTime = 0;
-                      deviceObject.progressDegrees = 0;
-                      deviceObject.power = true;
-                      startTimer(deviceObject);
-                      runAnimation(deviceObject: deviceObject);
-                      deviceObject.radialProgressAnimationController.forward();
-                      databaseHelper.insertHistory(History(
-                          roomName: room,
-                          workerName: worker,
-                          state:
-                              'Started with ${deviceObject.time.inMinutes} mins',
-                          time: DateTime.now()));
-                      historyList.add(
-                        History(
-                          roomName: room,
-                          workerName: worker,
-                          state:
-                              'Started with ${deviceObject.time.inMinutes} mins',
-                          time: DateTime.now(),
-                        ),
-                      );
+                      start(deviceObject);
                     } else if (deviceObject.power == true &&
                         onTapUpDetails.localPosition.dx <
                             MediaQuery.of(context).size.width / 2) {
@@ -574,55 +550,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     } else if (deviceObject.power == true &&
                         onTapUpDetails.localPosition.dx >
                             MediaQuery.of(context).size.width / 2) {
-                      print('Pause/Play');
-                      if (deviceObject.pause == false) {
-                        //Pause
-                        databaseHelper.insertHistory(History(
-                            roomName: room,
-                            workerName: worker,
-                            state: 'Paused',
-                            time: DateTime.now()));
-                        historyList.add(
-                          History(
-                            roomName: room,
-                            workerName: worker,
-                            state: 'Paused',
-                            time: DateTime.now(),
-                          ),
-                        );
-
-                        prefs.setInt('${deviceObject.ip}totalDuration',
-                            deviceObject.totalDuration.inSeconds);
-                        prefs.setInt('${deviceObject.ip}secondDuration',
-                            deviceObject.secondDuration.inSeconds);
-                        deviceObject.flare = 'pause';
-                        deviceObject.pause = true;
-                        deviceObject.timer.cancel();
-                        deviceObject.socket.write('h');
-                        deviceObject.radialProgressAnimationController.stop();
-                      } else {
-                        //Play
-                        databaseHelper.insertHistory(History(
-                            roomName: room,
-                            workerName: worker,
-                            state: 'Resumed',
-                            time: DateTime.now()));
-                        historyList.add(
-                          History(
-                            roomName: room,
-                            workerName: worker,
-                            state: 'Resumed',
-                            time: DateTime.now(),
-                          ),
-                        );
-
-                        deviceObject.pause = false;
-                        startTimer(deviceObject);
-                        deviceObject.flare = 'play';
-                        deviceObject.socket.write('p');
-                        deviceObject.radialProgressAnimationController
-                            .forward();
-                      }
+                      playPause(deviceObject);
                     }
                   },
                 );
@@ -634,6 +562,83 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         )
       ],
     );
+  }
+
+  void start(DeviceObject deviceObject) {
+    // Start
+    deviceObject.flare = 'on';
+    deviceObject.temp = false;
+    deviceObject.socket.writeln(deviceObject.time.inMinutes.round());
+    deviceObject.elapsedTime = 0;
+    deviceObject.progressDegrees = 0;
+    deviceObject.power = true;
+    startTimer(deviceObject);
+    runAnimation(deviceObject: deviceObject);
+    deviceObject.radialProgressAnimationController.forward();
+    databaseHelper.insertHistory(History(
+        roomName: room,
+        workerName: worker,
+        state: 'Started with ${deviceObject.time.inMinutes} mins',
+        time: DateTime.now()));
+    historyList.add(
+      History(
+        roomName: room,
+        workerName: worker,
+        state: 'Started with ${deviceObject.time.inMinutes} mins',
+        time: DateTime.now(),
+      ),
+    );
+  }
+
+  void playPause(DeviceObject deviceObject) {
+    print('Pause/Play');
+    if (deviceObject.pause == false) {
+      //Pause
+      databaseHelper.insertHistory(History(
+          roomName: room,
+          workerName: worker,
+          state: 'Paused',
+          time: DateTime.now()));
+      historyList.add(
+        History(
+          roomName: room,
+          workerName: worker,
+          state: 'Paused',
+          time: DateTime.now(),
+        ),
+      );
+
+      prefs.setInt('${deviceObject.ip}totalDuration',
+          deviceObject.totalDuration.inSeconds);
+      prefs.setInt('${deviceObject.ip}secondDuration',
+          deviceObject.secondDuration.inSeconds);
+      deviceObject.flare = 'pause';
+      deviceObject.pause = true;
+      deviceObject.timer.cancel();
+      deviceObject.socket.write('h');
+      deviceObject.radialProgressAnimationController.stop();
+    } else {
+      //Play
+      databaseHelper.insertHistory(History(
+          roomName: room,
+          workerName: worker,
+          state: 'Resumed',
+          time: DateTime.now()));
+      historyList.add(
+        History(
+          roomName: room,
+          workerName: worker,
+          state: 'Resumed',
+          time: DateTime.now(),
+        ),
+      );
+
+      deviceObject.pause = false;
+      startTimer(deviceObject);
+      deviceObject.flare = 'play';
+      deviceObject.socket.write('p');
+      deviceObject.radialProgressAnimationController.forward();
+    }
   }
 
   double mapValues(double value) {
