@@ -210,15 +210,19 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                 deviceObjectList[index].name = '';
                                 nameIt(context, deviceObjectList[index]);
                               }
-                              if (deviceObjectList[index].earlyMotionDetection == true) {
-                                deviceObjectList[index].earlyMotionDetection =false;
-                                earlyMotionDetection(context, deviceObjectList[index]);
+                              if (deviceObjectList[index]
+                                      .earlyMotionDetection ==
+                                  true) {
+                                deviceObjectList[index].earlyMotionDetection =
+                                    false;
+                                earlyMotionDetection(
+                                    context, deviceObjectList[index]);
                               }
-                              if(deviceObjectList[index].completedStatus==true)
-                                {
-                                  deviceObjectList[index].completedStatus=false;
-                                  completedPop(context, deviceObjectList[index]);
-                                }
+                              if (deviceObjectList[index].completedStatus ==
+                                  true) {
+                                deviceObjectList[index].completedStatus = false;
+                                completedPop(context, deviceObjectList[index]);
+                              }
                               return Column(
                                 children: <Widget>[
                                   Container(
@@ -260,8 +264,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                               : deviceObjectList[index]
                                                           .motionDetected ==
                                                       false
-                                                  ? 'Tap to disenfect'
-                                                  : 'Motion Detected : Tap to start again')
+                                                  ? 'Device Connected'
+                                                  : 'Motion Detected')
                                           : LinearPercentIndicator(
                                               lineHeight: 5.0,
                                               animation: false,
@@ -275,6 +279,35 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                               progressColor: Color(0xff019ae6),
                                             ),
                                       onTap: () {
+                                      },
+                                      onLongPress: () {
+                                        setName(
+                                          context,
+                                          deviceObjectList[index],
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        top: 10,
+                                        left: 20,
+                                        right: 20,
+                                        bottom: 10),
+                                    decoration: BoxDecoration(
+                                        color: Color(0xff9ad2ec),
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    child: ListTile(
+                                      leading: Icon(
+                                        Icons.lightbulb_outline,
+                                        color: Color(0xff02457a),
+                                      ),
+                                      title: Text(deviceObjectList[index].power==false?'Disinfect':deviceObjectList[index].pause==true?'Paused':'Disinfecting'),
+                                      subtitle: Text(
+                                          'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
+                                      onTap: () {
+                                        
                                         if (deviceObjectList[index].offline ==
                                             false) {
                                           if (deviceObjectList[index].power ==
@@ -311,19 +344,13 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                           }
                                         }
                                       },
-                                      onLongPress: () {
-                                        setName(
-                                          context,
-                                          deviceObjectList[index],
-                                        );
-                                      },
                                     ),
                                   ),
                                   Container(
                                     margin: EdgeInsets.only(
                                         top: 10,
-                                        left: 20,
-                                        right: 20,
+                                        left: 30,
+                                        right: 30,
                                         bottom: 10),
                                     decoration: BoxDecoration(
                                         color: Color(0xff9ad2ec),
@@ -356,8 +383,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                   Container(
                                     margin: EdgeInsets.only(
                                         top: 10,
-                                        left: 30,
-                                        right: 30,
+                                        left: 40,
+                                        right: 40,
                                         bottom: 10),
                                     decoration: BoxDecoration(
                                         color: Color(0xffbddeee),
@@ -790,8 +817,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   style: TextStyle(fontSize: 20),
                 ),
                 Text(
-                  '@ ${deviceObject.earlyMotionDetectionTime}Min Before',
-                  style: TextStyle(fontSize: 20),
+                  '${deviceObject.earlyMotionDetectionTime} mins completed',
+                  style: TextStyle(fontSize: 15, color: Colors.grey),
                 ),
                 Icon(Icons.warning, color: Color(0xff02457a))
               ],
@@ -806,17 +833,15 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         builder: (BuildContext context) {
           return SimpleDialog(
             shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             titlePadding: EdgeInsets.all(25),
             title: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  '${deviceObject.name} Completed The Work',
+                  '${deviceObject.name} Completed disinfecting',
                   style: TextStyle(fontSize: 20),
                 ),
-
-
               ],
             ),
           );

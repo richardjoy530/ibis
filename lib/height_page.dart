@@ -60,6 +60,7 @@ class _HeightPageState extends State<HeightPage> {
             alignment: Alignment.center,
             child: Container(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Container(
                     margin: EdgeInsets.only(top: 100),
@@ -76,6 +77,8 @@ class _HeightPageState extends State<HeightPage> {
                         padding: const EdgeInsets.only(top: 20),
                         child: Listener(
                           child: ClayContainer(
+                            height: 100,
+                            width: 100,
                             color: upBGColor,
                             spread: 0,
                             borderRadius: 20,
@@ -122,6 +125,8 @@ class _HeightPageState extends State<HeightPage> {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 20),
                         child: ClayContainer(
+                          height: 100,
+                          width: 100,
                           spread: 0,
                           color: downBGColor,
                           customBorderRadius: BorderRadius.only(
@@ -211,7 +216,7 @@ class _HeightPageState extends State<HeightPage> {
                     MaterialPageRoute(
                         builder: (context) => HomePage(widget.deviceObject)),
                   );
-                }else{
+                } else {
                   Navigator.pop(context);
                 }
               },

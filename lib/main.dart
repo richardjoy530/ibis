@@ -304,8 +304,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               child: Text('OK'),
                             ),
                             onPressed: () {
-                              widget.deviceObject.socket.write('d\r');
                               widget.deviceObject.motionDetected = false;
+                              Navigator.pop(context);
                             },
                           ),
                         )
