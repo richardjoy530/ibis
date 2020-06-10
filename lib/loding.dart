@@ -73,9 +73,9 @@ class _LodingState extends State<Loding> {
         children: <Widget>[
           Align(
             alignment: Alignment.center,
-            child: Text(
-              'Loading',
-              style: TextStyle(fontSize: 60),
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Image.asset('images/razecov.jfif'),
             ),
           ),
           Align(

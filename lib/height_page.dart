@@ -10,7 +10,8 @@ import 'main.dart';
 
 class HeightPage extends StatefulWidget {
   final DeviceObject deviceObject;
-  HeightPage(this.deviceObject);
+  final bool justHeight;
+  HeightPage(this.deviceObject, {this.justHeight = false});
   @override
   _HeightPageState createState() => _HeightPageState();
 }
@@ -204,11 +205,15 @@ class _HeightPageState extends State<HeightPage> {
                 widget.deviceObject.clientError = false;
                 isConnected = true;
 
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => HomePage(widget.deviceObject)),
-                );
+                if (widget.justHeight == false) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => HomePage(widget.deviceObject)),
+                  );
+                }else{
+                  Navigator.pop(context);
+                }
               },
             ),
           ),

@@ -231,18 +231,18 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                         deviceObjectList[index].offline == true
                                             ? Icons.signal_wifi_off
                                             : Icons.network_wifi,
-                                        color: Color(0xff019ae6),
+                                        color: Color(0xff02457a),
                                       ),
                                       trailing: deviceObjectList[index]
                                                   .motionDetected ==
                                               true
                                           ? Icon(
                                               Icons.warning,
-                                              color: Color(0xff019ae6),
+                                              color: Color(0xff02457a),
                                             )
                                           : IconButton(
                                               icon: Icon(Icons.more_vert,
-                                                  color: Color(0xff019ae6)),
+                                                  color: Color(0xff02457a)),
                                               onPressed: () {
                                                 info(context,
                                                     deviceObjectList[index]);
@@ -331,11 +331,11 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                     child: ListTile(
                                       leading: Icon(
                                         Icons.adjust,
-                                        color: Color(0xff019ae6),
+                                        color: Color(0xff02457a),
                                       ),
                                       title: Text('Adjust Height'),
                                       subtitle: Text(
-                                          'Device: ${deviceObjectList[index].offline==true?'Not connected':deviceObjectList[index].name}'),
+                                          'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
                                       onTap: () {
                                         if (deviceObjectList[index].offline ==
                                             false) {
@@ -344,6 +344,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                             MaterialPageRoute(
                                               builder: (context) => HeightPage(
                                                 deviceObjectList[index],
+                                                justHeight: true,
                                               ),
                                             ),
                                           );
@@ -363,8 +364,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                             BorderRadius.circular(20)),
                                     child: ListTile(
                                       leading: Icon(
-                                        Icons.adjust,
-                                        color: Color(0xff019ae6),
+                                        Icons.info_outline,
+                                        color: Color(0xff02457a),
                                       ),
                                       title: Text('Show History'),
                                       onTap: () {
@@ -414,23 +415,23 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             FloatingActionButton.extended(
-              backgroundColor: Color(0xff44b3ea),
+              backgroundColor: Color(0xff02457a),
               heroTag: 'hero1',
               label: Text(
                 'Staff',
-                style: TextStyle(fontSize: 20, color: Color(0xff02457a)),
+                style: TextStyle(fontSize: 20, color: Color(0xffffffff)),
               ),
-              icon: Icon(Icons.add, color: Color(0xff02457a)),
+              icon: Icon(Icons.add, color: Color(0xffffffff)),
               onPressed: () {
                 addWorker(context);
               },
             ),
             FloatingActionButton.extended(
-              backgroundColor: Color(0xff44b3ea),
+              backgroundColor: Color(0xff02457a),
               heroTag: 'hero2',
               label: Text('Room',
-                  style: TextStyle(fontSize: 20, color: Color(0xff02457a))),
-              icon: Icon(Icons.add, color: Color(0xff02457a)),
+                  style: TextStyle(fontSize: 20, color: Color(0xffffffff))),
+              icon: Icon(Icons.add, color: Color(0xffffffff)),
               onPressed: () {
                 addRooms(context);
               },
