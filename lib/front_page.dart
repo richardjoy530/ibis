@@ -210,18 +210,20 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                 deviceObjectList[index].name = '';
                                 nameIt(context, deviceObjectList[index]);
                               }
-                              if(deviceObjectList[index].earlyMotionDetection==true)
-                                {
-                                  deviceObjectList[index].earlyMotionDetection=false;
-                                  earlyMotionDetection(context, deviceObjectList[index]);
-
-                                }
+                              if (deviceObjectList[index]
+                                      .earlyMotionDetection ==
+                                  true) {
+                                deviceObjectList[index].earlyMotionDetection =
+                                    false;
+                                earlyMotionDetection(
+                                    context, deviceObjectList[index]);
+                              }
                               return Column(
                                 children: <Widget>[
                                   Container(
                                     margin: EdgeInsets.all(10),
                                     decoration: BoxDecoration(
-                                        color: Color(0xffa9d5ea),
+                                        color: Color(0xff75c5ec),
                                         borderRadius:
                                             BorderRadius.circular(20)),
                                     child: ListTile(
@@ -257,7 +259,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                               : deviceObjectList[index]
                                                           .motionDetected ==
                                                       false
-                                                  ? 'Device Connected'
+                                                  ? 'Tap to disenfect'
                                                   : 'Motion Detected : Tap to start again')
                                           : LinearPercentIndicator(
                                               lineHeight: 5.0,
@@ -281,9 +283,10 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      HomePage(deviceObjectList[
-                                                          index])),
+                                                builder: (context) => HomePage(
+                                                  deviceObjectList[index],
+                                                ),
+                                              ),
                                             );
                                           } else {
                                             deviceObjectList[index]
@@ -294,8 +297,10 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                 .progressDegrees = 0;
                                             if (rooms.length != 0) {
                                               if (workers.length != 0) {
-                                                showRooms(context,
-                                                    deviceObjectList[index]);
+                                                showRooms(
+                                                  context,
+                                                  deviceObjectList[index],
+                                                );
                                               } else {
                                                 addWorker(context);
                                               }
@@ -307,7 +312,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                       },
                                       onLongPress: () {
                                         setName(
-                                            context, deviceObjectList[index]);
+                                          context,
+                                          deviceObjectList[index],
+                                        );
                                       },
                                     ),
                                   ),
@@ -318,7 +325,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                         right: 20,
                                         bottom: 10),
                                     decoration: BoxDecoration(
-                                        color: Color(0xffa9d5ea),
+                                        color: Color(0xff9ad2ec),
                                         borderRadius:
                                             BorderRadius.circular(20)),
                                     child: ListTile(
@@ -327,6 +334,21 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                         color: Color(0xff019ae6),
                                       ),
                                       title: Text('Adjust Height'),
+                                      subtitle: Text(
+                                          'Device: ${deviceObjectList[index].offline==true?'Not connected':deviceObjectList[index].name}'),
+                                      onTap: () {
+                                        if (deviceObjectList[index].offline ==
+                                            false) {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => HeightPage(
+                                                deviceObjectList[index],
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      },
                                     ),
                                   ),
                                   Container(
@@ -336,7 +358,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                         right: 30,
                                         bottom: 10),
                                     decoration: BoxDecoration(
-                                        color: Color(0xffa9d5ea),
+                                        color: Color(0xffbddeee),
                                         borderRadius:
                                             BorderRadius.circular(20)),
                                     child: ListTile(
@@ -344,7 +366,15 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                         Icons.adjust,
                                         color: Color(0xff019ae6),
                                       ),
-                                      title: Text('Adjust Height'),
+                                      title: Text('Show History'),
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ShowHistory(),
+                                          ),
+                                        );
+                                      },
                                     ),
                                   )
                                 ],
@@ -384,17 +414,23 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             FloatingActionButton.extended(
+              backgroundColor: Color(0xff44b3ea),
               heroTag: 'hero1',
-              label: Text('Staff'),
-              icon: Icon(Icons.add),
+              label: Text(
+                'Staff',
+                style: TextStyle(fontSize: 20, color: Color(0xff02457a)),
+              ),
+              icon: Icon(Icons.add, color: Color(0xff02457a)),
               onPressed: () {
                 addWorker(context);
               },
             ),
             FloatingActionButton.extended(
+              backgroundColor: Color(0xff44b3ea),
               heroTag: 'hero2',
-              label: Text('Room'),
-              icon: Icon(Icons.add),
+              label: Text('Room',
+                  style: TextStyle(fontSize: 20, color: Color(0xff02457a))),
+              icon: Icon(Icons.add, color: Color(0xff02457a)),
               onPressed: () {
                 addRooms(context);
               },
@@ -735,31 +771,31 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           );
         });
   }
+
   Future<void> showingMotion(context, DeviceObject deviceObject) async {
     await showDialog(
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             titlePadding: EdgeInsets.all(25),
             title: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text('Motion Detected',style: TextStyle(color: Colors.red,fontSize: 35),),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text('${deviceObject.name}',style: TextStyle(fontSize: 15,color: Colors.blue,fontStyle: FontStyle.italic),),
-                    Text('Motion detected while disconnected',style: TextStyle(fontSize: 15),),
+                    Text(
+                      'Motion detected while disconnected',
+                      style: TextStyle(fontSize: 20),
+                    ),
                   ],
                 ),
-                Icon(Icons.warning,color: Colors.green,size: 100,)
-
+                Icon(Icons.warning, color: Color(0xff02457a))
               ],
             ),
           );
-
         });
   }
 
@@ -808,7 +844,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         });
   }
 
-  Future<void> earlyMotionDetection(BuildContext context, DeviceObject deviceObject) async {
+  Future<void> earlyMotionDetection(
+      BuildContext context, DeviceObject deviceObject) async {
     Future.delayed(Duration(milliseconds: 300), () {
       showingMotion(context, deviceObject);
     });
@@ -960,7 +997,7 @@ class _RoomsState extends State<Rooms> {
                         for (i = 0; i < nameNumber; i++) {
                           if (roomNames[i].text.length < 1) {
                             check += 1;
-                            cText[i]='Enter Name';
+                            cText[i] = 'Enter Name';
                           }
                         }
                         if (check == 0) {
@@ -1133,7 +1170,7 @@ class _WorkersState extends State<Workers> {
                         for (i = 0; i < nameNumber; i++) {
                           if (roomNames[i].text.length < 1) {
                             check += 1;
-                            cText[i]='Enter Name';
+                            cText[i] = 'Enter Name';
                           }
                         }
                         if (check == 0) {
