@@ -210,6 +210,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                 deviceObjectList[index].name = '';
                                 nameIt(context, deviceObjectList[index]);
                               }
+                              if(deviceObjectList[index].earlyMotionDetection==true)
+                                {
+                                  deviceObjectList[index].earlyMotionDetection=false;
+                                  earlyMotionDetection(context, deviceObjectList[index]);
+
+                                }
                               return Column(
                                 children: <Widget>[
                                   Container(
@@ -729,6 +735,33 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           );
         });
   }
+  Future<void> showingMotion(context, DeviceObject deviceObject) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10)),
+            titlePadding: EdgeInsets.all(25),
+            title: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text('Motion Detected',style: TextStyle(color: Colors.red,fontSize: 35),),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('${deviceObject.name}',style: TextStyle(fontSize: 15,color: Colors.blue,fontStyle: FontStyle.italic),),
+                    Text('Motion detected while disconnected',style: TextStyle(fontSize: 15),),
+                  ],
+                ),
+                Icon(Icons.warning,color: Colors.green,size: 100,)
+
+              ],
+            ),
+          );
+
+        });
+  }
 
   Future<void> setHeightYN(context, DeviceObject deviceObject) async {
     await showDialog(
@@ -773,6 +806,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             ],
           );
         });
+  }
+
+  Future<void> earlyMotionDetection(BuildContext context, DeviceObject deviceObject) async {
+    Future.delayed(Duration(milliseconds: 300), () {
+      showingMotion(context, deviceObject);
+    });
   }
 
   Future<void> nameIt(BuildContext context, DeviceObject deviceObject) async {
@@ -921,6 +960,7 @@ class _RoomsState extends State<Rooms> {
                         for (i = 0; i < nameNumber; i++) {
                           if (roomNames[i].text.length < 1) {
                             check += 1;
+                            cText[i]='Enter Name';
                           }
                         }
                         if (check == 0) {
@@ -1093,6 +1133,7 @@ class _WorkersState extends State<Workers> {
                         for (i = 0; i < nameNumber; i++) {
                           if (roomNames[i].text.length < 1) {
                             check += 1;
+                            cText[i]='Enter Name';
                           }
                         }
                         if (check == 0) {

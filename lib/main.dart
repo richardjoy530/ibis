@@ -15,8 +15,7 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'data.dart';
 import 'loding.dart';
 
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =  FlutterLocalNotificationsPlugin();
 final customColor = CustomSliderColors(
   progressBarColor: Color(0xffd6e7ee),
   hideShadow: true,
