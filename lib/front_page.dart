@@ -169,7 +169,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     width: 30,
                     child: FlareActor(
                       'assets/status.flr',
-                      animation: 'Connected',
+                      animation: 'off',
                     ),
                   ),
                 ),

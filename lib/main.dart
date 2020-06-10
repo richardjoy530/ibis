@@ -277,7 +277,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     width: 30,
                     child: FlareActor(
                       'assets/status.flr',
-                      animation: 'Connected',
+                      animation: widget.deviceObject.power==true&&widget.deviceObject.pause==false?'Connected':'off',
                     ),
                   ),
                 ),
