@@ -13,34 +13,20 @@ import 'package:wifi_iot/wifi_iot.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 
 import 'data.dart';
-import 'front_page.dart';
 import 'loding.dart';
 
-int displayTime;
-SharedPreferences prefs;
-String deviceName;
-int deviceHeight;
-DatabaseHelper databaseHelper;
-String room = '';
-String worker = '';
-List<History> historyList = [];
-List<String> rooms = [];
-List<String> workers = [];
-bool animationChecking=false;
-String animationText='';
-int dotTimer=0;
-double dot=0.0;
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 final customColor = CustomSliderColors(
-    progressBarColor: Color(0xffd6e7ee),
-    hideShadow: true,
-    trackColor: Color(0xffffffff),
-    progressBarColors: [
-      Color(0xff00477d),
-      Color(0xff008bc0),
-      Color(0xff97cadb),
-    ]);
+  progressBarColor: Color(0xffd6e7ee),
+  hideShadow: true,
+  trackColor: Color(0xffffffff),
+  progressBarColors: [
+    Color(0xff00477d),
+    Color(0xff008bc0),
+    Color(0xff97cadb),
+  ],
+);
 var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
 var initializationSettingsIOS = IOSInitializationSettings();
 var initializationSettings = InitializationSettings(
@@ -80,10 +66,6 @@ Future<void> notification(String message) async {
 }
 
 void connect() async {
-  if (isEnabled == false) {
-    WiFiForIoTPlugin.setEnabled(true);
-    isEnabled = true;
-  }
   ServerSocket.bind('0.0.0.0', 4042)
     ..then((sock) {
       serverSocket = sock;
@@ -193,6 +175,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     errorRemover = false;
+    connectionError = true;
 
     temp = 1;
     mainTick();
@@ -209,48 +192,37 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
-    animationTimer=Timer.periodic(Duration(milliseconds: 100), (timer) {
-      dotTimer+=1;
+    animationTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+      dotTimer += 1;
       setState(() {
-        if(dotTimer%10==0)
-        {
-           dotTimer=0;
-           if(dot>1)
-             {
-               dot=0;
-             }
-           else
-             {
-             dot+=1;
-           }
+        if (dotTimer % 10 == 0) {
+          dotTimer = 0;
+          if (dot > 1) {
+            dot = 0;
+          } else {
+            dot += 1;
+          }
         }
-        if(widget.deviceObject.power==true && widget.deviceObject.pause==false)
-        {
-          animationChecking=true;
-          animationText='Disinfecting';
+        if (widget.deviceObject.power == true &&
+            widget.deviceObject.pause == false) {
+          animationChecking = true;
+          animationText = 'Disinfecting';
+        } else if (widget.deviceObject.pause == true) {
+          animationText = 'Paused';
+          animationChecking = false;
+        } else if (widget.deviceObject.power == false &&
+            widget.deviceObject.pause == false) {
+          animationText = 'Ready to Disinfect';
+          animationChecking = false;
         }
-        if(widget.deviceObject.pause==true)
-        {
-          animationText='Paused';
-          animationChecking=false;
-        }
-        if(widget.deviceObject.power==false && widget.deviceObject.pause==false)
-        {
-          animationText='Ready to Disinfect';
-          animationChecking=false;
-        }
-
       });
-
     });
     super.initState();
   }
 
   @override
   void dispose() {
-    if (widget.deviceObject.power == true) {
-      widget.deviceObject.radialProgressAnimationController.dispose();
-    }
+    destroyAnimation(widget.deviceObject);
     mainTimer.cancel();
     if (widget.deviceObject.power == false &&
         widget.deviceObject.clientError == false &&
@@ -258,6 +230,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       widget.deviceObject.socket.write(65);
     }
     animationTimer.cancel();
+    connectionError = false;
     super.dispose();
   }
 
@@ -318,12 +291,27 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     title: Align(
                         alignment: Alignment.center,
                         child: Text('Motion Detected')),
-                    content: Icon(
-                      Icons.warning,
-                      color: Color(0xff02457a),
-                      size: 50,
+                    content: Column(
+                      children: <Widget>[
+                        Icon(
+                          Icons.warning,
+                          color: Color(0xff02457a),
+                          size: 50,
+                        ),
+                        Center(
+                          child: RaisedButton(
+                            color: Color(0xffd6e7ee),
+                            child: Center(
+                              child: Text('OK'),
+                            ),
+                            onPressed: () {
+                              widget.deviceObject.socket.write('d\r');
+                              widget.deviceObject.motionDetected = false;
+                            },
+                          ),
+                        )
+                      ],
                     ),
-                    backgroundColor: Color(0xff97cadb),
                   )
                 : Expanded(child: tabView(context, widget.deviceObject))
           ],
@@ -334,7 +322,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   startTimer(DeviceObject deviceObject) {
     deviceObject.timer = Timer.periodic(Duration(seconds: 1), (timer) {
-
       if (deviceObject.pause == false) {
         deviceObject.elapsedTime++;
         deviceObject.totalDuration =
@@ -442,32 +429,35 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                             Center(
-                               child: Column(
-                                 children: <Widget>[
-                                   Text(
-                                    '$animationText',
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        color: deviceObject.motionDetected == false
-                                            ? Colors.black
-                                            : Colors.red),
+                          Center(
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                  '$animationText',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      color:
+                                          deviceObject.motionDetected == false
+                                              ? Colors.black
+                                              : Colors.red),
+                                ),
+                                Visibility(
+                                  visible: animationChecking,
+                                  child: new DotsIndicator(
+                                    dotsCount: 3,
+                                    position: dot,
+                                    decorator: DotsDecorator(
+                                      size: const Size.square(9.0),
+                                      activeSize: const Size(18.0, 9.0),
+                                      activeShape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0)),
                                     ),
-                                   Visibility(
-                                     visible: animationChecking,
-                                     child: new DotsIndicator(
-                                       dotsCount: 3,
-                                       position: dot,
-                                       decorator: DotsDecorator(
-                                         size: const Size.square(9.0),
-                                         activeSize: const Size(18.0, 9.0),
-                                         activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-                                       ),
-                                     ),
-                                   )
-                                 ],
-                               ),
-                             ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
                           Text(
                             '${getMinuets(((deviceObject.time.inSeconds) - deviceObject.elapsedTime).round())}'
                             ':${getSeconds(((deviceObject.time.inSeconds) - deviceObject.elapsedTime).round())}',
@@ -482,7 +472,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               deviceObject.power == false
                   ? SleekCircularSlider(
                       min: 0,
-                      max: 20,
+                      max: 21,
                       initialValue: 0,
                       appearance: CircularSliderAppearance(
                           animationEnabled: false,
@@ -498,7 +488,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       onChange: (double value) {
                         displayTime = value.floor();
                         if (deviceObject.power == false &&
-                            errorRemover == true) {
+                            errorRemover == true &&
+                            isConnected == true &&
+                            widget.deviceObject.clientError == false) {
                           setState(() {
                             deviceObject.mainTime = Duration(
                                 minutes:
@@ -541,97 +533,27 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             height: 100,
             child: GestureDetector(
               onTapUp: (onTapUpDetails) {
-                setState(() {
-                  if (deviceObject.time.inMinutes > 0 &&
-                      deviceObject.power == false &&
-                      onTapUpDetails.localPosition.dx >
-                          MediaQuery.of(context).size.width / 3 &&
-                      onTapUpDetails.localPosition.dx <
-                          MediaQuery.of(context).size.width * 2 / 3) {
-                    // Start
-                    deviceObject.flare = 'on';
-                    deviceObject.temp = false;
-                    deviceObject.socket
-                        .writeln(deviceObject.time.inMinutes.round());
-                    deviceObject.elapsedTime = 0;
-                    deviceObject.progressDegrees = 0;
-                    deviceObject.power = true;
-                    startTimer(deviceObject);
-                    runAnimation(deviceObject: deviceObject);
-                    deviceObject.radialProgressAnimationController.forward();
-                    databaseHelper.insertHistory(History(
-                        roomName: room,
-                        workerName: worker,
-                        state:
-                            'Started with ${deviceObject.time.inMinutes} mins',
-                        time: DateTime.now()));
-                    historyList.add(
-                      History(
-                        roomName: room,
-                        workerName: worker,
-                        state:
-                            'Started with ${deviceObject.time.inMinutes} mins',
-                        time: DateTime.now(),
-                      ),
-                    );
-                  } else if (deviceObject.power == true &&
-                      onTapUpDetails.localPosition.dx <
-                          MediaQuery.of(context).size.width / 2) {
-                    //Stop
-                    confirmStop(context,deviceObject);
-                  } else if (deviceObject.power == true &&
-                      onTapUpDetails.localPosition.dx >
-                          MediaQuery.of(context).size.width / 2) {
-                    print('Pause/Play');
-                    if (deviceObject.pause == false) {
-                      //Pause
-                      databaseHelper.insertHistory(History(
-                          roomName: room,
-                          workerName: worker,
-                          state: 'Paused',
-                          time: DateTime.now()));
-                      historyList.add(
-                        History(
-                          roomName: room,
-                          workerName: worker,
-                          state: 'Paused',
-                          time: DateTime.now(),
-                        ),
-                      );
-
-                      prefs.setInt('${deviceObject.ip}totalDuration',
-                          deviceObject.totalDuration.inSeconds);
-                      prefs.setInt('${deviceObject.ip}secondDuration',
-                          deviceObject.secondDuration.inSeconds);
-                      deviceObject.flare = 'pause';
-                      deviceObject.pause = true;
-                      deviceObject.timer.cancel();
-                      deviceObject.socket.write('h');
-                      deviceObject.radialProgressAnimationController.stop();
-                    } else {
-                      //Play
-                      databaseHelper.insertHistory(History(
-                          roomName: room,
-                          workerName: worker,
-                          state: 'Resumed',
-                          time: DateTime.now()));
-                      historyList.add(
-                        History(
-                          roomName: room,
-                          workerName: worker,
-                          state: 'Resumed',
-                          time: DateTime.now(),
-                        ),
-                      );
-
-                      deviceObject.pause = false;
-                      startTimer(deviceObject);
-                      deviceObject.flare = 'play';
-                      deviceObject.socket.write('p');
-                      deviceObject.radialProgressAnimationController.forward();
+                setState(
+                  () {
+                    if (deviceObject.time.inMinutes > 0 &&
+                        deviceObject.power == false &&
+                        onTapUpDetails.localPosition.dx >
+                            MediaQuery.of(context).size.width / 3 &&
+                        onTapUpDetails.localPosition.dx <
+                            MediaQuery.of(context).size.width * 2 / 3) {
+                      start(deviceObject);
+                    } else if (deviceObject.power == true &&
+                        onTapUpDetails.localPosition.dx <
+                            MediaQuery.of(context).size.width / 2) {
+                      //Stop
+                      confirmStop(context, deviceObject);
+                    } else if (deviceObject.power == true &&
+                        onTapUpDetails.localPosition.dx >
+                            MediaQuery.of(context).size.width / 2) {
+                      playPause(deviceObject);
                     }
-                  }
-                });
+                  },
+                );
               },
               child: FlareActor('assets/playpausepower.flr',
                   animation: deviceObject.flare),
@@ -640,6 +562,83 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         )
       ],
     );
+  }
+
+  void start(DeviceObject deviceObject) {
+    // Start
+    deviceObject.flare = 'on';
+    deviceObject.temp = false;
+    deviceObject.socket.writeln(deviceObject.time.inMinutes.round());
+    deviceObject.elapsedTime = 0;
+    deviceObject.progressDegrees = 0;
+    deviceObject.power = true;
+    startTimer(deviceObject);
+    runAnimation(deviceObject: deviceObject);
+    deviceObject.radialProgressAnimationController.forward();
+    databaseHelper.insertHistory(History(
+        roomName: room,
+        workerName: worker,
+        state: 'Started with ${deviceObject.time.inMinutes} mins',
+        time: DateTime.now()));
+    historyList.add(
+      History(
+        roomName: room,
+        workerName: worker,
+        state: 'Started with ${deviceObject.time.inMinutes} mins',
+        time: DateTime.now(),
+      ),
+    );
+  }
+
+  void playPause(DeviceObject deviceObject) {
+    print('Pause/Play');
+    if (deviceObject.pause == false) {
+      //Pause
+      databaseHelper.insertHistory(History(
+          roomName: room,
+          workerName: worker,
+          state: 'Paused',
+          time: DateTime.now()));
+      historyList.add(
+        History(
+          roomName: room,
+          workerName: worker,
+          state: 'Paused',
+          time: DateTime.now(),
+        ),
+      );
+
+      prefs.setInt('${deviceObject.ip}totalDuration',
+          deviceObject.totalDuration.inSeconds);
+      prefs.setInt('${deviceObject.ip}secondDuration',
+          deviceObject.secondDuration.inSeconds);
+      deviceObject.flare = 'pause';
+      deviceObject.pause = true;
+      deviceObject.timer.cancel();
+      deviceObject.socket.write('h');
+      deviceObject.radialProgressAnimationController.stop();
+    } else {
+      //Play
+      databaseHelper.insertHistory(History(
+          roomName: room,
+          workerName: worker,
+          state: 'Resumed',
+          time: DateTime.now()));
+      historyList.add(
+        History(
+          roomName: room,
+          workerName: worker,
+          state: 'Resumed',
+          time: DateTime.now(),
+        ),
+      );
+
+      deviceObject.pause = false;
+      startTimer(deviceObject);
+      deviceObject.flare = 'play';
+      deviceObject.socket.write('p');
+      deviceObject.radialProgressAnimationController.forward();
+    }
   }
 
   double mapValues(double value) {
@@ -656,34 +655,36 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     } else if (value == 5) {
       temp = 5;
     } else if (value == 6) {
-      temp = 7;
+      temp = 6;
     } else if (value == 7) {
-      temp = 8;
+      temp = 7;
     } else if (value == 8) {
-      temp = 9;
+      temp = 8;
     } else if (value == 9) {
-      temp = 10;
+      temp = 9;
     } else if (value == 10) {
-      temp = 15;
+      temp = 10;
     } else if (value == 11) {
-      temp = 20;
+      temp = 15;
     } else if (value == 12) {
-      temp = 25;
+      temp = 20;
     } else if (value == 13) {
-      temp = 30;
+      temp = 25;
     } else if (value == 14) {
-      temp = 35;
+      temp = 30;
     } else if (value == 15) {
-      temp = 40;
+      temp = 35;
     } else if (value == 16) {
-      temp = 45;
+      temp = 40;
     } else if (value == 17) {
-      temp = 50;
+      temp = 45;
     } else if (value == 18) {
-      temp = 55;
+      temp = 50;
     } else if (value == 19) {
-      temp = 60;
+      temp = 55;
     } else if (value == 20) {
+      temp = 60;
+    } else if (value == 21) {
       temp = 60;
     }
     return temp;
@@ -696,6 +697,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         duration: Duration(
             seconds: deviceObject.time.inSeconds -
                 (deviceObject.timer != null ? deviceObject.timer.tick : 0)));
+    animationRunning = true;
+
     deviceObject.progressAnimation = Tween(begin: begin, end: end).animate(
         CurvedAnimation(
             parent: deviceObject.radialProgressAnimationController,
@@ -710,21 +713,25 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 deviceObject.secondDuration.inSeconds);
             errorRemover = false;
             deviceObject.flare = 'off';
+            print('state3');
+
             deviceObject.elapsedTime = 0;
             deviceObject.radialProgressAnimationController.stop();
             deviceObject.timer.cancel();
             deviceObject.pause = false;
             deviceObject.time = Duration(minutes: 0);
             deviceObject.mainTime = Duration(minutes: 0);
-            deviceObject.radialProgressAnimationController.dispose();
             deviceObject.power = false;
           }
           if (deviceObject.progressDegrees == 360) {
-            databaseHelper.insertHistory(History(
+            databaseHelper.insertHistory(
+              History(
                 roomName: room,
                 workerName: worker,
                 state: 'Finished',
-                time: DateTime.now()));
+                time: DateTime.now(),
+              ),
+            );
             historyList.add(
               History(
                 roomName: room,
@@ -744,6 +751,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             deviceObject.timer.cancel();
             deviceObject.pause = false;
             deviceObject.flare = 'off';
+            print('state4');
+
             deviceObject.elapsedTime = 0;
             deviceObject.time = Duration(minutes: 0);
             deviceObject.mainTime = Duration(minutes: 0);
@@ -757,7 +766,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   destroyAnimation(DeviceObject deviceObject) {
-    deviceObject.radialProgressAnimationController.dispose();
+    if (animationRunning == true) {
+      deviceObject.radialProgressAnimationController.dispose();
+      animationRunning = false;
+    }
   }
 
   getSeconds(int seconds) {
@@ -772,6 +784,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Future<void> overOver(context) async {
     await showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(
@@ -781,22 +794,29 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
             title: Center(
               child: Text(
-                'Finished and safe to Enter',
+                'Disinfect Again ?',
                 style: TextStyle(
                     color: Color(0xff02457a), fontWeight: FontWeight.bold),
               ),
             ),
             children: <Widget>[
               SimpleDialogOption(
-                child: Center(child: Text('Exit')),
+                child: Center(child: Text('yes')),
                 onPressed: () {
-                  Navigator.pop(context);
+                  widget.deviceObject.clientError = false;
+
+                  widget.deviceObject.socket.write('y\r');
+                  errorRemover = true;
                   Navigator.pop(context);
                 },
               ),
               SimpleDialogOption(
-                child: Center(child: Text('Continue')),
+                child: Center(child: Text('No')),
                 onPressed: () {
+                  widget.deviceObject.clientError = false;
+
+                  widget.deviceObject.socket.write('n\r');
+                  Navigator.pop(context);
                   Navigator.pop(context);
                 },
               ),
@@ -807,6 +827,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Future<void> confirmStop(context, DeviceObject deviceObject) async {
     await showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(
@@ -816,7 +837,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
             title: Center(
               child: Text(
-                'Are you sure',
+                'Are you sure ?',
                 style: TextStyle(
                     color: Color(0xff02457a), fontWeight: FontWeight.bold),
               ),
@@ -851,6 +872,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   errorRemover = false;
                   deviceObject.elapsedTime = 0;
                   deviceObject.flare = 'off';
+                  print('state5');
                   destroyAnimation(deviceObject);
                   deviceObject.socket.write('s');
                   deviceObject.power = false;
@@ -874,24 +896,56 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> mainTick() async {
-    mainTimer = Timer.periodic(Duration(seconds: 1), (callback) {
-      if (mainTimer.tick > 40 &&
-          mainTimer.tick < 60 &&
-          widget.deviceObject.power == false) {
-        Navigator.pop(context);
-      }
-      if (widget.deviceObject.motionDetected == true &&
-          widget.deviceObject.power == false) {
-        widget.deviceObject.elapsedTime = 0;
-        widget.deviceObject.pause = false;
-        Navigator.pop(context);
-      }
-      if (serverOnline == false || widget.deviceObject.clientError == true) {
-        if (widget.deviceObject.power == true) {
-          destroyAnimation(widget.deviceObject);
+    mainTimer = Timer.periodic(
+      Duration(seconds: 1),
+      (callback) {
+        WiFiForIoTPlugin.getIP().then(
+          (value) {
+            if (value != serverIp && connectionError == false) {
+              connectionError = true;
+              widget.deviceObject.motionDetected = false;
+              widget.deviceObject.flare = 'off';
+              print('state6');
+
+              widget.deviceObject.offline = true;
+              widget.deviceObject.pause = false;
+              widget.deviceObject.power = false;
+
+              widget.deviceObject.progressDegrees = 0;
+              widget.deviceObject.elapsedTime = 0;
+              print('off1');
+              widget.deviceObject.timer.cancel();
+              destroyAnimation(widget.deviceObject);
+              errorRemover = false;
+              Navigator.pop(context);
+            }
+          },
+        );
+        if (widget.deviceObject.socket == null) {
+          Navigator.pop(context);
         }
-        Navigator.pop(context);
-      }
-    });
+        if ((serverOnline == false ||
+                widget.deviceObject.clientError == true) &&
+            connectionError == false) {
+          connectionError = true;
+          widget.deviceObject.motionDetected = false;
+          widget.deviceObject.flare = 'off';
+          print('state7');
+          widget.deviceObject.offline = true;
+          widget.deviceObject.pause = false;
+          widget.deviceObject.progressDegrees = 0;
+          widget.deviceObject.elapsedTime = 0;
+          print('off2');
+          if (widget.deviceObject.timer != null) {
+            widget.deviceObject.timer.cancel();
+          }
+          destroyAnimation(widget.deviceObject);
+          widget.deviceObject.power = false;
+
+          errorRemover = false;
+          Navigator.pop(context);
+        }
+      },
+    );
   }
 }

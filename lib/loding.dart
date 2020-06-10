@@ -1,11 +1,11 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wakelock/wakelock.dart';
 
 import 'data.dart';
 import 'front_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'main.dart';
 
 class Loding extends StatefulWidget {
   @override
@@ -15,6 +15,16 @@ class Loding extends StatefulWidget {
 class _LodingState extends State<Loding> {
   @override
   void initState() {
+    Wakelock.enable();
+    wifiTimer = Timer.periodic(
+      Duration(seconds: 3),
+      (data) {
+        if (serverOnline == false) {
+          wifi();
+        }
+      },
+    );
+    wifi();
     load();
     redirect();
     super.initState();

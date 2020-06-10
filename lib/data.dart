@@ -5,11 +5,39 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
-
-import 'front_page.dart';
 import 'main.dart' as main;
-import 'main.dart';
+
+int displayTime;
+bool connectionError = false;
+SharedPreferences prefs;
+String deviceName;
+int deviceHeight;
+DatabaseHelper databaseHelper;
+String room = '';
+String worker = '';
+List<History> historyList = [];
+List<String> rooms = [];
+List<String> workers = [];
+bool animationChecking = false;
+String animationText = '';
+int dotTimer = 0;
+double dot = 0.0;
+List<DeviceObject> deviceObjectList = [];
+List<String> ipList = [];
+List<Socket> sockets = [];
+ServerSocket serverSocket;
+bool serverOnline = false;
+bool animationRunning = false;
+bool isEnabled = false;
+Timer wifiTimer;
+bool isConnected = false;
+String serverIp;
+int screenLengthConstant = 0;
+int nameNumber = 1;
+List<TextEditingController> roomNames = [];
+final List<bool> isSelected = [false];
 
 class DeviceObject {
   bool temp;
@@ -59,8 +87,13 @@ class DeviceObject {
   void run() {
     socket.listen((onData) {
       print([socket.remotePort, onData]);
+      if (String.fromCharCodes(onData).trim() == '1') {}
       if (this.offline == false) {
-        if (String.fromCharCodes(onData).trim() == '1') {
+        if (onData[0] == 50) {
+          print(
+            [socket.remotePort, onData],
+          );
+
           this.motionDetected = true;
           databaseHelper.insertHistory(History(
               roomName: room,
@@ -80,35 +113,45 @@ class DeviceObject {
         }
       }
     })
-      ..onError((handleError) {
-        print('Client Error : ${handleError.toString()}');
-        serverOnline = false;
-        serverSocket.close();
-        this.clientError = true;
-        this.socket.close();
-      })
-      ..onDone(() {
-        this.socket.close();
-        this.clientError = true;
-        this.offline = true;
-        if (this.power == true) {
-          this.timer.cancel();
-          databaseHelper.insertHistory(History(
-              roomName: room,
-              workerName: worker,
-              state: 'Error : Device disconnected',
-              time: DateTime.now()));
-          historyList.add(
-            History(
-              roomName: room,
-              workerName: worker,
-              state: 'Error : Device disconnected',
-              time: DateTime.now(),
-            ),
-          );
-        }
-        this.power = false;
-      });
+      ..onError(
+        (handleError) {
+          print('Client Error : ${handleError.toString()}');
+          serverOnline = false;
+          this.linearProgressBarValue = 0.0;
+          serverSocket.close();
+          this.clientError = true;
+          this.socket.close();
+        },
+      )
+      ..onDone(
+        () {
+                    print('Client onDone');
+
+          this.linearProgressBarValue = 0.0;
+          this.socket.close();
+          this.clientError = true;
+          this.offline = true;
+          if (this.power == true) {
+            this.timer.cancel();
+            databaseHelper.insertHistory(
+              History(
+                roomName: room,
+                workerName: worker,
+                state: 'Error : Device disconnected',
+                time: DateTime.now(),
+              ),
+            );
+            historyList.add(
+              History(
+                roomName: room,
+                workerName: worker,
+                state: 'Error : Device disconnected',
+                time: DateTime.now(),
+              ),
+            );
+          }
+        },
+      );
   }
 }
 
@@ -209,6 +252,7 @@ class DatabaseHelper {
         await db.rawDelete('DELETE FROM Rooms WHERE roomName = "$room"');
     return result;
   }
+
   Future<int> deleteWorker(String worker) async {
     var db = await this.database;
     int result =

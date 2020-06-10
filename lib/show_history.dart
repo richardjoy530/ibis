@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ibis/main.dart';
+import 'data.dart';
 import 'package:intl/intl.dart';
 
 class ShowHistory extends StatefulWidget {
@@ -29,8 +29,10 @@ class _ShowHistoryState extends State<ShowHistory> {
                       alignment: Alignment.topLeft,
                       child: Text(
                         'Device History',
-                        style: TextStyle(color: Color(0xff02457a),
-                            fontSize: 40, fontWeight: FontWeight.w900),
+                        style: TextStyle(
+                            color: Color(0xff02457a),
+                            fontSize: 40,
+                            fontWeight: FontWeight.w900),
                       ),
                     ),
                   ),
@@ -56,16 +58,25 @@ class _ShowHistoryState extends State<ShowHistory> {
                                       fontSize: 25, color: Colors.white))),
                           onTap: () {},
                           title: Text(
-                            historyList[index].workerName,
+                            historyList[index].roomName,
                             style: TextStyle(
                                 fontSize: 20,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),
                           ),
-                          subtitle: Text(
-                            historyList[index].state,
-                            style:
-                                TextStyle(color: Color(0xff02457a), fontSize: 15),
+                          subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                'Staff: ${historyList[index].workerName}',
+                                style: TextStyle(
+                                    color: Color(0xff02457a), fontSize: 15),
+                              ),
+                              Text(
+                                historyList[index].state,
+                                style: TextStyle(
+                                    color: Color(0xff02457a), fontSize: 15),
+                              ),
+                            ],
                           ),
                           trailing: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -81,7 +92,6 @@ class _ShowHistoryState extends State<ShowHistory> {
                         );
                       },
                       itemCount: historyList.length,
-
                     ),
                   )
                 ],

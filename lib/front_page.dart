@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_device_friendly_name/flutter_device_friendly_name.dart';
 import 'package:ibis/height_page.dart';
 import 'package:ibis/main.dart';
 import 'package:ibis/show_history.dart';
@@ -15,35 +13,36 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'data.dart';
 import 'show_rooms_workers.dart';
 
-List<DeviceObject> deviceObjectList = [];
-List<String> ipList = [];
-List<Socket> sockets = [];
-ServerSocket serverSocket;
-bool serverOnline = false;
-bool isEnabled = false;
-bool isConnected = false;
-String serverIp;
-int screenLengthConstant = 0;
-int nameNumber = 1;
-List<TextEditingController> roomNames = [];
-final List<bool> isSelected = [false];
 Future<void> wifi() async {
-  WiFiForIoTPlugin.isEnabled().then((val) {
-    if (val != null) {
-      isEnabled = val;
-      print('Wifi Status:$isEnabled');
-      if (isEnabled == false) {
-        WiFiForIoTPlugin.setEnabled(true);
-        print('Wifi turned on');
+  WiFiForIoTPlugin.isEnabled().then(
+    (val) {
+      if (val != null) {
+        isEnabled = val;
+        print('Wifi Status:$isEnabled');
+        if (isEnabled == false) {
+          WiFiForIoTPlugin.setEnabled(true);
+          print('Wifi turned on');
+        }
       }
-    }
-  });
-  WiFiForIoTPlugin.isConnected().then((val) {
-    if (val != null) {
-      isConnected = val;
-      print('Connected:$isConnected');
-    }
-  });
+    },
+  );
+  WiFiForIoTPlugin.isConnected().then(
+    (val) {
+      if (val != null) {
+        isConnected = val;
+        print('Connected:$isConnected');
+      }
+      if (val != true) {
+        WiFiForIoTPlugin.connect('ESP32-Access-Point',
+                password: '123456789',
+                joinOnce: true,
+                security: NetworkSecurity.WPA)
+            .then(
+          (value) {},
+        );
+      }
+    },
+  );
 
   serverIp = await WiFiForIoTPlugin.getIP();
 }
@@ -57,81 +56,83 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   Timer timer;
   TextEditingController nameController;
 
-  String _friendlyName = 'Loading...';
   ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
-    FlutterDeviceFriendlyName.friendlyName.then((x) {
-      setState(() {
-        _friendlyName = x;
-      });
-    });
     connect();
     nameController = TextEditingController();
-    wifi();
     getIpList();
-    timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
-      setState(() {
-        for (var i = 0; i < deviceObjectList.length; i++) {
-          if (deviceObjectList[i].motionDetected == true &&
-              deviceObjectList[i].power == true) {
-            deviceObjectList[i].power = false;
-            deviceObjectList[i].pause = false;
+    timer = Timer.periodic(
+      Duration(milliseconds: 100),
+      (callback) {
+        setState(
+          () {
+            for (var i = 0; i < deviceObjectList.length; i++) {
+              if ((deviceObjectList[i].motionDetected == true||deviceObjectList[i].clientError == true)&&deviceObjectList[i].power == true) {
+                deviceObjectList[i].power = false;
+                deviceObjectList[i].pause = false;
 
-            prefs.setInt('${deviceObjectList[i].ip}totalDuration',
-                deviceObjectList[i].totalDuration.inSeconds);
-            prefs.setInt('${deviceObjectList[i].ip}secondDuration',
-                deviceObjectList[i].secondDuration.inSeconds);
-            deviceObjectList[i].flare = 'off';
-            deviceObjectList[i].timer.cancel();
-            deviceObjectList[i].elapsedTime = 0;
-            deviceObjectList[i].time = Duration(minutes: 0);
-            deviceObjectList[i].mainTime = Duration(minutes: 0);
-            deviceObjectList[i].progressDegrees = 0;
-          }
+                prefs.setInt('${deviceObjectList[i].ip}totalDuration',
+                    deviceObjectList[i].totalDuration.inSeconds);
+                prefs.setInt('${deviceObjectList[i].ip}secondDuration',
+                    deviceObjectList[i].secondDuration.inSeconds);
+                    print('state1');
+                deviceObjectList[i].flare = 'off';
+                deviceObjectList[i].timer.cancel();
+                deviceObjectList[i].elapsedTime = 0;
+                deviceObjectList[i].time = Duration(minutes: 0);
+                deviceObjectList[i].mainTime = Duration(minutes: 0);
+                deviceObjectList[i].progressDegrees = 0;
+              }
 
-          if (deviceObjectList[i].power == true &&
-              deviceObjectList[i].pause == false) {
-            deviceObjectList[i].linearProgressBarValue =
-                (1 / deviceObjectList[i].time.inSeconds) *
-                    deviceObjectList[i].elapsedTime;
-            if (deviceObjectList[i].elapsedTime >
-                deviceObjectList[i].time.inSeconds) {
-              prefs.setInt('${deviceObjectList[i].ip}totalDuration',
-                  deviceObjectList[i].totalDuration.inSeconds);
-              prefs.setInt('${deviceObjectList[i].ip}secondDuration',
-                  deviceObjectList[i].secondDuration.inSeconds);
-              databaseHelper.insertHistory(
-                History(
-                  roomName: room,
-                  workerName: worker,
-                  state: 'Finished',
-                  time: DateTime.now(),
-                ),
-              );
-              historyList.add(
-                History(
-                  roomName: room,
-                  workerName: worker,
-                  state: 'Finished',
-                  time: DateTime.now(),
-                ),
-              );
+              if (deviceObjectList[i].power == true &&
+                  deviceObjectList[i].pause == false) {
+                deviceObjectList[i].linearProgressBarValue =
+                    (1 / deviceObjectList[i].time.inSeconds) *
+                        deviceObjectList[i].elapsedTime;
+                if ((deviceObjectList[i].elapsedTime >
+                    deviceObjectList[i].time.inSeconds)) {
+                  prefs.setInt('${deviceObjectList[i].ip}totalDuration',
+                      deviceObjectList[i].totalDuration.inSeconds);
+                  prefs.setInt('${deviceObjectList[i].ip}secondDuration',
+                      deviceObjectList[i].secondDuration.inSeconds);
+                  databaseHelper.insertHistory(
+                    History(
+                      roomName: room,
+                      workerName: worker,
+                      state: 'Finished',
+                      time: DateTime.now(),
+                    ),
+                  );
+                  historyList.add(
+                    History(
+                      roomName: room,
+                      workerName: worker,
+                      state: 'Finished',
+                      time: DateTime.now(),
+                    ),
+                  );
 
-              deviceObjectList[i].power = false;
-              deviceObjectList[i].pause = false;
-              deviceObjectList[i].flare = 'off';
-              deviceObjectList[i].timer.cancel();
-              deviceObjectList[i].elapsedTime = 0;
-              deviceObjectList[i].time = Duration(minutes: 0);
-              deviceObjectList[i].mainTime = Duration(minutes: 0);
-              deviceObjectList[i].progressDegrees = 0;
+                  deviceObjectList[i].power = false;
+                  deviceObjectList[i].linearProgressBarValue = 0.0;
+
+                  deviceObjectList[i].pause = false;
+                  deviceObjectList[i].flare = 'off';
+                                      print('state2');
+
+                  deviceObjectList[i].timer.cancel();
+                  deviceObjectList[i].elapsedTime = 0;
+                  deviceObjectList[i].time = Duration(minutes: 0);
+                  deviceObjectList[i].mainTime = Duration(minutes: 0);
+                  deviceObjectList[i].progressDegrees = 0;
+                }
+              }
             }
-          }
-        }
-      });
-    });
+          },
+        );
+      },
+    );
     super.initState();
   }
 
@@ -262,6 +263,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                         false) {
                                       if (deviceObjectList[index].power ==
                                           true) {
+                                            deviceObjectList[index].clientError = false;
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -329,7 +331,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           children: <Widget>[
             FloatingActionButton.extended(
               heroTag: 'hero1',
-              label: Text('Worker'),
+              label: Text('Staff'),
               icon: Icon(Icons.add),
               onPressed: () {
                 addWorker(context);
@@ -375,8 +377,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           ),
           title: Text(
             'Select a Room',
-            style:
-                TextStyle(color:  Color(0xff02457a), fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: Color(0xff02457a), fontWeight: FontWeight.bold),
           ),
           children: <Widget>[
             Column(
@@ -387,14 +389,13 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   return SimpleDialogOption(
                     child: Container(
                       decoration: BoxDecoration(
-                                            border: Border.all(color: Colors.blue),
-
+                        border: Border.all(color: Colors.blue),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: ListTile(
                         leading: Icon(
                           Icons.label_outline,
-                          color:  Color(0xff02457a),
+                          color: Color(0xff02457a),
                         ),
                         title: Text(rooms[index],
                             style: TextStyle(
@@ -427,8 +428,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           ),
           title: Text(
             'Select a Staff',
-            style:
-                TextStyle(color: Color(0xff02457a), fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: Color(0xff02457a), fontWeight: FontWeight.bold),
           ),
           children: <Widget>[
             Column(
@@ -438,16 +439,14 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 (index) {
                   return SimpleDialogOption(
                     child: Container(
-                       decoration: BoxDecoration(
-                                            border: Border.all(color: Colors.blue),
-
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.blue),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: ListTile(
                         leading: Icon(
                           Icons.label_outline,
-                                                    color:  Color(0xff02457a),
-
+                          color: Color(0xff02457a),
                         ),
                         title: Text(workers[index],
                             style: TextStyle(
@@ -456,6 +455,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       ),
                     ),
                     onPressed: () {
+                      deviceObject.clientError = false;
                       worker = workers[index];
                       Navigator.pushReplacement(
                         context,
@@ -495,7 +495,13 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 title: Text(
                   'Server Ip: $serverIp',
                 ),
-                subtitle: Text(_friendlyName),
+                subtitle: FutureBuilder(
+                    future: WiFiForIoTPlugin.getSSID(),
+                    initialData: "Loading..",
+                    builder:
+                        (BuildContext context, AsyncSnapshot<String> bssid) {
+                      return Text("BSSID: ${bssid.data}");
+                    }),
                 onTap: () {
                   setState(() {
                     WiFiForIoTPlugin.getIP().then((value) => serverIp = value);
@@ -510,7 +516,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 ),
                 title: Text('Show Rooms/Staffs'),
                 onTap: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) => ShowRoomsStaffs()));
