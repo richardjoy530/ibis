@@ -226,11 +226,11 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                               return Column(
                                 children: <Widget>[
                                   Container(
-                                    margin: EdgeInsets.all(10),
+                                    //margin: EdgeInsets.all(10),
                                     decoration: BoxDecoration(
-                                        color: Color(0xff75c5ec),
-                                        borderRadius:
-                                            BorderRadius.circular(20)),
+                                      color: Color(0xffbddeee),
+                                      //borderRadius: BorderRadius.circular(20),
+                                    ),
                                     child: ListTile(
                                       leading: Icon(
                                         deviceObjectList[index].offline == true
@@ -257,29 +257,28 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                           '${deviceObjectList[index].name}'),
                                       subtitle: deviceObjectList[index].power ==
                                               false
-                                          ? Text(deviceObjectList[index]
-                                                      .offline ==
-                                                  true
-                                              ? 'Device not Connected'
-                                              : deviceObjectList[index]
-                                                          .motionDetected ==
-                                                      false
-                                                  ? 'Device Connected'
-                                                  : 'Motion Detected')
+                                          ? Text(
+                                              deviceObjectList[index].offline ==
+                                                      true
+                                                  ? 'Device not Connected'
+                                                  : deviceObjectList[index]
+                                                              .motionDetected ==
+                                                          false
+                                                      ? 'Device Connected'
+                                                      : 'Motion Detected')
                                           : LinearPercentIndicator(
                                               lineHeight: 5.0,
                                               animation: false,
                                               animationDuration: 0,
                                               backgroundColor:
-                                                  Color(0xffd6e7ee),
+                                                  Color(0xff9ad2ec),
                                               percent: deviceObjectList[index]
                                                   .linearProgressBarValue,
                                               linearStrokeCap:
                                                   LinearStrokeCap.roundAll,
                                               progressColor: Color(0xff019ae6),
                                             ),
-                                      onTap: () {
-                                      },
+                                      onTap: () {},
                                       onLongPress: () {
                                         setName(
                                           context,
@@ -291,8 +290,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                   Container(
                                     margin: EdgeInsets.only(
                                         top: 10,
-                                        left: 20,
-                                        right: 20,
+                                        left: 10,
+                                        right: 10,
                                         bottom: 10),
                                     decoration: BoxDecoration(
                                         color: Color(0xff9ad2ec),
@@ -303,11 +302,16 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                         Icons.lightbulb_outline,
                                         color: Color(0xff02457a),
                                       ),
-                                      title: Text(deviceObjectList[index].power==false?'Disinfect':deviceObjectList[index].pause==true?'Paused':'Disinfecting'),
+                                      title: Text(
+                                          deviceObjectList[index].power == false
+                                              ? 'Disinfect'
+                                              : deviceObjectList[index].pause ==
+                                                      true
+                                                  ? 'Paused'
+                                                  : 'Disinfecting'),
                                       subtitle: Text(
                                           'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
                                       onTap: () {
-                                        
                                         if (deviceObjectList[index].offline ==
                                             false) {
                                           if (deviceObjectList[index].power ==
@@ -349,8 +353,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                   Container(
                                     margin: EdgeInsets.only(
                                         top: 10,
-                                        left: 30,
-                                        right: 30,
+                                        left: 10,
+                                        right: 10,
                                         bottom: 10),
                                     decoration: BoxDecoration(
                                         color: Color(0xff9ad2ec),
@@ -383,11 +387,11 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                   Container(
                                     margin: EdgeInsets.only(
                                         top: 10,
-                                        left: 40,
-                                        right: 40,
+                                        left: 10,
+                                        right: 10,
                                         bottom: 10),
                                     decoration: BoxDecoration(
-                                        color: Color(0xffbddeee),
+                                        color: Color(0xff9ad2ec),
                                         borderRadius:
                                             BorderRadius.circular(20)),
                                     child: ListTile(
@@ -606,28 +610,28 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               Padding(
                   padding: const EdgeInsets.fromLTRB(200.0, 10, 200, 10),
                   child: Divider(thickness: 2, color: Colors.grey[500])),
-              ListTile(
-                leading: Icon(
-                  Icons.settings_input_composite,
-                  color: Color(0xff02457a),
-                ),
-                title: Text(
-                  'Server Ip: $serverIp',
-                ),
-                subtitle: FutureBuilder(
-                    future: WiFiForIoTPlugin.getSSID(),
-                    initialData: "Loading..",
-                    builder:
-                        (BuildContext context, AsyncSnapshot<String> bssid) {
-                      return Text("BSSID: ${bssid.data}");
-                    }),
-                onTap: () {
-                  setState(() {
-                    WiFiForIoTPlugin.getIP().then((value) => serverIp = value);
-                  });
-                  Navigator.pop(context);
-                },
-              ),
+            //  ListTile(
+            //     leading: Icon(
+            //       Icons.settings_input_composite,
+            //       color: Color(0xff02457a),
+            //     ),
+            //     title: Text(
+            //       'Server Ip: $serverIp',
+            //     ),
+            //     subtitle: FutureBuilder(
+            //         future: WiFiForIoTPlugin.getSSID(),
+            //         initialData: "Loading..",
+            //         builder:
+            //             (BuildContext context, AsyncSnapshot<String> bssid) {
+            //           return Text("BSSID: ${bssid.data}");
+            //         }),
+            //     onTap: () {
+            //       setState(() {
+            //         WiFiForIoTPlugin.getIP().then((value) => serverIp = value);
+            //       });
+            //       Navigator.pop(context);
+            //     },
+            //   ),
               ListTile(
                 leading: Icon(
                   Icons.view_list,
@@ -659,19 +663,19 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   });
                 },
               ),
-              ListTile(
-                leading: Icon(
-                  Icons.info_outline,
-                  color: Color(0xff02457a),
-                ),
-                title: Text('History'),
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => ShowHistory()),
-                  );
-                },
-              ),
+              // ListTile(
+              //   leading: Icon(
+              //     Icons.info_outline,
+              //     color: Color(0xff02457a),
+              //   ),
+              //   title: Text('History'),
+              //   onTap: () {
+              //     Navigator.pushReplacement(
+              //       context,
+              //       MaterialPageRoute(builder: (context) => ShowHistory()),
+              //     );
+              //   },
+              // ),
             ],
           );
         });

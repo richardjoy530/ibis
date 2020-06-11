@@ -15,7 +15,8 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'data.dart';
 import 'loding.dart';
 
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =  FlutterLocalNotificationsPlugin();
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 final customColor = CustomSliderColors(
   progressBarColor: Color(0xffd6e7ee),
   hideShadow: true,
@@ -224,8 +225,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     destroyAnimation(widget.deviceObject);
     mainTimer.cancel();
     if (widget.deviceObject.power == false &&
-        widget.deviceObject.clientError == false &&
-        widget.deviceObject.temp == true) {
+        widget.deviceObject.clientError == false) {
       widget.deviceObject.socket.write(65);
     }
     animationTimer.cancel();
@@ -235,6 +235,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    // if (widget.deviceObject.motionDetected == true) {
+    //   motionDetected(context);
+    // }
     return Scaffold(
       body: Container(
         padding: EdgeInsets.only(top: 40),
@@ -256,8 +259,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ),
                     onPressed: () {
                       if (widget.deviceObject.power == false &&
-                          widget.deviceObject.clientError == false &&
-                          widget.deviceObject.temp == true) {
+                          widget.deviceObject.clientError == false) {
                         widget.deviceObject.socket.write(65);
                       }
                       Navigator.pop(context);
@@ -277,42 +279,47 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     width: 30,
                     child: FlareActor(
                       'assets/status.flr',
-                      animation: widget.deviceObject.power==true&&widget.deviceObject.pause==false?'Connected':'off',
+                      animation: widget.deviceObject.power == true &&
+                              widget.deviceObject.pause == false
+                          ? 'Connected'
+                          : 'off',
                     ),
                   ),
                 ),
               ],
             ),
-            widget.deviceObject.motionDetected == true
-                ? AlertDialog(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                    title: Align(
-                        alignment: Alignment.center,
-                        child: Text('Motion Detected')),
-                    content: Column(
-                      children: <Widget>[
-                        Icon(
-                          Icons.warning,
-                          color: Color(0xff02457a),
-                          size: 50,
-                        ),
-                        Center(
-                          child: RaisedButton(
-                            color: Color(0xffd6e7ee),
-                            child: Center(
-                              child: Text('OK'),
-                            ),
-                            onPressed: () {
-                              widget.deviceObject.motionDetected = false;
-                              Navigator.pop(context);
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                : Expanded(child: tabView(context, widget.deviceObject))
+            // widget.deviceObject.motionDetected == true
+            //     ? Center(
+            //       child: AlertDialog(
+            //           shape: RoundedRectangleBorder(
+            //               borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            //           title: Align(
+            //               alignment: Alignment.center,
+            //               child: Text('Motion Detected')),
+            //           content: Column(
+            //             children: <Widget>[
+            //               Icon(
+            //                 Icons.warning,
+            //                 color: Color(0xff02457a),
+            //                 size: 50,
+            //               ),
+            //               Center(
+            //                 child: RaisedButton(
+            //                   color: Color(0xffd6e7ee),
+            //                   child: Center(
+            //                     child: Text('OK'),
+            //                   ),
+            //                   onPressed: () {
+            //                     widget.deviceObject.motionDetected = false;
+            //                     Navigator.pop(context);
+            //                   },
+            //                 ),
+            //               )
+            //             ],
+            //           ),
+            //         ),
+            //     ):
+            Expanded(child: tabView(context, widget.deviceObject))
           ],
         ),
       ),
@@ -356,22 +363,22 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               Padding(
                   padding: const EdgeInsets.fromLTRB(200.0, 10, 200, 10),
                   child: Divider(thickness: 2, color: Colors.grey[500])),
-              ListTile(
-                leading: Icon(
-                  Icons.settings_input_composite,
-                  color: Color(0xff02457a),
-                ),
-                title: Text(
-                  'Server Ip: $serverIp',
-                ),
-                subtitle: Text('Refresh'),
-                onTap: () {
-                  setState(() {
-                    WiFiForIoTPlugin.getIP().then((value) => serverIp = value);
-                  });
-                  Navigator.pop(context);
-                },
-              ),
+              // ListTile(
+              //   leading: Icon(
+              //     Icons.settings_input_composite,
+              //     color: Color(0xff02457a),
+              //   ),
+              //   title: Text(
+              //     'Server Ip: $serverIp',
+              //   ),
+              //   subtitle: Text('Refresh'),
+              //   onTap: () {
+              //     setState(() {
+              //       WiFiForIoTPlugin.getIP().then((value) => serverIp = value);
+              //     });
+              //     Navigator.pop(context);
+              //   },
+              // ),
               ListTile(
                 leading: Icon(
                   isEnabled == true
@@ -390,12 +397,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   });
                 },
               ),
-              ListTile(
-                  leading: Icon(
-                    Icons.info_outline,
-                    color: Color(0xff02457a),
-                  ),
-                  title: Text('About')),
+              // ListTile(
+              //     leading: Icon(
+              //       Icons.info_outline,
+              //       color: Color(0xff02457a),
+              //     ),
+              //     title: Text('About')),
             ],
           );
         });
@@ -411,7 +418,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             children: <Widget>[
               FlareActor(
                 'assets/breathing.flr',
-                animation: deviceObject.power == true&&deviceObject.pause==false ? 'off' : 'breath',
+                animation:
+                    deviceObject.power == true && deviceObject.pause == false
+                        ? 'off'
+                        : 'breath',
               ),
               CustomPaint(
                 child: Container(
@@ -538,10 +548,13 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           margin: EdgeInsets.all(20),
                           child: Text(
                             'Start',
-                            style: TextStyle(fontSize: 20,color: Color(0xff02457a)),
+                            style: TextStyle(
+                                fontSize: 20, color: Color(0xff02457a)),
                           )),
                       onPressed: () {
-                        start(deviceObject);
+                        if (deviceObject.time.inMinutes != 0) {
+                          start(deviceObject);
+                        }
                       },
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
@@ -558,7 +571,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           margin: EdgeInsets.all(20),
                           child: Text(
                             'Stop',
-                            style: TextStyle(fontSize: 20,color: Color(0xff02457a)),
+                            style: TextStyle(
+                                fontSize: 20, color: Color(0xff02457a)),
                           )),
                       onPressed: () {
                         confirmStop(context, deviceObject);
@@ -573,7 +587,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           margin: EdgeInsets.all(20),
                           child: Text(
                             deviceObject.pause == true ? 'Play' : 'Pause',
-                            style: TextStyle(fontSize: 20,color: Color(0xff02457a)),
+                            style: TextStyle(
+                                fontSize: 20, color: Color(0xff02457a)),
                           )),
                       onPressed: () {
                         playPause(deviceObject);
@@ -593,7 +608,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void start(DeviceObject deviceObject) {
     // Start
     deviceObject.flare = 'on';
-    deviceObject.temp = false;
+    //deviceObject.temp = false;
     deviceObject.socket.writeln(deviceObject.time.inMinutes.round());
     deviceObject.elapsedTime = 0;
     deviceObject.progressDegrees = 0;
@@ -733,6 +748,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         setState(() {
           deviceObject.progressDegrees = deviceObject.progressAnimation.value;
           if (deviceObject.motionDetected == true) {
+            motionDetected(context);
             prefs.setInt('${deviceObject.ip}totalDuration',
                 deviceObject.totalDuration.inSeconds);
             prefs.setInt('${deviceObject.ip}secondDuration',
@@ -808,6 +824,47 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return f.format((seconds / 60).floor());
   }
 
+  Future<void> motionDetected(context) async {
+    await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            backgroundColor: Color(0xffffffff),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            children: <Widget>[
+              Center(
+                child: Text('Motion Detected',style: TextStyle(
+                        color: Color(0xff02457a),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24),),
+              ),
+              Icon(
+                Icons.warning,
+                color: Color(0xff02457a),
+                size: 50,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SimpleDialogOption(
+                  child: Center(
+                      child: Text(
+                    'OK',
+                    
+                  )),
+                  onPressed: () {
+                    widget.deviceObject.motionDetected = false;
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ],
+          );
+        });
+  }
+
   Future<void> overOver(context) async {
     await showDialog(
         barrierDismissible: false,
@@ -820,12 +877,20 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
             title: Center(
               child: Text(
-                'Disinfect Again ?',
+                'Succesfully completed!',
                 style: TextStyle(
-                    color: Color(0xff02457a), fontWeight: FontWeight.bold),
+                    color: Color(0xff02457a),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24),
               ),
             ),
             children: <Widget>[
+              Center(
+                child: Text(
+                  'Continue disinfecting ?',
+                  style: TextStyle(color: Colors.blueGrey, fontSize: 20),
+                ),
+              ),
               SimpleDialogOption(
                 child: Center(child: Text('yes')),
                 onPressed: () {
@@ -863,7 +928,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
             title: Center(
               child: Text(
-                'Are you sure ?',
+                'Turn off ?',
                 style: TextStyle(
                     color: Color(0xff02457a), fontWeight: FontWeight.bold),
               ),

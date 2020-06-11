@@ -16,7 +16,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="RazeCov"
+        android:label="RAZE COV"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

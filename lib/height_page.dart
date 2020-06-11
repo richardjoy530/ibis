@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:clay_containers/clay_containers.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ibis/radial_painter.dart';
 
 import 'data.dart';
 import 'main.dart';
@@ -45,26 +45,15 @@ class _HeightPageState extends State<HeightPage> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          // Align(
-          //   alignment: Alignment.topCenter,
-          //   child: Container(
-          //     margin: EdgeInsets.only(top:100),
-          //     height: 300,
-          //     child: FlareActor(
-          //       'assets/lift.flr',
-          //       animation: 'up',
-          //     ),
-          //   ),
-          // ),
           Align(
             alignment: Alignment.center,
             child: Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //margin: EdgeInsets.only(right: 50),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   Container(
-                    margin: EdgeInsets.only(top: 100),
-                    height: 300,
+                    width: 250,
                     child: FlareActor(
                       'assets/lift.flr',
                       animation: flare,
@@ -73,102 +62,100 @@ class _HeightPageState extends State<HeightPage> {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20),
-                        child: Listener(
-                          child: ClayContainer(
-                            height: 100,
-                            width: 100,
-                            color: upBGColor,
-                            spread: 0,
-                            borderRadius: 20,
-                            customBorderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20.0),
-                                topRight: Radius.circular(20.0)),
-                            child: IconButton(
-                              iconSize: 50.0,
-                              color: upArrowColor,
-                              icon: Icon(Icons.add),
-                              onPressed: () {},
+                      Listener(
+                        child: Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          child: CustomPaint(
+                            painter: TrianglePainter(
+                              strokeColor: upBGColor,
+                              strokeWidth: 10,
+                              paintingStyle: PaintingStyle.fill,
+                            ),
+                            child: Container(
+                              height: 120,
+                              width: 100,
                             ),
                           ),
-                          onPointerDown: (data) {
-                            widget.deviceObject.socket.write('-3\r');
-                            upBGColor = upArrowColor;
-                            setState(() {
-                              flare = 'up';
-                            });
-                            upArrowColor = downBGColor;
-                            indicator = 1;
-                            if (widget.deviceObject.height != 100) {
-                              tick();
-                            }
-                          },
-                          onPointerUp: (data) {
-                            widget.deviceObject.socket.write('-1\r');
-                            setState(() {
-                              flare = 'idle';
-                            });
-                            setState(() {
-                              upArrowColor = Color(0xff02457a);
-                              upBGColor = Color(0xff5cbceb);
-                            });
+                        ),
+                        onPointerDown: (data) {
+                          widget.deviceObject.socket.write('-3\r');
+                          upBGColor = upArrowColor;
+                          setState(() {
+                            flare = 'up';
+                          });
+                          upArrowColor = downBGColor;
+                          indicator = 1;
+                          if (widget.deviceObject.height != 100) {
+                            tick();
+                          }
+                        },
+                        onPointerUp: (data) {
+                          widget.deviceObject.socket.write('-1\r');
+                          setState(() {
+                            flare = 'idle';
+                          });
+                          setState(() {
+                            upArrowColor = Color(0xff02457a);
+                            upBGColor = Color(0xff5cbceb);
+                          });
+                          if (timer!=null) {
                             timer.cancel();
-                            if (indicator != 0) {
-                              prefs.setInt('${widget.deviceObject.ip}height',
-                                  widget.deviceObject.height.toInt());
-                              indicator = 0;
-                            }
-                          },
-                        ),
+                          }
+                          if (indicator != 0) {
+                            prefs.setInt('${widget.deviceObject.ip}height',
+                                widget.deviceObject.height.toInt());
+                            indicator = 0;
+                          }
+                        },
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
-                        child: ClayContainer(
-                          height: 100,
-                          width: 100,
-                          spread: 0,
-                          color: downBGColor,
-                          customBorderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(20.0),
-                              bottomRight: Radius.circular(20.0)),
-                          child: Listener(
-                            child: IconButton(
-                              iconSize: 50.0,
-                              color: downArrowColor,
-                              icon: Icon(Icons.remove),
-                              onPressed: () {},
+                      Listener(
+                        child: Transform.rotate(
+                          angle: 3.14,
+                          child: Container(
+                            margin: EdgeInsets.only(bottom: 10),
+                            child: CustomPaint(
+                              painter: TrianglePainter(
+                                strokeColor: downBGColor,
+                                strokeWidth: 10,
+                                paintingStyle: PaintingStyle.fill,
+                              ),
+                              child: Container(
+                                height: 120,
+                                width: 100,
+                              ),
                             ),
-                            onPointerDown: (data) {
-                              downBGColor = downArrowColor;
-                              downArrowColor = upBGColor;
-                              setState(() {
-                                flare = 'down';
-                              });
-
-                              indicator = -1;
-                              widget.deviceObject.socket.write('-2\r');
-                              if (widget.deviceObject.height != 0) {
-                                tick();
-                              }
-                            },
-                            onPointerUp: (data) {
-                              widget.deviceObject.socket.write('-1\r');
-
-                              setState(() {
-                                flare = 'idle';
-                                downArrowColor = Color(0xff02457a);
-                                downBGColor = Color(0xff5cbceb);
-                              });
-                              timer.cancel();
-                              if (indicator != 0) {
-                                prefs.setInt('${widget.deviceObject.ip}height',
-                                    widget.deviceObject.height.toInt());
-                                indicator = 0;
-                              }
-                            },
                           ),
                         ),
+                        onPointerDown: (data) {
+                          downBGColor = downArrowColor;
+                          downArrowColor = upBGColor;
+                          setState(() {
+                            flare = 'down';
+                          });
+
+                          indicator = -1;
+                          widget.deviceObject.socket.write('-2\r');
+                          if (widget.deviceObject.height != 0) {
+                            tick();
+                          }
+                        },
+                        onPointerUp: (data) {
+                          widget.deviceObject.socket.write('-1\r');
+
+                          setState(() {
+                            flare = 'idle';
+                            downArrowColor = Color(0xff02457a);
+                            downBGColor = Color(0xff5cbceb);
+                          });
+                          if (timer!=null) {
+                            timer.cancel();
+                          }
+                          if (indicator != 0) {
+                            prefs.setInt('${widget.deviceObject.ip}height',
+                                widget.deviceObject.height.toInt());
+                            indicator = 0;
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -180,10 +167,11 @@ class _HeightPageState extends State<HeightPage> {
             alignment: Alignment.bottomCenter,
             child: Listener(
               child: Container(
-                width: MediaQuery.of(context).size.width,
+                margin: EdgeInsets.only(bottom: 10, left: 50, right: 50),
+                //width: MediaQuery.of(context).size.width,
                 height: 70,
                 decoration: BoxDecoration(
-                    //borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(20),
                     gradient: LinearGradient(
                         colors: [Color(0xff009ce9), Color(0xff83caec)],
                         begin: Alignment.topLeft,
@@ -205,7 +193,7 @@ class _HeightPageState extends State<HeightPage> {
                 prefs.setInt('${widget.deviceObject.ip}height',
                     widget.deviceObject.height.toInt());
                 widget.deviceObject.time = Duration(minutes: 0);
-                widget.deviceObject.temp = true;
+                //widget.deviceObject.temp = true;
                 widget.deviceObject.elapsedTime = 0;
                 widget.deviceObject.clientError = false;
                 isConnected = true;
@@ -222,30 +210,17 @@ class _HeightPageState extends State<HeightPage> {
               },
             ),
           ),
-          Positioned(
-            top: 30,
-            left: 0,
-            child: Row(
-              children: <Widget>[
-                IconButton(
-                    icon: Icon(
-                      Icons.arrow_back_ios,
-                      color: Color(0xff02457a),
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    }),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: Text(
-                    'Adjust Height',
-                    style: TextStyle(
-                      fontSize: 30,
-                      color: Color(0xff02457a),
-                    ),
-                  ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 30),
+              child: Text(
+                'Adjust Height',
+                style: TextStyle(
+                  fontSize: 30,
+                  color: Color(0xff02457a),
                 ),
-              ],
+              ),
             ),
           ),
         ],
