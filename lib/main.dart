@@ -176,6 +176,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void initState() {
     errorRemover = false;
     connectionError = true;
+    stopPressed = false;
 
     temp = 1;
     mainTick();
@@ -225,7 +226,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     destroyAnimation(widget.deviceObject);
     mainTimer.cancel();
     if (widget.deviceObject.power == false &&
-        widget.deviceObject.clientError == false) {
+        widget.deviceObject.clientError == false&&stopPressed==false) {
       widget.deviceObject.socket.write(65);
     }
     animationTimer.cancel();
@@ -260,7 +261,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     onPressed: () {
                       if (widget.deviceObject.power == false &&
                           widget.deviceObject.clientError == false) {
-                        widget.deviceObject.socket.write(65);
+                        //widget.deviceObject.socket.write(65);
                       }
                       Navigator.pop(context);
                     }),
@@ -743,7 +744,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     deviceObject.progressAnimation = Tween(begin: begin, end: end).animate(
         CurvedAnimation(
             parent: deviceObject.radialProgressAnimationController,
-            curve: Curves.linear))
+            curve: Curves.linear),)
       ..addListener(() {
         setState(() {
           deviceObject.progressDegrees = deviceObject.progressAnimation.value;
@@ -799,12 +800,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             deviceObject.time = Duration(minutes: 0);
             deviceObject.mainTime = Duration(minutes: 0);
           }
-        });
+        },);
         if (deviceObject.progressDegrees == 360) {
           deviceObject.progressDegrees = 0;
           overOver(context);
         }
-      });
+      },);
   }
 
   destroyAnimation(DeviceObject deviceObject) {
@@ -821,48 +822,52 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   getMinuets(int seconds) {
     var f = new NumberFormat("00", "en_US");
-    return f.format((seconds / 60).floor());
+    return f.format((seconds / 60).floor(),);
   }
 
   Future<void> motionDetected(context) async {
     await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            backgroundColor: Color(0xffffffff),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          backgroundColor: Color(0xffffffff),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          children: <Widget>[
+            Center(
+              child: Text(
+                'Motion Detected',
+                style: TextStyle(
+                    color: Color(0xff02457a),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24),
+              ),
             ),
-            children: <Widget>[
-              Center(
-                child: Text('Motion Detected',style: TextStyle(
-                        color: Color(0xff02457a),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24),),
-              ),
-              Icon(
-                Icons.warning,
-                color: Color(0xff02457a),
-                size: 50,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SimpleDialogOption(
-                  child: Center(
-                      child: Text(
+            Icon(
+              Icons.warning,
+              color: Color(0xff02457a),
+              size: 50,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SimpleDialogOption(
+                child: Center(
+                  child: Text(
                     'OK',
-                    
-                  )),
-                  onPressed: () {
-                    widget.deviceObject.motionDetected = false;
-                    Navigator.pop(context);
-                  },
+                  ),
                 ),
+                onPressed: () {
+                  widget.deviceObject.motionDetected = false;
+                  Navigator.pop(context);
+                },
               ),
-            ],
-          );
-        });
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> overOver(context) async {
@@ -877,7 +882,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
             title: Center(
               child: Text(
-                'Succesfully completed!',
+                'Succesfully completed!',textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Color(0xff02457a),
                     fontWeight: FontWeight.bold,
@@ -887,12 +892,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             children: <Widget>[
               Center(
                 child: Text(
-                  'Continue disinfecting ?',
+                  'Continue disinfecting ?',textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.blueGrey, fontSize: 20),
                 ),
               ),
               SimpleDialogOption(
-                child: Center(child: Text('yes')),
+                child: Center(child: Text('yes',textAlign: TextAlign.center)),
                 onPressed: () {
                   widget.deviceObject.clientError = false;
 
@@ -913,7 +918,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ),
             ],
           );
-        });
+        },);
   }
 
   Future<void> confirmStop(context, DeviceObject deviceObject) async {
@@ -935,7 +940,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
             children: <Widget>[
               SimpleDialogOption(
-                child: Center(child: Text('YES')),
+                child: Center(child: Text('YES'),),
                 onPressed: () {
                   print('stop');
                   databaseHelper.insertHistory(
@@ -954,7 +959,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       time: DateTime.now(),
                     ),
                   );
-
+                  stopPressed=true;
                   prefs.setInt('${deviceObject.ip}totalDuration',
                       deviceObject.totalDuration.inSeconds);
                   prefs.setInt('${deviceObject.ip}secondDuration',
@@ -976,14 +981,14 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 },
               ),
               SimpleDialogOption(
-                child: Center(child: Text('NO')),
+                child: Center(child: Text('NO'),),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               ),
             ],
           );
-        });
+        },);
   }
 
   Future<void> mainTick() async {

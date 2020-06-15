@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ibis/radial_painter.dart';
 
 import 'data.dart';
 import 'main.dart';
@@ -48,12 +47,12 @@ class _HeightPageState extends State<HeightPage> {
           Align(
             alignment: Alignment.center,
             child: Container(
-              //margin: EdgeInsets.only(right: 50),
+              //margin: EdgeInsets.only(right: 50,left: 50),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Container(
-                    width: 250,
+                    width: 100,
                     child: FlareActor(
                       'assets/lift.flr',
                       animation: flare,
@@ -64,18 +63,9 @@ class _HeightPageState extends State<HeightPage> {
                     children: <Widget>[
                       Listener(
                         child: Container(
-                          margin: EdgeInsets.only(bottom: 10),
-                          child: CustomPaint(
-                            painter: TrianglePainter(
-                              strokeColor: upBGColor,
-                              strokeWidth: 10,
-                              paintingStyle: PaintingStyle.fill,
-                            ),
-                            child: Container(
-                              height: 120,
-                              width: 100,
-                            ),
-                          ),
+                          height: 100,
+                          width: 100,
+                          child: Image.asset('images/up.png',color: upBGColor,),
                         ),
                         onPointerDown: (data) {
                           widget.deviceObject.socket.write('-3\r');
@@ -112,19 +102,10 @@ class _HeightPageState extends State<HeightPage> {
                         child: Transform.rotate(
                           angle: 3.14,
                           child: Container(
-                            margin: EdgeInsets.only(bottom: 10),
-                            child: CustomPaint(
-                              painter: TrianglePainter(
-                                strokeColor: downBGColor,
-                                strokeWidth: 10,
-                                paintingStyle: PaintingStyle.fill,
-                              ),
-                              child: Container(
-                                height: 120,
-                                width: 100,
-                              ),
-                            ),
-                          ),
+                          height: 100,
+                          width: 100,
+                          child: Image.asset('images/up.png',color: downBGColor,),
+                        ),
                         ),
                         onPointerDown: (data) {
                           downBGColor = downArrowColor;
@@ -167,7 +148,7 @@ class _HeightPageState extends State<HeightPage> {
             alignment: Alignment.bottomCenter,
             child: Listener(
               child: Container(
-                margin: EdgeInsets.only(bottom: 10, left: 50, right: 50),
+                margin: EdgeInsets.only(bottom: 10, left: (MediaQuery.of(context).size.width-200)/3, right: (MediaQuery.of(context).size.width-200)/3),
                 //width: MediaQuery.of(context).size.width,
                 height: 70,
                 decoration: BoxDecoration(

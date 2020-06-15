@@ -99,24 +99,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       deviceObjectList[i].totalDuration.inSeconds);
                   prefs.setInt('${deviceObjectList[i].ip}secondDuration',
                       deviceObjectList[i].secondDuration.inSeconds);
-                  databaseHelper.insertHistory(
-                    History(
-                      roomName: room,
-                      workerName: worker,
-                      state: 'Finished',
-                      time: DateTime.now(),
-                    ),
-                  );
-                  historyList.add(
-                    History(
-                      roomName: room,
-                      workerName: worker,
-                      state: 'Finished',
-                      time: DateTime.now(),
-                    ),
-                  );
 
                   deviceObjectList[i].power = false;
+                  deviceObjectList[i].completedStatus = true;
                   deviceObjectList[i].linearProgressBarValue = 0.0;
 
                   deviceObjectList[i].pause = false;
@@ -361,10 +346,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                         borderRadius:
                                             BorderRadius.circular(20)),
                                     child: ListTile(
-                                      leading: Icon(
-                                        Icons.adjust,
-                                        color: Color(0xff02457a),
-                                      ),
+                                      leading: Image.asset('images/sort.png',color: Color(0xff02457a),width: 25,),
                                       title: Text('Adjust Height'),
                                       subtitle: Text(
                                           'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
@@ -396,7 +378,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                             BorderRadius.circular(20)),
                                     child: ListTile(
                                       leading: Icon(
-                                        Icons.info_outline,
+                                        Icons.history,
                                         color: Color(0xff02457a),
                                       ),
                                       title: Text('Show History'),
@@ -610,28 +592,28 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               Padding(
                   padding: const EdgeInsets.fromLTRB(200.0, 10, 200, 10),
                   child: Divider(thickness: 2, color: Colors.grey[500])),
-            //  ListTile(
-            //     leading: Icon(
-            //       Icons.settings_input_composite,
-            //       color: Color(0xff02457a),
-            //     ),
-            //     title: Text(
-            //       'Server Ip: $serverIp',
-            //     ),
-            //     subtitle: FutureBuilder(
-            //         future: WiFiForIoTPlugin.getSSID(),
-            //         initialData: "Loading..",
-            //         builder:
-            //             (BuildContext context, AsyncSnapshot<String> bssid) {
-            //           return Text("BSSID: ${bssid.data}");
-            //         }),
-            //     onTap: () {
-            //       setState(() {
-            //         WiFiForIoTPlugin.getIP().then((value) => serverIp = value);
-            //       });
-            //       Navigator.pop(context);
-            //     },
-            //   ),
+              //  ListTile(
+              //     leading: Icon(
+              //       Icons.settings_input_composite,
+              //       color: Color(0xff02457a),
+              //     ),
+              //     title: Text(
+              //       'Server Ip: $serverIp',
+              //     ),
+              //     subtitle: FutureBuilder(
+              //         future: WiFiForIoTPlugin.getSSID(),
+              //         initialData: "Loading..",
+              //         builder:
+              //             (BuildContext context, AsyncSnapshot<String> bssid) {
+              //           return Text("BSSID: ${bssid.data}");
+              //         }),
+              //     onTap: () {
+              //       setState(() {
+              //         WiFiForIoTPlugin.getIP().then((value) => serverIp = value);
+              //       });
+              //       Navigator.pop(context);
+              //     },
+              //   ),
               ListTile(
                 leading: Icon(
                   Icons.view_list,
@@ -831,6 +813,85 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         });
   }
 
+  Future<void> overOver(context, DeviceObject deviceObject) async {
+    databaseHelper.insertHistory(
+                    History(
+                      roomName: room,
+                      workerName: worker,
+                      state: 'Finished',
+                      time: DateTime.now(),
+                    ),
+                  );
+                  historyList.add(
+                    History(
+                      roomName: room,
+                      workerName: worker,
+                      state: 'Finished',
+                      time: DateTime.now(),
+                    ),
+                  );
+    await showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          backgroundColor: Color(0xffffffff),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Center(
+            child: Text(
+              'Succesfully completed!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Color(0xff02457a),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24),
+            ),
+          ),
+          children: <Widget>[
+            Center(
+              child: Text(
+                'Continue disinfecting ?',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.blueGrey, fontSize: 20),
+              ),
+            ),
+            SimpleDialogOption(
+              child: Center(child: Text('yes', textAlign: TextAlign.center)),
+              onPressed: () {
+                deviceObject.clientError = false;
+                deviceObject.time = Duration(minutes: 0);
+                //deviceObject.temp = true;
+                deviceObject.elapsedTime = 0;
+                deviceObject.clientError = false;
+                isConnected = true;
+
+                deviceObject.socket.write('y\r');
+                //errorRemover = true;
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => HomePage(deviceObject)),
+                );
+              },
+            ),
+            SimpleDialogOption(
+              child: Center(child: Text('No')),
+              onPressed: () {
+                deviceObject.clientError = false;
+
+                deviceObject.socket.write('n\r');
+                Navigator.pop(context);
+                //Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> showingCompletedPop(context, DeviceObject deviceObject) async {
     await showDialog(
         context: context,
@@ -907,7 +968,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   Future<void> completedPop(
       BuildContext context, DeviceObject deviceObject) async {
     Future.delayed(Duration(milliseconds: 300), () {
-      showingCompletedPop(context, deviceObject);
+      overOver(context, deviceObject);
     });
   }
 

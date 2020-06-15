@@ -10,6 +10,7 @@ import 'package:sqflite/sqflite.dart';
 import 'main.dart' as main;
 
 int displayTime;
+bool stopPressed = false;
 bool connectionError = false;
 SharedPreferences prefs;
 String deviceName;
