@@ -191,7 +191,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         widget.deviceObject.radialProgressAnimationController.forward();
       }
     }
-
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
     animationTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
       dotTimer += 1;
