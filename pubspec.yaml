@@ -39,6 +39,7 @@ dependencies:
   fluttertoast: ^4.0.0
   dots_indicator: ^1.0.0
   wakelock: ^0.1.4+1
+  qrscan: ^0.2.17
 
 dev_dependencies:
   flutter_test:
