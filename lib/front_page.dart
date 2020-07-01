@@ -51,6 +51,14 @@ Future<void> wifi() async {
         isConnected = val;
         print('Connected:$isConnected');
       }
+      if(val==true)
+        {
+          WiFiForIoTPlugin.disconnect();
+          WiFiForIoTPlugin.connect(prefs.getString('SSID'),
+              password: prefs.getString('password'),
+              joinOnce: true,
+              security: NetworkSecurity.WPA);
+        }
       if (val != true) {
         WiFiForIoTPlugin.connect(prefs.getString('SSID'),
                 password: prefs.getString('password'),

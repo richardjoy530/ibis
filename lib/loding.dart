@@ -1,4 +1,3 @@
-import 'package:qrscan/qrscan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -16,19 +15,8 @@ class Loding extends StatefulWidget {
 class _LodingState extends State<Loding> {
   @override
   void initState() {
-    Wakelock.enable();
     load();
-    String fetchSsid=prefs.getString('SSID')??' ';
-    //print('fetchssid:'+fetchSsid);
-    if(fetchSsid==' ')
-      {
-        Scan();
-      }
-    else
-      {
-      wifi();
-
-    }
+    Wakelock.enable();
     wifiTimer = Timer.periodic(
       Duration(seconds: 3),
       (data) {
@@ -37,6 +25,7 @@ class _LodingState extends State<Loding> {
         }
       },
     );
+    wifi();
     redirect();
     super.initState();
   }
