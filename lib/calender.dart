@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ibis/data.dart';
 import 'package:table_calendar/table_calendar.dart';
 //import 'data.dart';
 
@@ -69,7 +70,9 @@ class _CalenderPageState extends State<CalenderPage> {
           //const SizedBox(height: 8.0),
           //_buildButtons(),
           //const SizedBox(height: 8.0),
-         // Expanded(child: _buildEventList()),
+          Expanded(
+              child: _buildEventList()
+          ),
         ],
       ),
     );
@@ -81,21 +84,43 @@ class _CalenderPageState extends State<CalenderPage> {
      // holidays: _holidays,
       startingDayOfWeek: StartingDayOfWeek.sunday,
       calendarStyle: CalendarStyle(
-        selectedColor: Colors.blue,
-        todayColor: Colors.lightBlue,
-        markersColor: Colors.blue,
-        outsideDaysVisible: false,
+            selectedColor: Colors.blue,
+            todayColor: Colors.lightBlue,
+            markersColor: Colors.blue,
+            outsideDaysVisible: false,
       ),
       headerStyle: HeaderStyle(
-        formatButtonTextStyle: TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
-        formatButtonDecoration: BoxDecoration(
-          color: Colors.blue,
-          borderRadius: BorderRadius.circular(16.0),
-        ),
+                formatButtonTextStyle: TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
+                formatButtonDecoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(16.0),
+                ),
       ),
-     // onDaySelected: _onDaySelected,
+     onDaySelected: (date,events){
+        print(date);
+        setState(() {
+         // _selectedEvents=_events[date];
+        });
+     },
     //  onVisibleDaysChanged: _onVisibleDaysChanged,
      // onCalendarCreated: _onCalendarCreated,
+    );
+  }
+  Widget _buildEventList() {
+    return ListView(
+      children: _selectedEvents
+          .map((event) => Container(
+        decoration: BoxDecoration(
+          border: Border.all(width: 0.8),
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+        child: ListTile(
+          title: Text(event.toString()),
+          onTap: () => print('$event tapped!'),
+        ),
+      ))
+          .toList(),
     );
   }
 }
