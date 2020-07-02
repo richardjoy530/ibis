@@ -11,6 +11,7 @@ import 'package:wifi_iot/wifi_iot.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
+import 'calender.dart';
 import 'data.dart';
 import 'show_rooms_workers.dart';
 Future<void> scanIbis() async
@@ -671,19 +672,29 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   });
                 },
               ),
-              // ListTile(
-              //   leading: Icon(
-              //     Icons.info_outline,
-              //     color: Color(0xff02457a),
-              //   ),
-              //   title: Text('History'),
-              //   onTap: () {
-              //     Navigator.pushReplacement(
-              //       context,
-              //       MaterialPageRoute(builder: (context) => ShowHistory()),
-              //     );
-              //   },
-              // ),
+              ListTile(
+                leading: Icon(
+                  Icons.info_outline,
+                  color: Color(0xff02457a),
+                ),
+                title: Text('History'),
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => CalenderPage()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.scatter_plot
+                ),
+                title: Text('QR Scanner'),
+                onTap: ()
+                {
+                  scanIbis();
+                },
+              ),
             ],
           );
         });
