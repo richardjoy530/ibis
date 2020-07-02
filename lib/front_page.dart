@@ -11,11 +11,10 @@ import 'package:wifi_iot/wifi_iot.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
+import 'calender.dart';
 import 'data.dart';
 import 'show_rooms_workers.dart';
-import 'calender.dart';
-
-Future<void> Scan() async
+Future<void> scanIbis() async
 {
   String cameraScanResult = await scanner.scan();
   var data=cameraScanResult.split(',');
@@ -127,24 +126,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       deviceObjectList[i].totalDuration.inSeconds);
                   prefs.setInt('${deviceObjectList[i].ip}secondDuration',
                       deviceObjectList[i].secondDuration.inSeconds);
-                  databaseHelper.insertHistory(
-                    History(
-                      roomName: room,
-                      workerName: worker,
-                      state: 'Finished',
-                      time: DateTime.now(),
-                    ),
-                  );
-                  historyList.add(
-                    History(
-                      roomName: room,
-                      workerName: worker,
-                      state: 'Finished',
-                      time: DateTime.now(),
-                    ),
-                  );
 
                   deviceObjectList[i].power = false;
+                  deviceObjectList[i].completedStatus = true;
                   deviceObjectList[i].linearProgressBarValue = 0.0;
 
                   deviceObjectList[i].pause = false;
@@ -195,298 +179,330 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return new WillPopScope(child: Scaffold(
-      body: Container(
-        padding: EdgeInsets.only(top: 40),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xffffffff), Color(0xffffffff)]),
-        ),
-        child: Column(
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20),
-                    height: 30,
-                    width: 30,
-                    child: FlareActor(
-                      'assets/status.flr',
-                      animation: 'Connected',
+    return WillPopScope(
+          child: Scaffold(
+        body: Container(
+          padding: EdgeInsets.only(top: 40),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0xffffffff), Color(0xffffffff)]),
+          ),
+          child: Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      height: 30,
+                      width: 30,
+                      child: FlareActor(
+                        'assets/status.flr',
+                        animation: 'off',
+                      ),
                     ),
                   ),
-                ),
-                Expanded(child: Image.asset('images/razecov.jfif')),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  child: IconButton(
-                    icon: Icon(Icons.menu),
-                    color: Color(0xff019ae6),
-                    onPressed: () {
-                      onMenuPressed(context);
-                    },
-                  ),
-                )
-              ],
-            ),
-            serverOnline == true
-                ? deviceObjectList.length == 0
-                ? Center(
-              child: Container(
-                margin: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                    color: Color(0xffd6e7ee),
-                    borderRadius: BorderRadius.circular(20)),
-                child: ListTile(
-                  leading: Icon(Icons.wifi_tethering),
-                  title: Text('Please connect your device!'),
-                ),
+                  Expanded(child: Image.asset('images/razecov.jfif')),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    child: IconButton(
+                      icon: Icon(Icons.menu),
+                      color: Color(0xff019ae6),
+                      onPressed: () {
+                        onMenuPressed(context);
+                      },
+                    ),
+                  )
+                ],
               ),
-            )
-                : Expanded(
-              child: ListView.builder(
-                  physics: BouncingScrollPhysics(),
-                  controller: scrollController,
-                  itemCount: deviceObjectList.length,
-                  itemBuilder: (context, index) {
-                    if (deviceObjectList[index].name == 'Device') {
-                      deviceObjectList[index].name = '';
-                      nameIt(context, deviceObjectList[index]);
-                    }
-                    if (deviceObjectList[index]
-                        .earlyMotionDetection ==
-                        true) {
-                      deviceObjectList[index].earlyMotionDetection =
-                      false;
-                      earlyMotionDetection(
-                          context, deviceObjectList[index]);
-                    }
-                    return Column(
-                      children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                              color: Color(0xff75c5ec),
-                              borderRadius:
-                              BorderRadius.circular(20)),
-                          child: ListTile(
-                            leading: Icon(
-                              deviceObjectList[index].offline == true
-                                  ? Icons.signal_wifi_off
-                                  : Icons.network_wifi,
-                              color: Color(0xff019ae6),
+              serverOnline == true
+                  ? deviceObjectList.length == 0
+                      ? Center(
+                          child: Container(
+                            margin: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                                color: Color(0xffd6e7ee),
+                                borderRadius: BorderRadius.circular(20)),
+                            child: ListTile(
+                              leading: Icon(Icons.wifi_tethering),
+                              title: Text('Please connect your device!'),
                             ),
-                            trailing: deviceObjectList[index]
-                                .motionDetected ==
-                                true
-                                ? Icon(
-                              Icons.warning,
-                              color: Color(0xff019ae6),
-                            )
-                                : IconButton(
-                              icon: Icon(Icons.more_vert,
-                                  color: Color(0xff019ae6)),
-                              onPressed: () {
-                                info(context,
-                                    deviceObjectList[index]);
-                              },
-                            ),
-                            title: Text(
-                                '${deviceObjectList[index].name}'),
-                            subtitle: deviceObjectList[index].power ==
-                                false
-                                ? Text(deviceObjectList[index]
-                                .offline ==
-                                true
-                                ? 'Device not Connected'
-                                : deviceObjectList[index]
-                                .motionDetected ==
-                                false
-                                ? 'Tap to disenfect'
-                                : 'Motion Detected : Tap to start again')
-                                : LinearPercentIndicator(
-                              lineHeight: 5.0,
-                              animation: false,
-                              animationDuration: 0,
-                              backgroundColor:
-                              Color(0xffd6e7ee),
-                              percent: deviceObjectList[index]
-                                  .linearProgressBarValue,
-                              linearStrokeCap:
-                              LinearStrokeCap.roundAll,
-                              progressColor: Color(0xff019ae6),
-                            ),
-                            onTap: () {
-                              if (deviceObjectList[index].offline ==
-                                  false) {
-                                if (deviceObjectList[index].power ==
-                                    true) {
-                                  deviceObjectList[index]
-                                      .clientError = false;
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => HomePage(
-                                        deviceObjectList[index],
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  deviceObjectList[index]
-                                      .motionDetected = false;
-                                  deviceObjectList[index].time =
-                                      Duration(minutes: 0);
-                                  deviceObjectList[index]
-                                      .progressDegrees = 0;
-                                  if (rooms.length != 0) {
-                                    if (workers.length != 0) {
-                                      showRooms(
-                                        context,
-                                        deviceObjectList[index],
-                                      );
-                                    } else {
-                                      addWorker(context);
-                                    }
-                                  } else {
-                                    addRooms(context);
-                                  }
-                                }
-                              }
-                            },
-                            onLongPress: () {
-                              setName(
-                                context,
-                                deviceObjectList[index],
-                              );
-                            },
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(
-                              top: 10,
-                              left: 20,
-                              right: 20,
-                              bottom: 10),
-                          decoration: BoxDecoration(
-                              color: Color(0xff9ad2ec),
-                              borderRadius:
-                              BorderRadius.circular(20)),
-                          child: ListTile(
-                            leading: Icon(
-                              Icons.adjust,
-                              color: Color(0xff019ae6),
-                            ),
-                            title: Text('Adjust Height'),
-                            subtitle: Text(
-                                'Device: ${deviceObjectList[index].offline==true?'Not connected':deviceObjectList[index].name}'),
-                            onTap: () {
-                              if (deviceObjectList[index].offline ==
-                                  false) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => HeightPage(
-                                      deviceObjectList[index],
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(
-                              top: 10,
-                              left: 30,
-                              right: 30,
-                              bottom: 10),
-                          decoration: BoxDecoration(
-                              color: Color(0xffbddeee),
-                              borderRadius:
-                              BorderRadius.circular(20)),
-                          child: ListTile(
-                            leading: Icon(
-                              Icons.adjust,
-                              color: Color(0xff019ae6),
-                            ),
-                            title: Text('Show History'),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ShowHistory(),
-                                ),
-                              );
-                            },
                           ),
                         )
-                      ],
-                    );
-                  }),
-            )
-                : Align(
-              alignment: Alignment.center,
-              child: AlertDialog(
-                backgroundColor: Color(0xffffffff),
-                shape: RoundedRectangleBorder(
-                    borderRadius:
-                    BorderRadius.all(Radius.circular(20.0))),
-                title: Text(
-                  'Server is Offline',
-                  style: TextStyle(
-                      color: Color(0xff02457a),
-                      fontWeight: FontWeight.bold),
-                ),
-                content: IconButton(
-                  icon: Icon(
-                    Icons.refresh,
-                    color: Color(0xff019ae6),
-                  ),
-                  onPressed: () {
-                    connect();
-                  },
-                ),
-              ),
-            ),
-          ],
+                      : Expanded(
+                          child: ListView.builder(
+                              physics: BouncingScrollPhysics(),
+                              controller: scrollController,
+                              itemCount: deviceObjectList.length,
+                              itemBuilder: (context, index) {
+                                if (deviceObjectList[index].name == 'Device') {
+                                  deviceObjectList[index].name = '';
+                                  nameIt(context, deviceObjectList[index]);
+                                }
+                                if (deviceObjectList[index]
+                                        .earlyMotionDetection ==
+                                    true) {
+                                  deviceObjectList[index].earlyMotionDetection =
+                                      false;
+                                  earlyMotionDetection(
+                                      context, deviceObjectList[index]);
+                                }
+                                if (deviceObjectList[index].completedStatus ==
+                                    true) {
+                                  deviceObjectList[index].completedStatus = false;
+                                  completedPop(context, deviceObjectList[index]);
+                                }
+                                return Column(
+                                  children: <Widget>[
+                                    Container(
+                                      //margin: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: Color(0xffbddeee),
+                                        //borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: ListTile(
+                                        leading: Icon(
+                                          deviceObjectList[index].offline == true
+                                              ? Icons.signal_wifi_off
+                                              : Icons.network_wifi,
+                                          color: Color(0xff02457a),
+                                        ),
+                                        trailing: deviceObjectList[index]
+                                                    .motionDetected ==
+                                                true
+                                            ? Icon(
+                                                Icons.warning,
+                                                color: Color(0xff02457a),
+                                              )
+                                            : IconButton(
+                                                icon: Icon(Icons.more_vert,
+                                                    color: Color(0xff02457a)),
+                                                onPressed: () {
+                                                  info(context,
+                                                      deviceObjectList[index]);
+                                                },
+                                              ),
+                                        title: Text(
+                                            '${deviceObjectList[index].name}'),
+                                        subtitle: deviceObjectList[index].power ==
+                                                false
+                                            ? Text(
+                                                deviceObjectList[index].offline ==
+                                                        true
+                                                    ? 'Device not Connected'
+                                                    : deviceObjectList[index]
+                                                                .motionDetected ==
+                                                            false
+                                                        ? 'Device Connected'
+                                                        : 'Motion Detected')
+                                            : LinearPercentIndicator(
+                                                lineHeight: 5.0,
+                                                animation: false,
+                                                animationDuration: 0,
+                                                backgroundColor:
+                                                    Color(0xff9ad2ec),
+                                                percent: deviceObjectList[index]
+                                                    .linearProgressBarValue,
+                                                linearStrokeCap:
+                                                    LinearStrokeCap.roundAll,
+                                                progressColor: Color(0xff019ae6),
+                                              ),
+                                        onTap: () {},
+                                        onLongPress: () {
+                                          setName(
+                                            context,
+                                            deviceObjectList[index],
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          top: 10,
+                                          left: 10,
+                                          right: 10,
+                                          bottom: 10),
+                                      decoration: BoxDecoration(
+                                          color: Color(0xff9ad2ec),
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: ListTile(
+                                        leading: Icon(
+                                          Icons.lightbulb_outline,
+                                          color: Color(0xff02457a),
+                                        ),
+                                        title: Text(
+                                            deviceObjectList[index].power == false
+                                                ? 'Disinfect'
+                                                : deviceObjectList[index].pause ==
+                                                        true
+                                                    ? 'Paused'
+                                                    : 'Disinfecting'),
+                                        subtitle: Text(
+                                            'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
+                                        onTap: () {
+                                          if (deviceObjectList[index].offline ==
+                                              false) {
+                                            if (deviceObjectList[index].power ==
+                                                true) {
+                                              deviceObjectList[index]
+                                                  .clientError = false;
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => HomePage(
+                                                    deviceObjectList[index],
+                                                  ),
+                                                ),
+                                              );
+                                            } else {
+                                              deviceObjectList[index]
+                                                  .motionDetected = false;
+                                              deviceObjectList[index].time =
+                                                  Duration(minutes: 0);
+                                              deviceObjectList[index]
+                                                  .progressDegrees = 0;
+                                              if (rooms.length != 0) {
+                                                if (workers.length != 0) {
+                                                  showRooms(
+                                                    context,
+                                                    deviceObjectList[index],
+                                                  );
+                                                } else {
+                                                  addWorker(context);
+                                                }
+                                              } else {
+                                                addRooms(context);
+                                              }
+                                            }
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          top: 10,
+                                          left: 10,
+                                          right: 10,
+                                          bottom: 10),
+                                      decoration: BoxDecoration(
+                                          color: Color(0xff9ad2ec),
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: ListTile(
+                                        leading: Image.asset('images/sort.png',color: Color(0xff02457a),width: 25,),
+                                        title: Text('Adjust Height'),
+                                        subtitle: Text(
+                                            'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
+                                        onTap: () {
+                                          if (deviceObjectList[index].offline ==
+                                              false) {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => HeightPage(
+                                                  deviceObjectList[index],
+                                                  justHeight: true,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          top: 10,
+                                          left: 10,
+                                          right: 10,
+                                          bottom: 10),
+                                      decoration: BoxDecoration(
+                                          color: Color(0xff9ad2ec),
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: ListTile(
+                                        leading: Icon(
+                                          Icons.history,
+                                          color: Color(0xff02457a),
+                                        ),
+                                        title: Text('Show History'),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => ShowHistory(),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    )
+                                  ],
+                                );
+                              }),
+                        )
+                  : Align(
+                      alignment: Alignment.center,
+                      child: AlertDialog(
+                        backgroundColor: Color(0xffffffff),
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20.0))),
+                        title: Text(
+                          'Server is Offline',
+                          style: TextStyle(
+                              color: Color(0xff02457a),
+                              fontWeight: FontWeight.bold),
+                        ),
+                        content: IconButton(
+                          icon: Icon(
+                            Icons.refresh,
+                            color: Color(0xff019ae6),
+                          ),
+                          onPressed: () {
+                            connect();
+                          },
+                        ),
+                      ),
+                    ),
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: Container(
-        padding: EdgeInsets.fromLTRB(25, 0, 0, 0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            FloatingActionButton.extended(
-              backgroundColor: Color(0xff44b3ea),
-              heroTag: 'hero1',
-              label: Text(
-                'Staff',
-                style: TextStyle(fontSize: 20, color: Color(0xff02457a)),
+        floatingActionButton: Container(
+          padding: EdgeInsets.fromLTRB(25, 0, 0, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              FloatingActionButton.extended(
+                backgroundColor: Color(0xff02457a),
+                heroTag: 'hero1',
+                label: Text(
+                  'Staff',
+                  style: TextStyle(fontSize: 20, color: Color(0xffffffff)),
+                ),
+                icon: Icon(Icons.add, color: Color(0xffffffff)),
+                onPressed: () {
+                  addWorker(context);
+                },
               ),
-              icon: Icon(Icons.add, color: Color(0xff02457a)),
-              onPressed: () {
-                addWorker(context);
-              },
-            ),
-            FloatingActionButton.extended(
-              backgroundColor: Color(0xff44b3ea),
-              heroTag: 'hero2',
-              label: Text('Room',
-                  style: TextStyle(fontSize: 20, color: Color(0xff02457a))),
-              icon: Icon(Icons.add, color: Color(0xff02457a)),
-              onPressed: () {
-                addRooms(context);
-              },
-            )
-          ],
+              FloatingActionButton.extended(
+                backgroundColor: Color(0xff02457a),
+                heroTag: 'hero2',
+                label: Text('Room',
+                    style: TextStyle(fontSize: 20, color: Color(0xffffffff))),
+                icon: Icon(Icons.add, color: Color(0xffffffff)),
+                onPressed: () {
+                  addRooms(context);
+                },
+              )
+            ],
+          ),
         ),
-      ),
-    ), onWillPop: _onWillPop) ;
+      )
+    ,onWillPop: _onWillPop,);
   }
 
   Future<void> addRooms(BuildContext context) async {
@@ -625,28 +641,28 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               Padding(
                   padding: const EdgeInsets.fromLTRB(200.0, 10, 200, 10),
                   child: Divider(thickness: 2, color: Colors.grey[500])),
-              ListTile(
-                leading: Icon(
-                  Icons.settings_input_composite,
-                  color: Color(0xff02457a),
-                ),
-                title: Text(
-                  'Server Ip: $serverIp',
-                ),
-                subtitle: FutureBuilder(
-                    future: WiFiForIoTPlugin.getSSID(),
-                    initialData: "Loading..",
-                    builder:
-                        (BuildContext context, AsyncSnapshot<String> bssid) {
-                      return Text("BSSID: ${bssid.data}");
-                    }),
-                onTap: () {
-                  setState(() {
-                    WiFiForIoTPlugin.getIP().then((value) => serverIp = value);
-                  });
-                  Navigator.pop(context);
-                },
-              ),
+              //  ListTile(
+              //     leading: Icon(
+              //       Icons.settings_input_composite,
+              //       color: Color(0xff02457a),
+              //     ),
+              //     title: Text(
+              //       'Server Ip: $serverIp',
+              //     ),
+              //     subtitle: FutureBuilder(
+              //         future: WiFiForIoTPlugin.getSSID(),
+              //         initialData: "Loading..",
+              //         builder:
+              //             (BuildContext context, AsyncSnapshot<String> bssid) {
+              //           return Text("BSSID: ${bssid.data}");
+              //         }),
+              //     onTap: () {
+              //       setState(() {
+              //         WiFiForIoTPlugin.getIP().then((value) => serverIp = value);
+              //       });
+              //       Navigator.pop(context);
+              //     },
+              //   ),
               ListTile(
                 leading: Icon(
                   Icons.view_list,
@@ -698,7 +714,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 title: Text('QR Scanner'),
                 onTap: ()
                 {
-                  Scan();
+                  scanIbis();
                 },
               ),
             ],
@@ -841,16 +857,115 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             title: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      'Motion detected while disconnected',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ],
+                Text(
+                  'Motion detected while disconnected ',
+                  style: TextStyle(fontSize: 20),
+                ),
+                Text(
+                  '${deviceObject.earlyMotionDetectionTime} mins completed',
+                  style: TextStyle(fontSize: 15, color: Colors.grey),
                 ),
                 Icon(Icons.warning, color: Color(0xff02457a))
+              ],
+            ),
+          );
+        });
+  }
+
+  Future<void> overOver(context, DeviceObject deviceObject) async {
+    databaseHelper.insertHistory(
+                    History(
+                      roomName: room,
+                      workerName: worker,
+                      state: 'Finished',
+                      time: DateTime.now(),
+                    ),
+                  );
+                  historyList.add(
+                    History(
+                      roomName: room,
+                      workerName: worker,
+                      state: 'Finished',
+                      time: DateTime.now(),
+                    ),
+                  );
+    await showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          backgroundColor: Color(0xffffffff),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Center(
+            child: Text(
+              'Succesfully completed!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Color(0xff02457a),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24),
+            ),
+          ),
+          children: <Widget>[
+            Center(
+              child: Text(
+                'Continue disinfecting ?',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.blueGrey, fontSize: 20),
+              ),
+            ),
+            SimpleDialogOption(
+              child: Center(child: Text('yes', textAlign: TextAlign.center)),
+              onPressed: () {
+                deviceObject.clientError = false;
+                deviceObject.time = Duration(minutes: 0);
+                //deviceObject.temp = true;
+                deviceObject.elapsedTime = 0;
+                deviceObject.clientError = false;
+                isConnected = true;
+
+                deviceObject.socket.write('y\r');
+                //errorRemover = true;
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => HomePage(deviceObject)),
+                );
+              },
+            ),
+            SimpleDialogOption(
+              child: Center(child: Text('No')),
+              onPressed: () {
+                deviceObject.clientError = false;
+
+                deviceObject.socket.write('n\r');
+                Navigator.pop(context);
+                //Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showingCompletedPop(context, DeviceObject deviceObject) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            titlePadding: EdgeInsets.all(25),
+            title: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  '${deviceObject.name} Completed disinfecting',
+                  style: TextStyle(fontSize: 20),
+                ),
               ],
             ),
           );
@@ -902,12 +1017,17 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         });
   }
 
-
-
   Future<void> earlyMotionDetection(
       BuildContext context, DeviceObject deviceObject) async {
     Future.delayed(Duration(milliseconds: 300), () {
       showingMotion(context, deviceObject);
+    });
+  }
+
+  Future<void> completedPop(
+      BuildContext context, DeviceObject deviceObject) async {
+    Future.delayed(Duration(milliseconds: 300), () {
+      overOver(context, deviceObject);
     });
   }
 
