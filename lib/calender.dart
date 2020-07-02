@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ibis/data.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:fl_chart/fl_chart.dart';
 //import 'data.dart';
 
 class CalenderPage extends StatefulWidget {
@@ -96,6 +98,7 @@ class _CalenderPageState extends State<CalenderPage> {
       ),
      onDaySelected: (date,events){
         print(date);
+        print(historyList.length);
         setState(() {
          // _selectedEvents=_events[date];
         });
@@ -105,20 +108,13 @@ class _CalenderPageState extends State<CalenderPage> {
     );
   }
   Widget _buildEventList() {
-    return ListView(
-      children: _selectedEvents
-          .map((event) => Container(
-        decoration: BoxDecoration(
-          border: Border.all(width: 0.8),
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-        child: ListTile(
-          title: Text(event.toString()),
-          onTap: () => print('$event tapped!'),
-        ),
-      ))
-          .toList(),
+    return Container(
+      padding: EdgeInsets.all(8.0),
+      height:MediaQuery.of(context).size.height/2,
+      width: MediaQuery.of(context).size.width/1,
+      child: BarChart(
+
+      ),
     );
   }
 }

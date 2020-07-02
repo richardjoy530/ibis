@@ -44,6 +44,7 @@ final List<bool> isSelected = [false];
 
 class DeviceObject {
   bool temp;
+  bool completedStatus;
   int elapsedTime;
   Duration mainTime;
   bool offline;
@@ -68,6 +69,7 @@ class DeviceObject {
   String earlyMotionDetectionTime;
   DeviceObject({
     this.temp,
+    this.completedStatus,
     this.flare = 'off',
     this.elapsedTime = 0,
     this.ip,
