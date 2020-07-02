@@ -13,6 +13,7 @@ import 'package:qrscan/qrscan.dart' as scanner;
 
 import 'data.dart';
 import 'show_rooms_workers.dart';
+import 'calender.dart';
 
 Future<void> Scan() async
 {
@@ -177,7 +178,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
       context: context,
       builder: (context) => new AlertDialog(
         title: new Text('Are you sure?'),
-        content: new Text('Do you want to exit an App'),
+        content: new Text('Do you want to exit the App'),
         actions: <Widget>[
           new FlatButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -686,7 +687,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 onTap: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => ShowHistory()),
+                    MaterialPageRoute(builder: (context) => CalenderPage()),
                   );
                 },
               ),

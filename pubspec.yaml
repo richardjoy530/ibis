@@ -40,6 +40,7 @@ dependencies:
   dots_indicator: ^1.0.0
   wakelock: ^0.1.4+1
   qrscan: ^0.2.17
+  table_calendar: ^2.2.3
 
 dev_dependencies:
   flutter_test:
