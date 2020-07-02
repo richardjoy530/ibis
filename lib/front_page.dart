@@ -9,9 +9,27 @@ import 'package:ibis/show_history.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:qrscan/qrscan.dart' as scanner;
 
 import 'data.dart';
 import 'show_rooms_workers.dart';
+Future<void> scanIbis() async
+{
+  String cameraScanResult = await scanner.scan();
+  var data=cameraScanResult.split(',');
+  String ssid=data[1];
+  String password=data[3];
+  WiFiForIoTPlugin.connect(ssid,
+      password: password,
+      joinOnce: true,
+      security: NetworkSecurity.WPA);
+  WiFiForIoTPlugin.isConnected().then((value) => isConnected=value );
+  if(isConnected==true)
+  {
+    prefs.setString('SSID', ssid);
+    prefs.setString('password', password);
+  }
+}
 
 Future<void> wifi() async {
   WiFiForIoTPlugin.isEnabled().then(
@@ -32,9 +50,17 @@ Future<void> wifi() async {
         isConnected = val;
         print('Connected:$isConnected');
       }
+      if(val==true)
+        {
+          WiFiForIoTPlugin.disconnect();
+          WiFiForIoTPlugin.connect(prefs.getString('SSID'),
+              password: prefs.getString('password'),
+              joinOnce: true,
+              security: NetworkSecurity.WPA);
+        }
       if (val != true) {
-        WiFiForIoTPlugin.connect('ESP32-Access-Point',
-                password: '123456789',
+        WiFiForIoTPlugin.connect(prefs.getString('SSID'),
+                password: prefs.getString('password'),
                 joinOnce: true,
                 security: NetworkSecurity.WPA)
             .then(
