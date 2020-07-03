@@ -7,17 +7,17 @@ import 'package:fl_chart/fl_chart.dart';
 import 'data.dart';
 
 int graphDisplayTemp=0;
-double elapseTimeFunction()
-{
-  var max=timeDataList[0];
-  timeDataList.forEach((e) {
-    if(e.elapsedTime>max.elapsedTime)
-      {
-        max=e;
+double elapseTimeFunction() {
+  if (timeDataList.length != 0) {
+    var max = timeDataList[0];
+    timeDataList.forEach((e) {
+      if (e.elapsedTime > max.elapsedTime) {
+        max = e;
       }
-  });
-
-  return max.elapsedTime.toDouble()/60;
+      return max.elapsedTime.toDouble() / 60;
+    });
+  }
+  return 20.0;
 }
 
 class CalenderPage extends StatefulWidget {
