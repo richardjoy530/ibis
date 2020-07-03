@@ -70,7 +70,7 @@ class DeviceObject {
   String earlyMotionDetectionTime;
   DeviceObject({
     this.temp,
-    this.completedStatus,
+    this.completedStatus=false,
     this.flare = 'off',
     this.elapsedTime = 0,
     this.ip,
