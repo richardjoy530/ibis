@@ -115,22 +115,13 @@ class _CalenderPageState extends State<CalenderPage> {
     super.dispose();
   }
 
-  double elapseTimeFunction(){
-    var max = timeDataList[0];
-    timeDataList.forEach((e) {
-    if (e.elapsedTime > max.elapsedTime) max = e;
-  });
-  return max.elapsedTime.toDouble();
-  }
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Column(
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.fromLTRB(0.0,20.0,0.0,0.0),
             child: _buildTableCalendar(),
           ),
           Expanded(
@@ -196,36 +187,8 @@ class _CalenderPageState extends State<CalenderPage> {
                     ),
                     leftTitles: SideTitles(showTitles: false),
                   ),
-                ),
-                titlesData: FlTitlesData(
-                  show: true,
-                  bottomTitles: SideTitles(
-                    showTitles: true,
-                    textStyle: TextStyle(
-                        color: const Color(0xff7589a2), fontWeight: FontWeight.bold, fontSize: 14),
-                    margin: 20,
-                    getTitles: (double value) {
-                      switch (value.toInt()) {
-                        case 0:
-                          return '12 am';
-                        case 1:
-                          return '3 am';
-                        case 2:
-                          return '6 am';
-                        case 3:
-                          return '9 am';
-                        case 4:
-                          return '12 pm';
-                        case 5:
-                          return '3 pm';
-                        case 6:
-                          return '6 pm';
-                        case 7:
-                          return '9 pm';
-                        default:
-                          return '';
-                      }
-                    },
+                  borderData: FlBorderData(
+                    show: false,
                   ),
                   barGroups: [
                     BarChartGroupData(
@@ -263,44 +226,6 @@ class _CalenderPageState extends State<CalenderPage> {
 
                   ],
                 ),
-                borderData: FlBorderData(
-                  show: false,
-                ),
-                barGroups: [
-                  BarChartGroupData(
-                      x: 0,
-                      barRods: [BarChartRodData(y: time12am, color: Colors.lightBlueAccent)],
-                      showingTooltipIndicators: [0]),
-                  BarChartGroupData(
-                      x: 1,
-                      barRods: [BarChartRodData(y: time3am, color: Colors.lightBlueAccent)],
-                      showingTooltipIndicators: [0]),
-                  BarChartGroupData(
-                      x: 2,
-                      barRods: [BarChartRodData(y: time6am, color: Colors.lightBlueAccent)],
-                      showingTooltipIndicators: [0]),
-                  BarChartGroupData(
-                      x: 3,
-                      barRods: [BarChartRodData(y: time9am, color: Colors.lightBlueAccent)],
-                      showingTooltipIndicators: [0]),
-                  BarChartGroupData(
-                      x: 4,
-                      barRods: [BarChartRodData(y: time12pm, color: Colors.lightBlueAccent)],
-                      showingTooltipIndicators: [0]),
-                  BarChartGroupData(
-                      x: 5,
-                      barRods: [BarChartRodData(y: time3pm, color: Colors.lightBlueAccent)],
-                      showingTooltipIndicators: [0]),
-                  BarChartGroupData(
-                      x: 6,
-                      barRods: [BarChartRodData(y: time6pm, color: Colors.lightBlueAccent)],
-                      showingTooltipIndicators: [0]),
-                  BarChartGroupData(
-                      x: 7,
-                      barRods: [BarChartRodData(y: time9pm, color: Colors.lightBlueAccent)],
-                      showingTooltipIndicators: [0]),
-
-                ],
               ),
             ),
 
