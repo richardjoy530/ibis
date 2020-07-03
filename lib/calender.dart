@@ -7,7 +7,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'data.dart';
 
 int graphDisplayTemp=0;
-
 double elapseTimeFunction()
 {
   var max=timeDataList[0];
