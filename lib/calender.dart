@@ -119,7 +119,7 @@ class _CalenderPageState extends State<CalenderPage> {
                     case 6:
                       return '6PM';
                     case 7:
-                      return '9AM';
+                      return '9PM';
                     default:
                       return '';
                   }
@@ -196,7 +196,7 @@ class _CalenderPageState extends State<CalenderPage> {
         setState(() {
           for(int i=0;i<historyList.length;i++)
           {
-            if(historyList[i].time.day==date.day && historyList[i].time.month==date.month && historyList[i].time.year==date.year)
+            if(timeDataList[i].startTime.day==date.day && historyList[i].time.month==date.month && historyList[i].time.year==date.year)
             {
               if(historyList[i].time.hour>=8 && historyList[i].time.hour<11)
                 {
