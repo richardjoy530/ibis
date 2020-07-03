@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'data.dart';
 
 //import 'data.dart';
 
@@ -107,19 +108,21 @@ class _CalenderPageState extends State<CalenderPage> {
                 getTitles: (double value) {
                   switch (value.toInt()) {
                     case 0:
-                      return 'Mn';
+                      return '12AM';
                     case 1:
-                      return 'Te';
+                      return '3AM';
                     case 2:
-                      return 'Wd';
+                      return '6AM';
                     case 3:
-                      return 'Tu';
+                      return '9AM';
                     case 4:
-                      return 'Fr';
+                      return '12PM';
                     case 5:
-                      return 'St';
+                      return '3PM';
                     case 6:
-                      return 'Sn';
+                      return '6PM';
+                    case 7:
+                      return '9AM';
                     default:
                       return '';
                   }
@@ -133,28 +136,37 @@ class _CalenderPageState extends State<CalenderPage> {
             barGroups: [
               BarChartGroupData(
                   x: 0,
-                  barRods: [BarChartRodData(y: 8, color: Colors.lightBlueAccent)],
+                  barRods: [BarChartRodData(y: time12am, color: Colors.lightBlueAccent)],
                   showingTooltipIndicators: [0]),
               BarChartGroupData(
                   x: 1,
-                  barRods: [BarChartRodData(y: 10, color: Colors.lightBlueAccent)],
+                  barRods: [BarChartRodData(y: time3am, color: Colors.lightBlueAccent)],
                   showingTooltipIndicators: [0]),
               BarChartGroupData(
                   x: 2,
-                  barRods: [BarChartRodData(y: 14, color: Colors.lightBlueAccent)],
+                  barRods: [BarChartRodData(y: time6am, color: Colors.lightBlueAccent)],
                   showingTooltipIndicators: [0]),
               BarChartGroupData(
                   x: 3,
-                  barRods: [BarChartRodData(y: 15, color: Colors.lightBlueAccent)],
+                  barRods: [BarChartRodData(y: time9am, color: Colors.lightBlueAccent)],
                   showingTooltipIndicators: [0]),
               BarChartGroupData(
-                  x: 3,
-                  barRods: [BarChartRodData(y: 13, color: Colors.lightBlueAccent)],
+                  x: 4,
+                  barRods: [BarChartRodData(y: time12pm, color: Colors.lightBlueAccent)],
                   showingTooltipIndicators: [0]),
               BarChartGroupData(
-                  x: 3,
-                  barRods: [BarChartRodData(y: 10, color: Colors.lightBlueAccent)],
+                  x: 5,
+                  barRods: [BarChartRodData(y: time3pm, color: Colors.lightBlueAccent)],
                   showingTooltipIndicators: [0]),
+              BarChartGroupData(
+                  x: 6,
+                  barRods: [BarChartRodData(y: time6pm, color: Colors.lightBlueAccent)],
+                  showingTooltipIndicators: [0]),
+              BarChartGroupData(
+                  x: 7,
+                  barRods: [BarChartRodData(y: time9pm, color: Colors.lightBlueAccent)],
+                  showingTooltipIndicators: [0]),
+
             ],
           ),
         ),
@@ -184,9 +196,54 @@ class _CalenderPageState extends State<CalenderPage> {
                 ),
       ),
      onDaySelected: (date,events){
-        print(date);
+
         setState(() {
-         // _selectedEvents=_events[date];
+         for(int i=0;i<timeDataList.length;i++)
+           {
+             if(date.day==timeDataList[i].startTime.day && date.month==timeDataList[i].startTime.month && date.year==timeDataList[i].startTime.year)
+               {
+                 if(timeDataList[i].startTime.hour>=0 &&timeDataList[i].startTime.hour<3)
+                   {
+                     time3am=time3am+timeDataList[i].elapsedTime.toDouble();
+                     time3am=20-(time3am%20);
+                   }
+                 if(timeDataList[i].startTime.hour>=3 &&timeDataList[i].startTime.hour<6)
+                 {
+                   time6am=time6am+timeDataList[i].elapsedTime.toDouble();
+                   time6am=20-(time6am%20);
+                 }
+                 if(timeDataList[i].startTime.hour>=6 &&timeDataList[i].startTime.hour<9)
+                 {
+                   time9am=time9am+timeDataList[i].elapsedTime.toDouble();
+                   time9am=20-(time9am%20);
+                 }
+                 if(timeDataList[i].startTime.hour>=9 &&timeDataList[i].startTime.hour<12)
+                 {
+                   time12pm=time12pm+timeDataList[i].elapsedTime.toDouble();
+                   time12pm=20-(time12pm%20);
+                 }
+                 if(timeDataList[i].startTime.hour>=12 &&timeDataList[i].startTime.hour<15)
+                 {
+                   time3pm=time3pm+timeDataList[i].elapsedTime.toDouble();
+                   time3pm=20-(time3pm%20);
+                 }
+                 if(timeDataList[i].startTime.hour>=15 &&timeDataList[i].startTime.hour<18)
+                 {
+                   time6pm=time3am+timeDataList[i].elapsedTime.toDouble();
+                   time6pm=20-(time6pm%20);
+                 }
+                 if(timeDataList[i].startTime.hour>=18 &&timeDataList[i].startTime.hour<21)
+                 {
+                   time9pm=time9pm+timeDataList[i].elapsedTime.toDouble();
+                   time9pm=20-(time9pm%20);
+                 }
+                 if(timeDataList[i].startTime.hour>=21 &&timeDataList[i].startTime.hour<24)
+                 {
+                   time12am=time12am+timeDataList[i].elapsedTime.toDouble();
+                   time12am=20-(time12am%20);
+                 }
+               }
+           }
         });
      },
     //  onVisibleDaysChanged: _onVisibleDaysChanged,
