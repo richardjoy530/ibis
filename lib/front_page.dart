@@ -14,19 +14,16 @@ import 'package:qrscan/qrscan.dart' as scanner;
 import 'calender.dart';
 import 'data.dart';
 import 'show_rooms_workers.dart';
-Future<void> scanIbis() async
-{
+
+Future<void> scanIbis() async {
   String cameraScanResult = await scanner.scan();
-  var data=cameraScanResult.split(',');
-  String ssid=data[1];
-  String password=data[3];
+  var data = cameraScanResult.split(',');
+  String ssid = data[1];
+  String password = data[3];
   WiFiForIoTPlugin.connect(ssid,
-      password: password,
-      joinOnce: true,
-      security: NetworkSecurity.WPA);
-  WiFiForIoTPlugin.isConnected().then((value) => isConnected=value );
-  if(isConnected==true)
-  {
+      password: password, joinOnce: true, security: NetworkSecurity.WPA);
+  WiFiForIoTPlugin.isConnected().then((value) => isConnected = value);
+  if (isConnected == true) {
     prefs.setString('SSID', ssid);
     prefs.setString('password', password);
   }
@@ -51,17 +48,16 @@ Future<void> wifi() async {
         isConnected = val;
         print('Connected:$isConnected');
       }
-      if(val==true)
-        {
-          WiFiForIoTPlugin.disconnect();
-          WiFiForIoTPlugin.connect(prefs.getString('SSID'),
-              password: prefs.getString('password'),
-              joinOnce: true,
-              security: NetworkSecurity.WPA);
-        }
+      if (val == true) {
+        WiFiForIoTPlugin.disconnect();
+        WiFiForIoTPlugin.connect(prefs.getString('SSID')??'',
+            password: prefs.getString('password')??'',
+            joinOnce: true,
+            security: NetworkSecurity.WPA);
+      }
       if (val != true) {
-        WiFiForIoTPlugin.connect(prefs.getString('SSID'),
-                password: prefs.getString('password'),
+        WiFiForIoTPlugin.connect(prefs.getString('SSID')??'',
+                password: prefs.getString('password')??'',
                 joinOnce: true,
                 security: NetworkSecurity.WPA)
             .then(
@@ -159,28 +155,29 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 
   Future<bool> _onWillPop() async {
     return (await showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-        title: new Text('Are you sure?'),
-        content: new Text('Do you want to exit the App'),
-        actions: <Widget>[
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: new Text('No'),
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Are you sure?'),
+            content: new Text('Do you want to exit the App'),
+            actions: <Widget>[
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: new Text('No'),
+              ),
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: new Text('Yes'),
+              ),
+            ],
           ),
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: new Text('Yes'),
-          ),
-        ],
-      ),
-    )) ?? false;
+        )) ??
+        false;
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-          child: Scaffold(
+      child: Scaffold(
         body: Container(
           padding: EdgeInsets.only(top: 40),
           decoration: BoxDecoration(
@@ -235,214 +232,215 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                         )
                       : Expanded(
                           child: ListView.builder(
-                              physics: BouncingScrollPhysics(),
-                              controller: scrollController,
-                              itemCount: deviceObjectList.length,
-                              itemBuilder: (context, index) {
-                                if (deviceObjectList[index].name == 'Device') {
-                                  deviceObjectList[index].name = '';
-                                  nameIt(context, deviceObjectList[index]);
-                                }
-                                if (deviceObjectList[index]
-                                        .earlyMotionDetection ==
-                                    true) {
-                                  deviceObjectList[index].earlyMotionDetection =
-                                      false;
-                                  earlyMotionDetection(
-                                      context, deviceObjectList[index]);
-                                }
-                                if (deviceObjectList[index].completedStatus ==
-                                    true) {
-                                  deviceObjectList[index].completedStatus = false;
-                                  completedPop(context, deviceObjectList[index]);
-                                }
-                                return Column(
-                                  children: <Widget>[
-                                    Container(
-                                      //margin: EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        color: Color(0xffbddeee),
-                                        //borderRadius: BorderRadius.circular(20),
+                            physics: BouncingScrollPhysics(),
+                            controller: scrollController,
+                            itemCount: deviceObjectList.length,
+                            itemBuilder: (context, index) {
+                              if (deviceObjectList[index].name == 'Device') {
+                                deviceObjectList[index].name = '';
+                                nameIt(context, deviceObjectList[index]);
+                              }
+                              if (deviceObjectList[index]
+                                      .earlyMotionDetection ==
+                                  true) {
+                                deviceObjectList[index].earlyMotionDetection =
+                                    false;
+                                earlyMotionDetection(
+                                    context, deviceObjectList[index]);
+                              }
+                              if (deviceObjectList[index].completedStatus ==
+                                  true) {
+                                deviceObjectList[index].completedStatus = false;
+                                completedPop(context, deviceObjectList[index]);
+                              }
+                              return Column(
+                                children: <Widget>[
+                                  Container(
+                                    color: Color(0xffbddeee),
+                                    child: ListTile(
+                                      leading: Icon(
+                                        deviceObjectList[index].offline == true
+                                            ? Icons.signal_wifi_off
+                                            : Icons.network_wifi,
+                                        color: Color(0xff02457a),
                                       ),
-                                      child: ListTile(
-                                        leading: Icon(
-                                          deviceObjectList[index].offline == true
-                                              ? Icons.signal_wifi_off
-                                              : Icons.network_wifi,
-                                          color: Color(0xff02457a),
-                                        ),
-                                        trailing: deviceObjectList[index]
-                                                    .motionDetected ==
-                                                true
-                                            ? Icon(
-                                                Icons.warning,
-                                                color: Color(0xff02457a),
-                                              )
-                                            : IconButton(
-                                                icon: Icon(Icons.more_vert,
-                                                    color: Color(0xff02457a)),
-                                                onPressed: () {
-                                                  info(context,
-                                                      deviceObjectList[index]);
-                                                },
-                                              ),
-                                        title: Text(
-                                            '${deviceObjectList[index].name}'),
-                                        subtitle: deviceObjectList[index].power ==
-                                                false
-                                            ? Text(
-                                                deviceObjectList[index].offline ==
-                                                        true
-                                                    ? 'Device not Connected'
-                                                    : deviceObjectList[index]
-                                                                .motionDetected ==
-                                                            false
-                                                        ? 'Device Connected'
-                                                        : 'Motion Detected')
-                                            : LinearPercentIndicator(
-                                                lineHeight: 5.0,
-                                                animation: false,
-                                                animationDuration: 0,
-                                                backgroundColor:
-                                                    Color(0xff9ad2ec),
-                                                percent: deviceObjectList[index]
-                                                    .linearProgressBarValue,
-                                                linearStrokeCap:
-                                                    LinearStrokeCap.roundAll,
-                                                progressColor: Color(0xff019ae6),
-                                              ),
-                                        onTap: () {},
-                                        onLongPress: () {
-                                          setName(
-                                            context,
-                                            deviceObjectList[index],
-                                          );
-                                        },
-                                      ),
+                                      trailing: deviceObjectList[index]
+                                                  .motionDetected ==
+                                              true
+                                          ? Icon(
+                                              Icons.warning,
+                                              color: Color(0xff02457a),
+                                            )
+                                          : IconButton(
+                                              icon: Icon(Icons.more_vert,
+                                                  color: Color(0xff02457a)),
+                                              onPressed: () {
+                                                info(context,
+                                                    deviceObjectList[index]);
+                                              },
+                                            ),
+                                      title: Text(
+                                          '${deviceObjectList[index].name}'),
+                                      subtitle: deviceObjectList[index].power ==
+                                              false
+                                          ? Text(
+                                              deviceObjectList[index].offline ==
+                                                      true
+                                                  ? 'Device not Connected'
+                                                  : deviceObjectList[index]
+                                                              .motionDetected ==
+                                                          false
+                                                      ? 'Device Connected'
+                                                      : 'Motion Detected')
+                                          : LinearPercentIndicator(
+                                              lineHeight: 5.0,
+                                              animation: false,
+                                              animationDuration: 0,
+                                              backgroundColor:
+                                                  Color(0xff9ad2ec),
+                                              percent: deviceObjectList[index]
+                                                  .linearProgressBarValue,
+                                              linearStrokeCap:
+                                                  LinearStrokeCap.roundAll,
+                                              progressColor: Color(0xff019ae6),
+                                            ),
+                                      onTap: () {},
+                                      onLongPress: () {
+                                        setName(
+                                          context,
+                                          deviceObjectList[index],
+                                        );
+                                      },
                                     ),
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                          top: 10,
-                                          left: 10,
-                                          right: 10,
-                                          bottom: 10),
-                                      decoration: BoxDecoration(
-                                          color: Color(0xff9ad2ec),
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
-                                      child: ListTile(
-                                        leading: Icon(
-                                          Icons.lightbulb_outline,
-                                          color: Color(0xff02457a),
-                                        ),
-                                        title: Text(
-                                            deviceObjectList[index].power == false
-                                                ? 'Disinfect'
-                                                : deviceObjectList[index].pause ==
-                                                        true
-                                                    ? 'Paused'
-                                                    : 'Disinfecting'),
-                                        subtitle: Text(
-                                            'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
-                                        onTap: () {
-                                          if (deviceObjectList[index].offline ==
-                                              false) {
-                                            if (deviceObjectList[index].power ==
-                                                true) {
-                                              deviceObjectList[index]
-                                                  .clientError = false;
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) => HomePage(
-                                                    deviceObjectList[index],
-                                                  ),
-                                                ),
-                                              );
-                                            } else {
-                                              deviceObjectList[index]
-                                                  .motionDetected = false;
-                                              deviceObjectList[index].time =
-                                                  Duration(minutes: 0);
-                                              deviceObjectList[index]
-                                                  .progressDegrees = 0;
-                                              if (rooms.length != 0) {
-                                                if (workers.length != 0) {
-                                                  showRooms(
-                                                    context,
-                                                    deviceObjectList[index],
-                                                  );
-                                                } else {
-                                                  addWorker(context);
-                                                }
-                                              } else {
-                                                addRooms(context);
-                                              }
-                                            }
-                                          }
-                                        },
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        top: 10,
+                                        left: 10,
+                                        right: 10,
+                                        bottom: 10),
+                                    decoration: BoxDecoration(
+                                        color: Color(0xff9ad2ec),
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    child: ListTile(
+                                      leading: Icon(
+                                        Icons.lightbulb_outline,
+                                        color: Color(0xff02457a),
                                       ),
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                          top: 10,
-                                          left: 10,
-                                          right: 10,
-                                          bottom: 10),
-                                      decoration: BoxDecoration(
-                                          color: Color(0xff9ad2ec),
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
-                                      child: ListTile(
-                                        leading: Image.asset('images/sort.png',color: Color(0xff02457a),width: 25,),
-                                        title: Text('Adjust Height'),
-                                        subtitle: Text(
-                                            'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
-                                        onTap: () {
-                                          if (deviceObjectList[index].offline ==
-                                              false) {
+                                      title: Text(
+                                          deviceObjectList[index].power == false
+                                              ? 'Disinfect'
+                                              : deviceObjectList[index].pause ==
+                                                      true
+                                                  ? 'Paused'
+                                                  : 'Disinfecting'),
+                                      subtitle: Text(
+                                          'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
+                                      onTap: () {
+                                        if (deviceObjectList[index].offline ==
+                                            false) {
+                                          if (deviceObjectList[index].power ==
+                                              true) {
+                                            deviceObjectList[index]
+                                                .clientError = false;
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) => HeightPage(
+                                                builder: (context) => HomePage(
                                                   deviceObjectList[index],
-                                                  justHeight: true,
                                                 ),
                                               ),
                                             );
+                                          } else {
+                                            deviceObjectList[index]
+                                                .motionDetected = false;
+                                            deviceObjectList[index].time =
+                                                Duration(minutes: 0);
+                                            deviceObjectList[index]
+                                                .progressDegrees = 0;
+                                            if (rooms.length != 0) {
+                                              if (workers.length != 0) {
+                                                showRooms(
+                                                  context,
+                                                  deviceObjectList[index],
+                                                );
+                                              } else {
+                                                addWorker(context);
+                                              }
+                                            } else {
+                                              addRooms(context);
+                                            }
                                           }
-                                        },
-                                      ),
+                                        }
+                                      },
                                     ),
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                          top: 10,
-                                          left: 10,
-                                          right: 10,
-                                          bottom: 10),
-                                      decoration: BoxDecoration(
-                                          color: Color(0xff9ad2ec),
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
-                                      child: ListTile(
-                                        leading: Icon(
-                                          Icons.history,
-                                          color: Color(0xff02457a),
-                                        ),
-                                        title: Text('Show History'),
-                                        onTap: () {
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        top: 10,
+                                        left: 10,
+                                        right: 10,
+                                        bottom: 10),
+                                    decoration: BoxDecoration(
+                                        color: Color(0xff9ad2ec),
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    child: ListTile(
+                                      leading: Image.asset(
+                                        'images/sort.png',
+                                        color: Color(0xff02457a),
+                                        width: 25,
+                                      ),
+                                      title: Text('Adjust Height'),
+                                      subtitle: Text(
+                                          'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
+                                      onTap: () {
+                                        if (deviceObjectList[index].offline ==
+                                            false) {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => ShowHistory(),
+                                              builder: (context) => HeightPage(
+                                                deviceObjectList[index],
+                                                justHeight: true,
+                                              ),
                                             ),
                                           );
-                                        },
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        top: 10,
+                                        left: 10,
+                                        right: 10,
+                                        bottom: 10),
+                                    decoration: BoxDecoration(
+                                        color: Color(0xff9ad2ec),
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    child: ListTile(
+                                      leading: Icon(
+                                        Icons.history,
+                                        color: Color(0xff02457a),
                                       ),
-                                    )
-                                  ],
-                                );
-                              }),
+                                      title: Text('Show History'),
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ShowHistory(),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  )
+                                ],
+                              );
+                            },
+                          ),
                         )
                   : Align(
                       alignment: Alignment.center,
@@ -501,8 +499,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             ],
           ),
         ),
-      )
-    ,onWillPop: _onWillPop,);
+      ),
+      onWillPop: _onWillPop,
+    );
   }
 
   Future<void> addRooms(BuildContext context) async {
@@ -708,12 +707,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 },
               ),
               ListTile(
-                leading: Icon(
-                  Icons.scatter_plot
-                ),
+                leading: Icon(Icons.scatter_plot),
                 title: Text('QR Scanner'),
-                onTap: ()
-                {
+                onTap: () {
                   scanIbis();
                 },
               ),
@@ -874,21 +870,21 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 
   Future<void> overOver(context, DeviceObject deviceObject) async {
     databaseHelper.insertHistory(
-                    History(
-                      roomName: room,
-                      workerName: worker,
-                      state: 'Finished',
-                      time: DateTime.now(),
-                    ),
-                  );
-                  historyList.add(
-                    History(
-                      roomName: room,
-                      workerName: worker,
-                      state: 'Finished',
-                      time: DateTime.now(),
-                    ),
-                  );
+      History(
+        roomName: room,
+        workerName: worker,
+        state: 'Finished',
+        time: DateTime.now(),
+      ),
+    );
+    historyList.add(
+      History(
+        roomName: room,
+        workerName: worker,
+        state: 'Finished',
+        time: DateTime.now(),
+      ),
+    );
     await showDialog(
       barrierDismissible: false,
       context: context,
