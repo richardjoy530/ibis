@@ -226,7 +226,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     destroyAnimation(widget.deviceObject);
     mainTimer.cancel();
     if (widget.deviceObject.power == false &&
-        widget.deviceObject.clientError == false&&stopPressed==false) {
+        widget.deviceObject.clientError == false &&
+        stopPressed == false) {
       widget.deviceObject.socket.write(65);
     }
     animationTimer.cancel();
@@ -610,6 +611,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     // Start
     deviceObject.flare = 'on';
     //deviceObject.temp = false;
+    startTime = DateTime.now();
     deviceObject.socket.writeln(deviceObject.time.inMinutes.round());
     deviceObject.elapsedTime = 0;
     deviceObject.progressDegrees = 0;
@@ -742,70 +744,93 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     animationRunning = true;
 
     deviceObject.progressAnimation = Tween(begin: begin, end: end).animate(
-        CurvedAnimation(
-            parent: deviceObject.radialProgressAnimationController,
-            curve: Curves.linear),)
-      ..addListener(() {
-        setState(() {
-          deviceObject.progressDegrees = deviceObject.progressAnimation.value;
-          if (deviceObject.motionDetected == true) {
-            motionDetected(context);
-            prefs.setInt('${deviceObject.ip}totalDuration',
-                deviceObject.totalDuration.inSeconds);
-            prefs.setInt('${deviceObject.ip}secondDuration',
-                deviceObject.secondDuration.inSeconds);
-            errorRemover = false;
-            deviceObject.flare = 'off';
-            print('state3');
+      CurvedAnimation(
+          parent: deviceObject.radialProgressAnimationController,
+          curve: Curves.linear),
+    )..addListener(
+        () {
+          setState(
+            () {
+              deviceObject.progressDegrees =
+                  deviceObject.progressAnimation.value;
+              if (deviceObject.motionDetected == true) {
+                motionDetected(context);
+                prefs.setInt('${deviceObject.ip}totalDuration',
+                    deviceObject.totalDuration.inSeconds);
+                prefs.setInt('${deviceObject.ip}secondDuration',
+                    deviceObject.secondDuration.inSeconds);
+                errorRemover = false;
+                deviceObject.flare = 'off';
+                print('state3');
 
-            deviceObject.elapsedTime = 0;
-            deviceObject.radialProgressAnimationController.stop();
-            deviceObject.timer.cancel();
-            deviceObject.pause = false;
-            deviceObject.time = Duration(minutes: 0);
-            deviceObject.mainTime = Duration(minutes: 0);
-            deviceObject.power = false;
-          }
+                deviceObject.elapsedTime = 0;
+                deviceObject.radialProgressAnimationController.stop();
+                deviceObject.timer.cancel();
+                deviceObject.pause = false;
+                deviceObject.time = Duration(minutes: 0);
+                deviceObject.mainTime = Duration(minutes: 0);
+                deviceObject.power = false;
+              }
+              if (deviceObject.progressDegrees == 360) {
+                databaseHelper.insertTimeData(
+                  TimeData(
+                      roomName: room,
+                      workerName: worker,
+                      startTime: startTime,
+                      endTime: DateTime.now(),
+                      elapsedTime: deviceObject.elapsedTime,
+                      time: deviceObject.time.inSeconds.toInt()),
+                );
+                timeDataList.add(
+                  TimeData(
+                      roomName: room,
+                      workerName: worker,
+                      startTime: startTime,
+                      endTime: DateTime.now(),
+                      elapsedTime: deviceObject.elapsedTime,
+                      time: deviceObject.time.inSeconds.toInt()),
+                );
+                databaseHelper.insertHistory(
+                  History(
+                    roomName: room,
+                    workerName: worker,
+                    state: 'Finished',
+                    time: DateTime.now(),
+                  ),
+                );
+                historyList.add(
+                  History(
+                    roomName: room,
+                    workerName: worker,
+                    state: 'Finished',
+                    time: DateTime.now(),
+                  ),
+                );
+
+                prefs.setInt('${deviceObject.ip}totalDuration',
+                    deviceObject.totalDuration.inSeconds);
+                prefs.setInt('${deviceObject.ip}secondDuration',
+                    deviceObject.secondDuration.inSeconds);
+                deviceObject.power = false;
+                errorRemover = false;
+                deviceObject.radialProgressAnimationController.stop();
+                deviceObject.timer.cancel();
+                deviceObject.pause = false;
+                deviceObject.flare = 'off';
+                print('state4');
+
+                deviceObject.elapsedTime = 0;
+                deviceObject.time = Duration(minutes: 0);
+                deviceObject.mainTime = Duration(minutes: 0);
+              }
+            },
+          );
           if (deviceObject.progressDegrees == 360) {
-            databaseHelper.insertHistory(
-              History(
-                roomName: room,
-                workerName: worker,
-                state: 'Finished',
-                time: DateTime.now(),
-              ),
-            );
-            historyList.add(
-              History(
-                roomName: room,
-                workerName: worker,
-                state: 'Finished',
-                time: DateTime.now(),
-              ),
-            );
-
-            prefs.setInt('${deviceObject.ip}totalDuration',
-                deviceObject.totalDuration.inSeconds);
-            prefs.setInt('${deviceObject.ip}secondDuration',
-                deviceObject.secondDuration.inSeconds);
-            deviceObject.power = false;
-            errorRemover = false;
-            deviceObject.radialProgressAnimationController.stop();
-            deviceObject.timer.cancel();
-            deviceObject.pause = false;
-            deviceObject.flare = 'off';
-            print('state4');
-
-            deviceObject.elapsedTime = 0;
-            deviceObject.time = Duration(minutes: 0);
-            deviceObject.mainTime = Duration(minutes: 0);
+            deviceObject.progressDegrees = 0;
+            overOver(context);
           }
-        },);
-        if (deviceObject.progressDegrees == 360) {
-          deviceObject.progressDegrees = 0;
-          overOver(context);
-        }
-      },);
+        },
+      );
   }
 
   destroyAnimation(DeviceObject deviceObject) {
@@ -822,7 +847,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   getMinuets(int seconds) {
     var f = new NumberFormat("00", "en_US");
-    return f.format((seconds / 60).floor(),);
+    return f.format(
+      (seconds / 60).floor(),
+    );
   }
 
   Future<void> motionDetected(context) async {
@@ -872,123 +899,149 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Future<void> overOver(context) async {
     await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            backgroundColor: Color(0xffffffff),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          backgroundColor: Color(0xffffffff),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Center(
+            child: Text(
+              'Succesfully completed!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Color(0xff02457a),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24),
             ),
-            title: Center(
+          ),
+          children: <Widget>[
+            Center(
               child: Text(
-                'Succesfully completed!',textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Color(0xff02457a),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24),
+                'Continue disinfecting ?',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.blueGrey, fontSize: 20),
               ),
             ),
-            children: <Widget>[
-              Center(
-                child: Text(
-                  'Continue disinfecting ?',textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.blueGrey, fontSize: 20),
-                ),
-              ),
-              SimpleDialogOption(
-                child: Center(child: Text('yes',textAlign: TextAlign.center)),
-                onPressed: () {
-                  widget.deviceObject.clientError = false;
+            SimpleDialogOption(
+              child: Center(child: Text('yes', textAlign: TextAlign.center)),
+              onPressed: () {
+                widget.deviceObject.clientError = false;
 
-                  widget.deviceObject.socket.write('y\r');
-                  errorRemover = true;
-                  Navigator.pop(context);
-                },
-              ),
-              SimpleDialogOption(
-                child: Center(child: Text('No')),
-                onPressed: () {
-                  widget.deviceObject.clientError = false;
+                widget.deviceObject.socket.write('y\r');
+                errorRemover = true;
+                Navigator.pop(context);
+              },
+            ),
+            SimpleDialogOption(
+              child: Center(child: Text('No')),
+              onPressed: () {
+                widget.deviceObject.clientError = false;
 
-                  widget.deviceObject.socket.write('n\r');
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          );
-        },);
+                widget.deviceObject.socket.write('n\r');
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> confirmStop(context, DeviceObject deviceObject) async {
     await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            backgroundColor: Color(0xffffffff),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          backgroundColor: Color(0xffffffff),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Center(
+            child: Text(
+              'Turn off ?',
+              style: TextStyle(
+                  color: Color(0xff02457a), fontWeight: FontWeight.bold),
             ),
-            title: Center(
-              child: Text(
-                'Turn off ?',
-                style: TextStyle(
-                    color: Color(0xff02457a), fontWeight: FontWeight.bold),
+          ),
+          children: <Widget>[
+            SimpleDialogOption(
+              child: Center(
+                child: Text('YES'),
               ),
-            ),
-            children: <Widget>[
-              SimpleDialogOption(
-                child: Center(child: Text('YES'),),
-                onPressed: () {
-                  print('stop');
-                  databaseHelper.insertHistory(
-                    History(
+              onPressed: () {
+                print('stop');
+                databaseHelper.insertTimeData(
+                  TimeData(
                       roomName: room,
                       workerName: worker,
-                      state: 'Stopped',
-                      time: DateTime.now(),
-                    ),
-                  );
-                  historyList.add(
-                    History(
+                      startTime: startTime,
+                      endTime: DateTime.now(),
+                      elapsedTime: deviceObject.elapsedTime,
+                      time: deviceObject.time.inSeconds.toInt()),
+                );
+                timeDataList.add(
+                  TimeData(
                       roomName: room,
                       workerName: worker,
-                      state: 'Stopped',
-                      time: DateTime.now(),
-                    ),
-                  );
-                  stopPressed=true;
-                  prefs.setInt('${deviceObject.ip}totalDuration',
-                      deviceObject.totalDuration.inSeconds);
-                  prefs.setInt('${deviceObject.ip}secondDuration',
-                      deviceObject.secondDuration.inSeconds);
-                  deviceObject.pause = false;
-                  errorRemover = false;
-                  deviceObject.elapsedTime = 0;
-                  deviceObject.flare = 'off';
-                  print('state5');
-                  destroyAnimation(deviceObject);
-                  deviceObject.socket.write('s');
-                  deviceObject.power = false;
-                  deviceObject.time = Duration(minutes: 0);
-                  deviceObject.mainTime = Duration(minutes: 0);
-                  deviceObject.timer.cancel();
-                  deviceObject.progressDegrees = 0;
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                },
+                      startTime: startTime,
+                      endTime: DateTime.now(),
+                      elapsedTime: deviceObject.elapsedTime,
+                      time: deviceObject.time.inSeconds.toInt()),
+                );
+                databaseHelper.insertHistory(
+                  History(
+                    roomName: room,
+                    workerName: worker,
+                    state: 'Stopped',
+                    time: DateTime.now(),
+                  ),
+                );
+                historyList.add(
+                  History(
+                    roomName: room,
+                    workerName: worker,
+                    state: 'Stopped',
+                    time: DateTime.now(),
+                  ),
+                );
+                stopPressed = true;
+                prefs.setInt('${deviceObject.ip}totalDuration',
+                    deviceObject.totalDuration.inSeconds);
+                prefs.setInt('${deviceObject.ip}secondDuration',
+                    deviceObject.secondDuration.inSeconds);
+                deviceObject.pause = false;
+                errorRemover = false;
+                deviceObject.elapsedTime = 0;
+                deviceObject.flare = 'off';
+                print('state5');
+                destroyAnimation(deviceObject);
+                deviceObject.socket.write('s');
+                deviceObject.power = false;
+                deviceObject.time = Duration(minutes: 0);
+                deviceObject.mainTime = Duration(minutes: 0);
+                deviceObject.timer.cancel();
+                deviceObject.progressDegrees = 0;
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+            ),
+            SimpleDialogOption(
+              child: Center(
+                child: Text('NO'),
               ),
-              SimpleDialogOption(
-                child: Center(child: Text('NO'),),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          );
-        },);
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> mainTick() async {

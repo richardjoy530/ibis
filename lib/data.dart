@@ -10,6 +10,7 @@ import 'package:sqflite/sqflite.dart';
 import 'main.dart' as main;
 
 int displayTime;
+DateTime startTime;
 bool stopPressed = false;
 bool connectionError = false;
 SharedPreferences prefs;
@@ -19,6 +20,7 @@ DatabaseHelper databaseHelper;
 String room = '';
 String worker = '';
 List<History> historyList = [];
+List<TimeData> timeDataList = [];
 List<String> rooms = [];
 List<String> workers = [];
 bool animationChecking = false;
@@ -87,29 +89,26 @@ class DeviceObject {
     this.pause = false,
     this.totalDuration,
     this.secondDuration,
-    this.earlyMotionDetection=false,
-    this.earlyMotionDetectionTime='',
-    this.completedStatus=false,
+    this.earlyMotionDetection = false,
+    this.earlyMotionDetectionTime = '',
+    this.completedStatus = false,
   });
   void run() {
     socket.listen((onData) {
       print([socket.remotePort, onData]);
-      if(onData.length==5)
-        {
-          String chData=String.fromCharCode(onData[0]);
-          if(chData=='m')
-            {
-              String data1=String.fromCharCode(onData[1]);
-              String data2=String.fromCharCode(onData[2]);
-              String com=data1+data2;
-              this.earlyMotionDetectionTime=com;
-              this.earlyMotionDetection=true;
-            }
+      if (onData.length == 5) {
+        String chData = String.fromCharCode(onData[0]);
+        if (chData == 'm') {
+          String data1 = String.fromCharCode(onData[1]);
+          String data2 = String.fromCharCode(onData[2]);
+          String com = data1 + data2;
+          this.earlyMotionDetectionTime = com;
+          this.earlyMotionDetection = true;
         }
-      if(String.fromCharCode(onData[0])=='c')
-        {
-          this.completedStatus=true;
-        }
+      }
+      if (String.fromCharCode(onData[0]) == 'c') {
+        this.completedStatus = true;
+      }
 
       if (this.offline == false) {
         if (onData[0] == 50) {
@@ -118,6 +117,24 @@ class DeviceObject {
           );
 
           this.motionDetected = true;
+          databaseHelper.insertTimeData(
+                  TimeData(
+                      roomName: room,
+                      workerName: worker,
+                      startTime: startTime,
+                      endTime: DateTime.now(),
+                      elapsedTime: this.elapsedTime,
+                      time: this.time.inSeconds.toInt()),
+                );
+                timeDataList.add(
+                  TimeData(
+                      roomName: room,
+                      workerName: worker,
+                      startTime: startTime,
+                      endTime: DateTime.now(),
+                      elapsedTime: this.elapsedTime,
+                      time: this.time.inSeconds.toInt()),
+                );
           databaseHelper.insertHistory(History(
               roomName: room,
               workerName: worker,
@@ -148,7 +165,7 @@ class DeviceObject {
       )
       ..onDone(
         () {
-                    print('Client onDone');
+          print('Client onDone');
 
           this.linearProgressBarValue = 0.0;
           this.socket.close();
@@ -186,6 +203,22 @@ class History {
   History({this.roomName, this.state, this.time, this.workerName});
 }
 
+class TimeData {
+  DateTime startTime;
+  DateTime endTime;
+  String roomName;
+  String workerName;
+  int elapsedTime;
+  int time;
+  TimeData(
+      {this.startTime,
+      this.elapsedTime,
+      this.endTime,
+      this.time,
+      this.roomName,
+      this.workerName});
+}
+
 class DatabaseHelper {
   static DatabaseHelper _databaseHelper; // Singleton DatabaseHelper
   static Database _database; // Singleton Database
@@ -220,6 +253,8 @@ class DatabaseHelper {
 
   void _createDb(Database db, int newVersion) async {
     await db.execute(
+        'CREATE TABLE TimeData (id INTEGER PRIMARY KEY AUTOINCREMENT , roomName TEXT, workerName TEXT, startTime TEXT, endTime TEXT, elapsedTime INTEGER, time INTEGER)');
+    await db.execute(
         'CREATE TABLE Rooms (id INTEGER PRIMARY KEY AUTOINCREMENT , roomName TEXT)');
     await db.execute(
         'CREATE TABLE Workers (id INTEGER PRIMARY KEY AUTOINCREMENT , workerName TEXT)');
@@ -251,6 +286,19 @@ class DatabaseHelper {
     return result;
   }
 
+  Future<int> insertTimeData(TimeData timeData) async {
+    Database db = await this.database;
+    var result = await db.insert('TimeData', {
+      'workerName': timeData.workerName,
+      'roomName': timeData.roomName,
+      'startTime': timeData.startTime.toIso8601String(),
+      'endTime': timeData.startTime.toIso8601String(),
+      'time': timeData.elapsedTime,
+      'elapsedTime': timeData.elapsedTime
+    });
+    return result;
+  }
+
   Future<List<Map<String, dynamic>>> getRoomMapList() async {
     Database db = await this.database;
     var result = await db.query('Rooms');
@@ -266,6 +314,12 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> getHistoryMapList() async {
     Database db = await this.database;
     var result = await db.query('History');
+    return result;
+  }
+
+  Future<List<Map<String, dynamic>>> getTimeDataMapList() async {
+    Database db = await this.database;
+    var result = await db.query('TimeData');
     return result;
   }
 
