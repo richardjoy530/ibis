@@ -19,7 +19,6 @@ class _CalenderPageState extends State<CalenderPage> {
   void initState() {
     super.initState();
     //final _selectedDay = DateTime.now();
-
     // _events = {
     //   _selectedDay.subtract(Duration(days: 30)): ['Event A0', 'Event B0', 'Event C0'],
     //   _selectedDay.subtract(Duration(days: 27)): ['Event A1'],
