@@ -50,14 +50,14 @@ Future<void> wifi() async {
       }
       if (val == true) {
         WiFiForIoTPlugin.disconnect();
-        WiFiForIoTPlugin.connect(prefs.getString('SSID')??'',
-            password: prefs.getString('password')??'',
+        WiFiForIoTPlugin.connect(prefs.getString('SSID') ?? '',
+            password: prefs.getString('password') ?? '',
             joinOnce: true,
             security: NetworkSecurity.WPA);
       }
       if (val != true) {
-        WiFiForIoTPlugin.connect(prefs.getString('SSID')??'',
-                password: prefs.getString('password')??'',
+        WiFiForIoTPlugin.connect(prefs.getString('SSID') ?? '',
+                password: prefs.getString('password') ?? '',
                 joinOnce: true,
                 security: NetworkSecurity.WPA)
             .then(
@@ -869,6 +869,24 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   }
 
   Future<void> overOver(context, DeviceObject deviceObject) async {
+    databaseHelper.insertTimeData(
+      TimeData(
+          roomName: room,
+          workerName: worker,
+          startTime: startTime,
+          endTime: DateTime.now(),
+          elapsedTime: deviceObject.elapsedTime,
+          time: deviceObject.time.inSeconds.toInt()),
+    );
+    timeDataList.add(
+      TimeData(
+          roomName: room,
+          workerName: worker,
+          startTime: startTime,
+          endTime: DateTime.now(),
+          elapsedTime: deviceObject.elapsedTime,
+          time: deviceObject.time.inSeconds.toInt()),
+    );
     databaseHelper.insertHistory(
       History(
         roomName: room,
