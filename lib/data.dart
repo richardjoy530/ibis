@@ -10,6 +10,7 @@ import 'package:sqflite/sqflite.dart';
 import 'main.dart' as main;
 
 int displayTime;
+double time8am=0,time11am=0,time2pm=0,time5pm=0,time8pm=0,time11pm=0,time2am=0,time5am=0;
 DateTime startTime;
 bool stopPressed = false;
 bool connectionError = false;
