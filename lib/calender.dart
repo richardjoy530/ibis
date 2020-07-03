@@ -4,7 +4,18 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'data.dart';
 
-//import 'data.dart';
+double elapseTimeFunction()
+{
+  var max=timeDataList[0];
+  timeDataList.forEach((e) {
+    if(e.elapsedTime>max.elapsedTime)
+      {
+        max=e;
+      }
+  });
+
+  return max.elapsedTime.toDouble()/60;
+}
 
 class CalenderPage extends StatefulWidget {
   @override
@@ -43,7 +54,7 @@ class _CalenderPageState extends State<CalenderPage> {
               child: BarChart(
                 BarChartData(
                   alignment: BarChartAlignment.spaceAround,
-                  maxY: 20,
+                  maxY: elapseTimeFunction(),
                   barTouchData: BarTouchData(
                     enabled: true,
                     touchTooltipData: BarTouchTooltipData(
@@ -104,35 +115,35 @@ class _CalenderPageState extends State<CalenderPage> {
                   barGroups: [
                     BarChartGroupData(
                         x: 0,
-                        barRods: [BarChartRodData(y: time12am, color: Colors.lightBlueAccent)],
+                        barRods: [BarChartRodData(y: time12am/60, color: Colors.lightBlueAccent)],
                         showingTooltipIndicators: [0]),
                     BarChartGroupData(
                         x: 1,
-                        barRods: [BarChartRodData(y: time3am, color: Colors.lightBlueAccent)],
+                        barRods: [BarChartRodData(y: time3am/60, color: Colors.lightBlueAccent)],
                         showingTooltipIndicators: [0]),
                     BarChartGroupData(
                         x: 2,
-                        barRods: [BarChartRodData(y: time6am, color: Colors.lightBlueAccent)],
+                        barRods: [BarChartRodData(y: time6am/60, color: Colors.lightBlueAccent)],
                         showingTooltipIndicators: [0]),
                     BarChartGroupData(
                         x: 3,
-                        barRods: [BarChartRodData(y: time9am, color: Colors.lightBlueAccent)],
+                        barRods: [BarChartRodData(y: time9am/60, color: Colors.lightBlueAccent)],
                         showingTooltipIndicators: [0]),
                     BarChartGroupData(
                         x: 4,
-                        barRods: [BarChartRodData(y: time12pm, color: Colors.lightBlueAccent)],
+                        barRods: [BarChartRodData(y: time12pm/60, color: Colors.lightBlueAccent)],
                         showingTooltipIndicators: [0]),
                     BarChartGroupData(
                         x: 5,
-                        barRods: [BarChartRodData(y: time3pm, color: Colors.lightBlueAccent)],
+                        barRods: [BarChartRodData(y: time3pm/60, color: Colors.lightBlueAccent)],
                         showingTooltipIndicators: [0]),
                     BarChartGroupData(
                         x: 6,
-                        barRods: [BarChartRodData(y: time6pm, color: Colors.lightBlueAccent)],
+                        barRods: [BarChartRodData(y: time6pm/60, color: Colors.lightBlueAccent)],
                         showingTooltipIndicators: [0]),
                     BarChartGroupData(
                         x: 7,
-                        barRods: [BarChartRodData(y: time9pm, color: Colors.lightBlueAccent)],
+                        barRods: [BarChartRodData(y: time9pm/60, color: Colors.lightBlueAccent)],
                         showingTooltipIndicators: [0]),
 
                   ],
@@ -172,42 +183,42 @@ class _CalenderPageState extends State<CalenderPage> {
               if(timeDataList[i].startTime.hour>=0 &&timeDataList[i].startTime.hour<3)
               {
                 time3am=timeDataList[i].elapsedTime.toDouble();
-                time3am=20-(time3am%20);
+                //time3am=20-(time3am%20);
               }
               if(timeDataList[i].startTime.hour>=3 &&timeDataList[i].startTime.hour<6)
               {
                 time6am=timeDataList[i].elapsedTime.toDouble();
-                time6am=20-(time6am%20);
+                //time6am=20-(time6am%20);
               }
               if(timeDataList[i].startTime.hour>=6 &&timeDataList[i].startTime.hour<9)
               {
                 time9am=timeDataList[i].elapsedTime.toDouble();
-                time9am=20-(time9am%20);
+               // time9am=20-(time9am%20);
               }
               if(timeDataList[i].startTime.hour>=9 &&timeDataList[i].startTime.hour<12)
               {
                 time12pm=timeDataList[i].elapsedTime.toDouble();
-                time12pm=20-(time12pm%20);
+                //time12pm=20-(time12pm%20);
               }
               if(timeDataList[i].startTime.hour>=12 &&timeDataList[i].startTime.hour<15)
               {
                 time3pm=timeDataList[i].elapsedTime.toDouble();
-                time3pm=20-(time3pm%20);
+                //time3pm=20-(time3pm%20);
               }
               if(timeDataList[i].startTime.hour>=15 &&timeDataList[i].startTime.hour<18)
               {
                 time6pm=timeDataList[i].elapsedTime.toDouble();
-                time6pm=20-(time6pm%20);
+                //time6pm=20-(time6pm%20);
               }
               if(timeDataList[i].startTime.hour>=18 &&timeDataList[i].startTime.hour<21)
               {
                 time9pm=timeDataList[i].elapsedTime.toDouble();
-                time9pm=20-(time9pm%20);
+                //time9pm=20-(time9pm%20);
               }
               if(timeDataList[i].startTime.hour>=21 &&timeDataList[i].startTime.hour<24)
               {
                 time12am=timeDataList[i].elapsedTime.toDouble();
-                time12am=20-(time12am%20);
+                //time12am=20-(time12am%20);
               }
             }
             else
