@@ -50,14 +50,14 @@ Future<void> wifi() async {
       }
       if (val == true) {
         WiFiForIoTPlugin.disconnect();
-        WiFiForIoTPlugin.connect(prefs.getString('SSID'),
-            password: prefs.getString('password'),
+        WiFiForIoTPlugin.connect(prefs.getString('SSID')??'',
+            password: prefs.getString('password')??'',
             joinOnce: true,
             security: NetworkSecurity.WPA);
       }
       if (val != true) {
-        WiFiForIoTPlugin.connect(prefs.getString('SSID'),
-                password: prefs.getString('password'),
+        WiFiForIoTPlugin.connect(prefs.getString('SSID')??'',
+                password: prefs.getString('password')??'',
                 joinOnce: true,
                 security: NetworkSecurity.WPA)
             .then(

@@ -15,6 +15,7 @@ class Loding extends StatefulWidget {
 class _LodingState extends State<Loding> {
   @override
   void initState() {
+    load();
     Wakelock.enable();
     wifiTimer = Timer.periodic(
       Duration(seconds: 3),
@@ -25,7 +26,6 @@ class _LodingState extends State<Loding> {
       },
     );
     wifi();
-    load();
     redirect();
     super.initState();
   }
