@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ibis/data.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:fl_chart/fl_chart.dart';
-//import 'data.dart';
+import 'data.dart';
 
 class CalenderPage extends StatefulWidget {
   @override
@@ -98,10 +98,102 @@ class _CalenderPageState extends State<CalenderPage> {
                 ),
       ),
      onDaySelected: (date,events){
-        print(date);
-        print(historyList.length);
         setState(() {
-         // _selectedEvents=_events[date];
+          for(int i=0;i<historyList.length;i++)
+          {
+            if(historyList[i].time.day==date.day && historyList[i].time.month==date.month && historyList[i].time.year==date.year)
+            {
+              if(historyList[i].time.hour>=8 && historyList[i].time.hour<11)
+                {
+                  var timedata=historyList[i].state.split(' ');
+                  int addtime=0;
+                  if(timedata.length==4)
+                    {
+                      addtime=int.parse(timedata[2]);
+                    }
+                  time11am=time11am+addtime;
+                  time11am=20-(time11am%20);
+                }
+              if(historyList[i].time.hour>=11 && historyList[i].time.hour<14)
+              {
+                var timedata=historyList[i].state.split(' ');
+                int addtime=0;
+                if(timedata.length==4)
+                {
+                  addtime=int.parse(timedata[2]);
+                }
+                time2pm=time2pm+addtime;
+                time2pm=20-(time2pm%20);
+              }
+              if(historyList[i].time.hour>=14 && historyList[i].time.hour<17)
+              {
+                var timedata=historyList[i].state.split(' ');
+                int addtime=0;
+                if(timedata.length==4)
+                {
+                  addtime=int.parse(timedata[2]);
+                }
+                time5pm=time5pm+addtime;
+                time5pm=20-(time5pm%20);
+              }
+              if(historyList[i].time.hour>=17 && historyList[i].time.hour<20)
+              {
+                var timedata=historyList[i].state.split(' ');
+                int addtime=0;
+                if(timedata.length==4)
+                {
+                  addtime=int.parse(timedata[2]);
+                }
+                time8pm=time8pm+addtime;
+                time8pm=20-(time8pm%20);
+              }
+              if(historyList[i].time.hour>=20 && historyList[i].time.hour<23)
+              {
+                var timedata=historyList[i].state.split(' ');
+                int addtime=0;
+                if(timedata.length==4)
+                {
+                  addtime=int.parse(timedata[2]);
+                }
+                time11pm=time11pm+addtime;
+                time11pm=20-(time11pm%20);
+              }
+              if(historyList[i].time.hour>=23 && historyList[i].time.hour<2)
+              {
+                var timedata=historyList[i].state.split(' ');
+                int addtime=0;
+                if(timedata.length==4)
+                {
+                  addtime=int.parse(timedata[2]);
+                }
+                time2am=time2am+addtime;
+                time2am=20-(time2am%20);
+              }
+              if(historyList[i].time.hour>=2 && historyList[i].time.hour<5)
+              {
+                var timedata=historyList[i].state.split(' ');
+                int addtime=0;
+                if(timedata.length==4)
+                {
+                  addtime=int.parse(timedata[2]);
+                }
+                time5am=time5am+addtime;
+                time5am=20-(time5am%20);
+              }
+              if(historyList[i].time.hour>=5 && historyList[i].time.hour<8)
+              {
+                var timedata=historyList[i].state.split(' ');
+                int addtime=0;
+                if(timedata.length==4)
+                {
+                  addtime=int.parse(timedata[2]);
+                }
+                time8am=time8am+addtime;
+                time8am=20-(time8am%20);
+              }
+            }
+          }
+          print(time8am);
         });
      },
     //  onVisibleDaysChanged: _onVisibleDaysChanged,
@@ -178,35 +270,35 @@ class _CalenderPageState extends State<CalenderPage> {
         barGroups: [
           BarChartGroupData(
               x: 0,
-              barRods: [BarChartRodData(y: 8, color: Colors.lightBlueAccent)],
+              barRods: [BarChartRodData(y: time8am, color: Colors.lightBlueAccent)],
               showingTooltipIndicators: [0]),
           BarChartGroupData(
               x: 1,
-              barRods: [BarChartRodData(y: 10, color: Colors.lightBlueAccent)],
+              barRods: [BarChartRodData(y: time11am, color: Colors.lightBlueAccent)],
               showingTooltipIndicators: [0]),
           BarChartGroupData(
               x: 2,
-              barRods: [BarChartRodData(y: 14, color: Colors.lightBlueAccent)],
+              barRods: [BarChartRodData(y: time2pm, color: Colors.lightBlueAccent)],
               showingTooltipIndicators: [0]),
           BarChartGroupData(
               x: 3,
-              barRods: [BarChartRodData(y: 15, color: Colors.lightBlueAccent)],
+              barRods: [BarChartRodData(y: time5pm, color: Colors.lightBlueAccent)],
               showingTooltipIndicators: [0]),
           BarChartGroupData(
               x: 4,
-              barRods: [BarChartRodData(y: 13, color: Colors.lightBlueAccent)],
+              barRods: [BarChartRodData(y: time8pm, color: Colors.lightBlueAccent)],
               showingTooltipIndicators: [0]),
           BarChartGroupData(
               x: 5,
-              barRods: [BarChartRodData(y: 20, color: Colors.lightBlueAccent)],
+              barRods: [BarChartRodData(y: time11pm, color: Colors.lightBlueAccent)],
               showingTooltipIndicators: [0]),
           BarChartGroupData(
               x: 6,
-              barRods: [BarChartRodData(y: 20, color: Colors.lightBlueAccent)],
+              barRods: [BarChartRodData(y: time2am, color: Colors.lightBlueAccent)],
               showingTooltipIndicators: [0]),
           BarChartGroupData(
               x: 7,
-              barRods: [BarChartRodData(y: 20, color: Colors.lightBlueAccent)],
+              barRods: [BarChartRodData(y: time5am, color: Colors.lightBlueAccent)],
               showingTooltipIndicators: [0]),
         ],
       ),
