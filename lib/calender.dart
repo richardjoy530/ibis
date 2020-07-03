@@ -200,7 +200,6 @@ class _CalenderPageState extends State<CalenderPage> {
             {
               if(historyList[i].time.hour>=8 && historyList[i].time.hour<11)
                 {
-
                   var timedata=historyList[i].state.split(' ');
                   int addtime=0;
                   if(timedata.length==4)
