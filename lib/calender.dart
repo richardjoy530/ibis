@@ -171,42 +171,42 @@ class _CalenderPageState extends State<CalenderPage> {
             {
               if(timeDataList[i].startTime.hour>=0 &&timeDataList[i].startTime.hour<3)
               {
-                time3am=time3am+timeDataList[i].elapsedTime.toDouble();
+                time3am=timeDataList[i].elapsedTime.toDouble();
                 time3am=20-(time3am%20);
               }
               if(timeDataList[i].startTime.hour>=3 &&timeDataList[i].startTime.hour<6)
               {
-                time6am=time6am+timeDataList[i].elapsedTime.toDouble();
+                time6am=timeDataList[i].elapsedTime.toDouble();
                 time6am=20-(time6am%20);
               }
               if(timeDataList[i].startTime.hour>=6 &&timeDataList[i].startTime.hour<9)
               {
-                time9am=time9am+timeDataList[i].elapsedTime.toDouble();
+                time9am=timeDataList[i].elapsedTime.toDouble();
                 time9am=20-(time9am%20);
               }
               if(timeDataList[i].startTime.hour>=9 &&timeDataList[i].startTime.hour<12)
               {
-                time12pm=time12pm+timeDataList[i].elapsedTime.toDouble();
+                time12pm=timeDataList[i].elapsedTime.toDouble();
                 time12pm=20-(time12pm%20);
               }
               if(timeDataList[i].startTime.hour>=12 &&timeDataList[i].startTime.hour<15)
               {
-                time3pm=time3pm+timeDataList[i].elapsedTime.toDouble();
+                time3pm=timeDataList[i].elapsedTime.toDouble();
                 time3pm=20-(time3pm%20);
               }
               if(timeDataList[i].startTime.hour>=15 &&timeDataList[i].startTime.hour<18)
               {
-                time6pm=time3am+timeDataList[i].elapsedTime.toDouble();
+                time6pm=timeDataList[i].elapsedTime.toDouble();
                 time6pm=20-(time6pm%20);
               }
               if(timeDataList[i].startTime.hour>=18 &&timeDataList[i].startTime.hour<21)
               {
-                time9pm=time9pm+timeDataList[i].elapsedTime.toDouble();
+                time9pm=timeDataList[i].elapsedTime.toDouble();
                 time9pm=20-(time9pm%20);
               }
               if(timeDataList[i].startTime.hour>=21 &&timeDataList[i].startTime.hour<24)
               {
-                time12am=time12am+timeDataList[i].elapsedTime.toDouble();
+                time12am=timeDataList[i].elapsedTime.toDouble();
                 time12am=20-(time12am%20);
               }
             }
