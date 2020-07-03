@@ -14,10 +14,13 @@ double elapseTimeFunction() {
       if (e.elapsedTime > max.elapsedTime) {
         max = e;
       }
+      //print(max.elapsedTime.toDouble() / 60);
       return max.elapsedTime.toDouble() / 60;
     });
   }
-  return 20.0;
+  else {
+    return 20.0;
+  }
 }
 
 class CalenderPage extends StatefulWidget {
