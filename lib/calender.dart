@@ -243,6 +243,17 @@ class _CalenderPageState extends State<CalenderPage> {
                 time12am=20-(time12am%20);
               }
             }
+            else
+              {
+                time12am=0;
+                time3am=0;
+                time6am=0;
+                time9am=0;
+                time12pm=0;
+                time3pm=0;
+                time6pm=0;
+                time9pm=0;
+              }
           }
         });
       },
