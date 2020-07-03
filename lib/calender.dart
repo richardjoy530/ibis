@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'data.dart';
+
+int graphDisplayTemp=0;
 
 double elapseTimeFunction()
 {
@@ -24,16 +28,90 @@ class CalenderPage extends StatefulWidget {
 
 class _CalenderPageState extends State<CalenderPage> {
   CalendarController _calendarController;
+  Timer graphTempTimer;
 
   @override
   void initState() {
     super.initState();
+    graphTempTimer=Timer.periodic(Duration(seconds: 1), (timer) {
+      if(graphDisplayTemp==0)
+        {
+          setState(() {
+            var date=DateTime.now();
+            for(int i=0;i<timeDataList.length;i++)
+            {
+              if(date.day==timeDataList[i].startTime.day && date.month==timeDataList[i].startTime.month && date.year==timeDataList[i].startTime.year)
+              {
+                if(timeDataList[i].startTime.hour>=0 &&timeDataList[i].startTime.hour<3)
+                {
+                  time3am=timeDataList[i].elapsedTime.toDouble();
+                  //time3am=20-(time3am%20);
+                }
+                if(timeDataList[i].startTime.hour>=3 &&timeDataList[i].startTime.hour<6)
+                {
+                  time6am=timeDataList[i].elapsedTime.toDouble();
+                  //time6am=20-(time6am%20);
+                }
+                if(timeDataList[i].startTime.hour>=6 &&timeDataList[i].startTime.hour<9)
+                {
+                  time9am=timeDataList[i].elapsedTime.toDouble();
+                  // time9am=20-(time9am%20);
+                }
+                if(timeDataList[i].startTime.hour>=9 &&timeDataList[i].startTime.hour<12)
+                {
+                  time12pm=timeDataList[i].elapsedTime.toDouble();
+                  //time12pm=20-(time12pm%20);
+                }
+                if(timeDataList[i].startTime.hour>=12 &&timeDataList[i].startTime.hour<15)
+                {
+                  time3pm=timeDataList[i].elapsedTime.toDouble();
+                  //time3pm=20-(time3pm%20);
+                }
+                if(timeDataList[i].startTime.hour>=15 &&timeDataList[i].startTime.hour<18)
+                {
+                  time6pm=timeDataList[i].elapsedTime.toDouble();
+                  //time6pm=20-(time6pm%20);
+                }
+                if(timeDataList[i].startTime.hour>=18 &&timeDataList[i].startTime.hour<21)
+                {
+                  time9pm=timeDataList[i].elapsedTime.toDouble();
+                  //time9pm=20-(time9pm%20);
+                }
+                if(timeDataList[i].startTime.hour>=21 &&timeDataList[i].startTime.hour<24)
+                {
+                  time12am=timeDataList[i].elapsedTime.toDouble();
+                  //time12am=20-(time12am%20);
+                }
+              }
+              else
+              {
+                time12am=0;
+                time3am=0;
+                time6am=0;
+                time9am=0;
+                time12pm=0;
+                time3pm=0;
+                time6pm=0;
+                time9pm=0;
+              }
+            }
+
+          });
+          graphDisplayTemp=1;
+        }
+      if(graphDisplayTemp==1)
+        {
+          graphTempTimer.cancel();
+          print('timer canceled');
+        }
+    });
     _calendarController = CalendarController();
   }
 
   @override
   void dispose() {
     _calendarController.dispose();
+    graphTempTimer.cancel();
     super.dispose();
   }
 
@@ -174,7 +252,7 @@ class _CalenderPageState extends State<CalenderPage> {
         ),
       ),
       onDaySelected: (date,events){
-
+        graphDisplayTemp=1;
         setState(() {
           for(int i=0;i<timeDataList.length;i++)
           {
