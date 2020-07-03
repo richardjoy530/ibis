@@ -86,8 +86,10 @@ void connect() async {
               name: 'Device',
               mainTime: Duration(minutes: 0),
               time: Duration(minutes: 0)));
+              
           DeviceObject temp = deviceObjectList.singleWhere(
               (element) => element.ip == clientSocket.remoteAddress.address);
+
           deviceObjectList[deviceObjectList.indexOf(temp)].run();
           ipList.add(clientSocket.remoteAddress.address);
           SharedPreferences.getInstance().then((prefs) {

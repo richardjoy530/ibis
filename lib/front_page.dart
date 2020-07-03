@@ -125,6 +125,24 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 
                   deviceObjectList[i].power = false;
                   deviceObjectList[i].completedStatus = true;
+                  databaseHelper.insertTimeData(
+                    TimeData(
+                        roomName: room,
+                        workerName: worker,
+                        startTime: startTime,
+                        endTime: DateTime.now(),
+                        elapsedTime: deviceObjectList[i].elapsedTime,
+                        time: deviceObjectList[i].time.inSeconds.toInt()),
+                  );
+                  timeDataList.add(
+                    TimeData(
+                        roomName: room,
+                        workerName: worker,
+                        startTime: startTime,
+                        endTime: DateTime.now(),
+                        elapsedTime: deviceObjectList[i].elapsedTime,
+                        time: deviceObjectList[i].time.inSeconds.toInt()),
+                  );
                   deviceObjectList[i].linearProgressBarValue = 0.0;
 
                   deviceObjectList[i].pause = false;
@@ -869,24 +887,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   }
 
   Future<void> overOver(context, DeviceObject deviceObject) async {
-    databaseHelper.insertTimeData(
-      TimeData(
-          roomName: room,
-          workerName: worker,
-          startTime: startTime,
-          endTime: DateTime.now(),
-          elapsedTime: deviceObject.elapsedTime,
-          time: deviceObject.time.inSeconds.toInt()),
-    );
-    timeDataList.add(
-      TimeData(
-          roomName: room,
-          workerName: worker,
-          startTime: startTime,
-          endTime: DateTime.now(),
-          elapsedTime: deviceObject.elapsedTime,
-          time: deviceObject.time.inSeconds.toInt()),
-    );
     databaseHelper.insertHistory(
       History(
         roomName: room,
