@@ -56,6 +56,18 @@ class _LodingState extends State<Loding> {
         );
       }
     });
+
+    databaseHelper.getTimeDataMapList().then((value) {
+      for (var map in value) {
+        timeDataList.add(TimeData(
+            roomName: map['roomName'],
+            workerName: map['workerName'],
+            startTime: DateTime.parse(map['startTime']),
+            endTime: DateTime.parse(map['endTime']),
+            time: map['time'],
+            elapsedTime: map['elapsedTime']));
+      }
+    });
   }
 
   void redirect() {
