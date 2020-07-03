@@ -1,10 +1,25 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'data.dart';
 
-//import 'data.dart';
+int graphDisplayTemp=0;
+
+double elapseTimeFunction()
+{
+  var max=timeDataList[0];
+  timeDataList.forEach((e) {
+    if(e.elapsedTime>max.elapsedTime)
+      {
+        max=e;
+      }
+  });
+
+  return max.elapsedTime.toDouble()/60;
+}
 
 class CalenderPage extends StatefulWidget {
   @override
@@ -13,16 +28,90 @@ class CalenderPage extends StatefulWidget {
 
 class _CalenderPageState extends State<CalenderPage> {
   CalendarController _calendarController;
+  Timer graphTempTimer;
 
   @override
   void initState() {
     super.initState();
+    graphTempTimer=Timer.periodic(Duration(seconds: 1), (timer) {
+      if(graphDisplayTemp==0)
+        {
+          setState(() {
+            var date=DateTime.now();
+            for(int i=0;i<timeDataList.length;i++)
+            {
+              if(date.day==timeDataList[i].startTime.day && date.month==timeDataList[i].startTime.month && date.year==timeDataList[i].startTime.year)
+              {
+                if(timeDataList[i].startTime.hour>=0 &&timeDataList[i].startTime.hour<3)
+                {
+                  time3am=timeDataList[i].elapsedTime.toDouble();
+                  //time3am=20-(time3am%20);
+                }
+                if(timeDataList[i].startTime.hour>=3 &&timeDataList[i].startTime.hour<6)
+                {
+                  time6am=timeDataList[i].elapsedTime.toDouble();
+                  //time6am=20-(time6am%20);
+                }
+                if(timeDataList[i].startTime.hour>=6 &&timeDataList[i].startTime.hour<9)
+                {
+                  time9am=timeDataList[i].elapsedTime.toDouble();
+                  // time9am=20-(time9am%20);
+                }
+                if(timeDataList[i].startTime.hour>=9 &&timeDataList[i].startTime.hour<12)
+                {
+                  time12pm=timeDataList[i].elapsedTime.toDouble();
+                  //time12pm=20-(time12pm%20);
+                }
+                if(timeDataList[i].startTime.hour>=12 &&timeDataList[i].startTime.hour<15)
+                {
+                  time3pm=timeDataList[i].elapsedTime.toDouble();
+                  //time3pm=20-(time3pm%20);
+                }
+                if(timeDataList[i].startTime.hour>=15 &&timeDataList[i].startTime.hour<18)
+                {
+                  time6pm=timeDataList[i].elapsedTime.toDouble();
+                  //time6pm=20-(time6pm%20);
+                }
+                if(timeDataList[i].startTime.hour>=18 &&timeDataList[i].startTime.hour<21)
+                {
+                  time9pm=timeDataList[i].elapsedTime.toDouble();
+                  //time9pm=20-(time9pm%20);
+                }
+                if(timeDataList[i].startTime.hour>=21 &&timeDataList[i].startTime.hour<24)
+                {
+                  time12am=timeDataList[i].elapsedTime.toDouble();
+                  //time12am=20-(time12am%20);
+                }
+              }
+              else
+              {
+                time12am=0;
+                time3am=0;
+                time6am=0;
+                time9am=0;
+                time12pm=0;
+                time3pm=0;
+                time6pm=0;
+                time9pm=0;
+              }
+            }
+
+          });
+          graphDisplayTemp=1;
+        }
+      if(graphDisplayTemp==1)
+        {
+          graphTempTimer.cancel();
+          print('timer canceled');
+        }
+    });
     _calendarController = CalendarController();
   }
 
   @override
   void dispose() {
     _calendarController.dispose();
+    graphTempTimer.cancel();
     super.dispose();
   }
 
@@ -45,30 +134,67 @@ class _CalenderPageState extends State<CalenderPage> {
             child: _buildTableCalendar(),
           ),
           Expanded(
-            child: BarChart(
-              BarChartData(
-                alignment: BarChartAlignment.spaceBetween,
-                maxY: elapseTimeFunction(),
-                barTouchData: BarTouchData(
-                  enabled: false,
-                  touchTooltipData: BarTouchTooltipData(
-                    tooltipBgColor: Colors.transparent,
-                    tooltipPadding: const EdgeInsets.all(0),
-                    tooltipBottomMargin: 8,
-                    getTooltipItem: (
-                        BarChartGroupData group,
-                        int groupIndex,
-                        BarChartRodData rod,
-                        int rodIndex,
-                        ) {
-                      return BarTooltipItem(
-                        rod.y.round().toString(),
-                        TextStyle(
-                          color: Colors.blueGrey,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      );
-                    },
+            child: Container(
+              height: MediaQuery.of(context).size.height/2,
+              width: MediaQuery.of(context).size.width/1,
+              padding: EdgeInsets.all(8.0),
+              child: BarChart(
+                BarChartData(
+                  alignment: BarChartAlignment.spaceAround,
+                  maxY: elapseTimeFunction(),
+                  barTouchData: BarTouchData(
+                    enabled: true,
+                    touchTooltipData: BarTouchTooltipData(
+                      tooltipBgColor: Colors.transparent,
+                      tooltipPadding: const EdgeInsets.all(0),
+                      tooltipBottomMargin: 8,
+                      getTooltipItem: (
+                          BarChartGroupData group,
+                          int groupIndex,
+                          BarChartRodData rod,
+                          int rodIndex,
+                          ) {
+                        return BarTooltipItem(
+                          rod.y.round().toString(),
+                          TextStyle(
+                            color: Colors.blueGrey,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  titlesData: FlTitlesData(
+                    show: true,
+                    bottomTitles: SideTitles(
+                      showTitles: true,
+                      textStyle: TextStyle(
+                          color: const Color(0xff7589a2), fontWeight: FontWeight.bold, fontSize: 14),
+                      margin: 20,
+                      getTitles: (double value) {
+                        switch (value.toInt()) {
+                          case 0:
+                            return '12AM';
+                          case 1:
+                            return '3AM';
+                          case 2:
+                            return '6AM';
+                          case 3:
+                            return '9AM';
+                          case 4:
+                            return '12PM';
+                          case 5:
+                            return '3PM';
+                          case 6:
+                            return '6PM';
+                          case 7:
+                            return '9PM';
+                          default:
+                            return '';
+                        }
+                      },
+                    ),
+                    leftTitles: SideTitles(showTitles: false),
                   ),
                 ),
                 titlesData: FlTitlesData(
@@ -101,7 +227,41 @@ class _CalenderPageState extends State<CalenderPage> {
                       }
                     },
                   ),
-                  leftTitles: SideTitles(showTitles: true),
+                  barGroups: [
+                    BarChartGroupData(
+                        x: 0,
+                        barRods: [BarChartRodData(y: time12am/60, color: Colors.lightBlueAccent)],
+                        showingTooltipIndicators: [0]),
+                    BarChartGroupData(
+                        x: 1,
+                        barRods: [BarChartRodData(y: time3am/60, color: Colors.lightBlueAccent)],
+                        showingTooltipIndicators: [0]),
+                    BarChartGroupData(
+                        x: 2,
+                        barRods: [BarChartRodData(y: time6am/60, color: Colors.lightBlueAccent)],
+                        showingTooltipIndicators: [0]),
+                    BarChartGroupData(
+                        x: 3,
+                        barRods: [BarChartRodData(y: time9am/60, color: Colors.lightBlueAccent)],
+                        showingTooltipIndicators: [0]),
+                    BarChartGroupData(
+                        x: 4,
+                        barRods: [BarChartRodData(y: time12pm/60, color: Colors.lightBlueAccent)],
+                        showingTooltipIndicators: [0]),
+                    BarChartGroupData(
+                        x: 5,
+                        barRods: [BarChartRodData(y: time3pm/60, color: Colors.lightBlueAccent)],
+                        showingTooltipIndicators: [0]),
+                    BarChartGroupData(
+                        x: 6,
+                        barRods: [BarChartRodData(y: time6pm/60, color: Colors.lightBlueAccent)],
+                        showingTooltipIndicators: [0]),
+                    BarChartGroupData(
+                        x: 7,
+                        barRods: [BarChartRodData(y: time9pm/60, color: Colors.lightBlueAccent)],
+                        showingTooltipIndicators: [0]),
+
+                  ],
                 ),
                 borderData: FlBorderData(
                   show: false,
@@ -167,7 +327,7 @@ class _CalenderPageState extends State<CalenderPage> {
         ),
       ),
       onDaySelected: (date,events){
-
+        graphDisplayTemp=1;
         setState(() {
           for(int i=0;i<timeDataList.length;i++)
           {
@@ -176,42 +336,42 @@ class _CalenderPageState extends State<CalenderPage> {
               if(timeDataList[i].startTime.hour>=0 &&timeDataList[i].startTime.hour<3)
               {
                 time3am=timeDataList[i].elapsedTime.toDouble();
-                time3am=20-(time3am%20);
+                //time3am=20-(time3am%20);
               }
               if(timeDataList[i].startTime.hour>=3 &&timeDataList[i].startTime.hour<6)
               {
                 time6am=timeDataList[i].elapsedTime.toDouble();
-                time6am=20-(time6am%20);
+                //time6am=20-(time6am%20);
               }
               if(timeDataList[i].startTime.hour>=6 &&timeDataList[i].startTime.hour<9)
               {
                 time9am=timeDataList[i].elapsedTime.toDouble();
-                time9am=20-(time9am%20);
+               // time9am=20-(time9am%20);
               }
               if(timeDataList[i].startTime.hour>=9 &&timeDataList[i].startTime.hour<12)
               {
                 time12pm=timeDataList[i].elapsedTime.toDouble();
-                time12pm=20-(time12pm%20);
+                //time12pm=20-(time12pm%20);
               }
               if(timeDataList[i].startTime.hour>=12 &&timeDataList[i].startTime.hour<15)
               {
                 time3pm=timeDataList[i].elapsedTime.toDouble();
-                time3pm=20-(time3pm%20);
+                //time3pm=20-(time3pm%20);
               }
               if(timeDataList[i].startTime.hour>=15 &&timeDataList[i].startTime.hour<18)
               {
                 time6pm=timeDataList[i].elapsedTime.toDouble();
-                time6pm=20-(time6pm%20);
+                //time6pm=20-(time6pm%20);
               }
               if(timeDataList[i].startTime.hour>=18 &&timeDataList[i].startTime.hour<21)
               {
                 time9pm=timeDataList[i].elapsedTime.toDouble();
-                time9pm=20-(time9pm%20);
+                //time9pm=20-(time9pm%20);
               }
               if(timeDataList[i].startTime.hour>=21 &&timeDataList[i].startTime.hour<24)
               {
                 time12am=timeDataList[i].elapsedTime.toDouble();
-                time12am=20-(time12am%20);
+                //time12am=20-(time12am%20);
               }
             }
             else
