@@ -7,6 +7,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'data.dart';
 
 int graphDisplayTemp = 0;
+String dropdownValue;
 double elapseTimeFunction() {
   if (timeDataList.length != 0) {
     var max = timeDataList[0];
@@ -115,7 +116,42 @@ class _CalenderPageState extends State<CalenderPage> {
       body: Column(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
+            padding: const EdgeInsets.fromLTRB(0.0,30.0, 0.0, 0.0),
+            child:Container(
+              height: 50,
+              width: MediaQuery.of(context).size.width/2,
+              child: DropdownButton<String>(
+                value: rooms.length==0?'No rooms':rooms[0],
+                icon: Icon(Icons.arrow_downward),
+                iconSize: 24,
+                elevation: 26,
+                style: TextStyle(color: Colors.deepPurple),
+                underline: Container(
+                  height: 2,
+                  color: Colors.deepPurpleAccent,
+                ),
+                onChanged: (String newValue) {
+                  setState(() {
+                    dropdownValue = newValue;
+                  });
+                },
+                items: rooms.length==0?<String>['No rooms'].map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList():rooms
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 0.0),
             child: _buildTableCalendar(),
           ),
           Expanded(
