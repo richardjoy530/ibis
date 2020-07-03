@@ -196,6 +196,7 @@ class _CalenderPageState extends State<CalenderPage> {
                 ),
       ),
      onDaySelected: (date,events){
+
         setState(() {
          for(int i=0;i<timeDataList.length;i++)
            {
