@@ -32,7 +32,6 @@ class _CalenderPageState extends State<CalenderPage> {
 
   @override
   void initState() {
-
     super.initState();
     graphTempTimer=Timer.periodic(Duration(seconds: 1), (timer) {
       if(graphDisplayTemp==0)
