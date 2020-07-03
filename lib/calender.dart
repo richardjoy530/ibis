@@ -4,8 +4,6 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'data.dart';
 
-//import 'data.dart';
-
 class CalenderPage extends StatefulWidget {
   @override
   _CalenderPageState createState() => _CalenderPageState();
@@ -196,54 +194,102 @@ class _CalenderPageState extends State<CalenderPage> {
                 ),
       ),
      onDaySelected: (date,events){
-
         setState(() {
-         for(int i=0;i<timeDataList.length;i++)
-           {
-             if(date.day==timeDataList[i].startTime.day && date.month==timeDataList[i].startTime.month && date.year==timeDataList[i].startTime.year)
-               {
-                 if(timeDataList[i].startTime.hour>=0 &&timeDataList[i].startTime.hour<3)
-                   {
-                     time3am=time3am+timeDataList[i].elapsedTime.toDouble();
-                     time3am=20-(time3am%20);
-                   }
-                 if(timeDataList[i].startTime.hour>=3 &&timeDataList[i].startTime.hour<6)
-                 {
-                   time6am=time6am+timeDataList[i].elapsedTime.toDouble();
-                   time6am=20-(time6am%20);
-                 }
-                 if(timeDataList[i].startTime.hour>=6 &&timeDataList[i].startTime.hour<9)
-                 {
-                   time9am=time9am+timeDataList[i].elapsedTime.toDouble();
-                   time9am=20-(time9am%20);
-                 }
-                 if(timeDataList[i].startTime.hour>=9 &&timeDataList[i].startTime.hour<12)
-                 {
-                   time12pm=time12pm+timeDataList[i].elapsedTime.toDouble();
-                   time12pm=20-(time12pm%20);
-                 }
-                 if(timeDataList[i].startTime.hour>=12 &&timeDataList[i].startTime.hour<15)
-                 {
-                   time3pm=time3pm+timeDataList[i].elapsedTime.toDouble();
-                   time3pm=20-(time3pm%20);
-                 }
-                 if(timeDataList[i].startTime.hour>=15 &&timeDataList[i].startTime.hour<18)
-                 {
-                   time6pm=time3am+timeDataList[i].elapsedTime.toDouble();
-                   time6pm=20-(time6pm%20);
-                 }
-                 if(timeDataList[i].startTime.hour>=18 &&timeDataList[i].startTime.hour<21)
-                 {
-                   time9pm=time9pm+timeDataList[i].elapsedTime.toDouble();
-                   time9pm=20-(time9pm%20);
-                 }
-                 if(timeDataList[i].startTime.hour>=21 &&timeDataList[i].startTime.hour<24)
-                 {
-                   time12am=time12am+timeDataList[i].elapsedTime.toDouble();
-                   time12am=20-(time12am%20);
-                 }
-               }
-           }
+          for(int i=0;i<historyList.length;i++)
+          {
+            if(historyList[i].time.day==date.day && historyList[i].time.month==date.month && historyList[i].time.year==date.year)
+            {
+              if(historyList[i].time.hour>=8 && historyList[i].time.hour<11)
+                {
+                  var timedata=historyList[i].state.split(' ');
+                  int addtime=0;
+                  if(timedata.length==4)
+                    {
+                      addtime=int.parse(timedata[2]);
+                    }
+                  time11am=time11am+addtime;
+                  time11am=20-(time11am%20);
+                }
+              if(historyList[i].time.hour>=11 && historyList[i].time.hour<14)
+              {
+                var timedata=historyList[i].state.split(' ');
+                int addtime=0;
+                if(timedata.length==4)
+                {
+                  addtime=int.parse(timedata[2]);
+                }
+                time2pm=time2pm+addtime;
+                time2pm=20-(time2pm%20);
+              }
+              if(historyList[i].time.hour>=14 && historyList[i].time.hour<17)
+              {
+                var timedata=historyList[i].state.split(' ');
+                int addtime=0;
+                if(timedata.length==4)
+                {
+                  addtime=int.parse(timedata[2]);
+                }
+                time5pm=time5pm+addtime;
+                time5pm=20-(time5pm%20);
+              }
+              if(historyList[i].time.hour>=17 && historyList[i].time.hour<20)
+              {
+                var timedata=historyList[i].state.split(' ');
+                int addtime=0;
+                if(timedata.length==4)
+                {
+                  addtime=int.parse(timedata[2]);
+                }
+                time8pm=time8pm+addtime;
+                time8pm=20-(time8pm%20);
+              }
+              if(historyList[i].time.hour>=20 && historyList[i].time.hour<23)
+              {
+                var timedata=historyList[i].state.split(' ');
+                int addtime=0;
+                if(timedata.length==4)
+                {
+                  addtime=int.parse(timedata[2]);
+                }
+                time11pm=time11pm+addtime;
+                time11pm=20-(time11pm%20);
+              }
+              if(historyList[i].time.hour>=23 && historyList[i].time.hour<2)
+              {
+                var timedata=historyList[i].state.split(' ');
+                int addtime=0;
+                if(timedata.length==4)
+                {
+                  addtime=int.parse(timedata[2]);
+                }
+                time2am=time2am+addtime;
+                time2am=20-(time2am%20);
+              }
+              if(historyList[i].time.hour>=2 && historyList[i].time.hour<5)
+              {
+                var timedata=historyList[i].state.split(' ');
+                int addtime=0;
+                if(timedata.length==4)
+                {
+                  addtime=int.parse(timedata[2]);
+                }
+                time5am=time5am+addtime;
+                time5am=20-(time5am%20);
+              }
+              if(historyList[i].time.hour>=5 && historyList[i].time.hour<8)
+              {
+                var timedata=historyList[i].state.split(' ');
+                int addtime=0;
+                if(timedata.length==4)
+                {
+                  addtime=int.parse(timedata[2]);
+                }
+                time8am=time8am+addtime;
+                time8am=20-(time8am%20);
+              }
+            }
+          }
+          print(time8am);
         });
      },
     //  onVisibleDaysChanged: _onVisibleDaysChanged,
