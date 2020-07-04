@@ -7,7 +7,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'data.dart';
 
 int graphDisplayTemp = 0;
-String dropdownValue;
+String dropdownValue=rooms[0];
 double elapseTimeFunction() {
   if (timeDataList.length != 0) {
     var max = timeDataList[0];
@@ -40,7 +40,8 @@ class _CalenderPageState extends State<CalenderPage> {
           for (int i = 0; i < timeDataList.length; i++) {
             if (date.day == timeDataList[i].startTime.day &&
                 date.month == timeDataList[i].startTime.month &&
-                date.year == timeDataList[i].startTime.year) {
+                date.year == timeDataList[i].startTime.year &&
+                dropdownValue==timeDataList[i].roomName) {
               if (timeDataList[i].startTime.hour >= 0 &&
                   timeDataList[i].startTime.hour < 3) {
                 time3am = timeDataList[i].elapsedTime.toDouble();
@@ -119,34 +120,47 @@ class _CalenderPageState extends State<CalenderPage> {
             padding: const EdgeInsets.fromLTRB(0.0,30.0, 0.0, 0.0),
             child:Container(
               height: 50,
-              width: MediaQuery.of(context).size.width/2,
-              child: DropdownButton<String>(
-                value: rooms.length==0?'No rooms':rooms[0],
-                icon: Icon(Icons.arrow_downward),
-                iconSize: 24,
-                elevation: 26,
-                style: TextStyle(color: Colors.deepPurple),
-                underline: Container(
-                  height: 2,
-                  color: Colors.deepPurpleAccent,
-                ),
-                onChanged: (String newValue) {
-                  setState(() {
-                    dropdownValue = newValue;
-                  });
-                },
-                items: rooms.length==0?<String>['No rooms'].map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList():rooms
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
+              width: MediaQuery.of(context).size.width/1.5,
+              decoration: BoxDecoration(
+                border: Border.all(),
+                borderRadius: BorderRadius.all(Radius.circular(20.0))
+              ),
+              child: Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(40.0, 6.0, 20.0, 0.0),
+                    child: Text('Select Room',style: TextStyle(fontSize: 20.0),),
+                  ),
+                  DropdownButton<String>(
+                    value: rooms.length==0?'No rooms':dropdownValue,
+                    icon: Icon(Icons.arrow_downward),
+                    iconSize: 24,
+                    elevation: 26,
+                    style: TextStyle(color: Colors.deepPurple),
+                    underline: Container(
+                      height: 2,
+                      color: Colors.deepPurpleAccent,
+                    ),
+                    onChanged: (String newValue) {
+                      setState(() {
+                        dropdownValue = newValue;
+                        print(dropdownValue);
+                      });
+                    },
+                    items: rooms.length==0?<String>['No rooms'].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList():rooms
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ],
               ),
             ),
           ),
@@ -302,10 +316,13 @@ class _CalenderPageState extends State<CalenderPage> {
       onDaySelected: (date, events) {
         graphDisplayTemp = 1;
         setState(() {
+          print('date selected');
+          print(dropdownValue);
           for (int i = 0; i < timeDataList.length; i++) {
             if (date.day == timeDataList[i].startTime.day &&
                 date.month == timeDataList[i].startTime.month &&
-                date.year == timeDataList[i].startTime.year) {
+                date.year == timeDataList[i].startTime.year &&
+                dropdownValue==timeDataList[i].roomName) {
               if (timeDataList[i].startTime.hour >= 0 &&
                   timeDataList[i].startTime.hour < 3) {
                 time3am = timeDataList[i].elapsedTime.toDouble();
