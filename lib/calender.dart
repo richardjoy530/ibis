@@ -7,7 +7,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'data.dart';
 
 int graphDisplayTemp = 0;
-String dropdownValue=rooms[0];
+String dropdownValue = rooms[0];
 double elapseTimeFunction() {
   if (timeDataList.length != 0) {
     var max = timeDataList[0];
@@ -41,7 +41,7 @@ class _CalenderPageState extends State<CalenderPage> {
             if (date.day == timeDataList[i].startTime.day &&
                 date.month == timeDataList[i].startTime.month &&
                 date.year == timeDataList[i].startTime.year &&
-                dropdownValue==timeDataList[i].roomName) {
+                dropdownValue == timeDataList[i].roomName) {
               if (timeDataList[i].startTime.hour >= 0 &&
                   timeDataList[i].startTime.hour < 3) {
                 time3am = timeDataList[i].elapsedTime.toDouble();
@@ -117,22 +117,24 @@ class _CalenderPageState extends State<CalenderPage> {
       body: Column(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.fromLTRB(0.0,30.0, 0.0, 0.0),
-            child:Container(
+            padding: const EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 0.0),
+            child: Container(
               height: 50,
-              width: MediaQuery.of(context).size.width/1.5,
+              width: MediaQuery.of(context).size.width / 1.5,
               decoration: BoxDecoration(
-                border: Border.all(),
-                borderRadius: BorderRadius.all(Radius.circular(20.0))
-              ),
+                  border: Border.all(),
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
               child: Row(
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.fromLTRB(40.0, 6.0, 20.0, 0.0),
-                    child: Text('Select Room',style: TextStyle(fontSize: 20.0),),
+                    child: Text(
+                      'Select Room',
+                      style: TextStyle(fontSize: 20.0),
+                    ),
                   ),
                   DropdownButton<String>(
-                    value: rooms.length==0?'No rooms':dropdownValue,
+                    value: rooms.length == 0 ? 'No rooms' : dropdownValue,
                     icon: Icon(Icons.arrow_downward),
                     iconSize: 24,
                     elevation: 26,
@@ -147,18 +149,20 @@ class _CalenderPageState extends State<CalenderPage> {
                         print(dropdownValue);
                       });
                     },
-                    items: rooms.length==0?<String>['No rooms'].map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList():rooms
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
+                    items: rooms.length == 0
+                        ? <String>['No rooms']
+                            .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList()
+                        : rooms.map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
                   ),
                 ],
               ),
@@ -318,60 +322,59 @@ class _CalenderPageState extends State<CalenderPage> {
         setState(() {
           print('date selected');
           print(dropdownValue);
+          time12am = 0;
+          time3am = 0;
+          time6am = 0;
+          time9am = 0;
+          time12pm = 0;
+          time3pm = 0;
+          time6pm = 0;
+          time9pm = 0;
           for (int i = 0; i < timeDataList.length; i++) {
             if (date.day == timeDataList[i].startTime.day &&
                 date.month == timeDataList[i].startTime.month &&
                 date.year == timeDataList[i].startTime.year &&
-                dropdownValue==timeDataList[i].roomName) {
+                dropdownValue == timeDataList[i].roomName) {
               if (timeDataList[i].startTime.hour >= 0 &&
                   timeDataList[i].startTime.hour < 3) {
-                time3am = timeDataList[i].elapsedTime.toDouble();
+                time3am += timeDataList[i].elapsedTime.toDouble();
                 //time3am=20-(time3am%20);
               }
               if (timeDataList[i].startTime.hour >= 3 &&
                   timeDataList[i].startTime.hour < 6) {
-                time6am = timeDataList[i].elapsedTime.toDouble();
+                time6am += timeDataList[i].elapsedTime.toDouble();
                 //time6am=20-(time6am%20);
               }
               if (timeDataList[i].startTime.hour >= 6 &&
                   timeDataList[i].startTime.hour < 9) {
-                time9am = timeDataList[i].elapsedTime.toDouble();
+                time9am += timeDataList[i].elapsedTime.toDouble();
                 // time9am=20-(time9am%20);
               }
               if (timeDataList[i].startTime.hour >= 9 &&
                   timeDataList[i].startTime.hour < 12) {
-                time12pm = timeDataList[i].elapsedTime.toDouble();
+                time12pm += timeDataList[i].elapsedTime.toDouble();
                 //time12pm=20-(time12pm%20);
               }
               if (timeDataList[i].startTime.hour >= 12 &&
                   timeDataList[i].startTime.hour < 15) {
-                time3pm = timeDataList[i].elapsedTime.toDouble();
+                time3pm += timeDataList[i].elapsedTime.toDouble();
                 //time3pm=20-(time3pm%20);
               }
               if (timeDataList[i].startTime.hour >= 15 &&
                   timeDataList[i].startTime.hour < 18) {
-                time6pm = timeDataList[i].elapsedTime.toDouble();
+                time6pm += timeDataList[i].elapsedTime.toDouble();
                 //time6pm=20-(time6pm%20);
               }
               if (timeDataList[i].startTime.hour >= 18 &&
                   timeDataList[i].startTime.hour < 21) {
-                time9pm = timeDataList[i].elapsedTime.toDouble();
+                time9pm += timeDataList[i].elapsedTime.toDouble();
                 //time9pm=20-(time9pm%20);
               }
               if (timeDataList[i].startTime.hour >= 21 &&
                   timeDataList[i].startTime.hour < 24) {
-                time12am = timeDataList[i].elapsedTime.toDouble();
+                time12am += timeDataList[i].elapsedTime.toDouble();
                 //time12am=20-(time12am%20);
               }
-            } else {
-              time12am = 0;
-              time3am = 0;
-              time6am = 0;
-              time9am = 0;
-              time12pm = 0;
-              time3pm = 0;
-              time6pm = 0;
-              time9pm = 0;
             }
           }
         });
