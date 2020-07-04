@@ -7,14 +7,24 @@ import 'package:fl_chart/fl_chart.dart';
 import 'data.dart';
 
 int graphDisplayTemp = 0;
-String dropdownValue = rooms[0];
+DateTime defaultTime=DateTime.now();
+String dropdownValue = rooms.length==0?'No rooms':rooms[0];
 double elapseTimeFunction() {
   if (timeDataList.length != 0) {
     var max = timeDataList[0];
     timeDataList.forEach((e) {
       if (e.elapsedTime > max.elapsedTime) max = e;
     });
-    return max.elapsedTime.toDouble() / 60;
+    String roomNameTemp=max.roomName;
+    double maxElaspedTime=0;
+    for(int i=0;i<timeDataList.length;i++)
+      {
+        if(timeDataList[i].roomName==roomNameTemp)
+          {
+            maxElaspedTime+=timeDataList[i].elapsedTime;
+          }
+      }
+    return maxElaspedTime/ 60;
   } else {
     return 20.0;
   }
@@ -37,6 +47,14 @@ class _CalenderPageState extends State<CalenderPage> {
       if (graphDisplayTemp == 0) {
         setState(() {
           var date = DateTime.now();
+          time12am = 0;
+          time3am = 0;
+          time6am = 0;
+          time9am = 0;
+          time12pm = 0;
+          time3pm = 0;
+          time6pm = 0;
+          time9pm = 0;
           for (int i = 0; i < timeDataList.length; i++) {
             if (date.day == timeDataList[i].startTime.day &&
                 date.month == timeDataList[i].startTime.month &&
@@ -44,32 +62,32 @@ class _CalenderPageState extends State<CalenderPage> {
                 dropdownValue == timeDataList[i].roomName) {
               if (timeDataList[i].startTime.hour >= 0 &&
                   timeDataList[i].startTime.hour < 3) {
-                time3am = timeDataList[i].elapsedTime.toDouble();
+                time3am += timeDataList[i].elapsedTime.toDouble();
                 //time3am=20-(time3am%20);
               }
               if (timeDataList[i].startTime.hour >= 3 &&
                   timeDataList[i].startTime.hour < 6) {
-                time6am = timeDataList[i].elapsedTime.toDouble();
+                time6am += timeDataList[i].elapsedTime.toDouble();
                 //time6am=20-(time6am%20);
               }
               if (timeDataList[i].startTime.hour >= 6 &&
                   timeDataList[i].startTime.hour < 9) {
-                time9am = timeDataList[i].elapsedTime.toDouble();
+                time9am += timeDataList[i].elapsedTime.toDouble();
                 // time9am=20-(time9am%20);
               }
               if (timeDataList[i].startTime.hour >= 9 &&
                   timeDataList[i].startTime.hour < 12) {
-                time12pm = timeDataList[i].elapsedTime.toDouble();
+                time12pm += timeDataList[i].elapsedTime.toDouble();
                 //time12pm=20-(time12pm%20);
               }
               if (timeDataList[i].startTime.hour >= 12 &&
                   timeDataList[i].startTime.hour < 15) {
-                time3pm = timeDataList[i].elapsedTime.toDouble();
+                time3pm += timeDataList[i].elapsedTime.toDouble();
                 //time3pm=20-(time3pm%20);
               }
               if (timeDataList[i].startTime.hour >= 15 &&
                   timeDataList[i].startTime.hour < 18) {
-                time6pm = timeDataList[i].elapsedTime.toDouble();
+                time6pm += timeDataList[i].elapsedTime.toDouble();
                 //time6pm=20-(time6pm%20);
               }
               if (timeDataList[i].startTime.hour >= 18 &&
@@ -79,18 +97,9 @@ class _CalenderPageState extends State<CalenderPage> {
               }
               if (timeDataList[i].startTime.hour >= 21 &&
                   timeDataList[i].startTime.hour < 24) {
-                time12am = timeDataList[i].elapsedTime.toDouble();
+                time12am += timeDataList[i].elapsedTime.toDouble();
                 //time12am=20-(time12am%20);
               }
-            } else {
-              time12am = 0;
-              time3am = 0;
-              time6am = 0;
-              time9am = 0;
-              time12pm = 0;
-              time3pm = 0;
-              time6pm = 0;
-              time9pm = 0;
             }
           }
         });
@@ -146,7 +155,62 @@ class _CalenderPageState extends State<CalenderPage> {
                     onChanged: (String newValue) {
                       setState(() {
                         dropdownValue = newValue;
-                        print(dropdownValue);
+                        var date = defaultTime;
+                        time12am = 0;
+                        time3am = 0;
+                        time6am = 0;
+                        time9am = 0;
+                        time12pm = 0;
+                        time3pm = 0;
+                        time6pm = 0;
+                        time9pm = 0;
+                        for (int i = 0; i < timeDataList.length; i++) {
+                          if (date.day == timeDataList[i].startTime.day &&
+                              date.month == timeDataList[i].startTime.month &&
+                              date.year == timeDataList[i].startTime.year &&
+                              dropdownValue == timeDataList[i].roomName) {
+                            if (timeDataList[i].startTime.hour >= 0 &&
+                                timeDataList[i].startTime.hour < 3) {
+                              time3am += timeDataList[i].elapsedTime.toDouble();
+                              //time3am=20-(time3am%20);
+                            }
+                            if (timeDataList[i].startTime.hour >= 3 &&
+                                timeDataList[i].startTime.hour < 6) {
+                              time6am += timeDataList[i].elapsedTime.toDouble();
+                              //time6am=20-(time6am%20);
+                            }
+                            if (timeDataList[i].startTime.hour >= 6 &&
+                                timeDataList[i].startTime.hour < 9) {
+                              time9am += timeDataList[i].elapsedTime.toDouble();
+                              // time9am=20-(time9am%20);
+                            }
+                            if (timeDataList[i].startTime.hour >= 9 &&
+                                timeDataList[i].startTime.hour < 12) {
+                              time12pm += timeDataList[i].elapsedTime.toDouble();
+                              //time12pm=20-(time12pm%20);
+                            }
+                            if (timeDataList[i].startTime.hour >= 12 &&
+                                timeDataList[i].startTime.hour < 15) {
+                              time3pm += timeDataList[i].elapsedTime.toDouble();
+                              //time3pm=20-(time3pm%20);
+                            }
+                            if (timeDataList[i].startTime.hour >= 15 &&
+                                timeDataList[i].startTime.hour < 18) {
+                              time6pm += timeDataList[i].elapsedTime.toDouble();
+                              //time6pm=20-(time6pm%20);
+                            }
+                            if (timeDataList[i].startTime.hour >= 18 &&
+                                timeDataList[i].startTime.hour < 21) {
+                              time9pm = timeDataList[i].elapsedTime.toDouble();
+                              //time9pm=20-(time9pm%20);
+                            }
+                            if (timeDataList[i].startTime.hour >= 21 &&
+                                timeDataList[i].startTime.hour < 24) {
+                              time12am += timeDataList[i].elapsedTime.toDouble();
+                              //time12am=20-(time12am%20);
+                            }
+                          }
+                        }
                       });
                     },
                     items: rooms.length == 0
@@ -320,6 +384,7 @@ class _CalenderPageState extends State<CalenderPage> {
       onDaySelected: (date, events) {
         graphDisplayTemp = 1;
         setState(() {
+          defaultTime=date;
           print('date selected');
           print(dropdownValue);
           time12am = 0;
