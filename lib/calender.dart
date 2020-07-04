@@ -135,6 +135,7 @@ class _CalenderPageState extends State<CalenderPage> {
             ),
             iconSize: 30,
             elevation: 26,
+            dropdownColor: Colors.blue,
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 20.0,
