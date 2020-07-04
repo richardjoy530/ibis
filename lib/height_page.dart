@@ -6,6 +6,16 @@ import 'package:flutter/material.dart';
 
 import 'data.dart';
 import 'main.dart';
+Color upArrowColor = Color(0xff02457a);
+Color upBGColor = Color(0xff5cbceb);
+Color downArrowColor = Color(0xffd6e7ee);
+Color downBGColor = Color(0xff5cbceb);
+
+Timer mainTimer;
+Timer timer;
+int indicator = 0;
+bool quesVis = true;
+String flare = 'idle';
 
 class HeightPage extends StatefulWidget {
   final DeviceObject deviceObject;
@@ -16,16 +26,7 @@ class HeightPage extends StatefulWidget {
 }
 
 class _HeightPageState extends State<HeightPage> {
-  Color upArrowColor = Color(0xff02457a);
-  Color upBGColor = Color(0xff5cbceb);
-  Color downArrowColor = Color(0xffd6e7ee);
-  Color downBGColor = Color(0xff5cbceb);
 
-  Timer mainTimer;
-  Timer timer;
-  int indicator = 0;
-  bool quesVis = true;
-  String flare = 'idle';
 
   @override
   void initState() {

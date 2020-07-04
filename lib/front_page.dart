@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:ibis/height_page.dart';
 import 'package:ibis/main.dart';
 import 'package:ibis/show_history.dart';
@@ -14,6 +15,7 @@ import 'package:qrscan/qrscan.dart' as scanner;
 import 'calender.dart';
 import 'data.dart';
 import 'show_rooms_workers.dart';
+import 'height_page.dart';
 
 Future<void> scanIbis() async {
   String cameraScanResult = await scanner.scan();
@@ -71,6 +73,7 @@ Future<void> wifi() async {
 }
 
 class FrontPage extends StatefulWidget {
+
   @override
   FrontPageState createState() => FrontPageState();
 }
@@ -86,6 +89,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     connect();
     nameController = TextEditingController();
     getIpList();
+
     timer = Timer.periodic(
       Duration(milliseconds: 100),
       (callback) {
@@ -273,62 +277,71 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                               }
                               return Column(
                                 children: <Widget>[
-                                  Container(
-                                    color: Color(0xffbddeee),
-                                    child: ListTile(
-                                      leading: Icon(
-                                        deviceObjectList[index].offline == true
-                                            ? Icons.signal_wifi_off
-                                            : Icons.network_wifi,
-                                        color: Color(0xff02457a),
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(0.0,30.0,0.0,0.0),
+                                    child: Container(
+
+                                      width: MediaQuery.of(context).size.width/1.05,
+                                      decoration: BoxDecoration(
+                                        color: Color(0xffbddeee),
+                                        borderRadius: BorderRadius.all(Radius.circular(30.0)),
                                       ),
-                                      trailing: deviceObjectList[index]
-                                                  .motionDetected ==
-                                              true
-                                          ? Icon(
-                                              Icons.warning,
-                                              color: Color(0xff02457a),
-                                            )
-                                          : IconButton(
-                                              icon: Icon(Icons.more_vert,
-                                                  color: Color(0xff02457a)),
-                                              onPressed: () {
-                                                info(context,
-                                                    deviceObjectList[index]);
-                                              },
-                                            ),
-                                      title: Text(
-                                          '${deviceObjectList[index].name}'),
-                                      subtitle: deviceObjectList[index].power ==
-                                              false
-                                          ? Text(
-                                              deviceObjectList[index].offline ==
-                                                      true
-                                                  ? 'Device not Connected'
-                                                  : deviceObjectList[index]
-                                                              .motionDetected ==
-                                                          false
-                                                      ? 'Device Connected'
-                                                      : 'Motion Detected')
-                                          : LinearPercentIndicator(
-                                              lineHeight: 5.0,
-                                              animation: false,
-                                              animationDuration: 0,
-                                              backgroundColor:
-                                                  Color(0xff9ad2ec),
-                                              percent: deviceObjectList[index]
-                                                  .linearProgressBarValue,
-                                              linearStrokeCap:
-                                                  LinearStrokeCap.roundAll,
-                                              progressColor: Color(0xff019ae6),
-                                            ),
-                                      onTap: () {},
-                                      onLongPress: () {
-                                        setName(
-                                          context,
-                                          deviceObjectList[index],
-                                        );
-                                      },
+
+                                      child: ListTile(
+                                        leading: Icon(
+                                          deviceObjectList[index].offline == true
+                                              ? Icons.signal_wifi_off
+                                              : Icons.network_wifi,
+                                          color: Color(0xff02457a),
+                                        ),
+                                        trailing: deviceObjectList[index]
+                                                    .motionDetected ==
+                                                true
+                                            ? Icon(
+                                                Icons.warning,
+                                                color: Color(0xff02457a),
+                                              )
+                                            : IconButton(
+                                                icon: Icon(Icons.more_vert,
+                                                    color: Color(0xff02457a)),
+                                                onPressed: () {
+                                                  info(context,
+                                                      deviceObjectList[index]);
+                                                },
+                                              ),
+                                        title: Text(
+                                            '${deviceObjectList[index].name}'),
+                                        subtitle: deviceObjectList[index].power ==
+                                                false
+                                            ? Text(
+                                                deviceObjectList[index].offline ==
+                                                        true
+                                                    ? 'Device not Connected'
+                                                    : deviceObjectList[index]
+                                                                .motionDetected ==
+                                                            false
+                                                        ? 'Device Connected'
+                                                        : 'Motion Detected')
+                                            : LinearPercentIndicator(
+                                                lineHeight: 5.0,
+                                                animation: false,
+                                                animationDuration: 0,
+                                                backgroundColor:
+                                                    Color(0xff9ad2ec),
+                                                percent: deviceObjectList[index]
+                                                    .linearProgressBarValue,
+                                                linearStrokeCap:
+                                                    LinearStrokeCap.roundAll,
+                                                progressColor: Color(0xff019ae6),
+                                              ),
+                                        onTap: () {},
+                                        onLongPress: () {
+                                          setName(
+                                            context,
+                                            deviceObjectList[index],
+                                          );
+                                        },
+                                      ),
                                     ),
                                   ),
 //                                  Container(
@@ -394,60 +407,203 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 //                                      },
 //                                    ),
 //                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: <Widget>[
-                                      Container(
-                                        height: 100,
-                                        width: MediaQuery.of(context).size.width/2.5,
-                                        //color: Colors.blue,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                           // color: Colors.black
-                                          ),
-                                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                                          color: Colors.blue
-                                        ),
-                                          child: Listener(
-                                            child: Container(
-                                              height: 50,
-                                              width: 50,
-                                              child: Image.asset('images/up.png',color: Colors.pink,),
-                                            ),
-                                            onPointerDown: (data) {
-                                              deviceObjectList[index].socket.write('-3\r');
-
-                                            },
-                                            onPointerUp: (data) {
-                                              deviceObjectList[index].socket.write('-1\r');
-                                            },
-                                          ),
-                                      ),
-                                      Container(
-                                        height: 100,
-                                        width: MediaQuery.of(context).size.width/2.5,
-                                        //color: Colors.blue,
-                                        decoration: BoxDecoration(
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(0.0,50.0,0.0,0.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: <Widget>[
+                                        Container(
+                                          height: 200,
+                                          width: MediaQuery.of(context).size.width/2.5,
+                                          //color: Colors.blue,
+                                          decoration: BoxDecoration(
                                             border: Border.all(
-                                              // color: Colors.black
+                                             // color: Colors.black
                                             ),
                                             borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                                            color: Color(0xffbddeee)
+                                          ),
+                                            child: ListTile(
+                                              leading: Icon(
+                                                Icons.history,
+                                                color: Color(0xff02457a),
+                                              ),
+                                              title: Text('Show History'),
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) => ShowHistory(),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                        ),
+                                        Container(
+                                          height: 200,
+                                          width: MediaQuery.of(context).size.width/2.5,
+                                          //color: Colors.blue,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                // color: Colors.black
+                                              ),
+                                              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                                              color: Color(0xffbddeee),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            children: <Widget>[
+                                              Container(
+                                                height: 170,
+                                                width: (MediaQuery.of(context).size.width/2.5)/2.1,
+                                                 child: FlareActor(
+                                                    'assets/lift.flr',
+                                                    animation: flare,
+                                                  )
+
+                                              ),
+                                              Container(
+                                                height: 170,
+                                                width: (MediaQuery.of(context).size.width/2.5)/2.1,
+                                                child: Column(
+                                                  children: <Widget>[
+                                                    Container(
+                                                      height: 85,
+                                                      child: Listener(
+                                                        child: Container(
+                                                          height: 65,
+                                                          width: 65,
+                                                          child: Image.asset('images/up.png',color: upBGColor,),
+                                                        ),
+                                                        onPointerDown: (data) {
+                                                          if(deviceObjectList[index].offline==false)
+                                                            {
+                                                              deviceObjectList[index].socket.write('-3\r');
+                                                              upBGColor = upArrowColor;
+                                                              setState(() {
+                                                                flare = 'up';
+                                                              });
+                                                              upArrowColor = downBGColor;
+                                                              indicator = 1;
+                                                              if (deviceObjectList[index].height != 100) {
+                                                                tick(deviceObjectList[index]);
+                                                              }
+                                                            }
+
+                                                        },
+                                                        onPointerUp: (data) {
+                                                          if(deviceObjectList[index].offline==false)
+                                                            {
+                                                              deviceObjectList[index].socket.write('-1\r');
+                                                              setState(() {
+                                                                flare = 'idle';
+                                                              });
+                                                              setState(() {
+                                                                upArrowColor = Color(0xff02457a);
+                                                                upBGColor = Color(0xff5cbceb);
+                                                              });
+                                                              if (timer!=null) {
+                                                                timer.cancel();
+                                                              }
+                                                              if (indicator != 0) {
+                                                                prefs.setInt('${deviceObjectList[index].ip}height',
+                                                                    deviceObjectList[index].height.toInt());
+                                                                indicator = 0;
+                                                              }
+                                                            }
+
+                                                        },
+                                                      ),
+
+                                                    ),
+                                                    Container(
+                                                      height: 85,
+                                                      child: Listener(
+                                                        child: Transform.rotate(
+                                                          angle: 3.14,
+                                                          child: Container(
+                                                            height: 65,
+                                                            width: 65,
+                                                            child: Image.asset('images/up.png',color: downBGColor,),
+                                                          ),
+                                                        ),
+                                                        onPointerDown: (data) {
+                                                          if(deviceObjectList[index].offline==false)
+                                                            {
+                                                              downBGColor = downArrowColor;
+                                                              downArrowColor = upBGColor;
+                                                              setState(() {
+                                                                flare = 'down';
+                                                              });
+
+                                                              indicator = -1;
+                                                              deviceObjectList[index].socket.write('-2\r');
+                                                              if (deviceObjectList[index].height != 0) {
+                                                                tick(deviceObjectList[index]);
+                                                              }
+                                                            }
+
+                                                        },
+                                                        onPointerUp: (data) {
+                                                          if(deviceObjectList[index].offline==false)
+                                                            {
+                                                              deviceObjectList[index].socket.write('-1\r');
+
+                                                              setState(() {
+                                                                flare = 'idle';
+                                                                downArrowColor = Color(0xff02457a);
+                                                                downBGColor = Color(0xff5cbceb);
+                                                              });
+                                                              if (timer!=null) {
+                                                                timer.cancel();
+                                                              }
+                                                              if (indicator != 0) {
+                                                                prefs.setInt('${deviceObjectList[index].ip}height',
+                                                                    deviceObjectList[index].height.toInt());
+                                                                indicator = 0;
+                                                              }
+                                                            }
+
+                                                        },
+                                                      ),
+
+                                                    )
+                                                  ],
+                                                ),
+
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Stack(
+                                    children: <Widget>[
+                                      Container(
+                                        alignment: Alignment.bottomCenter,
+                                        width: 150,
+                                        height: 150,
+                                        decoration: BoxDecoration(
                                             color: Colors.blue,
+                                            borderRadius: BorderRadius.all(Radius.circular(75.0))
                                         ),
                                         child:  ListTile(
-                                          leading: Icon(
-                                            Icons.lightbulb_outline,
-                                            color: Color(0xff02457a),
-                                          ),
-                                          title: Text(
+//                                        leading: Icon(
+//                                          Icons.lightbulb_outline,
+//                                          color: Color(0xff02457a),
+//                                        ),
+                                          title: Center(
+                                            child: Text(
                                               deviceObjectList[index].power == false
                                                   ? 'Disinfect'
                                                   : deviceObjectList[index].pause ==
                                                   true
                                                   ? 'Paused'
-                                                  : 'Disinfecting'),
-                                          subtitle: Text(
-                                              'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
+                                                  : 'Disinfecting',style: TextStyle(fontSize: 20.0),),
+                                          ),
+//                                        subtitle: Text(
+//                                            'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
                                           onTap: () {
                                             if (deviceObjectList[index].offline ==
                                                 false) {
@@ -486,69 +642,10 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                             }
                                           },
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(0.0,20.0,0.0,20.0),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: <Widget>[
-                                        Container(
-                                          height: 100,
-                                          width: MediaQuery.of(context).size.width/2.5,
-                                          //color: Colors.blue,
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                // color: Colors.black
-                                              ),
-                                              borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                                              color: Colors.blue
-                                          ),
-                                          child: Listener(
-                                            child: Container(
-                                              height: 50,
-                                              width: 50,
-                                              child: Image.asset('images/down.png',color: Colors.pink),
-                                            ),
-                                            onPointerDown: (data) {
-                                              deviceObjectList[index].socket.write('-2\r');
+                                      )
 
-                                            },
-                                            onPointerUp: (data) {
-                                              deviceObjectList[index].socket.write('-1\r');
-                                            },
-                                          ),
-                                        ),
-                                        Container(
-                                          height: 100,
-                                          width: MediaQuery.of(context).size.width/2.5,
-                                          //color: Colors.blue,
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                // color: Colors.black
-                                              ),
-                                              borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                                              color: Colors.blue
-                                          ),
-                                          child: ListTile(
-                                            leading: Icon(
-                                              Icons.history,
-                                              color: Color(0xff02457a),
-                                            ),
-                                            title: Text('Show History'),
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) => ShowHistory(),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                    ],
+
                                   ),
 //                                  Container(
 //                                    margin: EdgeInsets.only(
@@ -676,6 +773,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
       ),
       onWillPop: _onWillPop,
     );
+
   }
 
   Future<void> addRooms(BuildContext context) async {
@@ -1121,6 +1219,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     );
   }
 
+
   Future<void> showingCompletedPop(context, DeviceObject deviceObject) async {
     await showDialog(
         context: context,
@@ -1187,6 +1286,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         });
   }
 
+
   Future<void> earlyMotionDetection(
       BuildContext context, DeviceObject deviceObject) async {
     Future.delayed(Duration(milliseconds: 300), () {
@@ -1206,6 +1306,33 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
       setName(context, deviceObject);
     });
   }
+  Future<void> tick(deviceObject) async {
+    timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
+      setState(() {
+        if (indicator == 1) {
+          deviceObject.height += 0.5;
+        } else if (indicator == -1) {
+          deviceObject.height -= 0.5;
+        }
+        if (deviceObject.height >= 100) {
+          deviceObject.height = 100;
+          indicator = 0;
+          prefs.setInt('${deviceObject.ip}height',
+              deviceObject.height.toInt());
+          //widget.deviceObject.socket.write('-1\r');
+        }
+        if (deviceObject.height <= 0) {
+          deviceObject.height = 0;
+          indicator = 0;
+          prefs.setInt('${deviceObject.ip}height',
+              deviceObject.height.toInt());
+          //widget.deviceObject.socket.write('-1\r');
+        }
+      });
+    });
+  }
+
+
 }
 
 class Rooms extends StatefulWidget {
