@@ -232,9 +232,14 @@ class _CalenderPageState extends State<CalenderPage> {
               ),
             ),
           ),
+
           Padding(
             padding: const EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 0.0),
             child: _buildTableCalendar(),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0.0,0.0,300.0,0.0),
+            child: Text("Time Interval Graph",style: TextStyle(fontSize: 20.0),),
           ),
           Expanded(
             child: Container(
