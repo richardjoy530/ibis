@@ -331,130 +331,286 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                       },
                                     ),
                                   ),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                        top: 10,
-                                        left: 10,
-                                        right: 10,
-                                        bottom: 10),
-                                    decoration: BoxDecoration(
-                                        color: Color(0xff9ad2ec),
-                                        borderRadius:
-                                            BorderRadius.circular(20)),
-                                    child: ListTile(
-                                      leading: Icon(
-                                        Icons.lightbulb_outline,
-                                        color: Color(0xff02457a),
+//                                  Container(
+//                                    margin: EdgeInsets.only(
+//                                        top: 10,
+//                                        left: 10,
+//                                        right: 10,
+//                                        bottom: 10),
+//                                    decoration: BoxDecoration(
+//                                        color: Color(0xff9ad2ec),
+//                                        borderRadius:
+//                                            BorderRadius.circular(20)),
+//                                    child: ListTile(
+//                                      leading: Icon(
+//                                        Icons.lightbulb_outline,
+//                                        color: Color(0xff02457a),
+//                                      ),
+//                                      title: Text(
+//                                          deviceObjectList[index].power == false
+//                                              ? 'Disinfect'
+//                                              : deviceObjectList[index].pause ==
+//                                                      true
+//                                                  ? 'Paused'
+//                                                  : 'Disinfecting'),
+//                                      subtitle: Text(
+//                                          'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
+//                                      onTap: () {
+//                                        if (deviceObjectList[index].offline ==
+//                                            false) {
+//                                          if (deviceObjectList[index].power ==
+//                                              true) {
+//                                            deviceObjectList[index]
+//                                                .clientError = false;
+//                                            Navigator.push(
+//                                              context,
+//                                              MaterialPageRoute(
+//                                                builder: (context) => HomePage(
+//                                                  deviceObjectList[index],
+//                                                ),
+//                                              ),
+//                                            );
+//                                          } else {
+//                                            deviceObjectList[index]
+//                                                .motionDetected = false;
+//                                            deviceObjectList[index].time =
+//                                                Duration(minutes: 0);
+//                                            deviceObjectList[index]
+//                                                .progressDegrees = 0;
+//                                            if (rooms.length != 0) {
+//                                              if (workers.length != 0) {
+//                                                showRooms(
+//                                                  context,
+//                                                  deviceObjectList[index],
+//                                                );
+//                                              } else {
+//                                                addWorker(context);
+//                                              }
+//                                            } else {
+//                                              addRooms(context);
+//                                            }
+//                                          }
+//                                        }
+//                                      },
+//                                    ),
+//                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: <Widget>[
+                                      Container(
+                                        height: 100,
+                                        width: MediaQuery.of(context).size.width/2.5,
+                                        //color: Colors.blue,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                           // color: Colors.black
+                                          ),
+                                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                                          color: Colors.blue
+                                        ),
+                                          child: Listener(
+                                            child: Container(
+                                              height: 50,
+                                              width: 50,
+                                              child: Image.asset('images/up.png',color: Colors.pink,),
+                                            ),
+                                            onPointerDown: (data) {
+                                              deviceObjectList[index].socket.write('-3\r');
+
+                                            },
+                                            onPointerUp: (data) {
+                                              deviceObjectList[index].socket.write('-1\r');
+                                            },
+                                          ),
                                       ),
-                                      title: Text(
-                                          deviceObjectList[index].power == false
-                                              ? 'Disinfect'
-                                              : deviceObjectList[index].pause ==
-                                                      true
+                                      Container(
+                                        height: 100,
+                                        width: MediaQuery.of(context).size.width/2.5,
+                                        //color: Colors.blue,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                              // color: Colors.black
+                                            ),
+                                            borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                                            color: Colors.blue,
+                                        ),
+                                        child:  ListTile(
+                                          leading: Icon(
+                                            Icons.lightbulb_outline,
+                                            color: Color(0xff02457a),
+                                          ),
+                                          title: Text(
+                                              deviceObjectList[index].power == false
+                                                  ? 'Disinfect'
+                                                  : deviceObjectList[index].pause ==
+                                                  true
                                                   ? 'Paused'
                                                   : 'Disinfecting'),
-                                      subtitle: Text(
-                                          'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
-                                      onTap: () {
-                                        if (deviceObjectList[index].offline ==
-                                            false) {
-                                          if (deviceObjectList[index].power ==
-                                              true) {
-                                            deviceObjectList[index]
-                                                .clientError = false;
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => HomePage(
-                                                  deviceObjectList[index],
-                                                ),
-                                              ),
-                                            );
-                                          } else {
-                                            deviceObjectList[index]
-                                                .motionDetected = false;
-                                            deviceObjectList[index].time =
-                                                Duration(minutes: 0);
-                                            deviceObjectList[index]
-                                                .progressDegrees = 0;
-                                            if (rooms.length != 0) {
-                                              if (workers.length != 0) {
-                                                showRooms(
+                                          subtitle: Text(
+                                              'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
+                                          onTap: () {
+                                            if (deviceObjectList[index].offline ==
+                                                false) {
+                                              if (deviceObjectList[index].power ==
+                                                  true) {
+                                                deviceObjectList[index]
+                                                    .clientError = false;
+                                                Navigator.push(
                                                   context,
-                                                  deviceObjectList[index],
+                                                  MaterialPageRoute(
+                                                    builder: (context) => HomePage(
+                                                      deviceObjectList[index],
+                                                    ),
+                                                  ),
                                                 );
                                               } else {
-                                                addWorker(context);
+                                                deviceObjectList[index]
+                                                    .motionDetected = false;
+                                                deviceObjectList[index].time =
+                                                    Duration(minutes: 0);
+                                                deviceObjectList[index]
+                                                    .progressDegrees = 0;
+                                                if (rooms.length != 0) {
+                                                  if (workers.length != 0) {
+                                                    showRooms(
+                                                      context,
+                                                      deviceObjectList[index],
+                                                    );
+                                                  } else {
+                                                    addWorker(context);
+                                                  }
+                                                } else {
+                                                  addRooms(context);
+                                                }
                                               }
-                                            } else {
-                                              addRooms(context);
                                             }
-                                          }
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                        top: 10,
-                                        left: 10,
-                                        right: 10,
-                                        bottom: 10),
-                                    decoration: BoxDecoration(
-                                        color: Color(0xff9ad2ec),
-                                        borderRadius:
-                                            BorderRadius.circular(20)),
-                                    child: ListTile(
-                                      leading: Image.asset(
-                                        'images/sort.png',
-                                        color: Color(0xff02457a),
-                                        width: 25,
+                                          },
+                                        ),
                                       ),
-                                      title: Text('Adjust Height'),
-                                      subtitle: Text(
-                                          'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
-                                      onTap: () {
-                                        if (deviceObjectList[index].offline ==
-                                            false) {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => HeightPage(
-                                                deviceObjectList[index],
-                                                justHeight: true,
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(0.0,20.0,0.0,20.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: <Widget>[
+                                        Container(
+                                          height: 100,
+                                          width: MediaQuery.of(context).size.width/2.5,
+                                          //color: Colors.blue,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                // color: Colors.black
                                               ),
+                                              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                                              color: Colors.blue
+                                          ),
+                                          child: Listener(
+                                            child: Container(
+                                              height: 50,
+                                              width: 50,
+                                              child: Image.asset('images/down.png',color: Colors.pink),
                                             ),
-                                          );
-                                        }
-                                      },
+                                            onPointerDown: (data) {
+                                              deviceObjectList[index].socket.write('-2\r');
+
+                                            },
+                                            onPointerUp: (data) {
+                                              deviceObjectList[index].socket.write('-1\r');
+                                            },
+                                          ),
+                                        ),
+                                        Container(
+                                          height: 100,
+                                          width: MediaQuery.of(context).size.width/2.5,
+                                          //color: Colors.blue,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                // color: Colors.black
+                                              ),
+                                              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                                              color: Colors.blue
+                                          ),
+                                          child: ListTile(
+                                            leading: Icon(
+                                              Icons.history,
+                                              color: Color(0xff02457a),
+                                            ),
+                                            title: Text('Show History'),
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => ShowHistory(),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                        top: 10,
-                                        left: 10,
-                                        right: 10,
-                                        bottom: 10),
-                                    decoration: BoxDecoration(
-                                        color: Color(0xff9ad2ec),
-                                        borderRadius:
-                                            BorderRadius.circular(20)),
-                                    child: ListTile(
-                                      leading: Icon(
-                                        Icons.history,
-                                        color: Color(0xff02457a),
-                                      ),
-                                      title: Text('Show History'),
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => ShowHistory(),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  )
+//                                  Container(
+//                                    margin: EdgeInsets.only(
+//                                        top: 10,
+//                                        left: 10,
+//                                        right: 10,
+//                                        bottom: 10),
+//                                    decoration: BoxDecoration(
+//                                        color: Color(0xff9ad2ec),
+//                                        borderRadius:
+//                                            BorderRadius.circular(20)),
+//                                    child: ListTile(
+//                                      leading: Image.asset(
+//                                        'images/sort.png',
+//                                        color: Color(0xff02457a),
+//                                        width: 25,
+//                                      ),
+//                                      title: Text('Adjust Height'),
+//                                      subtitle: Text(
+//                                          'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
+//                                      onTap: () {
+//                                        if (deviceObjectList[index].offline ==
+//                                            false) {
+//                                          Navigator.push(
+//                                            context,
+//                                            MaterialPageRoute(
+//                                              builder: (context) => HeightPage(
+//                                                deviceObjectList[index],
+//                                                justHeight: true,
+//                                              ),
+//                                            ),
+//                                          );
+//                                        }
+//                                      },
+//                                    ),
+//                                  ),
+//                                  Container(
+//                                    margin: EdgeInsets.only(
+//                                        top: 10,
+//                                        left: 10,
+//                                        right: 10,
+//                                        bottom: 10),
+//                                    decoration: BoxDecoration(
+//                                        color: Color(0xff9ad2ec),
+//                                        borderRadius:
+//                                            BorderRadius.circular(20)),
+//                                    child: ListTile(
+//                                      leading: Icon(
+//                                        Icons.history,
+//                                        color: Color(0xff02457a),
+//                                      ),
+//                                      title: Text('Show History'),
+//                                      onTap: () {
+//                                        Navigator.push(
+//                                          context,
+//                                          MaterialPageRoute(
+//                                            builder: (context) => ShowHistory(),
+//                                          ),
+//                                        );
+//                                      },
+//                                    ),
+//                                  )
                                 ],
                               );
                             },
