@@ -11,6 +11,7 @@ import 'package:ibis/show_history.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:clay_containers/clay_containers.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
 import 'calender.dart';
@@ -477,92 +478,92 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                           width: MediaQuery.of(context).size.width/2.5,
                                           //color: Colors.blue,
                                           decoration: BoxDecoration(
-                                            border: Border.all(
-                                             // color: Colors.black
-                                            ),
                                             borderRadius: BorderRadius.all(Radius.circular(20.0)),
                                             color: Color(0xffbddeee)
                                           ),
                                             child: GestureDetector(
-                                              child: Container(
-                                                height:200,
-                                                width: MediaQuery.of(context).size.width / 2.5,
-                                                padding: EdgeInsets.all(8.0),
-                                                child: BarChart(
-                                                    BarChartData(
-                                                      alignment: BarChartAlignment.spaceAround,
-                                                      maxY: maxYAxis/60,
-                                                      barTouchData: BarTouchData(
-                                                        enabled: true,
-                                                        touchTooltipData: BarTouchTooltipData(
-                                                          tooltipBgColor: Colors.transparent,
-                                                          tooltipPadding: const EdgeInsets.all(0),
-                                                          tooltipBottomMargin: 8,
-                                                          getTooltipItem: (
-                                                              BarChartGroupData group,
-                                                              int groupIndex,
-                                                              BarChartRodData rod,
-                                                              int rodIndex,
-                                                              ) {
-                                                            return BarTooltipItem(
-                                                              rod.y.round().toString(),
-                                                              TextStyle(
-                                                                color: Colors.blueGrey,
+                                              child: Padding(
+                                                padding: const EdgeInsets.fromLTRB(0.0,30.0,0.0,0.0),
+                                                child: Container(
+                                                  height:200,
+                                                  width: MediaQuery.of(context).size.width / 2.5,
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child: BarChart(
+                                                      BarChartData(
+                                                        alignment: BarChartAlignment.spaceAround,
+                                                        maxY: maxYAxis/60,
+                                                        barTouchData: BarTouchData(
+                                                          enabled: true,
+                                                          touchTooltipData: BarTouchTooltipData(
+                                                            tooltipBgColor: Colors.transparent,
+                                                            tooltipPadding: const EdgeInsets.all(0),
+                                                            tooltipBottomMargin: 8,
+                                                            getTooltipItem: (
+                                                                BarChartGroupData group,
+                                                                int groupIndex,
+                                                                BarChartRodData rod,
+                                                                int rodIndex,
+                                                                ) {
+                                                              return BarTooltipItem(
+                                                                rod.y.round().toString(),
+                                                                TextStyle(
+                                                                  color: Colors.blueGrey,
+                                                                  fontWeight: FontWeight.bold,
+                                                                ),
+                                                              );
+                                                            },
+                                                          ),
+                                                        ),
+                                                        titlesData: FlTitlesData(
+                                                          show: true,
+                                                          bottomTitles: SideTitles(
+                                                            showTitles: true,
+                                                            textStyle: TextStyle(
+                                                                color: const Color(0xff7589a2),
                                                                 fontWeight: FontWeight.bold,
-                                                              ),
-                                                            );
-                                                          },
-                                                        ),
-                                                      ),
-                                                      titlesData: FlTitlesData(
-                                                        show: true,
-                                                        bottomTitles: SideTitles(
-                                                          showTitles: true,
-                                                          textStyle: TextStyle(
-                                                              color: const Color(0xff7589a2),
-                                                              fontWeight: FontWeight.bold,
-                                                              fontSize: 14),
-                                                          margin: 20,
-                                                          getTitles: (double value) {
-                                                            switch (value.toInt()) {
-                                                              case 0:
-                                                                return 'DBY';
-                                                              case 1:
-                                                                return 'Yes';
-                                                              case 2:
-                                                                return 'Tod';
+                                                                fontSize: 14),
+                                                            margin: 20,
+                                                            getTitles: (double value) {
+                                                              switch (value.toInt()) {
+                                                                case 0:
+                                                                  return 'DBY';
+                                                                case 1:
+                                                                  return 'Yes';
+                                                                case 2:
+                                                                  return 'Tod';
 
-                                                              default:
-                                                                return '';
-                                                            }
-                                                          },
+                                                                default:
+                                                                  return '';
+                                                              }
+                                                            },
+                                                          ),
+                                                          leftTitles: SideTitles(showTitles: false),
                                                         ),
-                                                        leftTitles: SideTitles(showTitles: false),
-                                                      ),
-                                                      borderData: FlBorderData(
-                                                        show: false,
-                                                      ),
-                                                      barGroups: [
-                                                        BarChartGroupData(x: 0, barRods: [
-                                                          BarChartRodData(
-                                                              y: dayBeforeYesTotalTime/60, color: Colors.lightBlueAccent)
-                                                        ], showingTooltipIndicators: [
-                                                          0
-                                                        ]),
-                                                        BarChartGroupData(x: 1, barRods: [
-                                                          BarChartRodData(
-                                                              y: yesdayTotalTime/60, color: Colors.lightBlueAccent)
-                                                        ], showingTooltipIndicators: [
-                                                          0
-                                                        ]),
-                                                        BarChartGroupData(x: 2, barRods: [
-                                                          BarChartRodData(
-                                                              y: todayTotalTime/60, color: Colors.lightBlueAccent)
-                                                        ], showingTooltipIndicators: [
-                                                          0
-                                                        ]),
-                                                      ],
-                                                    )
+                                                        borderData: FlBorderData(
+                                                          show: false,
+                                                        ),
+                                                        barGroups: [
+                                                          BarChartGroupData(x: 0, barRods: [
+                                                            BarChartRodData(
+                                                                y: dayBeforeYesTotalTime/60, color: Colors.lightBlueAccent)
+                                                          ], showingTooltipIndicators: [
+                                                            0
+                                                          ]),
+                                                          BarChartGroupData(x: 1, barRods: [
+                                                            BarChartRodData(
+                                                                y: yesdayTotalTime/60, color: Colors.lightBlueAccent)
+                                                          ], showingTooltipIndicators: [
+                                                            0
+                                                          ]),
+                                                          BarChartGroupData(x: 2, barRods: [
+                                                            BarChartRodData(
+                                                                y: todayTotalTime/60, color: Colors.lightBlueAccent)
+                                                          ], showingTooltipIndicators: [
+                                                            0
+                                                          ]),
+                                                        ],
+                                                      )
+                                                  ),
                                                 ),
                                               ),
                                               onTap: ()
@@ -579,9 +580,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                           width: MediaQuery.of(context).size.width/2.5,
                                           //color: Colors.blue,
                                           decoration: BoxDecoration(
-                                              border: Border.all(
-                                                // color: Colors.black
-                                              ),
+
                                               borderRadius: BorderRadius.all(Radius.circular(20.0)),
                                               color: Color(0xffbddeee),
                                           ),
@@ -713,69 +712,88 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                       ],
                                     ),
                                   ),
+                                  Container(
+                                    height: MediaQuery.of(context).size.height/12,
+                                  ),
                                   Stack(
                                     children: <Widget>[
                                       Container(
-                                        alignment: Alignment.bottomCenter,
-                                        width: 150,
-                                        height: 150,
-                                        decoration: BoxDecoration(
-                                            color: Colors.blue,
-                                            borderRadius: BorderRadius.all(Radius.circular(75.0))
+                                        alignment: Alignment.center,
+                                        width: 250,
+                                        height: 250,
+                                        child: FlareActor(
+                                          'assets/breathing.flr',
+                                          animation:
+                                          deviceObjectList[index].offline==false
+                                              ? 'off'
+                                              : 'breath',
                                         ),
-                                        child:  ListTile(
+                                      ),
+                                      Container(
+                                        alignment: Alignment.center,
+                                        width: 250,
+                                        height: 250,
+                                        child:  Container(
+                                          width: 150,
+                                          height: 150,
+                                          decoration: BoxDecoration(
+                                              color: Colors.blue,
+                                              borderRadius: BorderRadius.all(Radius.circular(75.0))
+                                          ),
+                                          child: ListTile(
 //                                        leading: Icon(
 //                                          Icons.lightbulb_outline,
 //                                          color: Color(0xff02457a),
 //                                        ),
-                                          title: Center(
-                                            child: Text(
-                                              deviceObjectList[index].power == false
-                                                  ? 'Disinfect'
-                                                  : deviceObjectList[index].pause ==
-                                                  true
-                                                  ? 'Paused'
-                                                  : 'Disinfecting',style: TextStyle(fontSize: 20.0),),
-                                          ),
+                                            title: Center(
+                                              child: Text(
+                                                deviceObjectList[index].power == false
+                                                    ? 'Disinfect'
+                                                    : deviceObjectList[index].pause ==
+                                                    true
+                                                    ? 'Paused'
+                                                    : 'Disinfecting',style: TextStyle(fontSize: 20.0,color: Colors.white),),
+                                            ),
 //                                        subtitle: Text(
 //                                            'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
-                                          onTap: () {
-                                            if (deviceObjectList[index].offline ==
-                                                false) {
-                                              if (deviceObjectList[index].power ==
-                                                  true) {
-                                                deviceObjectList[index]
-                                                    .clientError = false;
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) => HomePage(
-                                                      deviceObjectList[index],
+                                            onTap: () {
+                                              if (deviceObjectList[index].offline ==
+                                                  false) {
+                                                if (deviceObjectList[index].power ==
+                                                    true) {
+                                                  deviceObjectList[index]
+                                                      .clientError = false;
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) => HomePage(
+                                                        deviceObjectList[index],
+                                                      ),
                                                     ),
-                                                  ),
-                                                );
-                                              } else {
-                                                deviceObjectList[index]
-                                                    .motionDetected = false;
-                                                deviceObjectList[index].time =
-                                                    Duration(minutes: 0);
-                                                deviceObjectList[index]
-                                                    .progressDegrees = 0;
-                                                if (rooms.length != 0) {
-                                                  if (workers.length != 0) {
-                                                    showRooms(
-                                                      context,
-                                                      deviceObjectList[index],
-                                                    );
-                                                  } else {
-                                                    addWorker(context);
-                                                  }
+                                                  );
                                                 } else {
-                                                  addRooms(context);
+                                                  deviceObjectList[index]
+                                                      .motionDetected = false;
+                                                  deviceObjectList[index].time =
+                                                      Duration(minutes: 0);
+                                                  deviceObjectList[index]
+                                                      .progressDegrees = 0;
+                                                  if (rooms.length != 0) {
+                                                    if (workers.length != 0) {
+                                                      showRooms(
+                                                        context,
+                                                        deviceObjectList[index],
+                                                      );
+                                                    } else {
+                                                      addWorker(context);
+                                                    }
+                                                  } else {
+                                                    addRooms(context);
+                                                  }
                                                 }
                                               }
-                                            }
-                                          },
+                                            },
+                                          ),
                                         ),
                                       )
 
@@ -1019,10 +1037,11 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     onPressed: () {
                       deviceObject.clientError = false;
                       worker = workers[index];
+                      deviceObjectList[index].socket.write('5\r');
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => HeightPage(deviceObject)),
+                            builder: (context) => HomePage(deviceObject)),
                       );
                     },
                   );
@@ -1216,91 +1235,106 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             children: <Widget>[
               Container(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    RaisedButton(
-                     onPressed: ()
-                      {
-                        Navigator.push(context,MaterialPageRoute( builder: (context) => ShowHistory(),),);
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          width: MediaQuery.of(context).size.width/3,
+                        ),
+                        RaisedButton(
+                         onPressed: ()
+                          {
+                            Navigator.push(context,MaterialPageRoute( builder: (context) => ShowHistory(),),);
 
-                      },
-                      child: Text('Detiled Hstory',style: TextStyle(color: Colors.white),),
-                      color: Colors.lightBlue,
+                          },
+                          color: Colors.lightBlue,
+                          child: Text('Detailed Hstory',style: TextStyle(color: Colors.white),),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0),
+
+                          ),
+                        ),
+                      ],
                     ),
-                    BarChart(
-                        BarChartData(
-                          alignment: BarChartAlignment.spaceAround,
-                          maxY: maxYAxis/60,
-                          barTouchData: BarTouchData(
-                            enabled: true,
-                            touchTooltipData: BarTouchTooltipData(
-                              tooltipBgColor: Colors.transparent,
-                              tooltipPadding: const EdgeInsets.all(0),
-                              tooltipBottomMargin: 8,
-                              getTooltipItem: (
-                                  BarChartGroupData group,
-                                  int groupIndex,
-                                  BarChartRodData rod,
-                                  int rodIndex,
-                                  ) {
-                                return BarTooltipItem(
-                                  rod.y.round().toString(),
-                                  TextStyle(
-                                    color: Colors.blueGrey,
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0.0,30.0,0.0,0.0),
+                      child: BarChart(
+                          BarChartData(
+                            alignment: BarChartAlignment.spaceAround,
+                            maxY: maxYAxis/60,
+                            barTouchData: BarTouchData(
+                              enabled: true,
+                              touchTooltipData: BarTouchTooltipData(
+                                tooltipBgColor: Colors.transparent,
+                                tooltipPadding: const EdgeInsets.all(0),
+                                tooltipBottomMargin: 8,
+                                getTooltipItem: (
+                                    BarChartGroupData group,
+                                    int groupIndex,
+                                    BarChartRodData rod,
+                                    int rodIndex,
+                                    ) {
+                                  return BarTooltipItem(
+                                    rod.y.round().toString(),
+                                    TextStyle(
+                                      color: Colors.blueGrey,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            titlesData: FlTitlesData(
+                              show: true,
+                              bottomTitles: SideTitles(
+                                showTitles: true,
+                                textStyle: TextStyle(
+                                    color: const Color(0xff7589a2),
                                     fontWeight: FontWeight.bold,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                          titlesData: FlTitlesData(
-                            show: true,
-                            bottomTitles: SideTitles(
-                              showTitles: true,
-                              textStyle: TextStyle(
-                                  color: const Color(0xff7589a2),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14),
-                              margin: 20,
-                              getTitles: (double value) {
-                                switch (value.toInt()) {
-                                  case 0:
-                                    return 'DBY';
-                                  case 1:
-                                    return 'Yes';
-                                  case 2:
-                                    return 'Tod';
+                                    fontSize: 14),
+                                margin: 20,
+                                getTitles: (double value) {
+                                  switch (value.toInt()) {
+                                    case 0:
+                                      return 'DBY';
+                                    case 1:
+                                      return 'Yes';
+                                    case 2:
+                                      return 'Tod';
 
-                                  default:
-                                    return '';
-                                }
-                              },
+                                    default:
+                                      return '';
+                                  }
+                                },
+                              ),
+                              leftTitles: SideTitles(showTitles: false),
                             ),
-                            leftTitles: SideTitles(showTitles: false),
-                          ),
-                          borderData: FlBorderData(
-                            show: false,
-                          ),
-                          barGroups: [
-                            BarChartGroupData(x: 0, barRods: [
-                              BarChartRodData(
-                                  y: dayBeforeYesTotalTime/60, color: Colors.lightBlueAccent)
-                            ], showingTooltipIndicators: [
-                              0
-                            ]),
-                            BarChartGroupData(x: 1, barRods: [
-                              BarChartRodData(
-                                  y: yesdayTotalTime/60, color: Colors.lightBlueAccent)
-                            ], showingTooltipIndicators: [
-                              0
-                            ]),
-                            BarChartGroupData(x: 2, barRods: [
-                              BarChartRodData(
-                                  y: todayTotalTime/60, color: Colors.lightBlueAccent)
-                            ], showingTooltipIndicators: [
-                              0
-                            ]),
-                          ],
-                        )
+                            borderData: FlBorderData(
+                              show: false,
+                            ),
+                            barGroups: [
+                              BarChartGroupData(x: 0, barRods: [
+                                BarChartRodData(
+                                    y: dayBeforeYesTotalTime/60, color: Colors.lightBlueAccent)
+                              ], showingTooltipIndicators: [
+                                0
+                              ]),
+                              BarChartGroupData(x: 1, barRods: [
+                                BarChartRodData(
+                                    y: yesdayTotalTime/60, color: Colors.lightBlueAccent)
+                              ], showingTooltipIndicators: [
+                                0
+                              ]),
+                              BarChartGroupData(x: 2, barRods: [
+                                BarChartRodData(
+                                    y: todayTotalTime/60, color: Colors.lightBlueAccent)
+                              ], showingTooltipIndicators: [
+                                0
+                              ]),
+                            ],
+                          )
+                      ),
                     ),
                   ],
                 ),
