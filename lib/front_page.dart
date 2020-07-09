@@ -11,7 +11,6 @@ import 'package:ibis/show_history.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:clay_containers/clay_containers.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
 import 'calender.dart';
@@ -780,10 +779,15 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                       .progressDegrees = 0;
                                                   if (rooms.length != 0) {
                                                     if (workers.length != 0) {
-                                                      showRooms(
-                                                        context,
-                                                        deviceObjectList[index],
+                                                      deviceObjectList[index].clientError = false;
+                                                      deviceObjectList[index].socket.write('5\r');
+                                                      Navigator.push(context,
+                                                      MaterialPageRoute(builder: (context) => HomePage(deviceObjectList[index])),
                                                       );
+//                                                      showRooms(
+//                                                        context,
+//                                                        deviceObjectList[index],
+//                                                      );
                                                     } else {
                                                       addWorker(context);
                                                     }
@@ -824,7 +828,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 //                                            false) {
 //                                          Navigator.push(
 //                                            context,
-//                                            MaterialPageRoute(
+//                                            MaterialPageRoute
 //                                              builder: (context) => HeightPage(
 //                                                deviceObjectList[index],
 //                                                justHeight: true,
@@ -1037,7 +1041,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     onPressed: () {
                       deviceObject.clientError = false;
                       worker = workers[index];
-                      deviceObjectList[index].socket.write('5\r');
+                      deviceObject.socket.write('5\r');
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(

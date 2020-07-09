@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:wifi_iot/wifi_iot.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 
 import 'data.dart';
@@ -17,6 +18,9 @@ import 'loding.dart';
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
+String dropdownValueRoom = rooms.length == 0 ? 'No rooms' : rooms[0];
+String dropdownValueStaff = rooms.length == 0 ? 'No Staff' : workers[0];
+
 final customColor = CustomSliderColors(
   progressBarColor: Color(0xffd6e7ee),
   hideShadow: true,
@@ -176,6 +180,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Timer animationTimer;
   @override
   void initState() {
+    room=dropdownValueRoom;
+    worker=dropdownValueStaff;
     errorRemover = false;
     connectionError = true;
     stopPressed = false;
@@ -327,6 +333,143 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ],
         ),
       ),
+      floatingActionButton: Container(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(0.0,250.0,30.0,0.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+
+              FloatingActionButton.extended(
+                backgroundColor: Color(0xff02457a),
+                heroTag: 'staff1',
+                label: DropdownButton<String>(
+                  value: rooms.length == 0 ? 'No rooms' : dropdownValueRoom,
+                  icon: Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.white,
+                  ),
+                  iconSize: 30,
+                  elevation: 26,
+                  dropdownColor: Color(0xff02457a),
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold),
+                  underline: Container(
+                    height: 0,
+                    color: Colors.deepPurpleAccent,
+                  ),
+                  onChanged: (String newValue) {
+                    setState(() {
+                      if(widget.deviceObject.power==false)
+                        {
+                          dropdownValueRoom = newValue;
+                          room=dropdownValueRoom;
+                        }
+                      else
+                        {
+                          Fluttertoast.showToast(
+                            msg: 'Please Turn off the Machine to change Room',
+                            gravity: ToastGravity.CENTER,
+                            toastLength: Toast.LENGTH_SHORT,
+                            backgroundColor: Colors.blue,
+                            textColor: Colors.white,
+                            fontSize: 16.0,
+                          );
+                        }
+
+
+                    });
+                  },
+                  items: rooms.length == 0
+                      ? <String>['No rooms']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList()
+                      : rooms.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+                onPressed: ()
+                {
+
+                },
+
+              ),
+              FloatingActionButton.extended(
+                backgroundColor: Color(0xff02457a),
+                heroTag: 'room1',
+                label:DropdownButton<String>(
+                  value: workers.length == 0 ? 'No Staff' : dropdownValueStaff,
+                  icon: Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.white,
+                  ),
+                  iconSize: 30,
+                  elevation: 26,
+                  dropdownColor: Color(0xff02457a),
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold),
+                  underline: Container(
+                    height: 0,
+                    color: Colors.deepPurpleAccent,
+                  ),
+                  onChanged: (String newValue) {
+                    setState(() {
+                      if(widget.deviceObject.power==false)
+                        {
+                          dropdownValueStaff = newValue;
+                          worker=dropdownValueStaff;
+
+                        }
+                      else{
+                        Fluttertoast.showToast(
+                          msg: 'Please Turn off the Machine to change Staff',
+                          gravity: ToastGravity.CENTER,
+                          toastLength: Toast.LENGTH_SHORT,
+                          backgroundColor: Colors.blue,
+                          textColor: Colors.white,
+                          fontSize: 16.0,
+                        );
+                      }
+
+                    });
+                  },
+                  items: workers.length == 0
+                      ? <String>['No Staff']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList()
+                      : workers.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+                onPressed: ()
+                {
+
+                },
+              )
+
+            ],
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
     );
   }
 
