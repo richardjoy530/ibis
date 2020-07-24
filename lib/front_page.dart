@@ -844,7 +844,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 //                                            false) {
 //                                          Navigator.push(
 //                                            context,
-//                                            MaterialPageRoute(
+//                                            MaterialPageRoute
 //                                              builder: (context) => HeightPage(
 //                                                deviceObjectList[index],
 //                                                justHeight: true,
@@ -1129,6 +1129,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     onPressed: () {
                       deviceObject.clientError = false;
                       worker = workers[index];
+                      deviceObject.socket.write('5\r');
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
@@ -1327,6 +1328,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             children: <Widget>[
               Container(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     RaisedButton(
                       onPressed: () {
