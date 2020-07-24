@@ -1,0 +1,36 @@
+if (deviceObjectList[index].offline ==
+                                                false) {
+                                              if (deviceObjectList[index].power ==
+                                                  true) {
+                                                deviceObjectList[index]
+                                                    .clientError = false;
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) => HomePage(
+                                                      deviceObjectList[index],
+                                                    ),
+                                                  ),
+                                                );
+                                              } else {
+                                                deviceObjectList[index]
+                                                    .motionDetected = false;
+                                                deviceObjectList[index].time =
+                                                    Duration(minutes: 0);
+                                                deviceObjectList[index]
+                                                    .progressDegrees = 0;
+                                                if (rooms.length != 0) {
+                                                  if (workers.length != 0) {
+                                                    showRooms(
+                                                      context,
+                                                      deviceObjectList[index],
+                                                    );
+                                                  } else {
+                                                    addWorker(context);
+                                                  }
+                                                } else {
+                                                  addRooms(context);
+                                                }
+                                              }
+                                            }
+                                          

@@ -18,7 +18,7 @@ import 'data.dart';
 import 'show_rooms_workers.dart';
 import 'height_page.dart';
 
-double todayTotalTime,yesdayTotalTime,dayBeforeYesTotalTime,maxYAxis;
+double todayTotalTime, yesdayTotalTime, dayBeforeYesTotalTime, maxYAxis;
 Future<void> scanIbis() async {
   String cameraScanResult = await scanner.scan();
   var data = cameraScanResult.split(',');
@@ -75,7 +75,6 @@ Future<void> wifi() async {
 }
 
 class FrontPage extends StatefulWidget {
-
   @override
   FrontPageState createState() => FrontPageState();
 }
@@ -85,15 +84,14 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   Timer totalDayTime;
   TextEditingController nameController;
 
-
   ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
-    todayTotalTime=0;
-    yesdayTotalTime=0;
-    dayBeforeYesTotalTime=0;
-    maxYAxis=20;
+    todayTotalTime = 0;
+    yesdayTotalTime = 0;
+    dayBeforeYesTotalTime = 0;
+    maxYAxis = 20;
     connect();
     nameController = TextEditingController();
 
@@ -174,55 +172,47 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         );
       },
     );
-    totalDayTime=Timer.periodic(Duration(seconds: 1), (callback)
-    {
-      todayTotalTime=0;
-      yesdayTotalTime=0;
-      dayBeforeYesTotalTime=0;
-      maxYAxis=20;
+    totalDayTime = Timer.periodic(Duration(seconds: 1), (callback) {
+      todayTotalTime = 0;
+      yesdayTotalTime = 0;
+      dayBeforeYesTotalTime = 0;
+      maxYAxis = 20;
       setState(() {
-        for(int i=0;i<timeDataList.length;i++)
-        {
-          if(timeDataList[i].startTime.day==DateTime.now().day
-              && timeDataList[i].startTime.month==DateTime.now().month
-              && timeDataList[i].startTime.year==DateTime.now().year)
-          {
-            todayTotalTime+=timeDataList[i].elapsedTime.toDouble();
-
+        for (int i = 0; i < timeDataList.length; i++) {
+          if (timeDataList[i].startTime.day == DateTime.now().day &&
+              timeDataList[i].startTime.month == DateTime.now().month &&
+              timeDataList[i].startTime.year == DateTime.now().year) {
+            todayTotalTime += timeDataList[i].elapsedTime.toDouble();
           }
-          if(timeDataList[i].startTime.day==DateTime.now().subtract(Duration(days: 1)).day
-              && timeDataList[i].startTime.month==DateTime.now().subtract(Duration(days: 1)).month
-              && timeDataList[i].startTime.year==DateTime.now().subtract(Duration(days: 1)).year)
-          {
-            yesdayTotalTime+=timeDataList[i].elapsedTime.toDouble();
-
+          if (timeDataList[i].startTime.day ==
+                  DateTime.now().subtract(Duration(days: 1)).day &&
+              timeDataList[i].startTime.month ==
+                  DateTime.now().subtract(Duration(days: 1)).month &&
+              timeDataList[i].startTime.year ==
+                  DateTime.now().subtract(Duration(days: 1)).year) {
+            yesdayTotalTime += timeDataList[i].elapsedTime.toDouble();
           }
-          if(timeDataList[i].startTime.day==DateTime.now().subtract(Duration(days: 2)).day
-              && timeDataList[i].startTime.month==DateTime.now().subtract(Duration(days: 2)).month
-              && timeDataList[i].startTime.year==DateTime.now().subtract(Duration(days: 2)).year)
-          {
-            dayBeforeYesTotalTime+=timeDataList[i].elapsedTime.toDouble();
-
+          if (timeDataList[i].startTime.day ==
+                  DateTime.now().subtract(Duration(days: 2)).day &&
+              timeDataList[i].startTime.month ==
+                  DateTime.now().subtract(Duration(days: 2)).month &&
+              timeDataList[i].startTime.year ==
+                  DateTime.now().subtract(Duration(days: 2)).year) {
+            dayBeforeYesTotalTime += timeDataList[i].elapsedTime.toDouble();
           }
-          if(todayTotalTime>yesdayTotalTime)
-          {
-            maxYAxis=todayTotalTime;
-            if(dayBeforeYesTotalTime>todayTotalTime)
-            {
-              maxYAxis=dayBeforeYesTotalTime;
+          if (todayTotalTime > yesdayTotalTime) {
+            maxYAxis = todayTotalTime;
+            if (dayBeforeYesTotalTime > todayTotalTime) {
+              maxYAxis = dayBeforeYesTotalTime;
             }
-          }
-          else
-          {
-            maxYAxis=yesdayTotalTime;
-            if(dayBeforeYesTotalTime>yesdayTotalTime)
-            {
-              maxYAxis=dayBeforeYesTotalTime;
+          } else {
+            maxYAxis = yesdayTotalTime;
+            if (dayBeforeYesTotalTime > yesdayTotalTime) {
+              maxYAxis = dayBeforeYesTotalTime;
             }
           }
         }
       });
-
     });
     super.initState();
   }
@@ -281,7 +271,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       width: 30,
                       child: FlareActor(
                         'assets/status.flr',
-                        animation: 'off',
+                        animation: 'on',
                       ),
                     ),
                   ),
@@ -338,18 +328,20 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                               return Column(
                                 children: <Widget>[
                                   Padding(
-                                    padding: const EdgeInsets.fromLTRB(0.0,30.0,0.0,0.0),
+                                    padding: const EdgeInsets.fromLTRB(
+                                        0.0, 30.0, 0.0, 0.0),
                                     child: Container(
-
-                                      width: MediaQuery.of(context).size.width/1.05,
+                                      width: MediaQuery.of(context).size.width /
+                                          1.05,
                                       decoration: BoxDecoration(
                                         color: Color(0xffbddeee),
-                                        borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(30.0)),
                                       ),
-
                                       child: ListTile(
                                         leading: Icon(
-                                          deviceObjectList[index].offline == true
+                                          deviceObjectList[index].offline ==
+                                                  true
                                               ? Icons.signal_wifi_off
                                               : Icons.network_wifi,
                                           color: Color(0xff02457a),
@@ -371,17 +363,18 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                               ),
                                         title: Text(
                                             '${deviceObjectList[index].name}'),
-                                        subtitle: deviceObjectList[index].power ==
+                                        subtitle: deviceObjectList[index]
+                                                    .power ==
                                                 false
-                                            ? Text(
-                                                deviceObjectList[index].offline ==
-                                                        true
-                                                    ? 'Device not Connected'
-                                                    : deviceObjectList[index]
-                                                                .motionDetected ==
-                                                            false
-                                                        ? 'Device Connected'
-                                                        : 'Motion Detected')
+                                            ? Text(deviceObjectList[index]
+                                                        .offline ==
+                                                    true
+                                                ? 'Device not Connected'
+                                                : deviceObjectList[index]
+                                                            .motionDetected ==
+                                                        false
+                                                    ? 'Device Connected'
+                                                    : 'Motion Detected')
                                             : LinearPercentIndicator(
                                                 lineHeight: 5.0,
                                                 animation: false,
@@ -392,7 +385,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                     .linearProgressBarValue,
                                                 linearStrokeCap:
                                                     LinearStrokeCap.roundAll,
-                                                progressColor: Color(0xff019ae6),
+                                                progressColor:
+                                                    Color(0xff019ae6),
                                               ),
                                         onTap: () {},
                                         onLongPress: () {
@@ -468,138 +462,184 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 //                                    ),
 //                                  ),
                                   Padding(
-                                    padding: const EdgeInsets.fromLTRB(0.0,50.0,0.0,0.0),
+                                    padding: const EdgeInsets.fromLTRB(
+                                        0.0, 50.0, 0.0, 0.0),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
                                       children: <Widget>[
                                         Container(
+                                          padding: EdgeInsets.only(top: 25),
                                           height: 200,
-                                          width: MediaQuery.of(context).size.width/2.5,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              2.5,
                                           //color: Colors.blue,
                                           decoration: BoxDecoration(
-                                            border: Border.all(
-                                             // color: Colors.black
-                                            ),
-                                            borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                                            color: Color(0xffbddeee)
-                                          ),
-                                            child: GestureDetector(
-                                              child: Container(
-                                                height:200,
-                                                width: MediaQuery.of(context).size.width / 2.5,
-                                                padding: EdgeInsets.all(8.0),
-                                                child: BarChart(
-                                                    BarChartData(
-                                                      alignment: BarChartAlignment.spaceAround,
-                                                      maxY: maxYAxis/60,
-                                                      barTouchData: BarTouchData(
-                                                        enabled: true,
-                                                        touchTooltipData: BarTouchTooltipData(
-                                                          tooltipBgColor: Colors.transparent,
-                                                          tooltipPadding: const EdgeInsets.all(0),
-                                                          tooltipBottomMargin: 8,
-                                                          getTooltipItem: (
-                                                              BarChartGroupData group,
-                                                              int groupIndex,
-                                                              BarChartRodData rod,
-                                                              int rodIndex,
-                                                              ) {
-                                                            return BarTooltipItem(
-                                                              rod.y.round().toString(),
-                                                              TextStyle(
-                                                                color: Colors.blueGrey,
-                                                                fontWeight: FontWeight.bold,
-                                                              ),
-                                                            );
-                                                          },
+                                              // border: Border.all(
+                                              //  // color: Colors.black
+                                              // ),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(20.0)),
+                                              color: Color(0xffbddeee)),
+                                          child: GestureDetector(
+                                            child: Container(
+                                              height: 200,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  2.5,
+                                              padding: EdgeInsets.all(8.0),
+                                              child: BarChart(BarChartData(
+                                                alignment: BarChartAlignment
+                                                    .spaceAround,
+                                                maxY: maxYAxis / 60,
+                                                barTouchData: BarTouchData(
+                                                  enabled: true,
+                                                  touchTooltipData:
+                                                      BarTouchTooltipData(
+                                                    tooltipBgColor:
+                                                        Colors.transparent,
+                                                    tooltipPadding:
+                                                        const EdgeInsets.all(0),
+                                                    tooltipBottomMargin: 8,
+                                                    getTooltipItem: (
+                                                      BarChartGroupData group,
+                                                      int groupIndex,
+                                                      BarChartRodData rod,
+                                                      int rodIndex,
+                                                    ) {
+                                                      return BarTooltipItem(
+                                                        rod.y
+                                                            .round()
+                                                            .toString(),
+                                                        TextStyle(
+                                                          color:
+                                                              Colors.blueGrey,
+                                                          fontWeight:
+                                                              FontWeight.bold,
                                                         ),
-                                                      ),
-                                                      titlesData: FlTitlesData(
-                                                        show: true,
-                                                        bottomTitles: SideTitles(
-                                                          showTitles: true,
-                                                          textStyle: TextStyle(
-                                                              color: const Color(0xff7589a2),
-                                                              fontWeight: FontWeight.bold,
-                                                              fontSize: 14),
-                                                          margin: 20,
-                                                          getTitles: (double value) {
-                                                            switch (value.toInt()) {
-                                                              case 0:
-                                                                return 'DBY';
-                                                              case 1:
-                                                                return 'Yes';
-                                                              case 2:
-                                                                return 'Tod';
-
-                                                              default:
-                                                                return '';
-                                                            }
-                                                          },
-                                                        ),
-                                                        leftTitles: SideTitles(showTitles: false),
-                                                      ),
-                                                      borderData: FlBorderData(
-                                                        show: false,
-                                                      ),
-                                                      barGroups: [
-                                                        BarChartGroupData(x: 0, barRods: [
-                                                          BarChartRodData(
-                                                              y: dayBeforeYesTotalTime/60, color: Colors.lightBlueAccent)
-                                                        ], showingTooltipIndicators: [
-                                                          0
-                                                        ]),
-                                                        BarChartGroupData(x: 1, barRods: [
-                                                          BarChartRodData(
-                                                              y: yesdayTotalTime/60, color: Colors.lightBlueAccent)
-                                                        ], showingTooltipIndicators: [
-                                                          0
-                                                        ]),
-                                                        BarChartGroupData(x: 2, barRods: [
-                                                          BarChartRodData(
-                                                              y: todayTotalTime/60, color: Colors.lightBlueAccent)
-                                                        ], showingTooltipIndicators: [
-                                                          0
-                                                        ]),
-                                                      ],
-                                                    )
+                                                      );
+                                                    },
+                                                  ),
                                                 ),
-                                              ),
-                                              onTap: ()
-                                              {
-                                                setState(() {
-                                                  graph3Days(context, deviceObjectList[index]);
-                                              });
+                                                titlesData: FlTitlesData(
+                                                  show: true,
+                                                  bottomTitles: SideTitles(
+                                                    showTitles: true,
+                                                    textStyle: TextStyle(
+                                                        color: const Color(
+                                                            0xff7589a2),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14),
+                                                    margin: 20,
+                                                    getTitles: (double value) {
+                                                      switch (value.toInt()) {
+                                                        case 0:
+                                                          return 'DBY';
+                                                        case 1:
+                                                          return 'YTD';
+                                                        case 2:
+                                                          return 'TOD';
 
-                                              },
+                                                        default:
+                                                          return '';
+                                                      }
+                                                    },
+                                                  ),
+                                                  leftTitles: SideTitles(
+                                                      showTitles: false),
+                                                ),
+                                                borderData: FlBorderData(
+                                                  show: false,
+                                                ),
+                                                barGroups: [
+                                                  BarChartGroupData(
+                                                      x: 0,
+                                                      barRods: [
+                                                        BarChartRodData(
+                                                            y: dayBeforeYesTotalTime /
+                                                                60,
+                                                            color: Colors
+                                                                .lightBlueAccent)
+                                                      ],
+                                                      showingTooltipIndicators: [
+                                                        0
+                                                      ]),
+                                                  BarChartGroupData(
+                                                      x: 1,
+                                                      barRods: [
+                                                        BarChartRodData(
+                                                            y: yesdayTotalTime /
+                                                                60,
+                                                            color: Colors
+                                                                .lightBlueAccent)
+                                                      ],
+                                                      showingTooltipIndicators: [
+                                                        0
+                                                      ]),
+                                                  BarChartGroupData(
+                                                      x: 2,
+                                                      barRods: [
+                                                        BarChartRodData(
+                                                            y: todayTotalTime /
+                                                                60,
+                                                            color: Colors
+                                                                .lightBlueAccent)
+                                                      ],
+                                                      showingTooltipIndicators: [
+                                                        0
+                                                      ]),
+                                                ],
+                                              )),
                                             ),
+                                            onTap: () {
+                                              setState(() {
+                                                graph3Days(context,
+                                                    deviceObjectList[index]);
+                                              });
+                                            },
+                                          ),
                                         ),
                                         Container(
                                           height: 200,
-                                          width: MediaQuery.of(context).size.width/2.5,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              2.5,
                                           //color: Colors.blue,
                                           decoration: BoxDecoration(
-                                              border: Border.all(
-                                                // color: Colors.black
-                                              ),
-                                              borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                                              color: Color(0xffbddeee),
+                                            // border: Border.all(
+                                            //   // color: Colors.black
+                                            // ),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(20.0)),
+                                            color: Color(0xffbddeee),
                                           ),
                                           child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
                                             children: <Widget>[
                                               Container(
-                                                height: 170,
-                                                width: (MediaQuery.of(context).size.width/2.5)/2.1,
-                                                 child: FlareActor(
+                                                  height: 160,
+                                                  width: (MediaQuery.of(context)
+                                                              .size
+                                                              .width /
+                                                          2.5) /
+                                                      2.1,
+                                                  child: FlareActor(
                                                     'assets/lift.flr',
                                                     animation: flare,
-                                                  )
-
-                                              ),
+                                                  )),
                                               Container(
                                                 height: 170,
-                                                width: (MediaQuery.of(context).size.width/2.5)/2.1,
+                                                width: (MediaQuery.of(context)
+                                                            .size
+                                                            .width /
+                                                        2.5) /
+                                                    2.1,
                                                 child: Column(
                                                   children: <Widget>[
                                                     Container(
@@ -608,48 +648,81 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                         child: Container(
                                                           height: 65,
                                                           width: 65,
-                                                          child: Image.asset('images/up.png',color: upBGColor,),
+                                                          child: Image.asset(
+                                                            'images/up.png',
+                                                            color: upBGColor,
+                                                          ),
                                                         ),
                                                         onPointerDown: (data) {
-                                                          if(deviceObjectList[index].offline==false && deviceObjectList[index].power==false)
-                                                            {
-                                                              deviceObjectList[index].socket.write('-3\r');
-                                                              upBGColor = upArrowColor;
-                                                              setState(() {
-                                                                flare = 'up';
-                                                              });
-                                                              upArrowColor = downBGColor;
-                                                              indicator = 1;
-                                                              if (deviceObjectList[index].height != 100) {
-                                                                tick(deviceObjectList[index]);
-                                                              }
+                                                          if (deviceObjectList[
+                                                                          index]
+                                                                      .offline ==
+                                                                  false &&
+                                                              deviceObjectList[
+                                                                          index]
+                                                                      .power ==
+                                                                  false) {
+                                                            deviceObjectList[
+                                                                    index]
+                                                                .socket
+                                                                .write('-3\r');
+                                                            upBGColor =
+                                                                upArrowColor;
+                                                            setState(() {
+                                                              flare = 'up';
+                                                            });
+                                                            upArrowColor =
+                                                                downBGColor;
+                                                            indicator = 1;
+                                                            if (deviceObjectList[
+                                                                        index]
+                                                                    .height !=
+                                                                100) {
+                                                              tick(
+                                                                  deviceObjectList[
+                                                                      index]);
                                                             }
-
+                                                          }
                                                         },
                                                         onPointerUp: (data) {
-                                                          if(deviceObjectList[index].offline==false && deviceObjectList[index].power==false)
-                                                            {
-                                                              deviceObjectList[index].socket.write('-1\r');
-                                                              setState(() {
-                                                                flare = 'idle';
-                                                              });
-                                                              setState(() {
-                                                                upArrowColor = Color(0xff02457a);
-                                                                upBGColor = Color(0xff5cbceb);
-                                                              });
-                                                              if (timer!=null) {
-                                                                timer.cancel();
-                                                              }
-                                                              if (indicator != 0) {
-                                                                prefs.setInt('${deviceObjectList[index].ip}height',
-                                                                    deviceObjectList[index].height.toInt());
-                                                                indicator = 0;
-                                                              }
+                                                          if (deviceObjectList[
+                                                                          index]
+                                                                      .offline ==
+                                                                  false &&
+                                                              deviceObjectList[
+                                                                          index]
+                                                                      .power ==
+                                                                  false) {
+                                                            deviceObjectList[
+                                                                    index]
+                                                                .socket
+                                                                .write('-1\r');
+                                                            setState(() {
+                                                              flare = 'idle';
+                                                            });
+                                                            setState(() {
+                                                              upArrowColor =
+                                                                  Color(
+                                                                      0xff02457a);
+                                                              upBGColor = Color(
+                                                                  0xff5cbceb);
+                                                            });
+                                                            if (timer != null) {
+                                                              timer.cancel();
                                                             }
-
+                                                            if (indicator !=
+                                                                0) {
+                                                              prefs.setInt(
+                                                                  '${deviceObjectList[index].ip}height',
+                                                                  deviceObjectList[
+                                                                          index]
+                                                                      .height
+                                                                      .toInt());
+                                                              indicator = 0;
+                                                            }
+                                                          }
                                                         },
                                                       ),
-
                                                     ),
                                                     Container(
                                                       height: 85,
@@ -659,53 +732,86 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                           child: Container(
                                                             height: 65,
                                                             width: 65,
-                                                            child: Image.asset('images/up.png',color: downBGColor,),
+                                                            child: Image.asset(
+                                                              'images/up.png',
+                                                              color:
+                                                                  downBGColor,
+                                                            ),
                                                           ),
                                                         ),
                                                         onPointerDown: (data) {
-                                                          if(deviceObjectList[index].offline==false && deviceObjectList[index].power==false)
-                                                            {
-                                                              downBGColor = downArrowColor;
-                                                              downArrowColor = upBGColor;
-                                                              setState(() {
-                                                                flare = 'down';
-                                                              });
+                                                          if (deviceObjectList[
+                                                                          index]
+                                                                      .offline ==
+                                                                  false &&
+                                                              deviceObjectList[
+                                                                          index]
+                                                                      .power ==
+                                                                  false) {
+                                                            downBGColor =
+                                                                downArrowColor;
+                                                            downArrowColor =
+                                                                upBGColor;
+                                                            setState(() {
+                                                              flare = 'down';
+                                                            });
 
-                                                              indicator = -1;
-                                                              deviceObjectList[index].socket.write('-2\r');
-                                                              if (deviceObjectList[index].height != 0) {
-                                                                tick(deviceObjectList[index]);
-                                                              }
+                                                            indicator = -1;
+                                                            deviceObjectList[
+                                                                    index]
+                                                                .socket
+                                                                .write('-2\r');
+                                                            if (deviceObjectList[
+                                                                        index]
+                                                                    .height !=
+                                                                0) {
+                                                              tick(
+                                                                  deviceObjectList[
+                                                                      index]);
                                                             }
-
+                                                          }
                                                         },
                                                         onPointerUp: (data) {
-                                                          if(deviceObjectList[index].offline==false && deviceObjectList[index].power==false)
-                                                            {
-                                                              deviceObjectList[index].socket.write('-1\r');
+                                                          if (deviceObjectList[
+                                                                          index]
+                                                                      .offline ==
+                                                                  false &&
+                                                              deviceObjectList[
+                                                                          index]
+                                                                      .power ==
+                                                                  false) {
+                                                            deviceObjectList[
+                                                                    index]
+                                                                .socket
+                                                                .write('-1\r');
 
-                                                              setState(() {
-                                                                flare = 'idle';
-                                                                downArrowColor = Color(0xff02457a);
-                                                                downBGColor = Color(0xff5cbceb);
-                                                              });
-                                                              if (timer!=null) {
-                                                                timer.cancel();
-                                                              }
-                                                              if (indicator != 0) {
-                                                                prefs.setInt('${deviceObjectList[index].ip}height',
-                                                                    deviceObjectList[index].height.toInt());
-                                                                indicator = 0;
-                                                              }
+                                                            setState(() {
+                                                              flare = 'idle';
+                                                              downArrowColor =
+                                                                  Color(
+                                                                      0xff02457a);
+                                                              downBGColor = Color(
+                                                                  0xff5cbceb);
+                                                            });
+                                                            if (timer != null) {
+                                                              timer.cancel();
                                                             }
-
+                                                            if (indicator !=
+                                                                0) {
+                                                              prefs.setInt(
+                                                                  '${deviceObjectList[index].ip}height',
+                                                                  deviceObjectList[
+                                                                          index]
+                                                                      .height
+                                                                      .toInt());
+                                                              indicator = 0;
+                                                            }
+                                                          }
                                                         },
                                                       ),
-
                                                     )
                                                   ],
                                                 ),
-
                                               )
                                             ],
                                           ),
@@ -713,75 +819,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                       ],
                                     ),
                                   ),
-                                  Stack(
-                                    children: <Widget>[
-                                      Container(
-                                        alignment: Alignment.bottomCenter,
-                                        width: 150,
-                                        height: 150,
-                                        decoration: BoxDecoration(
-                                            color: Colors.blue,
-                                            borderRadius: BorderRadius.all(Radius.circular(75.0))
-                                        ),
-                                        child:  ListTile(
-//                                        leading: Icon(
-//                                          Icons.lightbulb_outline,
-//                                          color: Color(0xff02457a),
-//                                        ),
-                                          title: Center(
-                                            child: Text(
-                                              deviceObjectList[index].power == false
-                                                  ? 'Disinfect'
-                                                  : deviceObjectList[index].pause ==
-                                                  true
-                                                  ? 'Paused'
-                                                  : 'Disinfecting',style: TextStyle(fontSize: 20.0),),
-                                          ),
-//                                        subtitle: Text(
-//                                            'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
-                                          onTap: () {
-                                            if (deviceObjectList[index].offline ==
-                                                false) {
-                                              if (deviceObjectList[index].power ==
-                                                  true) {
-                                                deviceObjectList[index]
-                                                    .clientError = false;
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) => HomePage(
-                                                      deviceObjectList[index],
-                                                    ),
-                                                  ),
-                                                );
-                                              } else {
-                                                deviceObjectList[index]
-                                                    .motionDetected = false;
-                                                deviceObjectList[index].time =
-                                                    Duration(minutes: 0);
-                                                deviceObjectList[index]
-                                                    .progressDegrees = 0;
-                                                if (rooms.length != 0) {
-                                                  if (workers.length != 0) {
-                                                    showRooms(
-                                                      context,
-                                                      deviceObjectList[index],
-                                                    );
-                                                  } else {
-                                                    addWorker(context);
-                                                  }
-                                                } else {
-                                                  addRooms(context);
-                                                }
-                                              }
-                                            }
-                                          },
-                                        ),
-                                      )
-
-                                    ],
-
-                                  ),
+                                  
 //                                  Container(
 //                                    margin: EdgeInsets.only(
 //                                        top: 10,
@@ -872,7 +910,82 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
-            ],
+            Padding(
+              padding: const EdgeInsets.all(100.0),
+              child: Stack(
+                                      children: <Widget>[
+                                        Container(
+                                            //alignment: Alignment.bottomCenter,
+                                            width: 150,
+                                            height: 150,
+                                            decoration: BoxDecoration(
+                                                color: Color(0xff9ad2ec),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(75.0))),
+                                            child: Center(
+                                              child: Listener(
+                                                child: Text(
+                                                  deviceObjectList[0].power ==
+                                                          false
+                                                      ? 'Disinfect'
+                                                      : deviceObjectList[0]
+                                                                  .pause ==
+                                                              true
+                                                          ? 'Paused'
+                                                          : 'Disinfecting',
+                                                  style:
+                                                      TextStyle(fontSize: 20.0),
+                                                ),
+                                                onPointerDown:
+                                                    // ignore: non_constant_identifier_names
+                                                    (PointerDownEvent) {
+                                                  if (deviceObjectList[0]
+                                                          .offline ==
+                                                      false) {
+                                                    if (deviceObjectList[0]
+                                                            .power ==
+                                                        true) {
+                                                      deviceObjectList[0]
+                                                          .clientError = false;
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              HomePage(
+                                                            deviceObjectList[
+                                                                0],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      deviceObjectList[0]
+                                                          .motionDetected = false;
+                                                      deviceObjectList[0]
+                                                              .time =
+                                                          Duration(minutes: 0);
+                                                      deviceObjectList[0]
+                                                          .progressDegrees = 0;
+                                                      if (rooms.length != 0) {
+                                                        if (workers.length != 0) {
+                                                          showRooms(
+                                                            context,
+                                                            deviceObjectList[
+                                                                0],
+                                                          );
+                                                        } else {
+                                                          addWorker(context);
+                                                        }
+                                                      } else {
+                                                        addRooms(context);
+                                                      }
+                                                    }
+                                                  }
+                                                },
+                                              ),
+                                            ))
+                                      ],
+                                    ),
+            ),],
           ),
         ),
         floatingActionButton: Container(
@@ -908,10 +1021,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
       ),
       onWillPop: _onWillPop,
     );
-
-
   }
-
 
   Future<void> addRooms(BuildContext context) async {
     await showDialog(
@@ -1022,7 +1132,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => HeightPage(deviceObject)),
+                            builder: (context) => HomePage(deviceObject)),
                       );
                     },
                   );
@@ -1205,6 +1315,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           );
         });
   }
+
   Future<void> graph3Days(context, DeviceObject deviceObject) async {
     await showDialog(
         context: context,
@@ -1212,96 +1323,103 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           return SimpleDialog(
             backgroundColor: Color(0xffffffff),
             shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             children: <Widget>[
               Container(
                 child: Column(
                   children: <Widget>[
                     RaisedButton(
-                     onPressed: ()
-                      {
-                        Navigator.push(context,MaterialPageRoute( builder: (context) => ShowHistory(),),);
-
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ShowHistory(),
+                          ),
+                        );
                       },
-                      child: Text('Detiled Hstory',style: TextStyle(color: Colors.white),),
+                      child: Text(
+                        'Detiled Hstory',
+                        style: TextStyle(color: Colors.white),
+                      ),
                       color: Colors.lightBlue,
                     ),
-                    BarChart(
-                        BarChartData(
-                          alignment: BarChartAlignment.spaceAround,
-                          maxY: maxYAxis/60,
-                          barTouchData: BarTouchData(
-                            enabled: true,
-                            touchTooltipData: BarTouchTooltipData(
-                              tooltipBgColor: Colors.transparent,
-                              tooltipPadding: const EdgeInsets.all(0),
-                              tooltipBottomMargin: 8,
-                              getTooltipItem: (
-                                  BarChartGroupData group,
-                                  int groupIndex,
-                                  BarChartRodData rod,
-                                  int rodIndex,
-                                  ) {
-                                return BarTooltipItem(
-                                  rod.y.round().toString(),
-                                  TextStyle(
-                                    color: Colors.blueGrey,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                          titlesData: FlTitlesData(
-                            show: true,
-                            bottomTitles: SideTitles(
-                              showTitles: true,
-                              textStyle: TextStyle(
-                                  color: const Color(0xff7589a2),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14),
-                              margin: 20,
-                              getTitles: (double value) {
-                                switch (value.toInt()) {
-                                  case 0:
-                                    return 'DBY';
-                                  case 1:
-                                    return 'Yes';
-                                  case 2:
-                                    return 'Tod';
+                    BarChart(BarChartData(
+                      alignment: BarChartAlignment.spaceAround,
+                      maxY: maxYAxis / 60,
+                      barTouchData: BarTouchData(
+                        enabled: true,
+                        touchTooltipData: BarTouchTooltipData(
+                          tooltipBgColor: Colors.transparent,
+                          tooltipPadding: const EdgeInsets.all(0),
+                          tooltipBottomMargin: 8,
+                          getTooltipItem: (
+                            BarChartGroupData group,
+                            int groupIndex,
+                            BarChartRodData rod,
+                            int rodIndex,
+                          ) {
+                            return BarTooltipItem(
+                              rod.y.round().toString(),
+                              TextStyle(
+                                color: Colors.blueGrey,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      titlesData: FlTitlesData(
+                        show: true,
+                        bottomTitles: SideTitles(
+                          showTitles: true,
+                          textStyle: TextStyle(
+                              color: const Color(0xff7589a2),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14),
+                          margin: 20,
+                          getTitles: (double value) {
+                            switch (value.toInt()) {
+                              case 0:
+                                return 'DBY';
+                              case 1:
+                                return 'Yes';
+                              case 2:
+                                return 'Tod';
 
-                                  default:
-                                    return '';
-                                }
-                              },
-                            ),
-                            leftTitles: SideTitles(showTitles: false),
-                          ),
-                          borderData: FlBorderData(
-                            show: false,
-                          ),
-                          barGroups: [
-                            BarChartGroupData(x: 0, barRods: [
-                              BarChartRodData(
-                                  y: dayBeforeYesTotalTime/60, color: Colors.lightBlueAccent)
-                            ], showingTooltipIndicators: [
-                              0
-                            ]),
-                            BarChartGroupData(x: 1, barRods: [
-                              BarChartRodData(
-                                  y: yesdayTotalTime/60, color: Colors.lightBlueAccent)
-                            ], showingTooltipIndicators: [
-                              0
-                            ]),
-                            BarChartGroupData(x: 2, barRods: [
-                              BarChartRodData(
-                                  y: todayTotalTime/60, color: Colors.lightBlueAccent)
-                            ], showingTooltipIndicators: [
-                              0
-                            ]),
-                          ],
-                        )
-                    ),
+                              default:
+                                return '';
+                            }
+                          },
+                        ),
+                        leftTitles: SideTitles(showTitles: false),
+                      ),
+                      borderData: FlBorderData(
+                        show: false,
+                      ),
+                      barGroups: [
+                        BarChartGroupData(x: 0, barRods: [
+                          BarChartRodData(
+                              y: dayBeforeYesTotalTime / 60,
+                              color: Colors.lightBlueAccent)
+                        ], showingTooltipIndicators: [
+                          0
+                        ]),
+                        BarChartGroupData(x: 1, barRods: [
+                          BarChartRodData(
+                              y: yesdayTotalTime / 60,
+                              color: Colors.lightBlueAccent)
+                        ], showingTooltipIndicators: [
+                          0
+                        ]),
+                        BarChartGroupData(x: 2, barRods: [
+                          BarChartRodData(
+                              y: todayTotalTime / 60,
+                              color: Colors.lightBlueAccent)
+                        ], showingTooltipIndicators: [
+                          0
+                        ]),
+                      ],
+                    )),
                   ],
                 ),
               )
@@ -1460,7 +1578,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     );
   }
 
-
   Future<void> showingCompletedPop(context, DeviceObject deviceObject) async {
     await showDialog(
         context: context,
@@ -1527,7 +1644,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         });
   }
 
-
   Future<void> earlyMotionDetection(
       BuildContext context, DeviceObject deviceObject) async {
     Future.delayed(Duration(milliseconds: 300), () {
@@ -1547,7 +1663,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
       setName(context, deviceObject);
     });
   }
-  Future<void> tick(deviceObject) async {
+
+  Future<void> tick(DeviceObject deviceObject) async {
     timer = Timer.periodic(Duration(milliseconds: 100), (callback) {
       setState(() {
         if (indicator == 1) {
@@ -1558,22 +1675,18 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         if (deviceObject.height >= 100) {
           deviceObject.height = 100;
           indicator = 0;
-          prefs.setInt('${deviceObject.ip}height',
-              deviceObject.height.toInt());
+          prefs.setInt('${deviceObject.ip}height', deviceObject.height.toInt());
           //widget.deviceObject.socket.write('-1\r');
         }
         if (deviceObject.height <= 0) {
           deviceObject.height = 0.0;
           indicator = 0;
-          prefs.setInt('${deviceObject.ip}height',
-              deviceObject.height.toInt());
+          prefs.setInt('${deviceObject.ip}height', deviceObject.height.toInt());
           //widget.deviceObject.socket.write('-1\r');
         }
       });
     });
   }
-
-
 }
 
 class Rooms extends StatefulWidget {
