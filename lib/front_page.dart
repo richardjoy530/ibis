@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:ibis/height_page.dart';
 import 'package:ibis/main.dart';
+import 'package:ibis/select_time.dart';
 import 'package:ibis/show_history.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:wifi_iot/wifi_iot.dart';
@@ -138,12 +139,13 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   deviceObjectList[i].completedStatus = true;
                   databaseHelper.insertTimeData(
                     TimeData(
-                        roomName: room,
-                        workerName: worker,
-                        startTime: startTime,
-                        endTime: DateTime.now(),
-                        elapsedTime: deviceObjectList[i].elapsedTime,
-                        time: deviceObjectList[i].time.inSeconds.toInt()),
+                      roomName: room,
+                      workerName: worker,
+                      startTime: startTime,
+                      endTime: DateTime.now(),
+                      elapsedTime: deviceObjectList[i].elapsedTime,
+                      time: deviceObjectList[i].time.inSeconds.toInt(),
+                    ),
                   );
                   timeDataList.add(
                     TimeData(
@@ -271,7 +273,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       width: 30,
                       child: FlareActor(
                         'assets/status.flr',
-                        animation: 'on',
+                        animation: 'Connected',
                       ),
                     ),
                   ),
@@ -362,7 +364,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                 },
                                               ),
                                         title: Text(
-                                            '${deviceObjectList[index].name}'),
+                                            '${deviceObjectList[index].name}',style: TextStyle(fontWeight: FontWeight.bold),),
                                         subtitle: deviceObjectList[index]
                                                     .power ==
                                                 false
@@ -398,69 +400,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                       ),
                                     ),
                                   ),
-//                                  Container(
-//                                    margin: EdgeInsets.only(
-//                                        top: 10,
-//                                        left: 10,
-//                                        right: 10,
-//                                        bottom: 10),
-//                                    decoration: BoxDecoration(
-//                                        color: Color(0xff9ad2ec),
-//                                        borderRadius:
-//                                            BorderRadius.circular(20)),
-//                                    child: ListTile(
-//                                      leading: Icon(
-//                                        Icons.lightbulb_outline,
-//                                        color: Color(0xff02457a),
-//                                      ),
-//                                      title: Text(
-//                                          deviceObjectList[index].power == false
-//                                              ? 'Disinfect'
-//                                              : deviceObjectList[index].pause ==
-//                                                      true
-//                                                  ? 'Paused'
-//                                                  : 'Disinfecting'),
-//                                      subtitle: Text(
-//                                          'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
-//                                      onTap: () {
-//                                        if (deviceObjectList[index].offline ==
-//                                            false) {
-//                                          if (deviceObjectList[index].power ==
-//                                              true) {
-//                                            deviceObjectList[index]
-//                                                .clientError = false;
-//                                            Navigator.push(
-//                                              context,
-//                                              MaterialPageRoute(
-//                                                builder: (context) => HomePage(
-//                                                  deviceObjectList[index],
-//                                                ),
-//                                              ),
-//                                            );
-//                                          } else {
-//                                            deviceObjectList[index]
-//                                                .motionDetected = false;
-//                                            deviceObjectList[index].time =
-//                                                Duration(minutes: 0);
-//                                            deviceObjectList[index]
-//                                                .progressDegrees = 0;
-//                                            if (rooms.length != 0) {
-//                                              if (workers.length != 0) {
-//                                                showRooms(
-//                                                  context,
-//                                                  deviceObjectList[index],
-//                                                );
-//                                              } else {
-//                                                addWorker(context);
-//                                              }
-//                                            } else {
-//                                              addRooms(context);
-//                                            }
-//                                          }
-//                                        }
-//                                      },
-//                                    ),
-//                                  ),
                                   Padding(
                                     padding: const EdgeInsets.fromLTRB(
                                         0.0, 50.0, 0.0, 0.0),
@@ -469,151 +408,187 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                           MainAxisAlignment.spaceEvenly,
                                       children: <Widget>[
                                         Container(
-                                          padding: EdgeInsets.only(top: 25),
                                           height: 200,
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width /
                                               2.5,
-                                          //color: Colors.blue,
-                                          decoration: BoxDecoration(
-                                              // border: Border.all(
-                                              //  // color: Colors.black
-                                              // ),
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(20.0)),
-                                              color: Color(0xffbddeee)),
-                                          child: GestureDetector(
-                                            child: Container(
-                                              height: 200,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  2.5,
-                                              padding: EdgeInsets.all(8.0),
-                                              child: BarChart(BarChartData(
-                                                alignment: BarChartAlignment
-                                                    .spaceAround,
-                                                maxY: maxYAxis / 60,
-                                                barTouchData: BarTouchData(
-                                                  enabled: true,
-                                                  touchTooltipData:
-                                                      BarTouchTooltipData(
-                                                    tooltipBgColor:
-                                                        Colors.transparent,
-                                                    tooltipPadding:
-                                                        const EdgeInsets.all(0),
-                                                    tooltipBottomMargin: 8,
-                                                    getTooltipItem: (
-                                                      BarChartGroupData group,
-                                                      int groupIndex,
-                                                      BarChartRodData rod,
-                                                      int rodIndex,
-                                                    ) {
-                                                      return BarTooltipItem(
-                                                        rod.y
-                                                            .round()
-                                                            .toString(),
-                                                        TextStyle(
-                                                          color:
-                                                              Colors.blueGrey,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: <Widget>[
+                                              FloatingActionButton.extended(
+                                                backgroundColor:
+                                                    Color(0xff02457a),
+                                                heroTag: 'hero1',
+                                                label: Text(
+                                                  'Staff',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Color(0xffffffff)),
                                                 ),
-                                                titlesData: FlTitlesData(
-                                                  show: true,
-                                                  bottomTitles: SideTitles(
-                                                    showTitles: true,
-                                                    textStyle: TextStyle(
-                                                        color: const Color(
-                                                            0xff7589a2),
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 14),
-                                                    margin: 20,
-                                                    getTitles: (double value) {
-                                                      switch (value.toInt()) {
-                                                        case 0:
-                                                          return 'DBY';
-                                                        case 1:
-                                                          return 'YTD';
-                                                        case 2:
-                                                          return 'TOD';
-
-                                                        default:
-                                                          return '';
-                                                      }
-                                                    },
-                                                  ),
-                                                  leftTitles: SideTitles(
-                                                      showTitles: false),
-                                                ),
-                                                borderData: FlBorderData(
-                                                  show: false,
-                                                ),
-                                                barGroups: [
-                                                  BarChartGroupData(
-                                                      x: 0,
-                                                      barRods: [
-                                                        BarChartRodData(
-                                                            y: dayBeforeYesTotalTime /
-                                                                60,
-                                                            color: Colors
-                                                                .lightBlueAccent)
-                                                      ],
-                                                      showingTooltipIndicators: [
-                                                        0
-                                                      ]),
-                                                  BarChartGroupData(
-                                                      x: 1,
-                                                      barRods: [
-                                                        BarChartRodData(
-                                                            y: yesdayTotalTime /
-                                                                60,
-                                                            color: Colors
-                                                                .lightBlueAccent)
-                                                      ],
-                                                      showingTooltipIndicators: [
-                                                        0
-                                                      ]),
-                                                  BarChartGroupData(
-                                                      x: 2,
-                                                      barRods: [
-                                                        BarChartRodData(
-                                                            y: todayTotalTime /
-                                                                60,
-                                                            color: Colors
-                                                                .lightBlueAccent)
-                                                      ],
-                                                      showingTooltipIndicators: [
-                                                        0
-                                                      ]),
-                                                ],
-                                              )),
-                                            ),
-                                            onTap: () {
-                                              setState(() {
-                                                graph3Days(context,
-                                                    deviceObjectList[index]);
-                                              });
-                                            },
+                                                icon: Icon(Icons.add,
+                                                    color: Color(0xffffffff)),
+                                                onPressed: () {
+                                                  addWorker(context);
+                                                },
+                                              ),
+                                              FloatingActionButton.extended(
+                                                backgroundColor:
+                                                    Color(0xff02457a),
+                                                heroTag: 'hero2',
+                                                label: Text('Room',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        color:
+                                                            Color(0xffffffff))),
+                                                icon: Icon(Icons.add,
+                                                    color: Color(0xffffffff)),
+                                                onPressed: () {
+                                                  addRooms(context);
+                                                },
+                                              )
+                                            ],
                                           ),
-                                        ),
+                                        )
+                                        // Container(
+                                        //   padding: EdgeInsets.only(top: 25),
+                                        //   height: 200,
+                                        //   width: MediaQuery.of(context).size.width/2.5,
+                                        //   decoration: BoxDecoration(
+                                        //     borderRadius: BorderRadius.all(
+                                        //       Radius.circular(20.0),
+                                        //     ),
+                                        //     color: Color(0xffbddeee),
+                                        //   ),
+                                        //   child: GestureDetector(
+                                        //     child: Container(
+                                        //       height: 200,
+                                        //       width: MediaQuery.of(context)
+                                        //               .size
+                                        //               .width /
+                                        //           2.5,
+                                        //       padding: EdgeInsets.all(8.0),
+                                        //       child: BarChart(BarChartData(
+                                        //         alignment: BarChartAlignment
+                                        //             .spaceAround,
+                                        //         maxY: maxYAxis / 60,
+                                        //         barTouchData: BarTouchData(
+                                        //           enabled: true,
+                                        //           touchTooltipData:
+                                        //               BarTouchTooltipData(
+                                        //             tooltipBgColor:
+                                        //                 Colors.transparent,
+                                        //             tooltipPadding:
+                                        //                 const EdgeInsets.all(0),
+                                        //             tooltipBottomMargin: 8,
+                                        //             getTooltipItem: (
+                                        //               BarChartGroupData group,
+                                        //               int groupIndex,
+                                        //               BarChartRodData rod,
+                                        //               int rodIndex,
+                                        //             ) {
+                                        //               return BarTooltipItem(
+                                        //                 rod.y
+                                        //                     .round()
+                                        //                     .toString(),
+                                        //                 TextStyle(
+                                        //                   color:
+                                        //                       Colors.blueGrey,
+                                        //                   fontWeight:
+                                        //                       FontWeight.bold,
+                                        //                 ),
+                                        //               );
+                                        //             },
+                                        //           ),
+                                        //         ),
+                                        //         titlesData: FlTitlesData(
+                                        //           show: true,
+                                        //           bottomTitles: SideTitles(
+                                        //             showTitles: true,
+                                        //             textStyle: TextStyle(
+                                        //                 color: const Color(
+                                        //                     0xff7589a2),
+                                        //                 fontWeight:
+                                        //                     FontWeight.bold,
+                                        //                 fontSize: 14),
+                                        //             margin: 20,
+                                        //             getTitles: (double value) {
+                                        //               switch (value.toInt()) {
+                                        //                 case 0:
+                                        //                   return 'DBY';
+                                        //                 case 1:
+                                        //                   return 'YTD';
+                                        //                 case 2:
+                                        //                   return 'TOD';
+
+                                        //                 default:
+                                        //                   return '';
+                                        //               }
+                                        //             },
+                                        //           ),
+                                        //           leftTitles: SideTitles(
+                                        //               showTitles: false),
+                                        //         ),
+                                        //         borderData: FlBorderData(
+                                        //           show: false,
+                                        //         ),
+                                        //         barGroups: [
+                                        //           BarChartGroupData(
+                                        //               x: 0,
+                                        //               barRods: [
+                                        //                 BarChartRodData(
+                                        //                     y: dayBeforeYesTotalTime /
+                                        //                         60,
+                                        //                     color: Colors
+                                        //                         .lightBlueAccent)
+                                        //               ],
+                                        //               showingTooltipIndicators: [
+                                        //                 0
+                                        //               ]),
+                                        //           BarChartGroupData(
+                                        //               x: 1,
+                                        //               barRods: [
+                                        //                 BarChartRodData(
+                                        //                     y: yesdayTotalTime /
+                                        //                         60,
+                                        //                     color: Colors
+                                        //                         .lightBlueAccent)
+                                        //               ],
+                                        //               showingTooltipIndicators: [
+                                        //                 0
+                                        //               ]),
+                                        //           BarChartGroupData(
+                                        //               x: 2,
+                                        //               barRods: [
+                                        //                 BarChartRodData(
+                                        //                     y: todayTotalTime /
+                                        //                         60,
+                                        //                     color: Colors
+                                        //                         .lightBlueAccent)
+                                        //               ],
+                                        //               showingTooltipIndicators: [
+                                        //                 0
+                                        //               ]),
+                                        //         ],
+                                        //       )),
+                                        //     ),
+                                        //     onTap: () {
+                                        //       setState(() {
+                                        //         graph3Days(context,
+                                        //             deviceObjectList[index]);
+                                        //       });
+                                        //     },
+                                        //   ),
+                                        // ),
+                                        ,
                                         Container(
                                           height: 200,
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width /
                                               2.5,
-                                          //color: Colors.blue,
                                           decoration: BoxDecoration(
-                                            // border: Border.all(
-                                            //   // color: Colors.black
-                                            // ),
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(20.0)),
                                             color: Color(0xffbddeee),
@@ -623,18 +598,23 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                 MainAxisAlignment.spaceEvenly,
                                             children: <Widget>[
                                               Container(
-                                                  height: 160,
+                                                  //height: 160,
                                                   width: (MediaQuery.of(context)
                                                               .size
                                                               .width /
                                                           2.5) /
                                                       2.1,
-                                                  child: FlareActor(
-                                                    'assets/lift.flr',
-                                                    animation: flare,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    child: FlareActor(
+                                                      'assets/lift.flr',
+                                                      animation: flare,
+                                                    ),
                                                   )),
                                               Container(
-                                                height: 170,
+                                                //height: 170,
                                                 width: (MediaQuery.of(context)
                                                             .size
                                                             .width /
@@ -819,68 +799,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                       ],
                                     ),
                                   ),
-                                  
-//                                  Container(
-//                                    margin: EdgeInsets.only(
-//                                        top: 10,
-//                                        left: 10,
-//                                        right: 10,
-//                                        bottom: 10),
-//                                    decoration: BoxDecoration(
-//                                        color: Color(0xff9ad2ec),
-//                                        borderRadius:
-//                                            BorderRadius.circular(20)),
-//                                    child: ListTile(
-//                                      leading: Image.asset(
-//                                        'images/sort.png',
-//                                        color: Color(0xff02457a),
-//                                        width: 25,
-//                                      ),
-//                                      title: Text('Adjust Height'),
-//                                      subtitle: Text(
-//                                          'Device: ${deviceObjectList[index].offline == true ? 'Not connected' : deviceObjectList[index].name}'),
-//                                      onTap: () {
-//                                        if (deviceObjectList[index].offline ==
-//                                            false) {
-//                                          Navigator.push(
-//                                            context,
-//                                            MaterialPageRoute
-//                                              builder: (context) => HeightPage(
-//                                                deviceObjectList[index],
-//                                                justHeight: true,
-//                                              ),
-//                                            ),
-//                                          );
-//                                        }
-//                                      },
-//                                    ),
-//                                  ),
-//                                  Container(
-//                                    margin: EdgeInsets.only(
-//                                        top: 10,
-//                                        left: 10,
-//                                        right: 10,
-//                                        bottom: 10),
-//                                    decoration: BoxDecoration(
-//                                        color: Color(0xff9ad2ec),
-//                                        borderRadius:
-//                                            BorderRadius.circular(20)),
-//                                    child: ListTile(
-//                                      leading: Icon(
-//                                        Icons.history,
-//                                        color: Color(0xff02457a),
-//                                      ),
-//                                      title: Text('Show History'),
-//                                      onTap: () {
-//                                        Navigator.push(
-//                                          context,
-//                                          MaterialPageRoute(
-//                                            builder: (context) => ShowHistory(),
-//                                          ),
-//                                        );
-//                                      },
-//                                    ),
-//                                  )
                                 ],
                               );
                             },
@@ -910,114 +828,103 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
-            Padding(
-              padding: const EdgeInsets.all(100.0),
-              child: Stack(
-                                      children: <Widget>[
-                                        Container(
-                                            //alignment: Alignment.bottomCenter,
-                                            width: 150,
-                                            height: 150,
-                                            decoration: BoxDecoration(
-                                                color: Color(0xff9ad2ec),
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(75.0))),
-                                            child: Center(
-                                              child: Listener(
-                                                child: Text(
-                                                  deviceObjectList[0].power ==
-                                                          false
-                                                      ? 'Disinfect'
-                                                      : deviceObjectList[0]
-                                                                  .pause ==
-                                                              true
-                                                          ? 'Paused'
-                                                          : 'Disinfecting',
-                                                  style:
-                                                      TextStyle(fontSize: 20.0),
-                                                ),
-                                                onPointerDown:
-                                                    // ignore: non_constant_identifier_names
-                                                    (PointerDownEvent) {
-                                                  if (deviceObjectList[0]
-                                                          .offline ==
-                                                      false) {
-                                                    if (deviceObjectList[0]
-                                                            .power ==
-                                                        true) {
-                                                      deviceObjectList[0]
-                                                          .clientError = false;
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              HomePage(
-                                                            deviceObjectList[
-                                                                0],
-                                                          ),
-                                                        ),
-                                                      );
-                                                    } else {
-                                                      deviceObjectList[0]
-                                                          .motionDetected = false;
-                                                      deviceObjectList[0]
-                                                              .time =
-                                                          Duration(minutes: 0);
-                                                      deviceObjectList[0]
-                                                          .progressDegrees = 0;
-                                                      if (rooms.length != 0) {
-                                                        if (workers.length != 0) {
-                                                          showRooms(
-                                                            context,
-                                                            deviceObjectList[
-                                                                0],
-                                                          );
-                                                        } else {
-                                                          addWorker(context);
-                                                        }
-                                                      } else {
-                                                        addRooms(context);
-                                                      }
-                                                    }
-                                                  }
-                                                },
-                                              ),
-                                            ))
-                                      ],
-                                    ),
-            ),],
-          ),
-        ),
-        floatingActionButton: Container(
-          padding: EdgeInsets.fromLTRB(25, 0, 0, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              FloatingActionButton.extended(
-                backgroundColor: Color(0xff02457a),
-                heroTag: 'hero1',
-                label: Text(
-                  'Staff',
-                  style: TextStyle(fontSize: 20, color: Color(0xffffffff)),
+              Padding(
+                padding: const EdgeInsets.all(100.0),
+                child: Stack(
+                  children: <Widget>[
+                    Listener(
+                      onPointerDown:
+                            // ignore: non_constant_identifier_names
+                            (PointerDownEvent) {
+                          if (deviceObjectList[0].offline == false) {
+                            if (deviceObjectList[0].power == true) {
+                              deviceObjectList[0].clientError = false;
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HomePage(
+                                    deviceObjectList[0],
+                                  ),
+                                ),
+                              );
+                            } else {
+                              deviceObjectList[0].motionDetected = false;
+                              deviceObjectList[0].time =
+                                  Duration(minutes: 0);
+                              deviceObjectList[0].progressDegrees = 0;
+                              if (rooms.length != 0) {
+                                if (workers.length != 0) {
+                                  showRooms(
+                                    context,
+                                    deviceObjectList[0],
+                                  );
+                                } else {
+                                  addWorker(context);
+                                }
+                              } else {
+                                addRooms(context);
+                              }
+                            }
+                          }
+                        },
+                      child: Container(
+                        width: 150,
+                        height: 150,
+                        decoration: BoxDecoration(
+                              color: Color(0xff9ad2ec),
+                              boxShadow: [
+                                BoxShadow(blurRadius: 20, spreadRadius: 10,color:Color(0xff9ad2ec) )
+                              ],
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(75.0))),
+                        child: Center(
+                            child: Text(
+                              deviceObjectList[0].power == false
+                                  ? 'Disinfect'
+                                  : deviceObjectList[0].pause == true
+                                      ? 'Paused'
+                                      : 'Disinfecting',
+                              style: TextStyle(fontSize: 20.0,color:Color(0xff02457a),fontWeight: FontWeight.bold ),
+                            ),
+                          ),
+                      ),
+                    )
+                  ],
                 ),
-                icon: Icon(Icons.add, color: Color(0xffffffff)),
-                onPressed: () {
-                  addWorker(context);
-                },
               ),
-              FloatingActionButton.extended(
-                backgroundColor: Color(0xff02457a),
-                heroTag: 'hero2',
-                label: Text('Room',
-                    style: TextStyle(fontSize: 20, color: Color(0xffffffff))),
-                icon: Icon(Icons.add, color: Color(0xffffffff)),
-                onPressed: () {
-                  addRooms(context);
-                },
-              )
             ],
           ),
         ),
+        // floatingActionButton: Container(
+        //   padding: EdgeInsets.fromLTRB(25, 0, 0, 0),
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //     children: <Widget>[
+        //       FloatingActionButton.extended(
+        //         backgroundColor: Color(0xff02457a),
+        //         heroTag: 'hero1',
+        //         label: Text(
+        //           'Staff',
+        //           style: TextStyle(fontSize: 20, color: Color(0xffffffff)),
+        //         ),
+        //         icon: Icon(Icons.add, color: Color(0xffffffff)),
+        //         onPressed: () {
+        //           addWorker(context);
+        //         },
+        //       ),
+        //       FloatingActionButton.extended(
+        //         backgroundColor: Color(0xff02457a),
+        //         heroTag: 'hero2',
+        //         label: Text('Room',
+        //             style: TextStyle(fontSize: 20, color: Color(0xffffffff))),
+        //         icon: Icon(Icons.add, color: Color(0xffffffff)),
+        //         onPressed: () {
+        //           addRooms(context);
+        //         },
+        //       )
+        //     ],
+        //   ),
+        // ),
       ),
       onWillPop: _onWillPop,
     );
@@ -1133,7 +1040,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => HomePage(deviceObject)),
+                            builder: (context) => SelectTime(deviceObject)),
                       );
                     },
                   );
