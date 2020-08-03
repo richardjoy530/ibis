@@ -858,7 +858,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                               if (workers.length != 0) {
                                 deviceObjectList[0].clientError = false;
                                 deviceObjectList[0].socket.write('5\r');
-                                Navigator.pushReplacement(
+                                Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
