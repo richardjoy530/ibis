@@ -200,9 +200,9 @@ class _SelectTimeState extends State<SelectTime> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
+                  margin: EdgeInsets.all(20),
                   padding: EdgeInsets.only(top: 25),
                   height: 200,
-                  width: MediaQuery.of(context).size.width / 2.5,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(
                       Radius.circular(20.0),
@@ -212,7 +212,7 @@ class _SelectTimeState extends State<SelectTime> {
                   child: GestureDetector(
                     child: Container(
                       height: 200,
-                      width: MediaQuery.of(context).size.width / 2.5,
+                      width: MediaQuery.of(context).size.width,
                       padding: EdgeInsets.all(8.0),
                       child: BarChart(BarChartData(
                         alignment: BarChartAlignment.spaceAround,
@@ -251,11 +251,11 @@ class _SelectTimeState extends State<SelectTime> {
                             getTitles: (double value) {
                               switch (value.toInt()) {
                                 case 0:
-                                  return 'DBY';
+                                  return '2 Days ago';
                                 case 1:
-                                  return 'YTD';
+                                  return 'Yesterday';
                                 case 2:
-                                  return 'TOD';
+                                  return 'Today';
 
                                 default:
                                   return '';

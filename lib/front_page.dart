@@ -364,7 +364,10 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                 },
                                               ),
                                         title: Text(
-                                            '${deviceObjectList[index].name}',style: TextStyle(fontWeight: FontWeight.bold),),
+                                          '${deviceObjectList[index].name}',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                         subtitle: deviceObjectList[index]
                                                     .power ==
                                                 false
@@ -834,59 +837,64 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   children: <Widget>[
                     Listener(
                       onPointerDown:
-                            // ignore: non_constant_identifier_names
-                            (PointerDownEvent) {
-                          if (deviceObjectList[0].offline == false) {
-                            if (deviceObjectList[0].power == true) {
-                              deviceObjectList[0].clientError = false;
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => HomePage(
-                                    deviceObjectList[0],
-                                  ),
+                          // ignore: non_constant_identifier_names
+                          (PointerDownEvent) {
+                        if (deviceObjectList[0].offline == false) {
+                          if (deviceObjectList[0].power == true) {
+                            deviceObjectList[0].clientError = false;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => HomePage(
+                                  deviceObjectList[0],
                                 ),
-                              );
-                            } else {
-                              deviceObjectList[0].motionDetected = false;
-                              deviceObjectList[0].time =
-                                  Duration(minutes: 0);
-                              deviceObjectList[0].progressDegrees = 0;
-                              if (rooms.length != 0) {
-                                if (workers.length != 0) {
-                                  showRooms(
-                                    context,
-                                    deviceObjectList[0],
-                                  );
-                                } else {
-                                  addWorker(context);
-                                }
+                              ),
+                            );
+                          } else {
+                            deviceObjectList[0].motionDetected = false;
+                            deviceObjectList[0].time = Duration(minutes: 0);
+                            deviceObjectList[0].progressDegrees = 0;
+                            if (rooms.length != 0) {
+                              if (workers.length != 0) {
+                                showRooms(
+                                  context,
+                                  deviceObjectList[0],
+                                );
                               } else {
-                                addRooms(context);
+                                addWorker(context);
                               }
+                            } else {
+                              addRooms(context);
                             }
                           }
-                        },
+                        }
+                      },
                       child: Container(
                         width: 150,
                         height: 150,
                         decoration: BoxDecoration(
-                              color: Color(0xff9ad2ec),
-                              boxShadow: [
-                                BoxShadow(blurRadius: 20, spreadRadius: 10,color:Color(0xff9ad2ec) )
-                              ],
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(75.0))),
+                            color: Color(0xff9ad2ec),
+                            boxShadow: [
+                              BoxShadow(
+                                  blurRadius: 20,
+                                  spreadRadius: 10,
+                                  color: Color(0xff9ad2ec))
+                            ],
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(75.0))),
                         child: Center(
-                            child: Text(
-                              deviceObjectList[0].power == false
-                                  ? 'Disinfect'
-                                  : deviceObjectList[0].pause == true
-                                      ? 'Paused'
-                                      : 'Disinfecting',
-                              style: TextStyle(fontSize: 20.0,color:Color(0xff02457a),fontWeight: FontWeight.bold ),
-                            ),
+                          child: Text(
+                            deviceObjectList[0].power == false
+                                ? 'Disinfect'
+                                : deviceObjectList[0].pause == true
+                                    ? 'Paused'
+                                    : 'Disinfecting',
+                            style: TextStyle(
+                                fontSize: 20.0,
+                                color: Color(0xff02457a),
+                                fontWeight: FontWeight.bold),
                           ),
+                        ),
                       ),
                     )
                   ],
