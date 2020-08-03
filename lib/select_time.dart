@@ -327,12 +327,12 @@ class _SelectTimeState extends State<SelectTime> {
                         initialValue: 0,
                         appearance: CircularSliderAppearance(
                             animationEnabled: false,
-                            startAngle: 270,
-                            angleRange: 359,
+                            startAngle: 140,
+                            angleRange: 260,
                             customWidths: CustomSliderWidths(
                               handlerSize: 20,
-                              trackWidth: 5,
-                              progressBarWidth: 20,
+                              trackWidth: 25,
+                              progressBarWidth: 25,
                             ),
                             size:
                                 (MediaQuery.of(context).size.width / 1.5) + 50,
@@ -363,12 +363,11 @@ class _SelectTimeState extends State<SelectTime> {
                             //     MediaQuery.of(context).size.width / 1.5),
                             child: Center(
                               child: Container(
+                                //color: Colors.green,
                                 height:
-                                    (MediaQuery.of(context).size.width / 1.5) -
-                                        50,
+                                    (MediaQuery.of(context).size.width / 1.5)-45,
                                 width:
-                                    (MediaQuery.of(context).size.width / 1.5) -
-                                        50,
+                                    (MediaQuery.of(context).size.width / 1.5)-45,
                                 decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: Colors.white),

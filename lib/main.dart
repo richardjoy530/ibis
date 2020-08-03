@@ -23,8 +23,8 @@ String dropdownValueStaff = rooms.length == 0 ? 'No Staff' : workers[0];
 
 final customColor = CustomSliderColors(
   progressBarColor: Color(0xffd6e7ee),
-  hideShadow: true,
-  trackColor: Color(0xffffffff),
+  hideShadow: false,
+  trackColor: Color(0xff00477d),
   progressBarColors: [
     Color(0xff00477d),
     Color(0xff008bc0),
