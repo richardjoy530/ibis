@@ -11,7 +11,11 @@ import 'front_page.dart';
 import 'main.dart';
 import 'show_history.dart';
 
+String dropdownValueRoom = rooms.length == 0 ? 'No rooms' : rooms[0];
+String dropdownValueStaff = rooms.length == 0 ? 'No Staff' : workers[0];
+
 final selectorColor = CustomSliderColors(
+  dotColor: Color(0xff02457a),
   progressBarColor: Color(0xffd6e7ee),
   hideShadow: true,
   trackColor: Color(0xff97cadb),
@@ -30,6 +34,13 @@ class SelectTime extends StatefulWidget {
 }
 
 class _SelectTimeState extends State<SelectTime> {
+  @override
+  void initState() {
+    super.initState();
+    room = dropdownValueRoom;
+    worker = dropdownValueStaff;
+  }
+
   Future<void> graph3Days(context, DeviceObject deviceObject) async {
     await showDialog(
         context: context,
@@ -328,15 +339,15 @@ class _SelectTimeState extends State<SelectTime> {
                         appearance: CircularSliderAppearance(
                             animationEnabled: false,
                             startAngle: 140,
-                            angleRange: 260,
+                            angleRange: 270,
                             customWidths: CustomSliderWidths(
                               handlerSize: 20,
-                              trackWidth: 25,
-                              progressBarWidth: 25,
+                              trackWidth: 5,
+                              progressBarWidth: 20,
                             ),
                             size:
                                 (MediaQuery.of(context).size.width / 1.5) + 50,
-                            customColors: customColor),
+                            customColors: selectorColor),
                         onChange: (double value) {
                           displayTime = value.floor();
                           if (widget.deviceObject.power == false &&
@@ -363,11 +374,12 @@ class _SelectTimeState extends State<SelectTime> {
                             //     MediaQuery.of(context).size.width / 1.5),
                             child: Center(
                               child: Container(
-                                //color: Colors.green,
                                 height:
-                                    (MediaQuery.of(context).size.width / 1.5)-45,
+                                    (MediaQuery.of(context).size.width / 1.5) -
+                                        50,
                                 width:
-                                    (MediaQuery.of(context).size.width / 1.5)-45,
+                                    (MediaQuery.of(context).size.width / 1.5) -
+                                        50,
                                 decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: Colors.white),
