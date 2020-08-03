@@ -856,9 +856,13 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                             deviceObjectList[0].progressDegrees = 0;
                             if (rooms.length != 0) {
                               if (workers.length != 0) {
-                                showRooms(
+                                deviceObjectList[0].clientError = false;
+                                deviceObjectList[0].socket.write('5\r');
+                                Navigator.pushReplacement(
                                   context,
-                                  deviceObjectList[0],
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          SelectTime(deviceObjectList[0])),
                                 );
                               } else {
                                 addWorker(context);
