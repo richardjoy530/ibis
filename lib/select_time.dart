@@ -396,7 +396,8 @@ class _SelectTimeState extends State<SelectTime> {
                                       child: Text("Start",style: TextStyle(color: Colors.white),),
                                       onPressed: ()
                                       {
-
+                                        HomePageState().start(widget.deviceObject);
+                                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage(widget.deviceObject)));
                                       },
                                     )
                                   ],
