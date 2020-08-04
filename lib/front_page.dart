@@ -802,6 +802,95 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                       ],
                                     ),
                                   ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(100.0),
+                                    child: Stack(
+                                      children: <Widget>[
+                                        Listener(
+                                          onPointerDown:
+                                              // ignore: non_constant_identifier_names
+                                              (PointerDownEvent) {
+                                            if (deviceObjectList[index].offline ==
+                                                false) {
+                                              if (deviceObjectList[index].power ==
+                                                  true) {
+                                                deviceObjectList[index]
+                                                    .clientError = false;
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        HomePage(
+                                                      deviceObjectList[index],
+                                                    ),
+                                                  ),
+                                                );
+                                              } else {
+                                                deviceObjectList[index]
+                                                    .motionDetected = false;
+                                                deviceObjectList[index].time =
+                                                    Duration(minutes: 0);
+                                                deviceObjectList[index]
+                                                    .progressDegrees = 0;
+                                                if (rooms.length != 0) {
+                                                  if (workers.length != 0) {
+                                                    deviceObjectList[index]
+                                                        .clientError = false;
+                                                    deviceObjectList[index]
+                                                        .socket
+                                                        .write('5\r');
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              SelectTime(
+                                                                  deviceObjectList[
+                                                                      index])),
+                                                    );
+                                                  } else {
+                                                    addWorker(context);
+                                                  }
+                                                } else {
+                                                  addRooms(context);
+                                                }
+                                              }
+                                            }
+                                          },
+                                          child: Container(
+                                            width: 150,
+                                            height: 150,
+                                            decoration: BoxDecoration(
+                                                color: Color(0xff9ad2ec),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                      blurRadius: 20,
+                                                      spreadRadius: 10,
+                                                      color: Color(0xff9ad2ec))
+                                                ],
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(75.0))),
+                                            child: Center(
+                                              child: Text(
+                                                deviceObjectList[index].power ==
+                                                        false
+                                                    ? 'Disinfect'
+                                                    : deviceObjectList[index]
+                                                                .pause ==
+                                                            true
+                                                        ? 'Paused'
+                                                        : 'Disinfecting',
+                                                style: TextStyle(
+                                                    fontSize: 20.0,
+                                                    color: Color(0xff02457a),
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  )
                                 ],
                               );
                             },
@@ -831,79 +920,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
-              Padding(
-                padding: const EdgeInsets.all(100.0),
-                child: Stack(
-                  children: <Widget>[
-                    Listener(
-                      onPointerDown:
-                          // ignore: non_constant_identifier_names
-                          (PointerDownEvent) {
-                        if (deviceObjectList[0].offline == false) {
-                          if (deviceObjectList[0].power == true) {
-                            deviceObjectList[0].clientError = false;
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => HomePage(
-                                  deviceObjectList[0],
-                                ),
-                              ),
-                            );
-                          } else {
-                            deviceObjectList[0].motionDetected = false;
-                            deviceObjectList[0].time = Duration(minutes: 0);
-                            deviceObjectList[0].progressDegrees = 0;
-                            if (rooms.length != 0) {
-                              if (workers.length != 0) {
-                                deviceObjectList[0].clientError = false;
-                                deviceObjectList[0].socket.write('5\r');
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          SelectTime(deviceObjectList[0])),
-                                );
-                              } else {
-                                addWorker(context);
-                              }
-                            } else {
-                              addRooms(context);
-                            }
-                          }
-                        }
-                      },
-                      child: Container(
-                        width: 150,
-                        height: 150,
-                        decoration: BoxDecoration(
-                            color: Color(0xff9ad2ec),
-                            boxShadow: [
-                              BoxShadow(
-                                  blurRadius: 20,
-                                  spreadRadius: 10,
-                                  color: Color(0xff9ad2ec))
-                            ],
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(75.0))),
-                        child: Center(
-                          child: Text(
-                            deviceObjectList[0].power == false
-                                ? 'Disinfect'
-                                : deviceObjectList[0].pause == true
-                                    ? 'Paused'
-                                    : 'Disinfecting',
-                            style: TextStyle(
-                                fontSize: 20.0,
-                                color: Color(0xff02457a),
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
             ],
           ),
         ),
