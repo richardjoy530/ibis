@@ -391,6 +391,14 @@ class _SelectTimeState extends State<SelectTime> {
                                       ':${HomePageState().getSeconds(((widget.deviceObject.time.inSeconds) - widget.deviceObject.elapsedTime).round())}',
                                       style: TextStyle(fontSize: 40),
                                     ),
+                                    RaisedButton(
+                                      color: Colors.blue,
+                                      child: Text("Start",style: TextStyle(color: Colors.white),),
+                                      onPressed: ()
+                                      {
+
+                                      },
+                                    )
                                   ],
                                 ),
                               ),
