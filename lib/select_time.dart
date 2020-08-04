@@ -398,7 +398,7 @@ class _SelectTimeState extends State<SelectTime> {
                                         style: TextStyle(color: Colors.white),
                                       ),
                                       onPressed: () {
-                                        Navigator.push(
+                                        Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) => HomePage(
