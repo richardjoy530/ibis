@@ -167,7 +167,8 @@ class MyApp extends StatelessWidget {
 
 class HomePage extends StatefulWidget {
   final DeviceObject deviceObject;
-  HomePage(this.deviceObject);
+  final String status;
+  HomePage(this.deviceObject,{this.status = "null"});
   @override
   HomePageState createState() => HomePageState();
 }
@@ -227,6 +228,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       });
     });
     super.initState();
+
+    if(widget.status=='start'){
+      start(widget.deviceObject);
+    }
   }
 
   @override

@@ -828,7 +828,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                   MaterialPageRoute(
                                                     builder: (context) =>
                                                         HomePage(
-                                                      deviceObjectList[index],
+                                                       deviceObjectList[index],
                                                     ),
                                                   ),
                                                 );
