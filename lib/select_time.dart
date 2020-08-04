@@ -398,15 +398,19 @@ class _SelectTimeState extends State<SelectTime> {
                                         style: TextStyle(color: Colors.white),
                                       ),
                                       onPressed: () {
-                                        Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => HomePage(
-                                              widget.deviceObject,
-                                              status: 'start',
+                                        if (widget
+                                                .deviceObject.time.inMinutes >=
+                                            1) {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => HomePage(
+                                                widget.deviceObject,
+                                                status: 'start',
+                                              ),
                                             ),
-                                          ),
-                                        );
+                                          );
+                                        }
                                       },
                                     )
                                   ],
