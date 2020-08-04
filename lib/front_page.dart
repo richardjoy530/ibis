@@ -110,6 +110,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   deviceObjectList[i].power == true) {
                 deviceObjectList[i].power = false;
                 deviceObjectList[i].pause = false;
+                deviceObjectList[i].resetingheight = true;
 
                 prefs.setInt('${deviceObjectList[i].ip}totalDuration',
                     deviceObjectList[i].totalDuration.inSeconds);
@@ -137,6 +138,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       deviceObjectList[i].secondDuration.inSeconds);
 
                   deviceObjectList[i].power = false;
+                  deviceObjectList[i].resetingheight = true;
+
                   deviceObjectList[i].completedStatus = true;
                   databaseHelper.insertTimeData(
                     TimeData(
@@ -303,8 +306,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                   borderRadius: BorderRadius.circular(20)),
                               child: ListTile(
                                 leading: Icon(Icons.wifi_tethering),
-                                title: Text('Please scan your device to connect !'),
-                                onTap: (){
+                                title: Text(
+                                    'Please scan your device to connect !'),
+                                onTap: () {
                                   scanIbis();
                                 },
                               ),
@@ -817,9 +821,11 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                           onPointerDown:
                                               // ignore: non_constant_identifier_names
                                               (PointerDownEvent) {
-                                            if (deviceObjectList[index].offline ==
+                                            if (deviceObjectList[index]
+                                                    .offline ==
                                                 false) {
-                                              if (deviceObjectList[index].power ==
+                                              if (deviceObjectList[index]
+                                                      .power ==
                                                   true) {
                                                 deviceObjectList[index]
                                                     .clientError = false;
@@ -828,7 +834,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                   MaterialPageRoute(
                                                     builder: (context) =>
                                                         HomePage(
-                                                       deviceObjectList[index],
+                                                      deviceObjectList[index],
                                                     ),
                                                   ),
                                                 );
@@ -1438,6 +1444,30 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 ),
                 Icon(Icons.warning, color: Color(0xff02457a))
               ],
+            ),
+          );
+        });
+  }
+
+  Future<void> resetingHeight(context) async {
+    await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            backgroundColor: Color(0xffffffff),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            title: Center(
+              child: Text(
+                'Reseting height',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Color(0xff02457a),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24),
+              ),
             ),
           );
         });

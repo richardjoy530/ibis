@@ -912,7 +912,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 errorRemover = false;
                 deviceObject.flare = 'off';
                 print('state3');
-
+                deviceObject.resetingheight = true;
                 deviceObject.elapsedTime = 0;
                 deviceObject.radialProgressAnimationController.stop();
                 deviceObject.timer.cancel();
@@ -1003,6 +1003,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> motionDetected(context) async {
+
     await showDialog(
       barrierDismissible: false,
       context: context,
@@ -1089,7 +1090,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               child: Center(child: Text('No')),
               onPressed: () {
                 widget.deviceObject.clientError = false;
-
+                widget.deviceObject.resetingheight = true;
                 widget.deviceObject.socket.write('n\r');
                 Navigator.pop(context);
                 Navigator.pop(context);
@@ -1170,6 +1171,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 deviceObject.flare = 'off';
                 print('state5');
                 destroyAnimation(deviceObject);
+                deviceObject.resetingheight = true;
                 deviceObject.socket.write('s');
                 deviceObject.power = false;
                 deviceObject.time = Duration(minutes: 0);
