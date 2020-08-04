@@ -293,17 +293,20 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               serverOnline == true
                   ? deviceObjectList.length == 0
                       ? Center(
-                          child: Container(
-                            margin: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                color: Color(0xffd6e7ee),
-                                borderRadius: BorderRadius.circular(20)),
-                            child: ListTile(
-                              leading: Icon(Icons.wifi_tethering),
-                              title: Text('Please scan your device to connect !'),
-                              onTap: (){
-                                scanIbis();
-                              },
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 50),
+                            child: Container(
+                              margin: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                  color: Color(0xffd6e7ee),
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: ListTile(
+                                leading: Icon(Icons.wifi_tethering),
+                                title: Text('Please scan your device to connect !'),
+                                onTap: (){
+                                  scanIbis();
+                                },
+                              ),
                             ),
                           ),
                         )
