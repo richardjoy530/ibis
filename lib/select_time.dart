@@ -18,7 +18,7 @@ final selectorColor = CustomSliderColors(
   dotColor: Color(0xff02457a),
   progressBarColor: Color(0xffd6e7ee),
   hideShadow: true,
-  trackColor: Color(0xff97cadb),
+  trackColor: Colors.lightBlue[50],
   progressBarColors: [
     Color(0xff00477d),
     Color(0xff008bc0),
@@ -342,7 +342,7 @@ class _SelectTimeState extends State<SelectTime> {
                             angleRange: 270,
                             customWidths: CustomSliderWidths(
                               handlerSize: 20,
-                              trackWidth: 5,
+                              trackWidth: 20,
                               progressBarWidth: 20,
                             ),
                             size:
