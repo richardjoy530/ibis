@@ -300,7 +300,10 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                 borderRadius: BorderRadius.circular(20)),
                             child: ListTile(
                               leading: Icon(Icons.wifi_tethering),
-                              title: Text('Please connect your device!'),
+                              title: Text('Please scan your device to connect !'),
+                              onTap: (){
+                                scanIbis();
+                              },
                             ),
                           ),
                         )
