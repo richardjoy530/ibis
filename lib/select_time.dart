@@ -393,11 +393,20 @@ class _SelectTimeState extends State<SelectTime> {
                                     ),
                                     RaisedButton(
                                       color: Colors.blue,
-                                      child: Text("Start",style: TextStyle(color: Colors.white),),
-                                      onPressed: ()
-                                      {
-                                        HomePageState().start(widget.deviceObject);
-                                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage(widget.deviceObject)));
+                                      child: Text(
+                                        "Start",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => HomePage(
+                                              widget.deviceObject,
+                                              status: 'start',
+                                            ),
+                                          ),
+                                        );
                                       },
                                     )
                                   ],
