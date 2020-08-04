@@ -46,6 +46,7 @@ List<TextEditingController> roomNames = [];
 final List<bool> isSelected = [false];
 
 class DeviceObject {
+  bool resetingheight = false;
   bool temp;
   bool completedStatus;
   int elapsedTime;
@@ -71,6 +72,7 @@ class DeviceObject {
   double height;
   String earlyMotionDetectionTime;
   DeviceObject({
+    this.resetingheight = false,
     this.temp,
     this.flare = 'off',
     this.elapsedTime = 0,
@@ -111,6 +113,10 @@ class DeviceObject {
       }
       if (String.fromCharCode(onData[0]) == 'c') {
         this.completedStatus = true;
+      }
+
+      if (String.fromCharCode(onData[0]) == 'd') {
+        this.resetingheight = false;
       }
 
       if (this.offline == false) {
