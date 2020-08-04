@@ -21,6 +21,7 @@ import 'height_page.dart';
 
 double todayTotalTime, yesdayTotalTime, dayBeforeYesTotalTime, maxYAxis;
 Future<void> scanIbis() async {
+  WiFiForIoTPlugin.setEnabled(false);
   String cameraScanResult = await scanner.scan();
   var data = cameraScanResult.split(',');
   String ssid = data[1];
