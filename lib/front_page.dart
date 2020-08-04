@@ -389,7 +389,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                 : deviceObjectList[index]
                                                             .motionDetected ==
                                                         false
-                                                    ? 'Device Connected'
+                                                    ? deviceObjectList[index].resetingheight==false?'Device Connected':'Reseting height...'
                                                     : 'Motion Detected')
                                             : LinearPercentIndicator(
                                                 lineHeight: 5.0,
@@ -624,7 +624,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                             5.0),
                                                     child: FlareActor(
                                                       'assets/lift.flr',
-                                                      animation: flare,
+                                                      animation: deviceObjectList[index].resetingheight==false?flare:'down',
                                                     ),
                                                   )),
                                               Container(
@@ -655,7 +655,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                               deviceObjectList[
                                                                           index]
                                                                       .power ==
-                                                                  false) {
+                                                                  false&&deviceObjectList[index].resetingheight==false) {
                                                             deviceObjectList[
                                                                     index]
                                                                 .socket
@@ -686,7 +686,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                               deviceObjectList[
                                                                           index]
                                                                       .power ==
-                                                                  false) {
+                                                                  false&&deviceObjectList[index].resetingheight==false) {
                                                             deviceObjectList[
                                                                     index]
                                                                 .socket
@@ -741,7 +741,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                               deviceObjectList[
                                                                           index]
                                                                       .power ==
-                                                                  false) {
+                                                                  false&&deviceObjectList[index].resetingheight==false) {
                                                             downBGColor =
                                                                 downArrowColor;
                                                             downArrowColor =
@@ -773,7 +773,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                               deviceObjectList[
                                                                           index]
                                                                       .power ==
-                                                                  false) {
+                                                                  false&&deviceObjectList[index].resetingheight==false) {
                                                             deviceObjectList[
                                                                     index]
                                                                 .socket
@@ -823,7 +823,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                               (PointerDownEvent) {
                                             if (deviceObjectList[index]
                                                     .offline ==
-                                                false) {
+                                                false&&deviceObjectList[index].resetingheight==false) {
                                               if (deviceObjectList[index]
                                                       .power ==
                                                   true) {
