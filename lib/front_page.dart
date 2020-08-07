@@ -256,6 +256,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     return WillPopScope(
       child: Scaffold(
         body: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
           padding: EdgeInsets.only(top: 40),
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -692,94 +694,96 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                       ],
                                     ),
                                   ),
-
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 50),
+                                  Container(
+                                    height:MediaQuery.of(context).size.height/2,
                                     child: Stack(
+                                      alignment: Alignment.bottomCenter,
                                       children: <Widget>[
-                                        Listener(
-                                          onPointerDown:
-                                              // ignore: non_constant_identifier_names
-                                              (PointerDownEvent) {
-                                            if (deviceObjectList[index]
-                                                        .offline ==
-                                                    false &&
-                                                deviceObjectList[index]
-                                                        .resetingheight ==
-                                                    false) {
+                                        Align(
+                                          child: Listener(
+                                            onPointerDown:
+                                                // ignore: non_constant_identifier_names
+                                                (PointerDownEvent) {
                                               if (deviceObjectList[index]
-                                                      .power ==
-                                                  true) {
-                                                deviceObjectList[index]
-                                                    .clientError = false;
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        HomePage(
-                                                      deviceObjectList[index],
+                                                          .offline ==
+                                                      false &&
+                                                  deviceObjectList[index]
+                                                          .resetingheight ==
+                                                      false) {
+                                                if (deviceObjectList[index]
+                                                        .power ==
+                                                    true) {
+                                                  deviceObjectList[index]
+                                                      .clientError = false;
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          HomePage(
+                                                        deviceObjectList[index],
+                                                      ),
                                                     ),
-                                                  ),
-                                                );
-                                              } else {
-                                                deviceObjectList[index]
-                                                    .motionDetected = false;
-                                                deviceObjectList[index].time =
-                                                    Duration(minutes: 0);
-                                                deviceObjectList[index]
-                                                    .progressDegrees = 0;
-                                                if (rooms.length != 0) {
-                                                  if (workers.length != 0) {
-                                                    deviceObjectList[index]
-                                                        .clientError = false;
-                                                    deviceObjectList[index]
-                                                        .socket
-                                                        .write('5\r');
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              SelectTime(
-                                                                  deviceObjectList[
-                                                                      index])),
-                                                    );
-                                                  } else {
-                                                    addWorker(context);
-                                                  }
+                                                  );
                                                 } else {
-                                                  addRooms(context);
+                                                  deviceObjectList[index]
+                                                      .motionDetected = false;
+                                                  deviceObjectList[index].time =
+                                                      Duration(minutes: 0);
+                                                  deviceObjectList[index]
+                                                      .progressDegrees = 0;
+                                                  if (rooms.length != 0) {
+                                                    if (workers.length != 0) {
+                                                      deviceObjectList[index]
+                                                          .clientError = false;
+                                                      deviceObjectList[index]
+                                                          .socket
+                                                          .write('5\r');
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                SelectTime(
+                                                                    deviceObjectList[
+                                                                        index])),
+                                                      );
+                                                    } else {
+                                                      addWorker(context);
+                                                    }
+                                                  } else {
+                                                    addRooms(context);
+                                                  }
                                                 }
                                               }
-                                            }
-                                          },
-                                          child: Container(
-                                            width: 150,
-                                            height: 150,
-                                            decoration: BoxDecoration(
-                                                color: Color(0xff9ad2ec),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                      blurRadius: 20,
-                                                      spreadRadius: 10,
-                                                      color: Color(0xff9ad2ec))
-                                                ],
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(75.0))),
-                                            child: Center(
-                                              child: Text(
-                                                deviceObjectList[index].power ==
-                                                        false
-                                                    ? 'Disinfect'
-                                                    : deviceObjectList[index]
-                                                                .pause ==
-                                                            true
-                                                        ? 'Paused'
-                                                        : 'Disinfecting',
-                                                style: TextStyle(
-                                                    fontSize: 20.0,
-                                                    color: Color(0xff02457a),
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                            },
+                                            child: Container(
+                                              width: 150,
+                                              height: 150,
+                                              decoration: BoxDecoration(
+                                                  color: Color(0xff9ad2ec),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                        blurRadius: 20,
+                                                        spreadRadius: 10,
+                                                        color: Color(0xff9ad2ec))
+                                                  ],
+                                                  borderRadius: BorderRadius.all(
+                                                      Radius.circular(75.0))),
+                                              child: Center(
+                                                child: Text(
+                                                  deviceObjectList[index].power ==
+                                                          false
+                                                      ? 'Disinfect'
+                                                      : deviceObjectList[index]
+                                                                  .pause ==
+                                                              true
+                                                          ? 'Paused'
+                                                          : 'Disinfecting',
+                                                  style: TextStyle(
+                                                      fontSize: 20.0,
+                                                      color: Color(0xff02457a),
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
                                               ),
                                             ),
                                           ),
