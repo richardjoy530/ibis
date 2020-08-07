@@ -85,7 +85,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   Timer timer;
   Timer totalDayTime;
   TextEditingController nameController;
-
   ScrollController scrollController = ScrollController();
 
   @override
@@ -269,16 +268,13 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 20),
-                      height: 30,
-                      width: 30,
-                      child: FlareActor(
-                        'assets/status.flr',
-                        animation: 'Connected',
-                      ),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    height: 30,
+                    width: 30,
+                    child: FlareActor(
+                      'assets/status.flr',
+                      animation: 'Connected',
                     ),
                   ),
                   Expanded(child: Image.asset('images/razecov.jfif')),
@@ -297,21 +293,18 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               serverOnline == true
                   ? deviceObjectList.length == 0
                       ? Center(
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 50),
-                            child: Container(
-                              margin: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                  color: Color(0xffd6e7ee),
-                                  borderRadius: BorderRadius.circular(20)),
-                              child: ListTile(
-                                leading: Icon(Icons.wifi_tethering),
-                                title: Text(
-                                    'Please scan your device to connect !'),
-                                onTap: () {
-                                  scanIbis();
-                                },
-                              ),
+                          child: Container(
+                            margin: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                                color: Color(0xffd6e7ee),
+                                borderRadius: BorderRadius.circular(20)),
+                            child: ListTile(
+                              leading: Icon(Icons.wifi_tethering),
+                              title:
+                                  Text('Please scan your device to connect !'),
+                              onTap: () {
+                                scanIbis();
+                              },
                             ),
                           ),
                         )
@@ -340,96 +333,89 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                               }
                               return Column(
                                 children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        0.0, 30.0, 0.0, 0.0),
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width /
-                                          1.05,
-                                      decoration: BoxDecoration(
-                                        color: Color(0xffbddeee),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(30.0)),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width /
+                                        1.05,
+                                    decoration: BoxDecoration(
+                                      color: Color(0xffbddeee),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(30.0)),
+                                    ),
+                                    child: ListTile(
+                                      leading: Icon(
+                                        deviceObjectList[index].offline == true
+                                            ? Icons.signal_wifi_off
+                                            : Icons.network_wifi,
+                                        color: Color(0xff02457a),
                                       ),
-                                      child: ListTile(
-                                        leading: Icon(
-                                          deviceObjectList[index].offline ==
+                                      trailing: deviceObjectList[index]
+                                                  .motionDetected ==
+                                              true
+                                          ? Icon(
+                                              Icons.warning,
+                                              color: Color(0xff02457a),
+                                            )
+                                          : IconButton(
+                                              icon: Icon(Icons.more_vert,
+                                                  color: Color(0xff02457a)),
+                                              onPressed: () {
+                                                info(context,
+                                                    deviceObjectList[index]);
+                                              },
+                                            ),
+                                      title: Text(
+                                        '${deviceObjectList[index].name}',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      subtitle: deviceObjectList[index].power ==
+                                              false
+                                          ? Text(deviceObjectList[index]
+                                                      .offline ==
                                                   true
-                                              ? Icons.signal_wifi_off
-                                              : Icons.network_wifi,
-                                          color: Color(0xff02457a),
-                                        ),
-                                        trailing: deviceObjectList[index]
-                                                    .motionDetected ==
-                                                true
-                                            ? Icon(
-                                                Icons.warning,
-                                                color: Color(0xff02457a),
-                                              )
-                                            : IconButton(
-                                                icon: Icon(Icons.more_vert,
-                                                    color: Color(0xff02457a)),
-                                                onPressed: () {
-                                                  info(context,
-                                                      deviceObjectList[index]);
-                                                },
-                                              ),
-                                        title: Text(
-                                          '${deviceObjectList[index].name}',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        subtitle: deviceObjectList[index]
-                                                    .power ==
-                                                false
-                                            ? Text(deviceObjectList[index]
-                                                        .offline ==
-                                                    true
-                                                ? 'Device not Connected'
-                                                : deviceObjectList[index]
-                                                            .motionDetected ==
-                                                        false
-                                                    ? deviceObjectList[index].resetingheight==false?'Device Connected':'Reseting height...'
-                                                    : 'Motion Detected')
-                                            : LinearPercentIndicator(
-                                                lineHeight: 5.0,
-                                                animation: false,
-                                                animationDuration: 0,
-                                                backgroundColor:
-                                                    Color(0xff9ad2ec),
-                                                percent: deviceObjectList[index]
-                                                    .linearProgressBarValue,
-                                                linearStrokeCap:
-                                                    LinearStrokeCap.roundAll,
-                                                progressColor:
-                                                    Color(0xff019ae6),
-                                              ),
-                                        onTap: () {},
-                                        onLongPress: () {
-                                          setName(
-                                            context,
-                                            deviceObjectList[index],
-                                          );
-                                        },
-                                      ),
+                                              ? 'Device not Connected'
+                                              : deviceObjectList[index]
+                                                          .motionDetected ==
+                                                      false
+                                                  ? deviceObjectList[index]
+                                                              .resetingheight ==
+                                                          false
+                                                      ? 'Device Connected'
+                                                      : 'Reseting height...'
+                                                  : 'Motion Detected')
+                                          : LinearPercentIndicator(
+                                              lineHeight: 5.0,
+                                              animation: false,
+                                              animationDuration: 0,
+                                              backgroundColor:
+                                                  Color(0xff9ad2ec),
+                                              percent: deviceObjectList[index]
+                                                  .linearProgressBarValue,
+                                              linearStrokeCap:
+                                                  LinearStrokeCap.roundAll,
+                                              progressColor: Color(0xff019ae6),
+                                            ),
+                                      onTap: () {},
+                                      onLongPress: () {
+                                        setName(
+                                          context,
+                                          deviceObjectList[index],
+                                        );
+                                      },
                                     ),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.fromLTRB(
-                                        0.0, 50.0, 0.0, 0.0),
+                                        0.0, 10.0, 0.0, 0.0),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceEvenly,
                                       children: <Widget>[
                                         Container(
-                                          height: 200,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2.5,
+                                          height: 125,
                                           child: Column(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
+                                                MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
                                               FloatingActionButton.extended(
                                                 backgroundColor:
@@ -464,144 +450,13 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                               )
                                             ],
                                           ),
-                                        )
-                                        // Container(
-                                        //   padding: EdgeInsets.only(top: 25),
-                                        //   height: 200,
-                                        //   width: MediaQuery.of(context).size.width/2.5,
-                                        //   decoration: BoxDecoration(
-                                        //     borderRadius: BorderRadius.all(
-                                        //       Radius.circular(20.0),
-                                        //     ),
-                                        //     color: Color(0xffbddeee),
-                                        //   ),
-                                        //   child: GestureDetector(
-                                        //     child: Container(
-                                        //       height: 200,
-                                        //       width: MediaQuery.of(context)
-                                        //               .size
-                                        //               .width /
-                                        //           2.5,
-                                        //       padding: EdgeInsets.all(8.0),
-                                        //       child: BarChart(BarChartData(
-                                        //         alignment: BarChartAlignment
-                                        //             .spaceAround,
-                                        //         maxY: maxYAxis / 60,
-                                        //         barTouchData: BarTouchData(
-                                        //           enabled: true,
-                                        //           touchTooltipData:
-                                        //               BarTouchTooltipData(
-                                        //             tooltipBgColor:
-                                        //                 Colors.transparent,
-                                        //             tooltipPadding:
-                                        //                 const EdgeInsets.all(0),
-                                        //             tooltipBottomMargin: 8,
-                                        //             getTooltipItem: (
-                                        //               BarChartGroupData group,
-                                        //               int groupIndex,
-                                        //               BarChartRodData rod,
-                                        //               int rodIndex,
-                                        //             ) {
-                                        //               return BarTooltipItem(
-                                        //                 rod.y
-                                        //                     .round()
-                                        //                     .toString(),
-                                        //                 TextStyle(
-                                        //                   color:
-                                        //                       Colors.blueGrey,
-                                        //                   fontWeight:
-                                        //                       FontWeight.bold,
-                                        //                 ),
-                                        //               );
-                                        //             },
-                                        //           ),
-                                        //         ),
-                                        //         titlesData: FlTitlesData(
-                                        //           show: true,
-                                        //           bottomTitles: SideTitles(
-                                        //             showTitles: true,
-                                        //             textStyle: TextStyle(
-                                        //                 color: const Color(
-                                        //                     0xff7589a2),
-                                        //                 fontWeight:
-                                        //                     FontWeight.bold,
-                                        //                 fontSize: 14),
-                                        //             margin: 20,
-                                        //             getTitles: (double value) {
-                                        //               switch (value.toInt()) {
-                                        //                 case 0:
-                                        //                   return 'DBY';
-                                        //                 case 1:
-                                        //                   return 'YTD';
-                                        //                 case 2:
-                                        //                   return 'TOD';
-
-                                        //                 default:
-                                        //                   return '';
-                                        //               }
-                                        //             },
-                                        //           ),
-                                        //           leftTitles: SideTitles(
-                                        //               showTitles: false),
-                                        //         ),
-                                        //         borderData: FlBorderData(
-                                        //           show: false,
-                                        //         ),
-                                        //         barGroups: [
-                                        //           BarChartGroupData(
-                                        //               x: 0,
-                                        //               barRods: [
-                                        //                 BarChartRodData(
-                                        //                     y: dayBeforeYesTotalTime /
-                                        //                         60,
-                                        //                     color: Colors
-                                        //                         .lightBlueAccent)
-                                        //               ],
-                                        //               showingTooltipIndicators: [
-                                        //                 0
-                                        //               ]),
-                                        //           BarChartGroupData(
-                                        //               x: 1,
-                                        //               barRods: [
-                                        //                 BarChartRodData(
-                                        //                     y: yesdayTotalTime /
-                                        //                         60,
-                                        //                     color: Colors
-                                        //                         .lightBlueAccent)
-                                        //               ],
-                                        //               showingTooltipIndicators: [
-                                        //                 0
-                                        //               ]),
-                                        //           BarChartGroupData(
-                                        //               x: 2,
-                                        //               barRods: [
-                                        //                 BarChartRodData(
-                                        //                     y: todayTotalTime /
-                                        //                         60,
-                                        //                     color: Colors
-                                        //                         .lightBlueAccent)
-                                        //               ],
-                                        //               showingTooltipIndicators: [
-                                        //                 0
-                                        //               ]),
-                                        //         ],
-                                        //       )),
-                                        //     ),
-                                        //     onTap: () {
-                                        //       setState(() {
-                                        //         graph3Days(context,
-                                        //             deviceObjectList[index]);
-                                        //       });
-                                        //     },
-                                        //   ),
-                                        // ),
-                                        ,
+                                        ),
                                         Container(
                                           height: 200,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2.5,
+                                          // width: MediaQuery.of(context)
+                                          //         .size
+                                          //         .width /
+                                          //     2.5,
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(20.0)),
@@ -624,7 +479,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                             5.0),
                                                     child: FlareActor(
                                                       'assets/lift.flr',
-                                                      animation: deviceObjectList[index].resetingheight==false?flare:'down',
+                                                      animation: deviceObjectList[
+                                                                      index]
+                                                                  .resetingheight ==
+                                                              false
+                                                          ? flare
+                                                          : 'down',
                                                     ),
                                                   )),
                                               Container(
@@ -635,6 +495,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                         2.5) /
                                                     2.1,
                                                 child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
                                                   children: <Widget>[
                                                     Container(
                                                       height: 85,
@@ -655,7 +518,11 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                               deviceObjectList[
                                                                           index]
                                                                       .power ==
-                                                                  false&&deviceObjectList[index].resetingheight==false) {
+                                                                  false &&
+                                                              deviceObjectList[
+                                                                          index]
+                                                                      .resetingheight ==
+                                                                  false) {
                                                             deviceObjectList[
                                                                     index]
                                                                 .socket
@@ -686,7 +553,11 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                               deviceObjectList[
                                                                           index]
                                                                       .power ==
-                                                                  false&&deviceObjectList[index].resetingheight==false) {
+                                                                  false &&
+                                                              deviceObjectList[
+                                                                          index]
+                                                                      .resetingheight ==
+                                                                  false) {
                                                             deviceObjectList[
                                                                     index]
                                                                 .socket
@@ -741,7 +612,11 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                               deviceObjectList[
                                                                           index]
                                                                       .power ==
-                                                                  false&&deviceObjectList[index].resetingheight==false) {
+                                                                  false &&
+                                                              deviceObjectList[
+                                                                          index]
+                                                                      .resetingheight ==
+                                                                  false) {
                                                             downBGColor =
                                                                 downArrowColor;
                                                             downArrowColor =
@@ -773,7 +648,11 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                               deviceObjectList[
                                                                           index]
                                                                       .power ==
-                                                                  false&&deviceObjectList[index].resetingheight==false) {
+                                                                  false &&
+                                                              deviceObjectList[
+                                                                          index]
+                                                                      .resetingheight ==
+                                                                  false) {
                                                             deviceObjectList[
                                                                     index]
                                                                 .socket
@@ -813,8 +692,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                       ],
                                     ),
                                   ),
+
                                   Padding(
-                                    padding: const EdgeInsets.all(100.0),
+                                    padding: const EdgeInsets.only(top: 50),
                                     child: Stack(
                                       children: <Widget>[
                                         Listener(
@@ -822,8 +702,11 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                               // ignore: non_constant_identifier_names
                                               (PointerDownEvent) {
                                             if (deviceObjectList[index]
-                                                    .offline ==
-                                                false&&deviceObjectList[index].resetingheight==false) {
+                                                        .offline ==
+                                                    false &&
+                                                deviceObjectList[index]
+                                                        .resetingheight ==
+                                                    false) {
                                               if (deviceObjectList[index]
                                                       .power ==
                                                   true) {
@@ -936,36 +819,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             ],
           ),
         ),
-        // floatingActionButton: Container(
-        //   padding: EdgeInsets.fromLTRB(25, 0, 0, 0),
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: <Widget>[
-        //       FloatingActionButton.extended(
-        //         backgroundColor: Color(0xff02457a),
-        //         heroTag: 'hero1',
-        //         label: Text(
-        //           'Staff',
-        //           style: TextStyle(fontSize: 20, color: Color(0xffffffff)),
-        //         ),
-        //         icon: Icon(Icons.add, color: Color(0xffffffff)),
-        //         onPressed: () {
-        //           addWorker(context);
-        //         },
-        //       ),
-        //       FloatingActionButton.extended(
-        //         backgroundColor: Color(0xff02457a),
-        //         heroTag: 'hero2',
-        //         label: Text('Room',
-        //             style: TextStyle(fontSize: 20, color: Color(0xffffffff))),
-        //         icon: Icon(Icons.add, color: Color(0xffffffff)),
-        //         onPressed: () {
-        //           addRooms(context);
-        //         },
-        //       )
-        //     ],
-        //   ),
-        // ),
       ),
       onWillPop: _onWillPop,
     );
