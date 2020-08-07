@@ -470,9 +470,9 @@ class _SelectTimeState extends State<SelectTime> {
                                 (MediaQuery.of(context).size.width / 1.5) + 50,
                             customColors: selectorColor),
                         onChange: (double value) {
+                          print(value);
                           displayTime = value.floor();
                           if (widget.deviceObject.power == false &&
-                              isConnected == true &&
                               widget.deviceObject.clientError == false) {
                             setState(() {
                               widget.deviceObject.mainTime = Duration(
@@ -483,10 +483,12 @@ class _SelectTimeState extends State<SelectTime> {
                                   minutes: HomePageState()
                                       .mapValues(displayTime.toDouble())
                                       .toInt());
+                                      print([widget.deviceObject.time.inSeconds,widget.deviceObject.elapsedTime]);
                             });
                           }
                         },
                         innerWidget: (value) {
+                          //print([widget.deviceObject.time.inSeconds,widget.deviceObject.elapsedTime]);
                           return Container(
                             // height: min(
                             //     MediaQuery.of(context).size.height / 1.5,
