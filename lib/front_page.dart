@@ -25,6 +25,9 @@ Future<void> scanIbis() async {
   String cameraScanResult = await scanner.scan();
   var data = cameraScanResult.split(',');
   String ssid = data[1];
+  if(ssid[7]==' '){
+    prefs.setString('new', 'yes');
+  }
   String password = data[3];
   WiFiForIoTPlugin.connect(ssid,
       password: password, joinOnce: true, security: NetworkSecurity.WPA);
@@ -379,9 +382,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                               : deviceObjectList[index]
                                                           .motionDetected ==
                                                       false
-                                                  ? deviceObjectList[index]
-                                                              .resetingheight ==
-                                                          false
+                                                  ? (deviceObjectList[index].resetingheight == false || prefs.getString('new')!='yes')
                                                       ? 'Device Connected'
                                                       : 'Reseting height...'
                                                   : 'Motion Detected')
@@ -481,10 +482,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                             5.0),
                                                     child: FlareActor(
                                                       'assets/lift.flr',
-                                                      animation: deviceObjectList[
-                                                                      index]
-                                                                  .resetingheight ==
-                                                              false
+                                                      animation: (deviceObjectList[index].resetingheight == false || prefs.getString('new')!='yes')
                                                           ? flare
                                                           : 'down',
                                                     ),
@@ -521,10 +519,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                                           index]
                                                                       .power ==
                                                                   false &&
-                                                              deviceObjectList[
-                                                                          index]
-                                                                      .resetingheight ==
-                                                                  false) {
+                                                              (deviceObjectList[index].resetingheight == false || prefs.getString('new')!='yes')) {
                                                             deviceObjectList[
                                                                     index]
                                                                 .socket
@@ -556,10 +551,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                                           index]
                                                                       .power ==
                                                                   false &&
-                                                              deviceObjectList[
-                                                                          index]
-                                                                      .resetingheight ==
-                                                                  false) {
+                                                              (deviceObjectList[index].resetingheight == false || prefs.getString('new')!='yes')) {
                                                             deviceObjectList[
                                                                     index]
                                                                 .socket
@@ -615,10 +607,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                                           index]
                                                                       .power ==
                                                                   false &&
-                                                              deviceObjectList[
-                                                                          index]
-                                                                      .resetingheight ==
-                                                                  false) {
+                                                              (deviceObjectList[index].resetingheight == false || prefs.getString('new')!='yes')) {
                                                             downBGColor =
                                                                 downArrowColor;
                                                             downArrowColor =
@@ -651,10 +640,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                                                           index]
                                                                       .power ==
                                                                   false &&
-                                                              deviceObjectList[
-                                                                          index]
-                                                                      .resetingheight ==
-                                                                  false) {
+                                                              (deviceObjectList[index].resetingheight == false || prefs.getString('new')!='yes')) {
                                                             deviceObjectList[
                                                                     index]
                                                                 .socket
@@ -707,9 +693,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                               if (deviceObjectList[index]
                                                           .offline ==
                                                       false &&
-                                                  deviceObjectList[index]
-                                                          .resetingheight ==
-                                                      false) {
+                                                  (deviceObjectList[index].resetingheight == false || prefs.getString('new')!='yes')) {
                                                 if (deviceObjectList[index]
                                                         .power ==
                                                     true) {
