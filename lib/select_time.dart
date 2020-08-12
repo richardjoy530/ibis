@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 import 'data.dart';
@@ -190,32 +189,18 @@ class _SelectTimeState extends State<SelectTime> {
                         color: Colors.white,
                       ),
                       iconSize: 30,
-                      elevation: 26,
                       dropdownColor: Color(0xff02457a),
                       style: TextStyle(
                         color: Colors.white,
-                        //fontSize: 20.0,
                         fontWeight: FontWeight.bold,
                       ),
                       underline: Container(
                         height: 0,
-                        color: Colors.deepPurpleAccent,
                       ),
                       onChanged: (String newValue) {
                         setState(() {
-                          if (widget.deviceObject.power == false) {
                             dropdownValueRoom = newValue;
                             room = dropdownValueRoom;
-                          } else {
-                            Fluttertoast.showToast(
-                              msg: 'Please Turn off the Machine to change Room',
-                              gravity: ToastGravity.CENTER,
-                              toastLength: Toast.LENGTH_SHORT,
-                              backgroundColor: Colors.blue,
-                              textColor: Colors.white,
-                              fontSize: 16.0,
-                            );
-                          }
                         });
                       },
                       items: rooms.length == 0
@@ -246,33 +231,18 @@ class _SelectTimeState extends State<SelectTime> {
                         color: Colors.white,
                       ),
                       iconSize: 30,
-                      elevation: 26,
                       dropdownColor: Color(0xff02457a),
                       style: TextStyle(
                         color: Colors.white,
-                        //fontSize: 20.0,
                         fontWeight: FontWeight.bold,
                       ),
                       underline: Container(
                         height: 0,
-                        color: Colors.deepPurpleAccent,
                       ),
                       onChanged: (String newValue) {
                         setState(() {
-                          if (widget.deviceObject.power == false) {
                             dropdownValueStaff = newValue;
                             worker = dropdownValueStaff;
-                          } else {
-                            Fluttertoast.showToast(
-                              msg:
-                                  'Please Turn off the Machine to change Staff',
-                              gravity: ToastGravity.CENTER,
-                              toastLength: Toast.LENGTH_SHORT,
-                              backgroundColor: Colors.blue,
-                              textColor: Colors.white,
-                              fontSize: 16.0,
-                            );
-                          }
                         });
                       },
                       items: workers.length == 0

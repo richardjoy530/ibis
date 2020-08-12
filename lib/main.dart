@@ -89,7 +89,7 @@ void connect() async {
               name: 'Device',
               mainTime: Duration(minutes: 0),
               time: Duration(minutes: 0)));
-              
+
           DeviceObject temp = deviceObjectList.singleWhere(
               (element) => element.ip == clientSocket.remoteAddress.address);
 
@@ -167,7 +167,7 @@ class MyApp extends StatelessWidget {
 class HomePage extends StatefulWidget {
   final DeviceObject deviceObject;
   final String status;
-  HomePage(this.deviceObject,{this.status = "null"});
+  HomePage(this.deviceObject, {this.status = "null"});
   @override
   HomePageState createState() => HomePageState();
 }
@@ -180,8 +180,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Timer animationTimer;
   @override
   void initState() {
-    room=dropdownValueRoom;
-    worker=dropdownValueStaff;
+    room = dropdownValueRoom;
+    worker = dropdownValueStaff;
     errorRemover = false;
     connectionError = true;
     stopPressed = false;
@@ -228,7 +228,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     });
     super.initState();
 
-    if(widget.status=='start'){
+    if (widget.status == 'start') {
       start(widget.deviceObject);
     }
   }
@@ -382,7 +382,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       //                       fontSize: 16.0,
       //                     );
       //                   }
-
 
       //               });
       //             },
@@ -718,35 +717,37 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     RaisedButton(
-                      child: Container(
-                          margin: EdgeInsets.all(20),
-                          child: Text(
-                            'Stop',
-                            style: TextStyle(
-                                fontSize: 20, color: Color(0xff02457a)),
-                          )),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text(
+                          'Stop ',
+                          style:
+                              TextStyle(fontSize: 20, color: Color(0xffffffff)),
+                        ),
+                      ),
                       onPressed: () {
                         confirmStop(context, deviceObject);
                       },
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(15.0),
                       ),
-                      color: Color(0xff5cbceb),
+                      color: Color(0xff02457a),
                     ),
                     RaisedButton(
-                      child: Container(
-                          margin: EdgeInsets.all(20),
-                          child: Text(
-                            deviceObject.pause == true ? 'Play' : 'Pause',
-                            style: TextStyle(
-                                fontSize: 20, color: Color(0xff02457a)),
-                          )),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text(
+                          deviceObject.pause == true ? 'Play ' : 'Pause',
+                          style: TextStyle(
+                              fontSize: 20, color: Color(0xffffffff)),
+                        ),
+                      ),
                       onPressed: () {
                         playPause(deviceObject);
                       },
-                      color: Color(0xff5cbceb),
+                      color: Color(0xff02457a),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(15.0),
                       ),
                     )
                   ],
@@ -1002,7 +1003,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> motionDetected(context) async {
-
     await showDialog(
       barrierDismissible: false,
       context: context,

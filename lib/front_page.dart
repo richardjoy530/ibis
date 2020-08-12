@@ -651,7 +651,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             },
             child: Container(
               width: MediaQuery.of(context).size.width/2.5,
-              height: 50,
+              height: 75,
               //margin: EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
                 color: Color(0xff02457a),
