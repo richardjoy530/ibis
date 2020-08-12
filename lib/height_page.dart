@@ -6,11 +6,10 @@ import 'package:flutter/material.dart';
 
 import 'data.dart';
 import 'main.dart';
-Color upArrowColor = Color(0xff02457a);
-Color upBGColor = Color(0xff5cbceb);
-Color downArrowColor = Color(0xffd6e7ee);
-Color downBGColor = Color(0xff5cbceb);
-
+Color upArrowColor = Color(0xff5cbceb);
+Color upBGColor = Color(0xff02457a);
+Color downArrowColor = Color(0xff02457a);
+Color downBGColor = Color(0xff02457a);
 Timer mainTimer;
 Timer timer;
 int indicator = 0;

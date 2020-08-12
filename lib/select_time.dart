@@ -167,22 +167,7 @@ class _SelectTimeState extends State<SelectTime> {
         ),
         child: Column(
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                IconButton(
-                    icon: Icon(
-                      Icons.arrow_back_ios,
-                      color: Color(0xff02457a),
-                    ),
-                    onPressed: () {
-                      if (widget.deviceObject.power == false &&
-                          widget.deviceObject.clientError == false) {
-                        //widget.deviceObject.socket.write(65);
-                      }
-                      Navigator.pop(context);
-                    }),
-                Text(
+            Text(
                   widget.deviceObject.name,
                   style: TextStyle(
                     fontSize: 30,
@@ -190,22 +175,6 @@ class _SelectTimeState extends State<SelectTime> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    height: 30,
-                    width: 30,
-                    child: FlareActor(
-                      'assets/status.flr',
-                      animation: widget.deviceObject.power == true &&
-                              widget.deviceObject.pause == false
-                          ? 'Connected'
-                          : 'off',
-                    ),
-                  ),
-                ),
-              ],
-            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(

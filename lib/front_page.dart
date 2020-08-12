@@ -299,7 +299,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   ? deviceObjectList.length == 0
                       ? Center(
                           child: Container(
-                            margin: EdgeInsets.fromLTRB(10,30,10,30),
+                            margin: EdgeInsets.fromLTRB(10, 30, 10, 30),
                             decoration: BoxDecoration(
                                 color: Color(0xffd6e7ee),
                                 borderRadius: BorderRadius.circular(20)),
@@ -360,7 +360,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
       completedPop(context, deviceObjectList[0]);
     }
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         Container(
           margin: EdgeInsets.symmetric(horizontal: 20),
@@ -431,8 +431,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     heroTag: 'hero1',
                     label: Text(
                       'Staff',
-                      style:
-                          TextStyle(fontSize: 20, color: Color(0xffffffff)),
+                      style: TextStyle(fontSize: 20, color: Color(0xffffffff)),
                     ),
                     icon: Icon(Icons.add, color: Color(0xffffffff)),
                     onPressed: () {
@@ -443,8 +442,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     backgroundColor: Color(0xff02457a),
                     heroTag: 'hero2',
                     label: Text('Room',
-                        style: TextStyle(
-                            fontSize: 20, color: Color(0xffffffff))),
+                        style:
+                            TextStyle(fontSize: 20, color: Color(0xffffffff))),
                     icon: Icon(Icons.add, color: Color(0xffffffff)),
                     onPressed: () {
                       addRooms(context);
@@ -461,7 +460,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               //     2.5,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                color: Color(0xffbddeee),
+                //color: Color(0xffbddeee),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -526,8 +525,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                   flare = 'idle';
                                 });
                                 setState(() {
-                                  upArrowColor = Color(0xff02457a);
-                                  upBGColor = Color(0xff5cbceb);
+                                  upArrowColor = Color(0xff5cbceb);
+                                  upBGColor = Color(0xff02457a);
                                 });
                                 if (timer != null) {
                                   timer.cancel();
@@ -585,8 +584,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 
                                 setState(() {
                                   flare = 'idle';
-                                  downArrowColor = Color(0xff02457a);
-                                  downBGColor = Color(0xff5cbceb);
+                                  downArrowColor = Color(0xff5cbceb);
+                                  downBGColor = Color(0xff02457a);
                                 });
                                 if (timer != null) {
                                   timer.cancel();
@@ -651,30 +650,33 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               }
             },
             child: Container(
-              width: 150,
-              height: 150,
+              width: MediaQuery.of(context).size.width/2.5,
+              height: 50,
+              //margin: EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                  color: Color(0xff9ad2ec),
-                  boxShadow: [
-                    BoxShadow(
-                        blurRadius: 20,
-                        spreadRadius: 10,
-                        color: Color(0xff9ad2ec))
-                  ],
-                  borderRadius: BorderRadius.all(Radius.circular(75.0))),
-              child: Center(
-                child: Text(
-                  deviceObjectList[0].power == false
-                      ? 'Disinfect'
-                      : deviceObjectList[0].pause == true
-                          ? 'Paused'
-                          : 'Disinfecting',
-                  style: TextStyle(
-                      fontSize: 20.0,
-                      color: Color(0xff02457a),
-                      fontWeight: FontWeight.bold),
-                ),
+                color: Color(0xff02457a),
+                borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                boxShadow: [
+                  BoxShadow(
+                      blurRadius: 50,
+                      spreadRadius: 2,
+                      color: Color(0xff02457a))
+                ],
               ),
+              child: Center(
+                  child: Text(
+                    deviceObjectList[0].power == false
+                        ? 'Disinfect'
+                        : deviceObjectList[0].pause == true
+                            ? 'Paused'
+                            : 'Disinfecting',
+                    style: TextStyle(
+                        fontSize: 20.0,
+                        color: Color(0xffffffff),
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              
             ),
           ),
         )
