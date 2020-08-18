@@ -1161,11 +1161,14 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     time: DateTime.now(),
                   ),
                 );
-                barTime.add(DateTime.now().toString());
+                String dateTimeNow=DateTime.now().hour.toString();
+                dateTimeNow+=':';
+                dateTimeNow+=DateTime.now().minute.toString();
+                barTime.add(dateTimeNow);
                 barYAxis.add(BarChartGroupData(x: barYAxis.length, barRods: [
                   BarChartRodData(
                       y: deviceObject.elapsedTime/60,
-                      color: Colors.lightBlueAccent)
+                      color: Colors.lightBlueAccent),
                 ], showingTooltipIndicators: [
                   0
                 ]),);

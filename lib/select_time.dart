@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flare_flutter/flare_actor.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
@@ -310,52 +311,179 @@ class _SelectTimeState extends State<SelectTime> {
                       width: MediaQuery.of(context).size.width,
                       padding: EdgeInsets.all(8.0),
                       child: SingleChildScrollView(
-                        child: BarChart(BarChartData(
-                          alignment: BarChartAlignment.spaceAround,
-                          maxY: maxYAxis / 60,
-                          barTouchData: BarTouchData(
-                            enabled: true,
-                            touchTooltipData: BarTouchTooltipData(
-                              tooltipBgColor: Colors.transparent,
-                              tooltipPadding: const EdgeInsets.all(0),
-                              tooltipBottomMargin: 8,
-                              getTooltipItem: (
-                                BarChartGroupData group,
-                                int groupIndex,
-                                BarChartRodData rod,
-                                int rodIndex,
-                              ) {
-                                return BarTooltipItem(
-                                  rod.y.round().toString(),
-                                  TextStyle(
-                                    color: Colors.blueGrey,
-                                    fontWeight: FontWeight.bold,
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                              height: 125,
+                              width: MediaQuery.of(context).size.width/1.5,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: BarChart(BarChartData(
+                                  alignment: BarChartAlignment.center,
+                                  maxY: maxYAxis / 60,
+                                  groupsSpace: 40,
+                                  barTouchData: BarTouchData(
+                                    enabled: true,
+                                    touchTooltipData: BarTouchTooltipData(
+                                      tooltipBgColor: Colors.transparent,
+                                      tooltipPadding: const EdgeInsets.all(0),
+                                      tooltipBottomMargin: 8,
+                                      getTooltipItem: (
+                                        BarChartGroupData group,
+                                        int groupIndex,
+                                        BarChartRodData rod,
+                                        int rodIndex,
+                                      ) {
+                                        return BarTooltipItem(
+                                          rod.y.round().toString(),
+                                          TextStyle(
+                                            color: Colors.blueGrey,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   ),
-                                );
-                              },
+                                  titlesData: FlTitlesData(
+                                    show: true,
+                                    bottomTitles: SideTitles(
+                                      showTitles: true,
+                                      textStyle: TextStyle(
+                                          color: const Color(0xff7589a2),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14),
+                                      margin: 20,
+                                      getTitles: (double value) {
+                                        return barTime[value.toInt()];
+                                      },
+                                    ),
+                                    leftTitles: SideTitles(showTitles: false),
+                                  ),
+                                  borderData: FlBorderData(
+                                    show: false,
+                                  ),
+                                  barGroups: barYAxis
+                                  ,
+                                )),
+                              ),
                             ),
-                          ),
-                          titlesData: FlTitlesData(
-                            show: true,
-                            bottomTitles: SideTitles(
-                              showTitles: true,
-                              textStyle: TextStyle(
-                                  color: const Color(0xff7589a2),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14),
-                              margin: 20,
-                              getTitles: (double value) {
-                                return barTime[value.toInt()];
-                              },
+                            SizedBox(
+                              width: 80,
                             ),
-                            leftTitles: SideTitles(showTitles: false),
-                          ),
-                          borderData: FlBorderData(
-                            show: false,
-                          ),
-                          barGroups: barYAxis
-                          ,
-                        )),
+                            Container(
+                              height: 125,
+                              width: MediaQuery.of(context).size.width/1.5,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: BarChart(BarChartData(
+                                  alignment: BarChartAlignment.center,
+                                  maxY: maxYAxis / 60,
+                                  groupsSpace: 40,
+                                  barTouchData: BarTouchData(
+                                    enabled: true,
+                                    touchTooltipData: BarTouchTooltipData(
+                                      tooltipBgColor: Colors.transparent,
+                                      tooltipPadding: const EdgeInsets.all(0),
+                                      tooltipBottomMargin: 8,
+                                      getTooltipItem: (
+                                          BarChartGroupData group,
+                                          int groupIndex,
+                                          BarChartRodData rod,
+                                          int rodIndex,
+                                          ) {
+                                        return BarTooltipItem(
+                                          rod.y.round().toString(),
+                                          TextStyle(
+                                            color: Colors.blueGrey,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  titlesData: FlTitlesData(
+                                    show: true,
+                                    bottomTitles: SideTitles(
+                                      showTitles: true,
+                                      textStyle: TextStyle(
+                                          color: const Color(0xff7589a2),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14),
+                                      margin: 20,
+                                      getTitles: (double value) {
+                                        return barTime[value.toInt()];
+                                      },
+                                    ),
+                                    leftTitles: SideTitles(showTitles: false),
+                                  ),
+                                  borderData: FlBorderData(
+                                    show: false,
+                                  ),
+                                  barGroups: barYAxis
+                                  ,
+                                )),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 80,
+                            ),
+                            Container(
+                              height: 125,
+                              width: MediaQuery.of(context).size.width/1.5,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: BarChart(BarChartData(
+                                  alignment: BarChartAlignment.center,
+                                  maxY: maxYAxis / 60,
+                                  groupsSpace: 40,
+                                  barTouchData: BarTouchData(
+                                    enabled: true,
+                                    touchTooltipData: BarTouchTooltipData(
+                                      tooltipBgColor: Colors.transparent,
+                                      tooltipPadding: const EdgeInsets.all(0),
+                                      tooltipBottomMargin: 8,
+                                      getTooltipItem: (
+                                          BarChartGroupData group,
+                                          int groupIndex,
+                                          BarChartRodData rod,
+                                          int rodIndex,
+                                          ) {
+                                        return BarTooltipItem(
+                                          rod.y.round().toString(),
+                                          TextStyle(
+                                            color: Colors.blueGrey,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  titlesData: FlTitlesData(
+                                    show: true,
+                                    bottomTitles: SideTitles(
+                                      showTitles: true,
+                                      textStyle: TextStyle(
+                                          color: const Color(0xff7589a2),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14),
+                                      margin: 20,
+                                      getTitles: (double value) {
+                                        return barTime[value.toInt()];
+                                      },
+                                    ),
+                                    leftTitles: SideTitles(showTitles: false),
+                                  ),
+                                  borderData: FlBorderData(
+                                    show: false,
+                                  ),
+                                  barGroups: barYAxis
+                                  ,
+                                )),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     onTap: () {
