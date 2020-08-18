@@ -40,119 +40,6 @@ class _SelectTimeState extends State<SelectTime> {
     worker = dropdownValueStaff;
   }
 
-  Future<void> graph3Days(context, DeviceObject deviceObject) async {
-    await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            backgroundColor: Color(0xffffffff),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            children: <Widget>[
-              Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    RaisedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ShowHistory(),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        'Detiled Hstory',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      color: Colors.lightBlue,
-                    ),
-                    BarChart(BarChartData(
-                      alignment: BarChartAlignment.spaceAround,
-                      maxY: maxYAxis / 60,
-                      barTouchData: BarTouchData(
-                        enabled: true,
-                        touchTooltipData: BarTouchTooltipData(
-                          tooltipBgColor: Colors.transparent,
-                          tooltipPadding: const EdgeInsets.all(0),
-                          tooltipBottomMargin: 8,
-                          getTooltipItem: (
-                            BarChartGroupData group,
-                            int groupIndex,
-                            BarChartRodData rod,
-                            int rodIndex,
-                          ) {
-                            return BarTooltipItem(
-                              rod.y.round().toString(),
-                              TextStyle(
-                                color: Colors.blueGrey,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      titlesData: FlTitlesData(
-                        show: true,
-                        bottomTitles: SideTitles(
-                          showTitles: true,
-                          textStyle: TextStyle(
-                              color: const Color(0xff7589a2),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14),
-                          margin: 20,
-                          getTitles: (double value) {
-                            switch (value.toInt()) {
-                              case 0:
-                                return 'DBY';
-                              case 1:
-                                return 'Yes';
-                              case 2:
-                                return 'Tod';
-
-                              default:
-                                return '';
-                            }
-                          },
-                        ),
-                        leftTitles: SideTitles(showTitles: false),
-                      ),
-                      borderData: FlBorderData(
-                        show: false,
-                      ),
-                      barGroups: [
-                        BarChartGroupData(x: 0, barRods: [
-                          BarChartRodData(
-                              y: dayBeforeYesTotalTime / 60,
-                              color: Colors.lightBlueAccent)
-                        ], showingTooltipIndicators: [
-                          0
-                        ]),
-                        BarChartGroupData(x: 1, barRods: [
-                          BarChartRodData(
-                              y: yesdayTotalTime / 60,
-                              color: Colors.lightBlueAccent)
-                        ], showingTooltipIndicators: [
-                          0
-                        ]),
-                        BarChartGroupData(x: 2, barRods: [
-                          BarChartRodData(
-                              y: todayTotalTime / 60,
-                              color: Colors.lightBlueAccent)
-                        ], showingTooltipIndicators: [
-                          0
-                        ]),
-                      ],
-                    )),
-                  ],
-                ),
-              )
-            ],
-          );
-        });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -167,101 +54,36 @@ class _SelectTimeState extends State<SelectTime> {
         child: Column(
           children: <Widget>[
             Text(
-                  widget.deviceObject.name,
-                  style: TextStyle(
-                    fontSize: 30,
-                    color: Color(0xff02457a),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+              widget.deviceObject.name,
+              style: TextStyle(
+                fontSize: 30,
+                color: Color(0xff02457a),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   FloatingActionButton.extended(
                     backgroundColor: Color(0xff02457a),
                     heroTag: 'staff1',
-                    label: DropdownButton<String>(
-                      value: rooms.length == 0 ? 'No rooms' : dropdownValueRoom,
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: Colors.white,
-                      ),
-                      iconSize: 30,
-                      dropdownColor: Color(0xff02457a),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      underline: Container(
-                        height: 0,
-                      ),
-                      onChanged: (String newValue) {
-                        setState(() {
-                            dropdownValueRoom = newValue;
-                            room = dropdownValueRoom;
-                        });
-                      },
-                      items: rooms.length == 0
-                          ? <String>['No rooms']
-                              .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList()
-                          : rooms.map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                    ),
-                    onPressed: () {},
+                    label: Text(room),
+                    icon: Icon(Icons.arrow_drop_down),
+                    onPressed: () {
+                        showRooms(context, widget.deviceObject);
+                    },
                   ),
                   FloatingActionButton.extended(
                     backgroundColor: Color(0xff02457a),
+                    elevation: 4,
                     heroTag: 'room1',
-                    label: DropdownButton<String>(
-                      value:
-                          workers.length == 0 ? 'No Staff' : dropdownValueStaff,
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: Colors.white,
-                      ),
-                      iconSize: 30,
-                      dropdownColor: Color(0xff02457a),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      underline: Container(
-                        height: 0,
-                      ),
-                      onChanged: (String newValue) {
-                        setState(() {
-                            dropdownValueStaff = newValue;
-                            worker = dropdownValueStaff;
-                        });
-                      },
-                      items: workers.length == 0
-                          ? <String>['No Staff']
-                              .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList()
-                          : workers
-                              .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                    ),
-                    onPressed: () {},
+                    label: Text(worker),
+                    icon: Icon(Icons.arrow_drop_down),
+                    onPressed: () {
+                        showWorkers(context, widget.deviceObject);
+                    },
                   )
                 ],
               ),
@@ -422,7 +244,10 @@ class _SelectTimeState extends State<SelectTime> {
                                   minutes: HomePageState()
                                       .mapValues(displayTime.toDouble())
                                       .toInt());
-                                      print([widget.deviceObject.time.inSeconds,widget.deviceObject.elapsedTime]);
+                              print([
+                                widget.deviceObject.time.inSeconds,
+                                widget.deviceObject.elapsedTime
+                              ]);
                             });
                           }
                         },
@@ -455,13 +280,14 @@ class _SelectTimeState extends State<SelectTime> {
                                     ),
                                     RaisedButton(
                                       shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(18.0),
-                                          ),
+                                        borderRadius:
+                                            BorderRadius.circular(18.0),
+                                      ),
                                       color: Color(0xff02457a),
                                       child: Text(
                                         "Start",
-                                        style: TextStyle(color: Colors.white,fontSize: 20),
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
                                       ),
                                       onPressed: () {
                                         if (widget
@@ -502,5 +328,222 @@ class _SelectTimeState extends State<SelectTime> {
       // ),
       //floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
     );
+  }
+
+  Future<void> showRooms(context, DeviceObject deviceObject) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Text(
+            'Select a Room',
+            style: TextStyle(
+                color: Color(0xff02457a), fontWeight: FontWeight.bold),
+          ),
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: List.generate(
+                rooms.length,
+                (index) {
+                  return SimpleDialogOption(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.blue),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.label_outline,
+                          color: Color(0xff02457a),
+                        ),
+                        title: Text(rooms[index],
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                      room = rooms[index];
+                      });
+                      Navigator.pop(context);
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showWorkers(context, DeviceObject deviceObject) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Text(
+            'Select a Staff',
+            style: TextStyle(
+                color: Color(0xff02457a), fontWeight: FontWeight.bold),
+          ),
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: List.generate(
+                workers.length,
+                (index) {
+                  return SimpleDialogOption(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.blue),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.label_outline,
+                          color: Color(0xff02457a),
+                        ),
+                        title: Text(workers[index],
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        worker = workers[index];
+                      });
+                      Navigator.pop(context);
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> graph3Days(context, DeviceObject deviceObject) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            backgroundColor: Color(0xffffffff),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            children: <Widget>[
+              Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    RaisedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ShowHistory(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'Detiled Hstory',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      color: Colors.lightBlue,
+                    ),
+                    BarChart(BarChartData(
+                      alignment: BarChartAlignment.spaceAround,
+                      maxY: maxYAxis / 60,
+                      barTouchData: BarTouchData(
+                        enabled: true,
+                        touchTooltipData: BarTouchTooltipData(
+                          tooltipBgColor: Colors.transparent,
+                          tooltipPadding: const EdgeInsets.all(0),
+                          tooltipBottomMargin: 8,
+                          getTooltipItem: (
+                            BarChartGroupData group,
+                            int groupIndex,
+                            BarChartRodData rod,
+                            int rodIndex,
+                          ) {
+                            return BarTooltipItem(
+                              rod.y.round().toString(),
+                              TextStyle(
+                                color: Colors.blueGrey,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      titlesData: FlTitlesData(
+                        show: true,
+                        bottomTitles: SideTitles(
+                          showTitles: true,
+                          textStyle: TextStyle(
+                              color: const Color(0xff7589a2),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14),
+                          margin: 20,
+                          getTitles: (double value) {
+                            switch (value.toInt()) {
+                              case 0:
+                                return 'DBY';
+                              case 1:
+                                return 'Yes';
+                              case 2:
+                                return 'Tod';
+
+                              default:
+                                return '';
+                            }
+                          },
+                        ),
+                        leftTitles: SideTitles(showTitles: false),
+                      ),
+                      borderData: FlBorderData(
+                        show: false,
+                      ),
+                      barGroups: [
+                        BarChartGroupData(x: 0, barRods: [
+                          BarChartRodData(
+                              y: dayBeforeYesTotalTime / 60,
+                              color: Colors.lightBlueAccent)
+                        ], showingTooltipIndicators: [
+                          0
+                        ]),
+                        BarChartGroupData(x: 1, barRods: [
+                          BarChartRodData(
+                              y: yesdayTotalTime / 60,
+                              color: Colors.lightBlueAccent)
+                        ], showingTooltipIndicators: [
+                          0
+                        ]),
+                        BarChartGroupData(x: 2, barRods: [
+                          BarChartRodData(
+                              y: todayTotalTime / 60,
+                              color: Colors.lightBlueAccent)
+                        ], showingTooltipIndicators: [
+                          0
+                        ]),
+                      ],
+                    )),
+                  ],
+                ),
+              )
+            ],
+          );
+        });
   }
 }
