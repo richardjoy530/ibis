@@ -220,7 +220,7 @@ class _SelectTimeState extends State<SelectTime> {
                               );
                             }).toList(),
                     ),
-                    //onPressed: () {},
+                    onPressed: () {},
                   ),
                   FloatingActionButton.extended(
                     backgroundColor: Color(0xff02457a),
@@ -245,8 +245,11 @@ class _SelectTimeState extends State<SelectTime> {
                         setState(() {
                             dropdownValueStaff = newValue;
                             worker = dropdownValueStaff;
-                            workers.insert(workers.indexOf(newValue), workers[0]);
-                            workers.insert(0, newValue);
+                            var i = workers[0];
+                            var j = workers.indexOf(newValue);
+                            workers[0] = newValue;
+                            workers[j] = i;
+                            // workers.insert(0, newValue);
                         });
                       },
                       items: workers.length == 0
@@ -267,7 +270,7 @@ class _SelectTimeState extends State<SelectTime> {
                       isDense: true,
 
                     ),
-                   //onPressed: () {},
+                   onPressed: () {},
 
                   )
                 ],
