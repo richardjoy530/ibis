@@ -249,7 +249,6 @@ class _SelectTimeState extends State<SelectTime> {
                             var j = workers.indexOf(newValue);
                             workers[0] = newValue;
                             workers[j] = i;
-                            // workers.insert(0, newValue);
                         });
                       },
                       items: workers.length == 0
