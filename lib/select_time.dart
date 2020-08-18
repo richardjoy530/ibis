@@ -13,8 +13,6 @@ import 'show_history.dart';
 String dropdownValueRoom = rooms.length == 0 ? 'No rooms' : rooms[0];
 String dropdownValueStaff = rooms.length == 0 ? 'No Staff' : workers[0];
 
-
-
 final selectorColor = CustomSliderColors(
   dotColor: Color(0xff02457a),
   progressBarColor: Color(0xffd6e7ee),
@@ -38,6 +36,8 @@ class _SelectTimeState extends State<SelectTime> {
   @override
   void initState() {
     super.initState();
+    dropdownValueRoom = rooms[0];
+    dropdownValueStaff = workers[0];
     room = dropdownValueRoom;
     worker = dropdownValueStaff;
   }
@@ -203,6 +203,14 @@ class _SelectTimeState extends State<SelectTime> {
                         setState(() {
                             dropdownValueRoom = newValue;
                             room = dropdownValueRoom;
+                            if(rooms.length>1)
+                              {
+                                var i = rooms[0];
+                                var j = rooms.indexOf(newValue);
+                                rooms[0] = newValue;
+                                rooms[j] = i;
+                              }
+
                         });
                       },
                       items: rooms.length == 0
@@ -245,10 +253,14 @@ class _SelectTimeState extends State<SelectTime> {
                         setState(() {
                             dropdownValueStaff = newValue;
                             worker = dropdownValueStaff;
-                            var i = workers[0];
-                            var j = workers.indexOf(newValue);
-                            workers[0] = newValue;
-                            workers[j] = i;
+                            if(workers.length>1)
+                              {
+                                var i = workers[0];
+                                var j = workers.indexOf(newValue);
+                                workers[0] = newValue;
+                                workers[j] = i;
+                              }
+
                         });
                       },
                       items: workers.length == 0
