@@ -13,6 +13,8 @@ import 'show_history.dart';
 String dropdownValueRoom = rooms.length == 0 ? 'No rooms' : rooms[0];
 String dropdownValueStaff = rooms.length == 0 ? 'No Staff' : workers[0];
 
+
+
 final selectorColor = CustomSliderColors(
   dotColor: Color(0xff02457a),
   progressBarColor: Color(0xffd6e7ee),
@@ -218,7 +220,7 @@ class _SelectTimeState extends State<SelectTime> {
                               );
                             }).toList(),
                     ),
-                    onPressed: () {},
+                    //onPressed: () {},
                   ),
                   FloatingActionButton.extended(
                     backgroundColor: Color(0xff02457a),
@@ -243,6 +245,8 @@ class _SelectTimeState extends State<SelectTime> {
                         setState(() {
                             dropdownValueStaff = newValue;
                             worker = dropdownValueStaff;
+                            workers.insert(workers.indexOf(newValue), workers[0]);
+                            workers.insert(0, newValue);
                         });
                       },
                       items: workers.length == 0
@@ -257,11 +261,14 @@ class _SelectTimeState extends State<SelectTime> {
                               .map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
-                                child: Text(value),
+                                child: Text(value,),
                               );
                             }).toList(),
+                      isDense: true,
+
                     ),
-                    onPressed: () {},
+                   //onPressed: () {},
+
                   )
                 ],
               ),

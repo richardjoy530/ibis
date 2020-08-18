@@ -1517,6 +1517,11 @@ class _RoomsState extends State<Rooms> {
                             check += 1;
                             cText[i] = 'Enter Name';
                           }
+                          if(rooms.contains(roomNames[i].text))
+                          {
+                            check+=1;
+                            cText[i]='Room already Present';
+                          }
                         }
                         if (check == 0) {
                           for (i = 0; i < nameNumber; i++) {
@@ -1690,10 +1695,15 @@ class _WorkersState extends State<Workers> {
                             check += 1;
                             cText[i] = 'Enter Name';
                           }
+                          if(workers.contains(roomNames[i].text))
+                            {
+                             check+=1;
+                             cText[i]='Name already Present';
+                            }
                         }
                         if (check == 0) {
                           for (i = 0; i < nameNumber; i++) {
-                            if (roomNames[i].text.length > 0) {
+                            if (roomNames[i].text.length > 0 ) {
                               databaseHelper.insertWorker(roomNames[i].text);
                               workers.add(roomNames[i].text);
                             }
