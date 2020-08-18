@@ -36,6 +36,8 @@ class _SelectTimeState extends State<SelectTime> {
   @override
   void initState() {
     super.initState();
+    dropdownValueRoom = rooms[0];
+    dropdownValueStaff = workers[0];
     room = dropdownValueRoom;
     worker = dropdownValueStaff;
   }
