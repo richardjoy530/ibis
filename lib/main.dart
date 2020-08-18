@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:ibis/select_time.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
@@ -1159,6 +1161,14 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     time: DateTime.now(),
                   ),
                 );
+                barTime.add(DateTime.now().toString());
+                barYAxis.add(BarChartGroupData(x: barYAxis.length, barRods: [
+                  BarChartRodData(
+                      y: deviceObject.elapsedTime/60,
+                      color: Colors.lightBlueAccent)
+                ], showingTooltipIndicators: [
+                  0
+                ]),);
                 stopPressed = true;
                 prefs.setInt('${deviceObject.ip}totalDuration',
                     deviceObject.totalDuration.inSeconds);

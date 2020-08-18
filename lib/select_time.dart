@@ -13,6 +13,9 @@ import 'show_history.dart';
 String dropdownValueRoom = rooms.length == 0 ? 'No rooms' : rooms[0];
 String dropdownValueStaff = rooms.length == 0 ? 'No Staff' : workers[0];
 
+List<BarChartGroupData> barYAxis=[];
+List<String> barTime=[];
+
 final selectorColor = CustomSliderColors(
   dotColor: Color(0xff02457a),
   progressBarColor: Color(0xffd6e7ee),
@@ -306,83 +309,54 @@ class _SelectTimeState extends State<SelectTime> {
                       height: 200,
                       width: MediaQuery.of(context).size.width,
                       padding: EdgeInsets.all(8.0),
-                      child: BarChart(BarChartData(
-                        alignment: BarChartAlignment.spaceAround,
-                        maxY: maxYAxis / 60,
-                        barTouchData: BarTouchData(
-                          enabled: true,
-                          touchTooltipData: BarTouchTooltipData(
-                            tooltipBgColor: Colors.transparent,
-                            tooltipPadding: const EdgeInsets.all(0),
-                            tooltipBottomMargin: 8,
-                            getTooltipItem: (
-                              BarChartGroupData group,
-                              int groupIndex,
-                              BarChartRodData rod,
-                              int rodIndex,
-                            ) {
-                              return BarTooltipItem(
-                                rod.y.round().toString(),
-                                TextStyle(
-                                  color: Colors.blueGrey,
+                      child: SingleChildScrollView(
+                        child: BarChart(BarChartData(
+                          alignment: BarChartAlignment.spaceAround,
+                          maxY: maxYAxis / 60,
+                          barTouchData: BarTouchData(
+                            enabled: true,
+                            touchTooltipData: BarTouchTooltipData(
+                              tooltipBgColor: Colors.transparent,
+                              tooltipPadding: const EdgeInsets.all(0),
+                              tooltipBottomMargin: 8,
+                              getTooltipItem: (
+                                BarChartGroupData group,
+                                int groupIndex,
+                                BarChartRodData rod,
+                                int rodIndex,
+                              ) {
+                                return BarTooltipItem(
+                                  rod.y.round().toString(),
+                                  TextStyle(
+                                    color: Colors.blueGrey,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          titlesData: FlTitlesData(
+                            show: true,
+                            bottomTitles: SideTitles(
+                              showTitles: true,
+                              textStyle: TextStyle(
+                                  color: const Color(0xff7589a2),
                                   fontWeight: FontWeight.bold,
-                                ),
-                              );
-                            },
+                                  fontSize: 14),
+                              margin: 20,
+                              getTitles: (double value) {
+                                return barTime[value.toInt()];
+                              },
+                            ),
+                            leftTitles: SideTitles(showTitles: false),
                           ),
-                        ),
-                        titlesData: FlTitlesData(
-                          show: true,
-                          bottomTitles: SideTitles(
-                            showTitles: true,
-                            textStyle: TextStyle(
-                                color: const Color(0xff7589a2),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14),
-                            margin: 20,
-                            getTitles: (double value) {
-                              switch (value.toInt()) {
-                                case 0:
-                                  return '2 Days ago';
-                                case 1:
-                                  return 'Yesterday';
-                                case 2:
-                                  return 'Today';
-
-                                default:
-                                  return '';
-                              }
-                            },
+                          borderData: FlBorderData(
+                            show: false,
                           ),
-                          leftTitles: SideTitles(showTitles: false),
-                        ),
-                        borderData: FlBorderData(
-                          show: false,
-                        ),
-                        barGroups: [
-                          BarChartGroupData(x: 0, barRods: [
-                            BarChartRodData(
-                                y: dayBeforeYesTotalTime / 60,
-                                color: Colors.lightBlueAccent)
-                          ], showingTooltipIndicators: [
-                            0
-                          ]),
-                          BarChartGroupData(x: 1, barRods: [
-                            BarChartRodData(
-                                y: yesdayTotalTime / 60,
-                                color: Colors.lightBlueAccent)
-                          ], showingTooltipIndicators: [
-                            0
-                          ]),
-                          BarChartGroupData(x: 2, barRods: [
-                            BarChartRodData(
-                                y: todayTotalTime / 60,
-                                color: Colors.lightBlueAccent)
-                          ], showingTooltipIndicators: [
-                            0
-                          ]),
-                        ],
-                      )),
+                          barGroups: barYAxis
+                          ,
+                        )),
+                      ),
                     ),
                     onTap: () {
                       setState(() {
