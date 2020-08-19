@@ -1165,6 +1165,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     time: DateTime.now(),
                   ),
                 );
+
                 conToday.add(Container(
                   margin: EdgeInsets.only(top: 25),
                   width: 45,
