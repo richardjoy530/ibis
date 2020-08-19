@@ -1205,9 +1205,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             fontSize: 14),
                         margin: 20,
                         getTitles: (double value) {
-                          String dateTimeNow = DateTime.now().hour.toString();
+                          String dateTimeNow =timeDataList[timeDataList.length-1].startTime.hour.toString();
                           dateTimeNow += ':';
-                          dateTimeNow += DateTime.now().minute.toString();
+                          dateTimeNow += timeDataList[timeDataList.length-1].startTime.minute.toString();
                           return dateTimeNow;
                         },
                       ),
@@ -1219,7 +1219,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     barGroups: [
                       BarChartGroupData(x: 0, barRods: [
                         BarChartRodData(
-                            y: widget.deviceObject.elapsedTime / 60,
+                            y: timeDataList[timeDataList.length-1].elapsedTime/ 60,
                             color: Colors.lightBlueAccent),
                       ], showingTooltipIndicators: [
                         0
