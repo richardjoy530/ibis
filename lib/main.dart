@@ -16,7 +16,7 @@ import 'package:dots_indicator/dots_indicator.dart';
 
 import 'data.dart';
 import 'loding.dart';
-
+List<Container> con=[];
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 String dropdownValueRoom = rooms.length == 0 ? 'No rooms' : rooms[0];
@@ -1161,17 +1161,64 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     time: DateTime.now(),
                   ),
                 );
-                String dateTimeNow=DateTime.now().hour.toString();
-                dateTimeNow+=':';
-                dateTimeNow+=DateTime.now().minute.toString();
-                barTime.add(dateTimeNow);
-                barYAxis.add(BarChartGroupData(x: barYAxis.length, barRods: [
-                  BarChartRodData(
-                      y: deviceObject.elapsedTime/60,
-                      color: Colors.lightBlueAccent),
-                ], showingTooltipIndicators: [
-                  0
-                ]),);
+                con.add(Container(
+                  width: 45,
+                  child: BarChart(BarChartData(
+                    alignment: BarChartAlignment.spaceAround,
+                    maxY: widget.deviceObject.elapsedTime/60,
+                    groupsSpace: 40,
+                    barTouchData: BarTouchData(
+                      enabled: true,
+                      touchTooltipData: BarTouchTooltipData(
+                        tooltipBgColor: Colors.transparent,
+                        tooltipPadding: const EdgeInsets.all(0),
+                        tooltipBottomMargin: 8,
+                        getTooltipItem: (
+                            BarChartGroupData group,
+                            int groupIndex,
+                            BarChartRodData rod,
+                            int rodIndex,
+                            ) {
+                          return BarTooltipItem(
+                            rod.y.round().toString(),
+                            TextStyle(
+                              color: Colors.blueGrey,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    titlesData: FlTitlesData(
+                      show: true,
+                      bottomTitles: SideTitles(
+                        showTitles: true,
+                        textStyle: TextStyle(
+                            color: const Color(0xff7589a2),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14),
+                        margin: 20,
+                        getTitles: (double value) {
+                          String dateTimeNow=DateTime.now().hour.toString();
+                          dateTimeNow+=':';
+                          dateTimeNow+=DateTime.now().minute.toString();
+                          return dateTimeNow;
+                        },
+                      ),
+                      leftTitles: SideTitles(showTitles: false),
+                    ),
+                    borderData: FlBorderData(
+                      show: false,
+                    ),
+                    barGroups: [BarChartGroupData(x: 0, barRods: [
+                      BarChartRodData(
+                          y: widget.deviceObject.elapsedTime/60,
+                          color: Colors.lightBlueAccent),
+                    ], showingTooltipIndicators: [
+                      0
+                    ])],
+                  )),
+                ));
                 stopPressed = true;
                 prefs.setInt('${deviceObject.ip}totalDuration',
                     deviceObject.totalDuration.inSeconds);
