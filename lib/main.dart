@@ -1147,6 +1147,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       elapsedTime: deviceObject.elapsedTime,
                       time: deviceObject.time.inSeconds.toInt()),
                 );
+
                 databaseHelper.insertHistory(
                   History(
                     roomName: room,
