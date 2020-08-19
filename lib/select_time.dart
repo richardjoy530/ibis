@@ -6,19 +6,255 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
-
 import 'data.dart';
 import 'front_page.dart';
 import 'main.dart';
 import 'show_history.dart';
-import 'main.dart';
 
 String dropdownValueRoom = rooms.length == 0 ? 'No rooms' : rooms[0];
 String dropdownValueStaff = rooms.length == 0 ? 'No Staff' : workers[0];
 
-List<BarChartGroupData> barYAxis=[];
-List<String> barTime=[];
+List<BarChartGroupData> barYAxis = [];
+List<String> barTime = [];
+//
+//
+//
+Widget firstSection = Container(
+  decoration: BoxDecoration(
+    color: Color(0xffbddeee),
+    borderRadius: BorderRadius.all(
+      Radius.circular(30.0),
+    ),
+  ),
+  //height: 125,
+  child: Row(
+    children: firstSectionChildren,
+  ),
+);
+//
+//
+List<Container> firstSectionChildren = [
+  Container(
+    child: BarChart(
+      BarChartData(
+        maxY: 10,
+        barTouchData: BarTouchData(
+          enabled: false,
+          touchTooltipData: BarTouchTooltipData(
+            tooltipBgColor: Colors.transparent,
+            tooltipPadding: const EdgeInsets.all(0),
+            tooltipBottomMargin: 8,
+            getTooltipItem: (
+              BarChartGroupData group,
+              int groupIndex,
+              BarChartRodData rod,
+              int rodIndex,
+            ) {
+              return BarTooltipItem(
+                rod.y.round().toString(),
+                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
+              );
+            },
+          ),
+        ),
+        titlesData: FlTitlesData(
+          show: true,
+          bottomTitles: SideTitles(
+            showTitles: true,
+            textStyle: TextStyle(
+                color: const Color(0xff7589a2),
+                fontWeight: FontWeight.bold,
+                fontSize: 14),
+            margin: 20,
+            getTitles: (double value) {
+              return barTime[value.toInt()];
+            },
+          ),
+          leftTitles: SideTitles(showTitles: false),
+        ),
+        borderData: FlBorderData(
+          show: false,
+        ),
+        barGroups: [
+          BarChartGroupData(x: barYAxis.length, barRods: [
+            BarChartRodData(y: 2, color: Colors.lightBlueAccent),
+          ], showingTooltipIndicators: [
+            0
+          ]),
+        ],
+      ),
+    ),
+  ),
+  Container(
+    child: BarChart(
+      BarChartData(
+        maxY: 10,
+        barTouchData: BarTouchData(
+          enabled: false,
+          touchTooltipData: BarTouchTooltipData(
+            tooltipBgColor: Colors.transparent,
+            tooltipPadding: const EdgeInsets.all(0),
+            tooltipBottomMargin: 8,
+            getTooltipItem: (
+              BarChartGroupData group,
+              int groupIndex,
+              BarChartRodData rod,
+              int rodIndex,
+            ) {
+              return BarTooltipItem(
+                rod.y.round().toString(),
+                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
+              );
+            },
+          ),
+        ),
+        titlesData: FlTitlesData(
+          show: true,
+          bottomTitles: SideTitles(
+            showTitles: true,
+            textStyle: TextStyle(
+                color: const Color(0xff7589a2),
+                fontWeight: FontWeight.bold,
+                fontSize: 14),
+            margin: 20,
+            getTitles: (double value) {
+              return barTime[value.toInt()];
+            },
+          ),
+          leftTitles: SideTitles(showTitles: false),
+        ),
+        borderData: FlBorderData(
+          show: false,
+        ),
+        barGroups: [
+          BarChartGroupData(x: barYAxis.length, barRods: [
+            BarChartRodData(y: 2, color: Colors.lightBlueAccent),
+          ], showingTooltipIndicators: [
+            0
+          ]),
+        ],
+      ),
+    ),
+  ),
+  Container(
+    child: BarChart(
+      BarChartData(
+        maxY: 10,
+        barTouchData: BarTouchData(
+          enabled: false,
+          touchTooltipData: BarTouchTooltipData(
+            tooltipBgColor: Colors.transparent,
+            tooltipPadding: const EdgeInsets.all(0),
+            tooltipBottomMargin: 8,
+            getTooltipItem: (
+              BarChartGroupData group,
+              int groupIndex,
+              BarChartRodData rod,
+              int rodIndex,
+            ) {
+              return BarTooltipItem(
+                rod.y.round().toString(),
+                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
+              );
+            },
+          ),
+        ),
+        titlesData: FlTitlesData(
+          show: true,
+          bottomTitles: SideTitles(
+            showTitles: true,
+            textStyle: TextStyle(
+                color: const Color(0xff7589a2),
+                fontWeight: FontWeight.bold,
+                fontSize: 14),
+            margin: 20,
+            getTitles: (double value) {
+              return barTime[value.toInt()];
+            },
+          ),
+          leftTitles: SideTitles(showTitles: false),
+        ),
+        borderData: FlBorderData(
+          show: false,
+        ),
+        barGroups: [
+          BarChartGroupData(x: barYAxis.length, barRods: [
+            BarChartRodData(y: 2, color: Colors.lightBlueAccent),
+          ], showingTooltipIndicators: [
+            0
+          ]),
+        ],
+      ),
+    ),
+  ),
+  Container(
+    child: BarChart(
+      BarChartData(
+        maxY: 10,
+        barTouchData: BarTouchData(
+          enabled: false,
+          touchTooltipData: BarTouchTooltipData(
+            tooltipBgColor: Colors.transparent,
+            tooltipPadding: const EdgeInsets.all(0),
+            tooltipBottomMargin: 8,
+            getTooltipItem: (
+              BarChartGroupData group,
+              int groupIndex,
+              BarChartRodData rod,
+              int rodIndex,
+            ) {
+              return BarTooltipItem(
+                rod.y.round().toString(),
+                TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
+              );
+            },
+          ),
+        ),
+        titlesData: FlTitlesData(
+          show: true,
+          bottomTitles: SideTitles(
+            showTitles: true,
+            textStyle: TextStyle(
+                color: const Color(0xff7589a2),
+                fontWeight: FontWeight.bold,
+                fontSize: 14),
+            margin: 20,
+            getTitles: (double value) {
+              return barTime[value.toInt()];
+            },
+          ),
+          leftTitles: SideTitles(showTitles: false),
+        ),
+        borderData: FlBorderData(
+          show: false,
+        ),
+        barGroups: [
+          BarChartGroupData(x: barYAxis.length, barRods: [
+            BarChartRodData(y: 2, color: Colors.lightBlueAccent),
+          ], showingTooltipIndicators: [
+            0
+          ]),
+        ],
+      ),
+    ),
+  ),
+];
 
+//
+//
+//
+List<Container> secondSectionChildren = [];
+Widget secondSection = Container(
+  child: Row(
+    children: secondSectionChildren,
+  ),
+);
+List<Container> thirdSectionChildren = [];
+Widget thirdSection = Container(
+  child: Row(
+    children: thirdSectionChildren,
+  ),
+);
 final selectorColor = CustomSliderColors(
   dotColor: Color(0xff02457a),
   progressBarColor: Color(0xffd6e7ee),
@@ -175,13 +411,13 @@ class _SelectTimeState extends State<SelectTime> {
         child: Column(
           children: <Widget>[
             Text(
-                  widget.deviceObject.name,
-                  style: TextStyle(
-                    fontSize: 30,
-                    color: Color(0xff02457a),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+              widget.deviceObject.name,
+              style: TextStyle(
+                fontSize: 30,
+                color: Color(0xff02457a),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -207,16 +443,14 @@ class _SelectTimeState extends State<SelectTime> {
                       ),
                       onChanged: (String newValue) {
                         setState(() {
-                            dropdownValueRoom = newValue;
-                            room = dropdownValueRoom;
-                            if(rooms.length>1)
-                              {
-                                var i = rooms[0];
-                                var j = rooms.indexOf(newValue);
-                                rooms[0] = newValue;
-                                rooms[j] = i;
-                              }
-
+                          dropdownValueRoom = newValue;
+                          room = dropdownValueRoom;
+                          if (rooms.length > 1) {
+                            var i = rooms[0];
+                            var j = rooms.indexOf(newValue);
+                            rooms[0] = newValue;
+                            rooms[j] = i;
+                          }
                         });
                       },
                       items: rooms.length == 0
@@ -257,16 +491,14 @@ class _SelectTimeState extends State<SelectTime> {
                       ),
                       onChanged: (String newValue) {
                         setState(() {
-                            dropdownValueStaff = newValue;
-                            worker = dropdownValueStaff;
-                            if(workers.length>1)
-                              {
-                                var i = workers[0];
-                                var j = workers.indexOf(newValue);
-                                workers[0] = newValue;
-                                workers[j] = i;
-                              }
-
+                          dropdownValueStaff = newValue;
+                          worker = dropdownValueStaff;
+                          if (workers.length > 1) {
+                            var i = workers[0];
+                            var j = workers.indexOf(newValue);
+                            workers[0] = newValue;
+                            workers[j] = i;
+                          }
                         });
                       },
                       items: workers.length == 0
@@ -281,14 +513,14 @@ class _SelectTimeState extends State<SelectTime> {
                               .map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
-                                child: Text(value,),
+                                child: Text(
+                                  value,
+                                ),
                               );
                             }).toList(),
                       isDense: true,
-
                     ),
-                   onPressed: () {},
-
+                    onPressed: () {},
                   )
                 ],
               ),
@@ -297,70 +529,30 @@ class _SelectTimeState extends State<SelectTime> {
                 child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  margin: EdgeInsets.all(20),
-                  padding: EdgeInsets.only(top: 25),
-                  height: 200,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(20.0),
-                    ),
-                    color: Color(0xffbddeee),
-                  ),
-                  child: GestureDetector(
-                    child: Container(
-                      height: 200,
-                      width: MediaQuery.of(context).size.width,
-                      padding: EdgeInsets.all(8.0),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              height: 125,
-                              width: MediaQuery.of(context).size.width/1.5,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: con,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 80,
-                            ),
-                            Container(
-                              height: 125,
-                              width: MediaQuery.of(context).size.width/1.5,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: con,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 80,
-                            ),
-                            Container(
-                              height: 125,
-                              width: MediaQuery.of(context).size.width/1.5,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: con,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      graph3Days(context, deviceObjectList[0]);
+                    });
+                  },
+                  child: Container(
+                    height: 200,
+                    width: MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20.0),
                       ),
+                      color: Color(0xffbddeee),
                     ),
-                    onTap: () {
-                      setState(() {
-                        graph3Days(context, deviceObjectList[0]);
-                      });
-                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        firstSection,
+                        secondSection,
+                        thirdSection,
+                      ],
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -415,7 +607,10 @@ class _SelectTimeState extends State<SelectTime> {
                                   minutes: HomePageState()
                                       .mapValues(displayTime.toDouble())
                                       .toInt());
-                                      print([widget.deviceObject.time.inSeconds,widget.deviceObject.elapsedTime]);
+                              print([
+                                widget.deviceObject.time.inSeconds,
+                                widget.deviceObject.elapsedTime
+                              ]);
                             });
                           }
                         },
@@ -448,13 +643,14 @@ class _SelectTimeState extends State<SelectTime> {
                                     ),
                                     RaisedButton(
                                       shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(18.0),
-                                          ),
+                                        borderRadius:
+                                            BorderRadius.circular(18.0),
+                                      ),
                                       color: Color(0xff02457a),
                                       child: Text(
                                         "Start",
-                                        style: TextStyle(color: Colors.white,fontSize: 20),
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
                                       ),
                                       onPressed: () {
                                         if (widget

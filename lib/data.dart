@@ -10,9 +10,16 @@ import 'package:sqflite/sqflite.dart';
 //import 'package:table_calendar/table_calendar.dart';
 import 'main.dart' as main;
 
-
 int displayTime;
-double time12am=0,time3am=0,time6am=0,time9am=0,time12pm=0,time3pm=0,time6pm=0,time9pm=0;
+int maxTime = 0;
+double time12am = 0,
+    time3am = 0,
+    time6am = 0,
+    time9am = 0,
+    time12pm = 0,
+    time3pm = 0,
+    time6pm = 0,
+    time9pm = 0;
 DateTime startTime;
 bool stopPressed = false;
 //CalendarController _calendarController;
@@ -128,23 +135,23 @@ class DeviceObject {
 
           this.motionDetected = true;
           databaseHelper.insertTimeData(
-                  TimeData(
-                      roomName: room,
-                      workerName: worker,
-                      startTime: startTime,
-                      endTime: DateTime.now(),
-                      elapsedTime: this.elapsedTime,
-                      time: this.time.inSeconds.toInt()),
-                );
-                timeDataList.add(
-                  TimeData(
-                      roomName: room,
-                      workerName: worker,
-                      startTime: startTime,
-                      endTime: DateTime.now(),
-                      elapsedTime: this.elapsedTime,
-                      time: this.time.inSeconds.toInt()),
-                );
+            TimeData(
+                roomName: room,
+                workerName: worker,
+                startTime: startTime,
+                endTime: DateTime.now(),
+                elapsedTime: this.elapsedTime,
+                time: this.time.inSeconds.toInt()),
+          );
+          timeDataList.add(
+            TimeData(
+                roomName: room,
+                workerName: worker,
+                startTime: startTime,
+                endTime: DateTime.now(),
+                elapsedTime: this.elapsedTime,
+                time: this.time.inSeconds.toInt()),
+          );
           databaseHelper.insertHistory(History(
               roomName: room,
               workerName: worker,
