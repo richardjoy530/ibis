@@ -7,6 +7,7 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:ibis/front_page.dart';
 import 'package:ibis/select_time.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,7 +17,10 @@ import 'package:dots_indicator/dots_indicator.dart';
 
 import 'data.dart';
 import 'loding.dart';
-List<Container> con=[];
+
+List<Container> conToday = [];
+List<Container> conYesday=[];
+List<Container> con2DayBefore=[];
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 String dropdownValueRoom = rooms.length == 0 ? 'No rooms' : rooms[0];
@@ -740,8 +744,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         padding: const EdgeInsets.all(10.0),
                         child: Text(
                           deviceObject.pause == true ? 'Play ' : 'Pause',
-                          style: TextStyle(
-                              fontSize: 20, color: Color(0xffffffff)),
+                          style:
+                              TextStyle(fontSize: 20, color: Color(0xffffffff)),
                         ),
                       ),
                       onPressed: () {
@@ -1161,11 +1165,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     time: DateTime.now(),
                   ),
                 );
-                con.add(Container(
+                conToday.add(Container(
+                  margin: EdgeInsets.only(top: 25),
                   width: 45,
                   child: BarChart(BarChartData(
                     alignment: BarChartAlignment.spaceAround,
-                    maxY: widget.deviceObject.elapsedTime/60,
+                    maxY: 60,
                     groupsSpace: 40,
                     barTouchData: BarTouchData(
                       enabled: true,
@@ -1174,11 +1179,11 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         tooltipPadding: const EdgeInsets.all(0),
                         tooltipBottomMargin: 8,
                         getTooltipItem: (
-                            BarChartGroupData group,
-                            int groupIndex,
-                            BarChartRodData rod,
-                            int rodIndex,
-                            ) {
+                          BarChartGroupData group,
+                          int groupIndex,
+                          BarChartRodData rod,
+                          int rodIndex,
+                        ) {
                           return BarTooltipItem(
                             rod.y.round().toString(),
                             TextStyle(
@@ -1199,9 +1204,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             fontSize: 14),
                         margin: 20,
                         getTitles: (double value) {
-                          String dateTimeNow=DateTime.now().hour.toString();
-                          dateTimeNow+=':';
-                          dateTimeNow+=DateTime.now().minute.toString();
+                          String dateTimeNow = DateTime.now().hour.toString();
+                          dateTimeNow += ':';
+                          dateTimeNow += DateTime.now().minute.toString();
                           return dateTimeNow;
                         },
                       ),
@@ -1210,13 +1215,15 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     borderData: FlBorderData(
                       show: false,
                     ),
-                    barGroups: [BarChartGroupData(x: 0, barRods: [
-                      BarChartRodData(
-                          y: widget.deviceObject.elapsedTime/60,
-                          color: Colors.lightBlueAccent),
-                    ], showingTooltipIndicators: [
-                      0
-                    ])],
+                    barGroups: [
+                      BarChartGroupData(x: 0, barRods: [
+                        BarChartRodData(
+                            y: widget.deviceObject.elapsedTime / 60,
+                            color: Colors.lightBlueAccent),
+                      ], showingTooltipIndicators: [
+                        0
+                      ])
+                    ],
                   )),
                 ));
                 stopPressed = true;

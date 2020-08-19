@@ -11,7 +11,6 @@ import 'data.dart';
 import 'front_page.dart';
 import 'main.dart';
 import 'show_history.dart';
-import 'main.dart';
 
 String dropdownValueRoom = rooms.length == 0 ? 'No rooms' : rooms[0];
 String dropdownValueStaff = rooms.length == 0 ? 'No Staff' : workers[0];
@@ -322,7 +321,7 @@ class _SelectTimeState extends State<SelectTime> {
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
-                                  children: con,
+                                  children: conToday,
                                 ),
                               ),
                             ),
@@ -335,7 +334,7 @@ class _SelectTimeState extends State<SelectTime> {
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
-                                  children: con,
+                                  children: conYesday,
                                 ),
                               ),
                             ),
@@ -348,7 +347,7 @@ class _SelectTimeState extends State<SelectTime> {
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
-                                  children: con,
+                                  children: con2DayBefore,
                                 ),
                               ),
                             ),
