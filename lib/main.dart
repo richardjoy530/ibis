@@ -7,6 +7,8 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:ibis/front_page.dart';
+import 'package:ibis/select_time.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
@@ -1163,10 +1165,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     time: DateTime.now(),
                   ),
                 );
-                print("here");
+
                 conToday.add(Container(
-                  padding: EdgeInsets.only(top: 10),
-                  margin: EdgeInsets.only(top: 30),
+                  margin: EdgeInsets.only(top: 25),
                   width: 45,
                   child: BarChart(BarChartData(
                     alignment: BarChartAlignment.spaceAround,
@@ -1204,9 +1205,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             fontSize: 14),
                         margin: 20,
                         getTitles: (double value) {
-                          String dateTimeNow = DateTime.now().hour.toString();
+                          String dateTimeNow =timeDataList[timeDataList.length-1].startTime.hour.toString();
                           dateTimeNow += ':';
-                          dateTimeNow += DateTime.now().minute.toString();
+                          dateTimeNow += timeDataList[timeDataList.length-1].startTime.minute.toString();
                           return dateTimeNow;
                         },
                       ),
@@ -1218,7 +1219,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     barGroups: [
                       BarChartGroupData(x: 0, barRods: [
                         BarChartRodData(
-                            y: widget.deviceObject.elapsedTime / 60,
+                            y: timeDataList[timeDataList.length-1].elapsedTime/ 60,
                             color: Colors.lightBlueAccent),
                       ], showingTooltipIndicators: [
                         0
