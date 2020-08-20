@@ -11,6 +11,8 @@ import 'package:sqflite/sqflite.dart';
 import 'main.dart' as main;
 
 int displayTime;
+bool topHit = false;
+bool bottumHit = false;
 int maxTime = 0;
 double time12am = 0,
     time3am = 0,
@@ -121,6 +123,12 @@ class DeviceObject {
       }
       if (String.fromCharCode(onData[0]) == 'c') {
         this.completedStatus = true;
+      }
+      if (String.fromCharCode(onData[0]) == 't') {
+        topHit = true;
+      }
+      if (String.fromCharCode(onData[0]) == 'b') {
+        bottumHit = true;
       }
 
       if (String.fromCharCode(onData[0]) == 'd') {

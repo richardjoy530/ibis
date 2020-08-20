@@ -497,7 +497,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                               ),
                             ),
                             onPointerDown: (data) {
-                              if (deviceObjectList[0].offline == false &&
+                              if (deviceObjectList[0].offline == false &&topHit==false&&
                                   deviceObjectList[0].power == false &&
                                   (deviceObjectList[0].resetingheight ==
                                           false ||
@@ -507,6 +507,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                 setState(() {
                                   flare = 'up';
                                 });
+                                bottumHit = false;
                                 upArrowColor = downBGColor;
                                 indicator = 1;
                                 if (deviceObjectList[0].height != 100) {
@@ -556,13 +557,14 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                               ),
                             ),
                             onPointerDown: (data) {
-                              if (deviceObjectList[0].offline == false &&
+                              if (deviceObjectList[0].offline == false &&bottumHit==false&&
                                   deviceObjectList[0].power == false &&
                                   (deviceObjectList[0].resetingheight ==
                                           false ||
                                       prefs.getString('new') != 'yes')) {
                                 downBGColor = downArrowColor;
                                 downArrowColor = upBGColor;
+                                topHit=false;
                                 setState(() {
                                   flare = 'down';
                                 });
