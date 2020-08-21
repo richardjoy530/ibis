@@ -17,8 +17,8 @@ import 'data.dart';
 import 'loding.dart';
 
 List<Container> conToday = [];
-List<Container> conYesday=[];
-List<Container> con2DayBefore=[];
+List<Container> conYesday = [];
+List<Container> con2DayBefore = [];
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 String dropdownValueRoom = rooms.length == 0 ? 'No rooms' : rooms[0];
@@ -764,6 +764,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void start(DeviceObject deviceObject) {
     // Start
     deviceObject.flare = 'on';
+    topHit = false;
     //deviceObject.temp = false;
     startTime = DateTime.now();
     deviceObject.socket.writeln(deviceObject.time.inMinutes.round());
@@ -1203,9 +1204,16 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             fontSize: 14),
                         margin: 20,
                         getTitles: (double value) {
-                          String dateTimeNow =timeDataList[timeDataList.length-1].startTime.hour.toString();
+                          String dateTimeNow =
+                              timeDataList[timeDataList.length - 1]
+                                  .startTime
+                                  .hour
+                                  .toString();
                           dateTimeNow += ':';
-                          dateTimeNow += timeDataList[timeDataList.length-1].startTime.minute.toString();
+                          dateTimeNow += timeDataList[timeDataList.length - 1]
+                              .startTime
+                              .minute
+                              .toString();
                           return dateTimeNow;
                         },
                       ),
@@ -1217,7 +1225,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     barGroups: [
                       BarChartGroupData(x: 0, barRods: [
                         BarChartRodData(
-                            y: timeDataList[timeDataList.length-1].elapsedTime/ 60,
+                            y: timeDataList[timeDataList.length - 1]
+                                    .elapsedTime /
+                                60,
                             color: Colors.lightBlueAccent),
                       ], showingTooltipIndicators: [
                         0
