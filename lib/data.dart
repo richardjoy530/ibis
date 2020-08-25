@@ -8,9 +8,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 //import 'package:table_calendar/table_calendar.dart';
+import 'height_page.dart';
 import 'main.dart' as main;
 
 int displayTime;
+int doubleTapDown = 0;
+int doubleTapUp = 0;
 bool topHit = false;
 bool bottumHit = false;
 int maxTime = 0;
@@ -125,13 +128,28 @@ class DeviceObject {
         this.completedStatus = true;
       }
       if (String.fromCharCode(onData[0]) == 't') {
+        flare = 'idle';
+        downArrowColor = Color(0xff5cbceb);
+        downBGColor = Color(0xff02457a);
+        upArrowColor = Color(0xff5cbceb);
+        upBGColor = Color(0xff02457a);
         topHit = true;
       }
       if (String.fromCharCode(onData[0]) == 'b') {
+        flare = 'idle';
+        downArrowColor = Color(0xff5cbceb);
+        downBGColor = Color(0xff02457a);
+        upArrowColor = Color(0xff5cbceb);
+        upBGColor = Color(0xff02457a);
         bottumHit = true;
       }
 
       if (String.fromCharCode(onData[0]) == 'd') {
+        flare = 'idle';
+        downArrowColor = Color(0xff5cbceb);
+        downBGColor = Color(0xff02457a);
+        upArrowColor = Color(0xff5cbceb);
+        upBGColor = Color(0xff02457a);
         this.resetingheight = false;
       }
 
