@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
-
 import 'data.dart';
 import 'front_page.dart';
 import 'main.dart';
@@ -15,8 +14,8 @@ import 'show_history.dart';
 String dropdownValueRoom = rooms.length == 0 ? 'No rooms' : rooms[0];
 String dropdownValueStaff = rooms.length == 0 ? 'No Staff' : workers[0];
 
-List<BarChartGroupData> barYAxis=[];
-List<String> barTime=[];
+List<BarChartGroupData> barYAxis = [];
+List<String> barTime = [];
 
 final selectorColor = CustomSliderColors(
   dotColor: Color(0xff02457a),
@@ -79,7 +78,7 @@ class _SelectTimeState extends State<SelectTime> {
                     label: Text(room),
                     icon: Icon(Icons.arrow_drop_down),
                     onPressed: () {
-                        showRooms(context, widget.deviceObject);
+                      showRooms(context, widget.deviceObject);
                     },
                   ),
                   FloatingActionButton.extended(
@@ -89,7 +88,7 @@ class _SelectTimeState extends State<SelectTime> {
                     label: Text(worker),
                     icon: Icon(Icons.arrow_drop_down),
                     onPressed: () {
-                        showWorkers(context, widget.deviceObject);
+                      showWorkers(context, widget.deviceObject);
                     },
                   )
                 ],
@@ -99,70 +98,122 @@ class _SelectTimeState extends State<SelectTime> {
                 child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  margin: EdgeInsets.all(20),
-                  padding: EdgeInsets.only(top: 25),
-                  height: 200,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(20.0),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      graph3Days(context, deviceObjectList[0]);
+                    });
+                  },
+                  child: Container(
+                    margin: EdgeInsets.all(20),
+                    padding: EdgeInsets.only(top: 25),
+                    height: 200,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20.0),
+                      ),
+                      color: Color(0xff9ad2ec),
                     ),
-                    color: Color(0xffbddeee),
-                  ),
-                  child: GestureDetector(
-                    child: Container(
-                      height: 200,
-                      width: MediaQuery.of(context).size.width,
-                      padding: EdgeInsets.all(8.0),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              height: 125,
-                              width: MediaQuery.of(context).size.width/1.5,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: conToday,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: <Widget>[
+                          SizedBox(
+                            width: 40,
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20.0),
+                                  ),
+                                  color: Color(0xffbddeee),
+                                ),
+                                height: 125,
+                                width: MediaQuery.of(context).size.width - 120,
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: conToday,
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 80,
-                            ),
-                            Container(
-                              height: 125,
-                              width: MediaQuery.of(context).size.width/1.5,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: conYesday,
+                              Text(
+                                'Today',
+                                style: TextStyle(
+                                    color: Color(0xff02457a),
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            width: 80,
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20.0),
+                                  ),
+                                  color: Color(0xffbddeee),
+                                ),
+                                height: 125,
+                                width: MediaQuery.of(context).size.width - 120,
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: conYesday,
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 80,
-                            ),
-                            Container(
-                              height: 125,
-                              width: MediaQuery.of(context).size.width/1.5,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: con2DayBefore,
+                              Text(
+                                'Yesterday',
+                                style: TextStyle(
+                                    color: Color(0xff02457a),
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            width: 80,
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20.0),
+                                  ),
+                                  color: Color(0xffbddeee),
+                                ),
+                                height: 125,
+                                width: MediaQuery.of(context).size.width - 120,
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: con2DayBefore,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
+                              Text(
+                                '2 Days ago',
+                                style: TextStyle(
+                                    color: Color(0xff02457a),
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            width: 40,
+                          ),
+                        ],
                       ),
                     ),
-                    onTap: () {
-                      setState(() {
-                        graph3Days(context, deviceObjectList[0]);
-                      });
-                    },
                   ),
                 ),
                 SizedBox(
@@ -341,7 +392,7 @@ class _SelectTimeState extends State<SelectTime> {
                     ),
                     onPressed: () {
                       setState(() {
-                      room = rooms[index];
+                        room = rooms[index];
                       });
                       Navigator.pop(context);
                     },
@@ -420,8 +471,8 @@ class _SelectTimeState extends State<SelectTime> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    RaisedButton(
-                      onPressed: () {
+                    Listener(
+                      onPointerUp: (pointerUpEvent){
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -429,11 +480,22 @@ class _SelectTimeState extends State<SelectTime> {
                           ),
                         );
                       },
-                      child: Text(
-                        'Detiled Hstory',
-                        style: TextStyle(color: Colors.white),
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 30),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20.0),
+                          ),
+                          color: Color(0xff02457a),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Detiled Hstory',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
                       ),
-                      color: Colors.lightBlue,
                     ),
                     BarChart(BarChartData(
                       alignment: BarChartAlignment.spaceAround,
