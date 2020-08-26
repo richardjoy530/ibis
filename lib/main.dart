@@ -259,12 +259,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return Scaffold(
       body: Container(
         padding: EdgeInsets.only(top: 40),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xffffffff), Color(0xffffffff)]),
-        ),
         child: Column(
           children: <Widget>[
             Row(

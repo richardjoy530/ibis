@@ -277,12 +277,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           padding: EdgeInsets.only(top: 40),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xffffffff), Color(0xffffffff)]),
-          ),
+          color: Colors.white,
           child: Column(
             children: <Widget>[
               Row(
