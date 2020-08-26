@@ -1,3 +1,4 @@
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wakelock/wakelock.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -69,7 +70,7 @@ class _LodingState extends State<Loding> {
             time: map['time'],
             elapsedTime: map['elapsedTime']));
       }
-    }).whenComplete(() {
+    }).whenComplete(() {     
       for(int i=0;i<timeDataList.length;i++)
         {
           if(timeDataList[i].startTime.day==DateTime.now().day && timeDataList[i].startTime.year==DateTime.now().year && timeDataList[i].startTime.month==DateTime.now().month)
