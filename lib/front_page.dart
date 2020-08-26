@@ -25,7 +25,7 @@ Future<void> scanIbis() async {
   String cameraScanResult = await scanner.scan();
   var data = cameraScanResult.split(',');
   String ssid = data[1];
-  if (ssid[7] == ' ') {
+  if (ssid[7] == '_') {
     prefs.setString('new', 'yes');
   }
   String password = data[3];
@@ -106,6 +106,21 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
       (callback) {
         setState(
           () {
+            
+            if (topHit == true) {
+              flare = 'idle';
+              downArrowColor = Color(0xff5cbceb);
+              downBGColor = Color(0xff02457a);
+              upArrowColor = Color(0xff5cbceb);
+              upBGColor = Color(0xff02457a);
+            }
+            if (bottumHit == true) {
+              flare = 'idle';
+              downArrowColor = Color(0xff5cbceb);
+              downBGColor = Color(0xff02457a);
+              upArrowColor = Color(0xff5cbceb);
+              upBGColor = Color(0xff02457a);
+            }
             for (var i = 0; i < deviceObjectList.length; i++) {
               if ((deviceObjectList[i].motionDetected == true ||
                       deviceObjectList[i].clientError == true) &&
@@ -262,12 +277,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           padding: EdgeInsets.only(top: 40),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xffffffff), Color(0xffffffff)]),
-          ),
+          color: Colors.white,
           child: Column(
             children: <Widget>[
               Row(
@@ -497,13 +507,19 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                               ),
                             ),
                             onPointerDown: (data) {
-                              if (deviceObjectList[0].offline == false &&topHit==false&&
+                              if (deviceObjectList[0].offline == false &&
+                                  topHit == false &&
                                   deviceObjectList[0].power == false &&
                                   (deviceObjectList[0].resetingheight ==
                                           false ||
                                       prefs.getString('new') != 'yes')) {
                                 deviceObjectList[0].socket.write('-3\r');
                                 upBGColor = upArrowColor;
+                                doubleTapUp = doubleTapUp + 1;
+                                Future.delayed(Duration(milliseconds: 500), () {
+                                  doubleTapUp = 0;
+                                  print('--');
+                                });
                                 setState(() {
                                   flare = 'up';
                                 });
@@ -522,12 +538,15 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                           false ||
                                       prefs.getString('new') != 'yes')) {
                                 deviceObjectList[0].socket.write('-1\r');
+                                setState(() {});
                                 setState(() {
-                                  flare = 'idle';
-                                });
-                                setState(() {
-                                  upArrowColor = Color(0xff5cbceb);
-                                  upBGColor = Color(0xff02457a);
+                                  if (doubleTapUp < 2) {
+                                    flare = 'idle';
+                                    downArrowColor = Color(0xff5cbceb);
+                                    downBGColor = Color(0xff02457a);
+                                    upArrowColor = Color(0xff5cbceb);
+                                    upBGColor = Color(0xff02457a);
+                                  }
                                 });
                                 if (timer != null) {
                                   timer.cancel();
@@ -557,14 +576,20 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                               ),
                             ),
                             onPointerDown: (data) {
-                              if (deviceObjectList[0].offline == false &&bottumHit==false&&
+                              if (deviceObjectList[0].offline == false &&
+                                  bottumHit == false &&
                                   deviceObjectList[0].power == false &&
                                   (deviceObjectList[0].resetingheight ==
                                           false ||
                                       prefs.getString('new') != 'yes')) {
+                                doubleTapDown = doubleTapDown + 1;
+                                Future.delayed(Duration(milliseconds: 500), () {
+                                  doubleTapDown = 0;
+                                  print('--');
+                                });
                                 downBGColor = downArrowColor;
                                 downArrowColor = upBGColor;
-                                topHit=false;
+                                topHit = false;
                                 setState(() {
                                   flare = 'down';
                                 });
@@ -582,12 +607,15 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                   (deviceObjectList[0].resetingheight ==
                                           false ||
                                       prefs.getString('new') != 'yes')) {
-                                deviceObjectList[0].socket.write('-1\r');
-
+                                deviceObjectList[0].socket.write('-4\r');
                                 setState(() {
-                                  flare = 'idle';
-                                  downArrowColor = Color(0xff5cbceb);
-                                  downBGColor = Color(0xff02457a);
+                                  if (doubleTapDown < 2) {
+                                    flare = 'idle';
+                                    downArrowColor = Color(0xff5cbceb);
+                                    downBGColor = Color(0xff02457a);
+                                    upArrowColor = Color(0xff5cbceb);
+                                    upBGColor = Color(0xff02457a);
+                                  }
                                 });
                                 if (timer != null) {
                                   timer.cancel();
@@ -652,7 +680,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               }
             },
             child: Container(
-              width: MediaQuery.of(context).size.width/2.5,
+              width: MediaQuery.of(context).size.width / 2.5,
               height: 75,
               //margin: EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
@@ -660,25 +688,22 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 borderRadius: BorderRadius.all(Radius.circular(30.0)),
                 boxShadow: [
                   BoxShadow(
-                      blurRadius: 50,
-                      spreadRadius: 2,
-                      color: Color(0xff02457a))
+                      blurRadius: 50, spreadRadius: 2, color: Color(0xff02457a))
                 ],
               ),
               child: Center(
-                  child: Text(
-                    deviceObjectList[0].power == false
-                        ? 'Disinfect'
-                        : deviceObjectList[0].pause == true
-                            ? 'Paused'
-                            : 'Disinfecting',
-                    style: TextStyle(
-                        fontSize: 20.0,
-                        color: Color(0xffffffff),
-                        fontWeight: FontWeight.bold),
-                  ),
+                child: Text(
+                  deviceObjectList[0].power == false
+                      ? 'Disinfect'
+                      : deviceObjectList[0].pause == true
+                          ? 'Paused'
+                          : 'Disinfecting',
+                  style: TextStyle(
+                      fontSize: 20.0,
+                      color: Color(0xffffffff),
+                      fontWeight: FontWeight.bold),
                 ),
-              
+              ),
             ),
           ),
         )
@@ -1519,10 +1544,9 @@ class _RoomsState extends State<Rooms> {
                             check += 1;
                             cText[i] = 'Enter Name';
                           }
-                          if(rooms.contains(roomNames[i].text))
-                          {
-                            check+=1;
-                            cText[i]='Room already Present';
+                          if (rooms.contains(roomNames[i].text)) {
+                            check += 1;
+                            cText[i] = 'Room already Present';
                           }
                         }
                         if (check == 0) {
@@ -1697,15 +1721,14 @@ class _WorkersState extends State<Workers> {
                             check += 1;
                             cText[i] = 'Enter Name';
                           }
-                          if(workers.contains(roomNames[i].text))
-                            {
-                             check+=1;
-                             cText[i]='Name already Present';
-                            }
+                          if (workers.contains(roomNames[i].text)) {
+                            check += 1;
+                            cText[i] = 'Name already Present';
+                          }
                         }
                         if (check == 0) {
                           for (i = 0; i < nameNumber; i++) {
-                            if (roomNames[i].text.length > 0 ) {
+                            if (roomNames[i].text.length > 0) {
                               databaseHelper.insertWorker(roomNames[i].text);
                               workers.add(roomNames[i].text);
                             }
