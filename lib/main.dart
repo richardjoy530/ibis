@@ -696,18 +696,18 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           margin: EdgeInsets.all(20),
                           child: Text(
                             'Start',
-                            style: TextStyle(
-                                fontSize: 20, color: Color(0xff02457a)),
+                            style:
+                              TextStyle(fontSize: 20, color: Color(0xffffffff)),
                           )),
                       onPressed: () {
                         if (deviceObject.time.inMinutes != 0) {
                           start(deviceObject);
                         }
                       },
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                     shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
                       ),
-                      color: Color(0xff5cbceb),
+                      color: Color(0xff02457a),
                     ),
                   ],
                 )
@@ -955,6 +955,76 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     time: DateTime.now(),
                   ),
                 );
+                conToday.add(Container(
+                  margin: EdgeInsets.only(top: 25),
+                  width: 45,
+                  child: BarChart(BarChartData(
+                    alignment: BarChartAlignment.spaceAround,
+                    maxY: 60,
+                    groupsSpace: 40,
+                    barTouchData: BarTouchData(
+                      enabled: true,
+                      touchTooltipData: BarTouchTooltipData(
+                        tooltipBgColor: Colors.transparent,
+                        tooltipPadding: const EdgeInsets.all(0),
+                        tooltipBottomMargin: 8,
+                        getTooltipItem: (
+                          BarChartGroupData group,
+                          int groupIndex,
+                          BarChartRodData rod,
+                          int rodIndex,
+                        ) {
+                          return BarTooltipItem(
+                            rod.y.round().toString(),
+                            TextStyle(
+                              color: Colors.blueGrey,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    titlesData: FlTitlesData(
+                      show: true,
+                      bottomTitles: SideTitles(
+                        showTitles: true,
+                        textStyle: TextStyle(
+                            color: const Color(0xff7589a2),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14),
+                        margin: 20,
+                        getTitles: (double value) {
+                          String dateTimeNow =
+                              timeDataList[timeDataList.length - 1]
+                                  .startTime
+                                  .hour
+                                  .toString();
+                          dateTimeNow += ':';
+                          dateTimeNow += timeDataList[timeDataList.length - 1]
+                              .startTime
+                              .minute
+                              .toString();
+                          return dateTimeNow;
+                        },
+                      ),
+                      leftTitles: SideTitles(showTitles: false),
+                    ),
+                    borderData: FlBorderData(
+                      show: false,
+                    ),
+                    barGroups: [
+                      BarChartGroupData(x: 0, barRods: [
+                        BarChartRodData(
+                            y: timeDataList[timeDataList.length - 1]
+                                    .elapsedTime /
+                                60,
+                            color: Colors.lightBlueAccent),
+                      ], showingTooltipIndicators: [
+                        0
+                      ])
+                    ],
+                  )),
+                ));
 
                 prefs.setInt('${deviceObject.ip}totalDuration',
                     deviceObject.totalDuration.inSeconds);

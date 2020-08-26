@@ -106,7 +106,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
       (callback) {
         setState(
           () {
-            
             if (topHit == true) {
               flare = 'idle';
               downArrowColor = Color(0xff5cbceb);
@@ -182,6 +181,76 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   deviceObjectList[i].pause = false;
                   deviceObjectList[i].flare = 'off';
                   print('state2');
+                  conToday.add(Container(
+                    margin: EdgeInsets.only(top: 25),
+                    width: 45,
+                    child: BarChart(BarChartData(
+                      alignment: BarChartAlignment.spaceAround,
+                      maxY: 60,
+                      groupsSpace: 40,
+                      barTouchData: BarTouchData(
+                        enabled: true,
+                        touchTooltipData: BarTouchTooltipData(
+                          tooltipBgColor: Colors.transparent,
+                          tooltipPadding: const EdgeInsets.all(0),
+                          tooltipBottomMargin: 8,
+                          getTooltipItem: (
+                            BarChartGroupData group,
+                            int groupIndex,
+                            BarChartRodData rod,
+                            int rodIndex,
+                          ) {
+                            return BarTooltipItem(
+                              rod.y.round().toString(),
+                              TextStyle(
+                                color: Colors.blueGrey,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      titlesData: FlTitlesData(
+                        show: true,
+                        bottomTitles: SideTitles(
+                          showTitles: true,
+                          textStyle: TextStyle(
+                              color: const Color(0xff7589a2),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14),
+                          margin: 20,
+                          getTitles: (double value) {
+                            String dateTimeNow =
+                                timeDataList[timeDataList.length - 1]
+                                    .startTime
+                                    .hour
+                                    .toString();
+                            dateTimeNow += ':';
+                            dateTimeNow += timeDataList[timeDataList.length - 1]
+                                .startTime
+                                .minute
+                                .toString();
+                            return dateTimeNow;
+                          },
+                        ),
+                        leftTitles: SideTitles(showTitles: false),
+                      ),
+                      borderData: FlBorderData(
+                        show: false,
+                      ),
+                      barGroups: [
+                        BarChartGroupData(x: 0, barRods: [
+                          BarChartRodData(
+                              y: timeDataList[timeDataList.length - 1]
+                                      .elapsedTime /
+                                  60,
+                              color: Colors.lightBlueAccent),
+                        ], showingTooltipIndicators: [
+                          0
+                        ])
+                      ],
+                    )),
+                  ));
 
                   deviceObjectList[i].timer.cancel();
                   deviceObjectList[i].elapsedTime = 0;

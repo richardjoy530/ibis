@@ -58,21 +58,22 @@ class _ShowHistoryState extends State<ShowHistory> {
                                       fontSize: 25, color: Colors.white))),
                           onTap: () {},
                           title: Text(
-                            historyList[index].roomName,
+                            historyList[(historyList.length-1)-index].roomName,
                             style: TextStyle(
                                 fontSize: 20,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),
                           ),
-                          subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                'Staff: ${historyList[index].workerName}',
+                                'Staff: ${historyList[(historyList.length-1)-index].workerName}',
                                 style: TextStyle(
                                     color: Color(0xff02457a), fontSize: 15),
                               ),
                               Text(
-                                historyList[index].state,
+                                historyList[(historyList.length-1)-index].state,
                                 style: TextStyle(
                                     color: Color(0xff02457a), fontSize: 15),
                               ),
@@ -82,7 +83,7 @@ class _ShowHistoryState extends State<ShowHistory> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               Text(
-                                '${historyList[index].time.hour > 12 ? historyList[index].time.hour - 12 : historyList[index].time.hour}:${NumberFormat("00", "en_US").format(historyList[index].time.minute)} ${historyList[index].time.hour > 12 ? 'PM' : 'AM'}',
+                                '${historyList[(historyList.length-1)-index].time.day}- ${mapMonth(historyList[(historyList.length-1)-index].time.month)} - ${historyList[(historyList.length-1)-index].time.hour > 12 ? historyList[(historyList.length-1)-index].time.hour - 12 : historyList[(historyList.length-1)-index].time.hour}:${NumberFormat("00", "en_US").format(historyList[(historyList.length-1)-index].time.minute)} ${historyList[(historyList.length-1)-index].time.hour > 12 ? 'PM' : 'AM'}',
                                 style: TextStyle(
                                     color: Color(0xff02457a),
                                     fontWeight: FontWeight.bold),
@@ -104,3 +105,33 @@ class _ShowHistoryState extends State<ShowHistory> {
   }
 }
 
+String mapMonth(int month) {
+  switch (month) {
+    case 1:
+      return 'Jan';
+    case 2:
+      return 'Feb';
+    case 3:
+      return 'Mar';
+    case 4:
+      return 'Apr';
+    case 5:
+      return 'May';
+    case 6:
+      return 'Jun';
+    case 7:
+      return 'Jul';
+    case 8:
+      return 'Aug';
+    case 9:
+      return 'Sep';
+    case 10:
+      return 'Oct';
+    case 11:
+      return 'Nov';
+    case 12:
+      return 'Dec';
+  }
+        return '';
+
+}

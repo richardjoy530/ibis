@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
-//import 'package:table_calendar/table_calendar.dart';
 import 'height_page.dart';
-import 'main.dart' as main;
+import 'main.dart';
 
 int displayTime;
 int doubleTapDown = 0;
@@ -160,6 +160,74 @@ class DeviceObject {
           );
 
           this.motionDetected = true;
+          conToday.add(Container(
+            margin: EdgeInsets.only(top: 25),
+            width: 45,
+            child: BarChart(BarChartData(
+              alignment: BarChartAlignment.spaceAround,
+              maxY: 60,
+              groupsSpace: 40,
+              barTouchData: BarTouchData(
+                enabled: true,
+                touchTooltipData: BarTouchTooltipData(
+                  tooltipBgColor: Colors.transparent,
+                  tooltipPadding: const EdgeInsets.all(0),
+                  tooltipBottomMargin: 8,
+                  getTooltipItem: (
+                    BarChartGroupData group,
+                    int groupIndex,
+                    BarChartRodData rod,
+                    int rodIndex,
+                  ) {
+                    return BarTooltipItem(
+                      rod.y.round().toString(),
+                      TextStyle(
+                        color: Colors.blueGrey,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              titlesData: FlTitlesData(
+                show: true,
+                bottomTitles: SideTitles(
+                  showTitles: true,
+                  textStyle: TextStyle(
+                      color: const Color(0xff7589a2),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14),
+                  margin: 20,
+                  getTitles: (double value) {
+                    String dateTimeNow = timeDataList[timeDataList.length - 1]
+                        .startTime
+                        .hour
+                        .toString();
+                    dateTimeNow += ':';
+                    dateTimeNow += timeDataList[timeDataList.length - 1]
+                        .startTime
+                        .minute
+                        .toString();
+                    return dateTimeNow;
+                  },
+                ),
+                leftTitles: SideTitles(showTitles: false),
+              ),
+              borderData: FlBorderData(
+                show: false,
+              ),
+              barGroups: [
+                BarChartGroupData(x: 0, barRods: [
+                  BarChartRodData(
+                      y: timeDataList[timeDataList.length - 1].elapsedTime / 60,
+                      color: Colors.lightBlueAccent),
+                ], showingTooltipIndicators: [
+                  0
+                ])
+              ],
+            )),
+          ));
+
           databaseHelper.insertTimeData(
             TimeData(
                 roomName: room,
@@ -191,8 +259,7 @@ class DeviceObject {
               time: DateTime.now(),
             ),
           );
-
-          main.notification('Motion was detected');
+          notification('Motion was detected');
         }
       }
     })
