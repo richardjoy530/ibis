@@ -15,6 +15,7 @@ import 'package:dots_indicator/dots_indicator.dart';
 
 import 'data.dart';
 import 'loding.dart';
+import 'select_time.dart';
 
 List<Container> conToday = [];
 List<Container> conYesday = [];
@@ -264,18 +265,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                IconButton(
-                    icon: Icon(
-                      Icons.arrow_back_ios,
-                      color: Color(0xff02457a),
-                    ),
-                    onPressed: () {
-                      if (widget.deviceObject.power == false &&
-                          widget.deviceObject.clientError == false) {
-                        //widget.deviceObject.socket.write(65);
-                      }
-                      Navigator.pop(context);
-                    }),
+                SizedBox(),
                 Text(
                   widget.deviceObject.name,
                   style: TextStyle(
@@ -696,15 +686,15 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           margin: EdgeInsets.all(20),
                           child: Text(
                             'Start',
-                            style:
-                              TextStyle(fontSize: 20, color: Color(0xffffffff)),
+                            style: TextStyle(
+                                fontSize: 20, color: Color(0xffffffff)),
                           )),
                       onPressed: () {
                         if (deviceObject.time.inMinutes != 0) {
                           start(deviceObject);
                         }
                       },
-                     shape: RoundedRectangleBorder(
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15.0),
                       ),
                       color: Color(0xff02457a),
@@ -1046,7 +1036,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           );
           if (deviceObject.progressDegrees == 360) {
             deviceObject.progressDegrees = 0;
-            overOver(context);
+            overOver(context,deviceObject);
           }
         },
       );
@@ -1107,6 +1097,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 onPressed: () {
                   widget.deviceObject.motionDetected = false;
                   Navigator.pop(context);
+                  Navigator.pop(context);
+
                 },
               ),
             ),
@@ -1116,7 +1108,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  Future<void> overOver(context) async {
+  Future<void> overOver(context,DeviceObject deviceObject) async {
     await showDialog(
       barrierDismissible: false,
       context: context,
@@ -1152,6 +1144,11 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 widget.deviceObject.socket.write('y\r');
                 errorRemover = true;
                 Navigator.pop(context);
+                Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SelectTime(deviceObject)),
+                      );
               },
             ),
             SimpleDialogOption(

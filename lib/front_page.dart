@@ -661,7 +661,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                 topHit = false;
                                 setState(() {
                                   flare = 'down';
-                                });
+                                }); 
 
                                 indicator = -1;
                                 deviceObjectList[0].socket.write('-2\r');
@@ -755,10 +755,10 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               decoration: BoxDecoration(
                 color: Color(0xff02457a),
                 borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                boxShadow: [
-                  BoxShadow(
-                      blurRadius: 50, spreadRadius: 2, color: Color(0xff02457a))
-                ],
+                // boxShadow: [
+                //   BoxShadow(
+                //       blurRadius: 50, spreadRadius: 2, color: Color(0xff02457a))
+                // ],
               ),
               child: Center(
                 child: Text(
@@ -977,6 +977,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 ),
                 title: Text('History'),
                 onTap: () {
+                  Navigator.pop(context);
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => CalenderPage()),
@@ -987,6 +988,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 leading: Icon(Icons.scatter_plot),
                 title: Text('QR Scanner'),
                 onTap: () {
+                  Navigator.pop(context);
                   scanIbis();
                 },
               ),

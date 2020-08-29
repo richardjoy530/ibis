@@ -47,6 +47,12 @@ class _SelectTimeState extends State<SelectTime> {
   }
 
   @override
+  void dispose() {
+    widget.deviceObject.socket.write(65);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
@@ -472,7 +478,7 @@ class _SelectTimeState extends State<SelectTime> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     Listener(
-                      onPointerUp: (pointerUpEvent){
+                      onPointerUp: (pointerUpEvent) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(

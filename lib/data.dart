@@ -156,7 +156,7 @@ class DeviceObject {
       if (this.offline == false) {
         if (onData[0] == 50) {
           print(
-            [socket.remotePort, onData],
+            [socket.remotePort, onData],                    
           );
 
           this.motionDetected = true;
