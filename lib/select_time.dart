@@ -48,7 +48,9 @@ class _SelectTimeState extends State<SelectTime> {
 
   @override
   void dispose() {
+    if(widget.deviceObject.power==false){
     widget.deviceObject.socket.write(65);
+    }
     super.dispose();
   }
 
@@ -57,13 +59,8 @@ class _SelectTimeState extends State<SelectTime> {
     return Scaffold(
       body: Container(
         padding: EdgeInsets.only(top: 40),
-        // decoration: BoxDecoration(
-        //   gradient: LinearGradient(
-        //       begin: Alignment.topCenter,
-        //       end: Alignment.bottomCenter,
-        //       colors: [Color(0xffffffff), Color(0xffffffff)]),
-        // ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
               widget.deviceObject.name,
@@ -223,7 +220,7 @@ class _SelectTimeState extends State<SelectTime> {
                   ),
                 ),
                 SizedBox(
-                  height: 50,
+                  height: 10,
                 ),
                 Stack(
                   alignment: Alignment.center,
@@ -350,14 +347,7 @@ class _SelectTimeState extends State<SelectTime> {
           ],
         ),
       ),
-      // floatingActionButton: Container(
-      //   child: Padding(
-      //     padding: const EdgeInsets.fromLTRB(0.0, 100.0, 30.0, 0.0),
-      //     child: ,
-      //   ),
-      // ),
-      //floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
-    );
+     );
   }
 
   Future<void> showRooms(context, DeviceObject deviceObject) async {

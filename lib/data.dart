@@ -17,6 +17,7 @@ int doubleTapUp = 0;
 bool topHit = false;
 bool bottumHit = false;
 int maxTime = 0;
+double eachGraphSpace = 47;
 double time12am = 0,
     time3am = 0,
     time6am = 0,
@@ -156,13 +157,13 @@ class DeviceObject {
       if (this.offline == false) {
         if (onData[0] == 50) {
           print(
-            [socket.remotePort, onData],                    
+            [socket.remotePort, onData],
           );
 
           this.motionDetected = true;
           conToday.add(Container(
             margin: EdgeInsets.only(top: 25),
-            width: 45,
+            width: eachGraphSpace,
             child: BarChart(BarChartData(
               alignment: BarChartAlignment.spaceAround,
               maxY: 60,

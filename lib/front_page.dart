@@ -183,7 +183,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   print('state2');
                   conToday.add(Container(
                     margin: EdgeInsets.only(top: 25),
-                    width: 45,
+                    width: eachGraphSpace,
                     child: BarChart(BarChartData(
                       alignment: BarChartAlignment.spaceAround,
                       maxY: 60,
@@ -584,11 +584,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                       prefs.getString('new') != 'yes')) {
                                 deviceObjectList[0].socket.write('-3\r');
                                 upBGColor = upArrowColor;
-                                doubleTapUp = doubleTapUp + 1;
-                                Future.delayed(Duration(milliseconds: 500), () {
-                                  doubleTapUp = 0;
-                                  print('--');
-                                });
+                               
                                 setState(() {
                                   flare = 'up';
                                 });
@@ -607,15 +603,14 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                           false ||
                                       prefs.getString('new') != 'yes')) {
                                 deviceObjectList[0].socket.write('-1\r');
-                                setState(() {});
                                 setState(() {
-                                  if (doubleTapUp < 2) {
+                                 
                                     flare = 'idle';
                                     downArrowColor = Color(0xff5cbceb);
                                     downBGColor = Color(0xff02457a);
                                     upArrowColor = Color(0xff5cbceb);
                                     upBGColor = Color(0xff02457a);
-                                  }
+                                  
                                 });
                                 if (timer != null) {
                                   timer.cancel();
@@ -651,11 +646,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                   (deviceObjectList[0].resetingheight ==
                                           false ||
                                       prefs.getString('new') != 'yes')) {
-                                doubleTapDown = doubleTapDown + 1;
-                                Future.delayed(Duration(milliseconds: 500), () {
-                                  doubleTapDown = 0;
-                                  print('--');
-                                });
+                                
                                 downBGColor = downArrowColor;
                                 downArrowColor = upBGColor;
                                 topHit = false;
@@ -676,15 +667,15 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                   (deviceObjectList[0].resetingheight ==
                                           false ||
                                       prefs.getString('new') != 'yes')) {
-                                deviceObjectList[0].socket.write('-4\r');
+                                deviceObjectList[0].socket.write('-1\r');
                                 setState(() {
-                                  if (doubleTapDown < 2) {
+                                 
                                     flare = 'idle';
                                     downArrowColor = Color(0xff5cbceb);
                                     downBGColor = Color(0xff02457a);
                                     upArrowColor = Color(0xff5cbceb);
                                     upBGColor = Color(0xff02457a);
-                                  }
+                                  
                                 });
                                 if (timer != null) {
                                   timer.cancel();
