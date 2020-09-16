@@ -98,7 +98,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     maxYAxis = 20;
     connect();
     nameController = TextEditingController();
-
     getIpList();
 
     timer = Timer.periodic(
