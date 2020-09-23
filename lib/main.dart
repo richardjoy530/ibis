@@ -63,6 +63,7 @@ Future<void> getIpList() async {
 Future<void> notification(String message) async {
   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'your channel id', 'your channel name', 'your channel description',
+      icon: "Rave Cov",
       importance: Importance.Default,
       priority: Priority.Default,
       ticker: 'ticker');
@@ -1033,6 +1034,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 deviceObject.pause = false;
                 deviceObject.flare = 'off';
                 print('state4');
+                if (prefs.getString("new") == "yes") {
+                  new Timer.periodic(Duration(seconds: 40), (timer) {
+                    deviceObject.resetingheight = false;
+                    timer.cancel();
+                  });
+                }
 
                 deviceObject.elapsedTime = 0;
                 deviceObject.time = Duration(minutes: 0);
@@ -1118,11 +1125,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> overOver(context, DeviceObject deviceObject) async {
+    notification('Disinfection succusfully completed');
     await showDialog(
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        new Timer.periodic(Duration(seconds: 1), (timer) {
+        new Timer.periodic(Duration(seconds: 2), (timer) {
           Navigator.pop(context);
           timer.cancel();
         });
@@ -1141,7 +1149,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   fontSize: 24),
             ),
           ),
-         
         );
       },
     );
@@ -1343,6 +1350,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 deviceObject.elapsedTime = 0;
                 deviceObject.flare = 'off';
                 print('state5');
+                if (prefs.getString("new") == "yes") {
+                  new Timer.periodic(Duration(seconds: 40), (timer) {
+                    deviceObject.resetingheight = false;
+                    timer.cancel();
+                  });
+                }
                 destroyAnimation(deviceObject);
                 deviceObject.resetingheight = true;
                 deviceObject.socket.write('s');

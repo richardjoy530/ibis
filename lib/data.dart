@@ -260,6 +260,12 @@ class DeviceObject {
               time: DateTime.now(),
             ),
           );
+          if (prefs.getString("new") == "yes") {
+                  new Timer.periodic(Duration(seconds: 40), (timer) {
+                    this.resetingheight = false;
+                    timer.cancel();
+                  });
+                }
           notification('Motion was detected');
         }
       }

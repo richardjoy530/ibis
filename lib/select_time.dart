@@ -247,8 +247,8 @@ class _SelectTimeState extends State<SelectTime> {
                         initialValue: 0,
                         appearance: CircularSliderAppearance(
                             animationEnabled: false,
-                            startAngle: 140,
-                            angleRange: 270,
+                            startAngle: 180,
+                            angleRange: 350,
                             customWidths: CustomSliderWidths(
                               handlerSize: 20,
                               trackWidth: 20,

@@ -12,7 +12,6 @@ import 'package:ibis/show_history.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:qrscan/qrscan.dart' as scanner;
 
 import 'calender.dart';
 import 'data.dart';
@@ -20,23 +19,6 @@ import 'show_rooms_workers.dart';
 import 'height_page.dart';
 
 double todayTotalTime, yesdayTotalTime, dayBeforeYesTotalTime, maxYAxis;
-Future<void> scanIbis() async {
-  WiFiForIoTPlugin.setEnabled(false);
-  String cameraScanResult = await scanner.scan();
-  var data = cameraScanResult.split(',');
-  String ssid = data[1];
-  if (ssid[7] == '_') {
-    prefs.setString('new', 'yes');
-  }
-  String password = data[3];
-  WiFiForIoTPlugin.connect(ssid,
-      password: password, joinOnce: true, security: NetworkSecurity.WPA);
-  WiFiForIoTPlugin.isConnected().then((value) => isConnected = value);
-  if (isConnected == true) {
-    prefs.setString('SSID', ssid);
-    prefs.setString('password', password);
-  }
-}
 
 Future<void> wifi() async {
   WiFiForIoTPlugin.isEnabled().then(
@@ -88,6 +70,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   Timer timer;
   Timer totalDayTime;
   TextEditingController nameController;
+  TextEditingController ssidController;
+  TextEditingController passwordController;
   ScrollController scrollController = ScrollController();
 
   @override
@@ -98,6 +82,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     maxYAxis = 20;
     connect();
     nameController = TextEditingController();
+    ssidController = TextEditingController();
+    passwordController = TextEditingController();
     getIpList();
 
     timer = Timer.periodic(
@@ -151,7 +137,13 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       deviceObjectList[i].totalDuration.inSeconds);
                   prefs.setInt('${deviceObjectList[i].ip}secondDuration',
                       deviceObjectList[i].secondDuration.inSeconds);
-
+                  notification('Disinfection succusfully completed');
+                  if (prefs.getString("new") == "yes") {
+                    new Timer.periodic(Duration(seconds: 40), (timer) {
+                      deviceObjectList[i].resetingheight = false;
+                      timer.cancel();
+                    });
+                  }
                   deviceObjectList[i].power = false;
                   deviceObjectList[i].resetingheight = true;
 
@@ -384,9 +376,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                             child: ListTile(
                               leading: Icon(Icons.wifi_tethering),
                               title:
-                                  Text('Please scan your device to connect !'),
+                                  Text('Please Connect to your device hotspot'),
                               onTap: () {
-                                scanIbis();
+                                scanIbis(context);
                               },
                             ),
                           ),
@@ -422,6 +414,86 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
       ),
       onWillPop: _onWillPop,
     );
+  }
+
+  void checkCredentials(String ssid, String password) {
+    if (int.parse(ssid[7] + ssid[8]) > 19 &&
+        int.parse(ssid[7] + ssid[8]) < 29) {
+      prefs.setString('new', 'yes');
+    } else if (int.parse(ssid[7] + ssid[8]) > 28) {
+      prefs.setString('new', 'yes');
+    }
+  }
+
+  Future<void> scanIbis(BuildContext context) async {
+    await showDialog(
+        barrierDismissible: true,
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            backgroundColor: Color(0xffffffff),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            title: Center(
+              child: Text(
+                'Enter your device credentials',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Color(0xff02457a),
+                  fontWeight: FontWeight.bold,
+                  //fontSize: 24,
+                ),
+              ),
+            ),
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextField(
+                  controller: ssidController,
+                  decoration: InputDecoration(hintText: 'WiFi name'),
+                  onSubmitted: (name) {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextField(
+                  controller: passwordController,
+                  decoration: InputDecoration(hintText: 'password'),
+                  onSubmitted: (name) {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: SimpleDialogOption(
+                    child: Text('OK'),
+                    onPressed: () {
+                      if (ssidController.text != "" &&
+                          passwordController.text != "") {
+                        Navigator.pop(context);
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ],
+          );
+        });
+    WiFiForIoTPlugin.setEnabled(false);
+    String ssid = ssidController.text;
+    ssidController.text = "";
+    String password = passwordController.text;
+    passwordController.text = "";
+    WiFiForIoTPlugin.connect(ssid,
+        password: password, joinOnce: true, security: NetworkSecurity.WPA);
+    checkCredentials(ssid, password);
+    prefs.setString('SSID', ssid);
+    prefs.setString('password', password);
   }
 
   Widget fillerWidget(BuildContext context) {
@@ -583,7 +655,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                       prefs.getString('new') != 'yes')) {
                                 deviceObjectList[0].socket.write('-3\r');
                                 upBGColor = upArrowColor;
-                               
+
                                 setState(() {
                                   flare = 'up';
                                 });
@@ -603,13 +675,11 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                       prefs.getString('new') != 'yes')) {
                                 deviceObjectList[0].socket.write('-1\r');
                                 setState(() {
-                                 
-                                    flare = 'idle';
-                                    downArrowColor = Color(0xff5cbceb);
-                                    downBGColor = Color(0xff02457a);
-                                    upArrowColor = Color(0xff5cbceb);
-                                    upBGColor = Color(0xff02457a);
-                                  
+                                  flare = 'idle';
+                                  downArrowColor = Color(0xff5cbceb);
+                                  downBGColor = Color(0xff02457a);
+                                  upArrowColor = Color(0xff5cbceb);
+                                  upBGColor = Color(0xff02457a);
                                 });
                                 if (timer != null) {
                                   timer.cancel();
@@ -645,13 +715,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                   (deviceObjectList[0].resetingheight ==
                                           false ||
                                       prefs.getString('new') != 'yes')) {
-                                
                                 downBGColor = downArrowColor;
                                 downArrowColor = upBGColor;
                                 topHit = false;
                                 setState(() {
                                   flare = 'down';
-                                }); 
+                                });
 
                                 indicator = -1;
                                 deviceObjectList[0].socket.write('-2\r');
@@ -668,13 +737,11 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                       prefs.getString('new') != 'yes')) {
                                 deviceObjectList[0].socket.write('-1\r');
                                 setState(() {
-                                 
-                                    flare = 'idle';
-                                    downArrowColor = Color(0xff5cbceb);
-                                    downBGColor = Color(0xff02457a);
-                                    upArrowColor = Color(0xff5cbceb);
-                                    upBGColor = Color(0xff02457a);
-                                  
+                                  flare = 'idle';
+                                  downArrowColor = Color(0xff5cbceb);
+                                  downBGColor = Color(0xff02457a);
+                                  upArrowColor = Color(0xff5cbceb);
+                                  upBGColor = Color(0xff02457a);
                                 });
                                 if (timer != null) {
                                   timer.cancel();
@@ -944,42 +1011,16 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               ),
               ListTile(
                 leading: Icon(
-                  isEnabled == true
-                      ? Icons.signal_wifi_4_bar
-                      : Icons.signal_wifi_off,
-                  color: Color(0xff02457a),
-                ),
-                title: Text(
-                  isEnabled == true ? 'Tap to disconnect' : 'Tap to connect',
-                ),
-                onTap: () {
-                  setState(() {
-                    WiFiForIoTPlugin.setEnabled(!isEnabled);
-                    isEnabled = !isEnabled;
-                    Navigator.pop(context);
-                  });
-                },
-              ),
-              ListTile(
-                leading: Icon(
                   Icons.info_outline,
                   color: Color(0xff02457a),
                 ),
                 title: Text('History'),
                 onTap: () {
-                  Navigator.pop(context);
+                  //Navigator.pop(context);
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => CalenderPage()),
                   );
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.scatter_plot),
-                title: Text('QR Scanner'),
-                onTap: () {
-                  Navigator.pop(context);
-                  scanIbis();
                 },
               ),
             ],
