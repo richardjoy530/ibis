@@ -6,6 +6,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 import 'data.dart';
@@ -18,8 +19,11 @@ String dropdownValueStaff = rooms.length == 0 ? 'No Staff' : workers[0];
 
 List<BarChartGroupData> barYAxis = [];
 List<String> barTime = [];
-double pos=0;
-var scrollController=ScrollController();
+double pos = 0,todayoffset=0,yesdayoffset=0,twodayoffset=0;
+var scrollController = ScrollController();
+var todayScrollController = ScrollController();
+var yesterdayScrollController = ScrollController();
+var twoDayScrollController = ScrollController();
 
 Timer scrollTime;
 
@@ -46,27 +50,24 @@ class _SelectTimeState extends State<SelectTime> {
   @override
   void initState() {
     super.initState();
-    scrollTime=Timer.periodic(Duration(milliseconds: 100), (scrollbacktimer) {       
-      setState(() { 
-        if(scrollController.offset>0&& scrollController.offset<300)
-      {
-          pos=0;
-      }  
-      if(scrollController.offset>300&& scrollController.offset<700)
-      {
-          pos=1;
-      }       
-      if(scrollController.offset>700)
-      {
-        pos=2;
-      }
-      if(pos>2)
-      {
-        pos=0;
-      }
+    scrollTime = Timer.periodic(Duration(milliseconds: 100), (scrollbacktimer) {
+      setState(() {
+        todayoffset=(todayScrollController.offset)/((conToday.length-7)*57);
+        yesdayoffset=(yesterdayScrollController.offset)/((conYesday.length-7)*57);
+        twodayoffset=(twoDayScrollController.offset)/((con2DayBefore.length-7)*57);
+        if (scrollController.offset > 0 && scrollController.offset < 300) {
+          pos = 0;
+        }
+        if (scrollController.offset > 300 && scrollController.offset < 700) {
+          pos = 1;
+        }
+        if (scrollController.offset > 700) {
+          pos = 2;
+        }
+        if (pos > 2) {
+          pos = 0;
+        }
       });
-      
-  
     });
     dropdownValueRoom = rooms[0];
     dropdownValueStaff = workers[0];
@@ -76,7 +77,6 @@ class _SelectTimeState extends State<SelectTime> {
 
   @override
   void dispose() {
-    
     super.dispose();
     scrollTime.cancel();
   }
@@ -137,7 +137,6 @@ class _SelectTimeState extends State<SelectTime> {
                   onTap: () {
                     setState(() {
                       graph3Days(context, deviceObjectList[0]);
-                      
                     });
                   },
                   child: Container(
@@ -163,8 +162,9 @@ class _SelectTimeState extends State<SelectTime> {
                             children: [
                               Container(
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20.0),
+                                  borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(20.0),
+                                    topLeft: Radius.circular(20.0),
                                   ),
                                   color: Color(0xffbddeee),
                                 ),
@@ -172,11 +172,21 @@ class _SelectTimeState extends State<SelectTime> {
                                 width: MediaQuery.of(context).size.width - 120,
                                 child: SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
+                                  controller: todayScrollController,
                                   child: Row(
                                     children: conToday,
                                   ),
                                 ),
                               ),
+                            LinearPercentIndicator(
+                              lineHeight: 8,
+                              width: MediaQuery.of(context).size.width - 115,
+                              backgroundColor: Colors.grey[300],
+                              progressColor: Colors.blue,
+                              percent: todayoffset,
+                            )
+                              ,                           
+                              
                               Text(
                                 'Today',
                                 style: TextStyle(
@@ -202,11 +212,19 @@ class _SelectTimeState extends State<SelectTime> {
                                 width: MediaQuery.of(context).size.width - 120,
                                 child: SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
+                                  controller: yesterdayScrollController,
                                   child: Row(
                                     children: conYesday,
                                   ),
                                 ),
                               ),
+                              LinearPercentIndicator(
+                              lineHeight: 8,
+                              width: MediaQuery.of(context).size.width - 115,
+                              backgroundColor: Colors.grey[300],
+                              progressColor: Colors.blue,
+                              percent: yesdayoffset,
+                            ),
                               Text(
                                 'Yesterday',
                                 style: TextStyle(
@@ -232,11 +250,19 @@ class _SelectTimeState extends State<SelectTime> {
                                 width: MediaQuery.of(context).size.width - 120,
                                 child: SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
+                                  controller: twoDayScrollController,
                                   child: Row(
                                     children: con2DayBefore,
                                   ),
                                 ),
                               ),
+                              LinearPercentIndicator(
+                              lineHeight: 8,
+                              width: MediaQuery.of(context).size.width - 115,
+                              backgroundColor: Colors.grey[300],
+                              progressColor: Colors.blue,
+                              percent: twodayoffset,
+                            ),
                               Text(
                                 '2 Days ago',
                                 style: TextStyle(
@@ -252,17 +278,15 @@ class _SelectTimeState extends State<SelectTime> {
                       ),
                     ),
                   ),
-                ),                
-                SizedBox(
-                  height:20,
-                  child: DotsIndicator(
-                    dotsCount: 3,
-                    position: pos,
-                    )
                 ),
                 SizedBox(
-                  height:50,
-                  
+                    height: 20,
+                    child: DotsIndicator(
+                      dotsCount: 3,
+                      position: pos,
+                    )),
+                SizedBox(
+                  height: 50,
                 ),
                 Stack(
                   alignment: Alignment.center,
@@ -517,7 +541,7 @@ class _SelectTimeState extends State<SelectTime> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     Listener(
-                      onPointerUp: (pointerUpEvent){
+                      onPointerUp: (pointerUpEvent) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
