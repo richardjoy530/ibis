@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:math';
 
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,6 +18,10 @@ String dropdownValueStaff = rooms.length == 0 ? 'No Staff' : workers[0];
 
 List<BarChartGroupData> barYAxis = [];
 List<String> barTime = [];
+double pos=0;
+var scrollController=ScrollController();
+
+Timer scrollTime;
 
 final selectorColor = CustomSliderColors(
   dotColor: Color(0xff02457a),
@@ -40,10 +46,39 @@ class _SelectTimeState extends State<SelectTime> {
   @override
   void initState() {
     super.initState();
+    scrollTime=Timer.periodic(Duration(milliseconds: 100), (scrollbacktimer) {       
+      setState(() { 
+        if(scrollController.offset>0&& scrollController.offset<300)
+      {
+          pos=0;
+      }  
+      if(scrollController.offset>300&& scrollController.offset<700)
+      {
+          pos=1;
+      }       
+      if(scrollController.offset>700)
+      {
+        pos=2;
+      }
+      if(pos>2)
+      {
+        pos=0;
+      }
+      });
+      
+  
+    });
     dropdownValueRoom = rooms[0];
     dropdownValueStaff = workers[0];
     room = dropdownValueRoom;
     worker = dropdownValueStaff;
+  }
+
+  @override
+  void dispose() {
+    
+    super.dispose();
+    scrollTime.cancel();
   }
 
   @override
@@ -102,6 +137,7 @@ class _SelectTimeState extends State<SelectTime> {
                   onTap: () {
                     setState(() {
                       graph3Days(context, deviceObjectList[0]);
+                      
                     });
                   },
                   child: Container(
@@ -116,6 +152,7 @@ class _SelectTimeState extends State<SelectTime> {
                     ),
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
+                      controller: scrollController,
                       child: Row(
                         children: <Widget>[
                           SizedBox(
@@ -215,9 +252,17 @@ class _SelectTimeState extends State<SelectTime> {
                       ),
                     ),
                   ),
+                ),                
+                SizedBox(
+                  height:20,
+                  child: DotsIndicator(
+                    dotsCount: 3,
+                    position: pos,
+                    )
                 ),
                 SizedBox(
-                  height: 50,
+                  height:50,
+                  
                 ),
                 Stack(
                   alignment: Alignment.center,
