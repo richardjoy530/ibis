@@ -339,7 +339,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           padding: EdgeInsets.only(top: 40),
           color: Colors.white,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -366,49 +365,54 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   )
                 ],
               ),
-              serverOnline == true
-                  ? deviceObjectList.length == 0
-                      ? Center(
-                          child: Container(
-                            margin: EdgeInsets.fromLTRB(10, 30, 10, 30),
-                            decoration: BoxDecoration(
-                                color: Color(0xffd6e7ee),
-                                borderRadius: BorderRadius.circular(20)),
-                            child: ListTile(
-                              leading: Icon(Icons.add_box),
-                              title:
-                                  Text('Tap to add your device hotspot'),
-                              onTap: () {
-                                scanIbis(context);
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  serverOnline == true
+                      ? deviceObjectList.length == 0
+                          ? Center(
+                              child: Container(
+                                margin: EdgeInsets.fromLTRB(10, MediaQuery.of(context).size.height/3, 10, 0),
+                                decoration: BoxDecoration(
+                                    color: Color(0xffd6e7ee),
+                                    borderRadius: BorderRadius.circular(20)),
+                                child: ListTile(
+                                  leading: Icon(Icons.add_box),
+                                  title:
+                                      Text('Tap to add your device'),
+                                  onTap: () {
+                                    scanIbis(context);
+                                  },
+                                ),
+                              ),
+                            )
+                          : Expanded(child: fillerWidget(context))
+                      : Align(
+                          alignment: Alignment.center,
+                          child: AlertDialog(
+                            backgroundColor: Color(0xffffffff),
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20.0))),
+                            title: Text(
+                              'Server is Offline',
+                              style: TextStyle(
+                                  color: Color(0xff02457a),
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            content: IconButton(
+                              icon: Icon(
+                                Icons.refresh,
+                                color: Color(0xff019ae6),
+                              ),
+                              onPressed: () {
+                                connect();
                               },
                             ),
                           ),
-                        )
-                      : Expanded(child: fillerWidget(context))
-                  : Align(
-                      alignment: Alignment.center,
-                      child: AlertDialog(
-                        backgroundColor: Color(0xffffffff),
-                        shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20.0))),
-                        title: Text(
-                          'Server is Offline',
-                          style: TextStyle(
-                              color: Color(0xff02457a),
-                              fontWeight: FontWeight.bold),
                         ),
-                        content: IconButton(
-                          icon: Icon(
-                            Icons.refresh,
-                            color: Color(0xff019ae6),
-                          ),
-                          onPressed: () {
-                            connect();
-                          },
-                        ),
-                      ),
-                    ),
+                ],
+              ),
             ],
           ),
         ),
