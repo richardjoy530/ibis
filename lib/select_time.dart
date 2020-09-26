@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
@@ -37,19 +38,41 @@ class SelectTime extends StatefulWidget {
 }
 
 class _SelectTimeState extends State<SelectTime> {
+  ScrollController mainController;
+  ScrollController todayController;
+  ScrollController yesterdayController;
+  ScrollController dayBeforeYesterdayController;
+  double pos;
   @override
   void initState() {
+    pos = 1;
+    mainController = ScrollController();
+    todayController = ScrollController();
+    yesterdayController = ScrollController();
+    dayBeforeYesterdayController = ScrollController();
     super.initState();
     dropdownValueRoom = rooms[0];
     dropdownValueStaff = workers[0];
     room = dropdownValueRoom;
     worker = dropdownValueStaff;
+    mainController.addListener(() {
+      setState(() {
+        pos = ((2 * mainController.offset) /
+              (mainController.position.viewportDimension * 2))
+          ;
+      });
+      
+    });
   }
 
   @override
   void dispose() {
-    if(widget.deviceObject.power==false){
-    widget.deviceObject.socket.write(65);
+    mainController.dispose();
+    yesterdayController.dispose();
+    todayController.dispose();
+    dayBeforeYesterdayController.dispose();
+    if (widget.deviceObject.power == false) {
+      widget.deviceObject.socket.write(65);
     }
     super.dispose();
   }
@@ -100,251 +123,293 @@ class _SelectTimeState extends State<SelectTime> {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  graph3Days(context, deviceObjectList[0]);
-                });
-              },
-              child: Container(
-                margin: EdgeInsets.all(20),
-                padding: EdgeInsets.only(top: 25),
-                height: 200,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20.0),
-                  ),
-                  color: Color(0xff9ad2ec),
-                ),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: <Widget>[
-                      SizedBox(
-                        width: 40,
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      graph3Days(context, deviceObjectList[0]);
+                    });
+                  },
+                  child: Container(
+                    margin: EdgeInsets.all(20),
+                    padding: EdgeInsets.only(top: 25),
+                    height: 200,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20.0),
                       ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(20.0),
+                      color: Color(0xff9ad2ec),
+                    ),
+                    child: Column(
+                      children: [
+                        SingleChildScrollView(
+                          controller: mainController,
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: <Widget>[
+                              SizedBox(
+                                width: 40,
                               ),
-                              color: Color(0xffbddeee),
-                            ),
-                            height: 125,
-                            width: MediaQuery.of(context).size.width - 120,
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: conToday,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            'Today',
-                            style: TextStyle(
-                                color: Color(0xff02457a),
-                                fontWeight: FontWeight.bold),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        width: 80,
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(20.0),
-                              ),
-                              color: Color(0xffbddeee),
-                            ),
-                            height: 125,
-                            width: MediaQuery.of(context).size.width - 120,
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: conYesday,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            'Yesterday',
-                            style: TextStyle(
-                                color: Color(0xff02457a),
-                                fontWeight: FontWeight.bold),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        width: 80,
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(20.0),
-                              ),
-                              color: Color(0xffbddeee),
-                            ),
-                            height: 125,
-                            width: MediaQuery.of(context).size.width - 120,
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: con2DayBefore,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            '2 Days ago',
-                            style: TextStyle(
-                                color: Color(0xff02457a),
-                                fontWeight: FontWeight.bold),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        width: 40,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            
-            Stack(
-              alignment: Alignment.center,
-              children: <Widget>[
-                Container(
-                  height: min(MediaQuery.of(context).size.height / 3,
-                      MediaQuery.of(context).size.width / 1),
-                  width: min(MediaQuery.of(context).size.height / 3,
-                      MediaQuery.of(context).size.width / 1),
-                  child: FlareActor(
-                    'assets/breathing.flr',
-                    animation: widget.deviceObject.power == true &&
-                            widget.deviceObject.pause == false
-                        ? 'breath'
-                        : 'breath',
-                  ),
-                ),
-                Container(
-                  width: 300,
-                  height: 300,
-                  child: SleekCircularSlider(
-                    min: 0,
-                    max: 21,
-                    initialValue: 0,
-                    appearance: CircularSliderAppearance(
-                        animationEnabled: false,
-                        startAngle: 180,
-                        angleRange: 350,
-                        customWidths: CustomSliderWidths(
-                          handlerSize: 20,
-                          trackWidth: 20,
-                          progressBarWidth: 20,
-                        ),
-                        size:
-                            (MediaQuery.of(context).size.width / 1.5) + 50,
-                        customColors: selectorColor),
-                    onChange: (double value) {
-                      print(value);
-                      displayTime = value.floor();
-                      if (widget.deviceObject.power == false &&
-                          widget.deviceObject.clientError == false) {
-                        setState(() {
-                          widget.deviceObject.mainTime = Duration(
-                              minutes: HomePageState()
-                                  .mapValues(displayTime.toDouble())
-                                  .toInt());
-                          widget.deviceObject.time = Duration(
-                              minutes: HomePageState()
-                                  .mapValues(displayTime.toDouble())
-                                  .toInt());
-                          print([
-                            widget.deviceObject.time.inSeconds,
-                            widget.deviceObject.elapsedTime
-                          ]);
-                        });
-                      }
-                    },
-                    innerWidget: (value) {
-                      //print([widget.deviceObject.time.inSeconds,widget.deviceObject.elapsedTime]);
-                      return Container(
-                        // height: min(
-                        //     MediaQuery.of(context).size.height / 1.5,
-                        //     MediaQuery.of(context).size.width / 1.5),
-                        // width: min(MediaQuery.of(context).size.height / 1.5,
-                        //     MediaQuery.of(context).size.width / 1.5),
-                        child: Center(
-                          child: Container(
-                            height:
-                                (MediaQuery.of(context).size.width / 1.5) -
-                                    50,
-                            width:
-                                (MediaQuery.of(context).size.width / 1.5) -
-                                    50,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text(
-                                  '${HomePageState().getMinuets(((widget.deviceObject.time.inSeconds) - widget.deviceObject.elapsedTime).round())}'
-                                  ':${HomePageState().getSeconds(((widget.deviceObject.time.inSeconds) - widget.deviceObject.elapsedTime).round())}',
-                                  style: TextStyle(fontSize: 40),
-                                ),
-                                RaisedButton(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(18.0),
-                                  ),
-                                  color: Color(0xff02457a),
-                                  child: Text(
-                                    "Start",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 20),
-                                  ),
-                                  onPressed: () {
-                                    if (widget
-                                            .deviceObject.time.inMinutes >=
-                                        1) {
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => HomePage(
-                                            widget.deviceObject,
-                                            status: 'start',
+                              Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20.0),
+                                      ),
+                                      color: Color(0xffbddeee),
+                                    ),
+                                    height: 125,
+                                    width:
+                                        MediaQuery.of(context).size.width - 120,
+                                    child: Scrollbar(
+                                      controller: todayController,
+                                      isAlwaysShown: true,
+                                      radius: Radius.circular(5),
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 5),
+                                        child: SingleChildScrollView(
+                                          controller: todayController,
+                                          scrollDirection: Axis.horizontal,
+                                          child: Row(
+                                            children: conToday,
                                           ),
                                         ),
-                                      );
-                                    }
-                                  },
-                                )
-                              ],
-                            ),
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Today',
+                                    style: TextStyle(
+                                        color: Color(0xff02457a),
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                width: 80,
+                              ),
+                              Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20.0),
+                                      ),
+                                      color: Color(0xffbddeee),
+                                    ),
+                                    height: 125,
+                                    width:
+                                        MediaQuery.of(context).size.width - 120,
+                                    child: Scrollbar(
+                                      controller: yesterdayController,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 5),
+                                        child: SingleChildScrollView(
+                                          controller: yesterdayController,
+                                          scrollDirection: Axis.horizontal,
+                                          child: Row(
+                                            children: conYesday,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Yesterday',
+                                    style: TextStyle(
+                                        color: Color(0xff02457a),
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                width: 80,
+                              ),
+                              Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20.0),
+                                      ),
+                                      color: Color(0xffbddeee),
+                                    ),
+                                    height: 125,
+                                    width:
+                                        MediaQuery.of(context).size.width - 120,
+                                    child: Scrollbar(
+                                      controller: dayBeforeYesterdayController,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 5),
+                                        child: SingleChildScrollView(
+                                          controller:
+                                              dayBeforeYesterdayController,
+                                          scrollDirection: Axis.horizontal,
+                                          child: Row(
+                                            children: con2DayBefore,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    '2 Days ago',
+                                    style: TextStyle(
+                                        color: Color(0xff02457a),
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                width: 40,
+                              ),
+                            ],
                           ),
                         ),
-                      );
-                    },
+                        DotsIndicator(
+                          dotsCount: 3,
+                          position: pos,
+                        )
+                      ],
+                    ),
                   ),
-                )
-              ],
-            ),
+                ),
+                Stack(
+                  alignment: Alignment.center,
+                  children: <Widget>[
+                    Container(
+                      height: min(MediaQuery.of(context).size.height / 3,
+                          MediaQuery.of(context).size.width / 1),
+                      width: min(MediaQuery.of(context).size.height / 3,
+                          MediaQuery.of(context).size.width / 1),
+                      child: FlareActor(
+                        'assets/breathing.flr',
+                        animation: widget.deviceObject.power == true &&
+                                widget.deviceObject.pause == false
+                            ? 'breath'
+                            : 'breath',
+                      ),
+                    ),
+                    Container(
+                      width: 300,
+                      height: 300,
+                      child: SleekCircularSlider(
+                        min: 0,
+                        max: 21,
+                        initialValue: 0,
+                        appearance: CircularSliderAppearance(
+                            animationEnabled: false,
+                            startAngle: 180,
+                            angleRange: 350,
+                            customWidths: CustomSliderWidths(
+                              handlerSize: 20,
+                              trackWidth: 20,
+                              progressBarWidth: 20,
+                            ),
+                            size:
+                                (MediaQuery.of(context).size.width / 1.5) + 50,
+                            customColors: selectorColor),
+                        onChange: (double value) {
+                          print(value);
+                          displayTime = value.floor();
+                          if (widget.deviceObject.power == false &&
+                              widget.deviceObject.clientError == false) {
+                            setState(() {
+                              widget.deviceObject.mainTime = Duration(
+                                  minutes: HomePageState()
+                                      .mapValues(displayTime.toDouble())
+                                      .toInt());
+                              widget.deviceObject.time = Duration(
+                                  minutes: HomePageState()
+                                      .mapValues(displayTime.toDouble())
+                                      .toInt());
+                              print([
+                                widget.deviceObject.time.inSeconds,
+                                widget.deviceObject.elapsedTime
+                              ]);
+                            });
+                          }
+                        },
+                        innerWidget: (value) {
+                          //print([widget.deviceObject.time.inSeconds,widget.deviceObject.elapsedTime]);
+                          return Container(
+                            // height: min(
+                            //     MediaQuery.of(context).size.height / 1.5,
+                            //     MediaQuery.of(context).size.width / 1.5),
+                            // width: min(MediaQuery.of(context).size.height / 1.5,
+                            //     MediaQuery.of(context).size.width / 1.5),
+                            child: Center(
+                              child: Container(
+                                height:
+                                    (MediaQuery.of(context).size.width / 1.5) -
+                                        50,
+                                width:
+                                    (MediaQuery.of(context).size.width / 1.5) -
+                                        50,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      '${HomePageState().getMinuets(((widget.deviceObject.time.inSeconds) - widget.deviceObject.elapsedTime).round())}'
+                                      ':${HomePageState().getSeconds(((widget.deviceObject.time.inSeconds) - widget.deviceObject.elapsedTime).round())}',
+                                      style: TextStyle(fontSize: 40),
+                                    ),
+                                    RaisedButton(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(18.0),
+                                      ),
+                                      color: Color(0xff02457a),
+                                      child: Text(
+                                        "Start",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
+                                      onPressed: () {
+                                        if (widget
+                                                .deviceObject.time.inMinutes >=
+                                            1) {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => HomePage(
+                                                widget.deviceObject,
+                                                status: 'start',
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  ],
+                ),
               ],
             )
           ],
         ),
       ),
-     );
+    );
   }
 
   Future<void> showRooms(context, DeviceObject deviceObject) async {
@@ -477,12 +542,12 @@ class _SelectTimeState extends State<SelectTime> {
                         margin: EdgeInsets.only(bottom: 30),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(
-                            Radius.circular(20.0),
+                            Radius.circular(10.0),
                           ),
                           color: Color(0xff02457a),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(10.0),
                           child: Text(
                             'Detiled Hstory',
                             style: TextStyle(color: Colors.white),

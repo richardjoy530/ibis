@@ -162,6 +162,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
+        highlightColor: Color(0xff97cadb),
         fontFamily: 'BalooTamma2',
       ),
       home: Loding(),

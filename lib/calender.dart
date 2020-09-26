@@ -352,7 +352,7 @@ class _CalenderPageState extends State<CalenderPage> {
                 dropdownValue == timeDataList[i].roomName) {
               selectedDay.add(Container(
                 margin: EdgeInsets.only(top: 25),
-                width: 45,
+                width: eachGraphSpace,
                 child: BarChart(BarChartData(
                   alignment: BarChartAlignment.spaceAround,
                   maxY: 60,
