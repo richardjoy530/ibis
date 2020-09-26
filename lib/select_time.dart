@@ -55,6 +55,43 @@ class _SelectTimeState extends State<SelectTime> {
         todayoffset=(todayScrollController.offset)/((conToday.length-7)*57);
         yesdayoffset=(yesterdayScrollController.offset)/((conYesday.length-7)*57);
         twodayoffset=(twoDayScrollController.offset)/((con2DayBefore.length-7)*57);
+        if(todayoffset>=1)
+        {
+          todayoffset=1;
+        }
+        if(yesdayoffset>=1)
+        {
+          yesdayoffset=1;
+        }
+        if(twodayoffset>=1)
+        {
+          twodayoffset=1;
+        }
+        if(todayoffset<=0.2)
+        {
+          todayoffset=0.2;
+        }
+        if(yesdayoffset<=0.2)
+        {
+          yesdayoffset=0.2;
+        }
+        if(twodayoffset<=0.2)
+        {
+          twodayoffset=0.2;
+        }
+        if(conToday.length<7)
+        {
+          todayoffset=1;
+        }
+        if(conYesday.length<7)
+        {
+          yesdayoffset=1;
+        }
+        if(con2DayBefore.length<7)
+        {
+          twodayoffset=1;
+        }
+
         if (scrollController.offset > 0 && scrollController.offset < 300) {
           pos = 0;
         }

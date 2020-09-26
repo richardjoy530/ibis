@@ -952,7 +952,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                           builder: (context) => ShowRoomsStaffs()));
                 },
               ),
-              ListTile(
+            /*  ListTile(
                 leading: Icon(
                   isEnabled == true
                       ? Icons.signal_wifi_4_bar
@@ -969,7 +969,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     Navigator.pop(context);
                   });
                 },
-              ),
+              ),*/
               ListTile(
                 leading: Icon(
                   Icons.info_outline,
@@ -983,13 +983,13 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   );
                 },
               ),
-              ListTile(
+              /*ListTile(
                 leading: Icon(Icons.scatter_plot),
                 title: Text('QR Scanner'),
                 onTap: () {
                   scanIbis();
                 },
-              ),
+              ),*/
             ],
           );
         });
