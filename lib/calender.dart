@@ -158,7 +158,7 @@ class _CalenderPageState extends State<CalenderPage> {
                   return SimpleDialogOption(
                     child: Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.blue),
+                        border: Border.all(color: Color(0xff02457a)),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: ListTile(
@@ -270,6 +270,7 @@ class _CalenderPageState extends State<CalenderPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xff02457a),
         title: Text(
           'History',
           style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
@@ -325,15 +326,15 @@ class _CalenderPageState extends State<CalenderPage> {
       startingDayOfWeek: StartingDayOfWeek.sunday,
       calendarStyle: CalendarStyle(
         selectedColor: Colors.blue,
-        todayColor: Colors.lightBlue,
-        markersColor: Colors.blue,
+        todayColor: Color(0xff02457a),
+        markersColor: Color(0xff02457a),
         outsideDaysVisible: false,
       ),
       headerStyle: HeaderStyle(
         formatButtonTextStyle:
             TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
         formatButtonDecoration: BoxDecoration(
-          color: Colors.blue,
+          color: Color(0xff02457a),
           borderRadius: BorderRadius.circular(16.0),
         ),
       ),

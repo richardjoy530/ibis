@@ -60,7 +60,7 @@ class _SelectTimeState extends State<SelectTime> {
       body: Container(
         padding: EdgeInsets.only(top: 40),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Text(
               widget.deviceObject.name,
@@ -97,253 +97,250 @@ class _SelectTimeState extends State<SelectTime> {
                 ],
               ),
             ),
-            Expanded(
-                child: Column(
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      graph3Days(context, deviceObjectList[0]);
-                    });
-                  },
-                  child: Container(
-                    margin: EdgeInsets.all(20),
-                    padding: EdgeInsets.only(top: 25),
-                    height: 200,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(20.0),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  graph3Days(context, deviceObjectList[0]);
+                });
+              },
+              child: Container(
+                margin: EdgeInsets.all(20),
+                padding: EdgeInsets.only(top: 25),
+                height: 200,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20.0),
+                  ),
+                  color: Color(0xff9ad2ec),
+                ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: <Widget>[
+                      SizedBox(
+                        width: 40,
                       ),
-                      color: Color(0xff9ad2ec),
-                    ),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: <Widget>[
-                          SizedBox(
-                            width: 40,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20.0),
-                                  ),
-                                  color: Color(0xffbddeee),
-                                ),
-                                height: 125,
-                                width: MediaQuery.of(context).size.width - 120,
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: conToday,
-                                  ),
-                                ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(20.0),
                               ),
-                              Text(
-                                'Today',
-                                style: TextStyle(
-                                    color: Color(0xff02457a),
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            width: 80,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20.0),
-                                  ),
-                                  color: Color(0xffbddeee),
-                                ),
-                                height: 125,
-                                width: MediaQuery.of(context).size.width - 120,
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: conYesday,
-                                  ),
-                                ),
+                              color: Color(0xffbddeee),
+                            ),
+                            height: 125,
+                            width: MediaQuery.of(context).size.width - 120,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: conToday,
                               ),
-                              Text(
-                                'Yesterday',
-                                style: TextStyle(
-                                    color: Color(0xff02457a),
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ],
+                            ),
                           ),
-                          SizedBox(
-                            width: 80,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20.0),
-                                  ),
-                                  color: Color(0xffbddeee),
-                                ),
-                                height: 125,
-                                width: MediaQuery.of(context).size.width - 120,
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: con2DayBefore,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                '2 Days ago',
-                                style: TextStyle(
-                                    color: Color(0xff02457a),
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            width: 40,
-                          ),
+                          Text(
+                            'Today',
+                            style: TextStyle(
+                                color: Color(0xff02457a),
+                                fontWeight: FontWeight.bold),
+                          )
                         ],
                       ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Stack(
-                  alignment: Alignment.center,
-                  children: <Widget>[
-                    Container(
-                      height: min(MediaQuery.of(context).size.height / 3,
-                          MediaQuery.of(context).size.width / 1),
-                      width: min(MediaQuery.of(context).size.height / 3,
-                          MediaQuery.of(context).size.width / 1),
-                      child: FlareActor(
-                        'assets/breathing.flr',
-                        animation: widget.deviceObject.power == true &&
-                                widget.deviceObject.pause == false
-                            ? 'breath'
-                            : 'breath',
+                      SizedBox(
+                        width: 80,
                       ),
-                    ),
-                    Container(
-                      width: 300,
-                      height: 300,
-                      child: SleekCircularSlider(
-                        min: 0,
-                        max: 21,
-                        initialValue: 0,
-                        appearance: CircularSliderAppearance(
-                            animationEnabled: false,
-                            startAngle: 180,
-                            angleRange: 350,
-                            customWidths: CustomSliderWidths(
-                              handlerSize: 20,
-                              trackWidth: 20,
-                              progressBarWidth: 20,
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(20.0),
+                              ),
+                              color: Color(0xffbddeee),
                             ),
-                            size:
-                                (MediaQuery.of(context).size.width / 1.5) + 50,
-                            customColors: selectorColor),
-                        onChange: (double value) {
-                          print(value);
-                          displayTime = value.floor();
-                          if (widget.deviceObject.power == false &&
-                              widget.deviceObject.clientError == false) {
-                            setState(() {
-                              widget.deviceObject.mainTime = Duration(
-                                  minutes: HomePageState()
-                                      .mapValues(displayTime.toDouble())
-                                      .toInt());
-                              widget.deviceObject.time = Duration(
-                                  minutes: HomePageState()
-                                      .mapValues(displayTime.toDouble())
-                                      .toInt());
-                              print([
-                                widget.deviceObject.time.inSeconds,
-                                widget.deviceObject.elapsedTime
-                              ]);
-                            });
-                          }
-                        },
-                        innerWidget: (value) {
-                          //print([widget.deviceObject.time.inSeconds,widget.deviceObject.elapsedTime]);
-                          return Container(
-                            // height: min(
-                            //     MediaQuery.of(context).size.height / 1.5,
-                            //     MediaQuery.of(context).size.width / 1.5),
-                            // width: min(MediaQuery.of(context).size.height / 1.5,
-                            //     MediaQuery.of(context).size.width / 1.5),
-                            child: Center(
-                              child: Container(
-                                height:
-                                    (MediaQuery.of(context).size.width / 1.5) -
-                                        50,
-                                width:
-                                    (MediaQuery.of(context).size.width / 1.5) -
-                                        50,
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      '${HomePageState().getMinuets(((widget.deviceObject.time.inSeconds) - widget.deviceObject.elapsedTime).round())}'
-                                      ':${HomePageState().getSeconds(((widget.deviceObject.time.inSeconds) - widget.deviceObject.elapsedTime).round())}',
-                                      style: TextStyle(fontSize: 40),
-                                    ),
-                                    RaisedButton(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(18.0),
-                                      ),
-                                      color: Color(0xff02457a),
-                                      child: Text(
-                                        "Start",
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 20),
-                                      ),
-                                      onPressed: () {
-                                        if (widget
-                                                .deviceObject.time.inMinutes >=
-                                            1) {
-                                          Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => HomePage(
-                                                widget.deviceObject,
-                                                status: 'start',
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      },
-                                    )
-                                  ],
-                                ),
+                            height: 125,
+                            width: MediaQuery.of(context).size.width - 120,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: conYesday,
                               ),
                             ),
-                          );
-                        },
+                          ),
+                          Text(
+                            'Yesterday',
+                            style: TextStyle(
+                                color: Color(0xff02457a),
+                                fontWeight: FontWeight.bold),
+                          )
+                        ],
                       ),
-                    )
-                  ],
+                      SizedBox(
+                        width: 80,
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(20.0),
+                              ),
+                              color: Color(0xffbddeee),
+                            ),
+                            height: 125,
+                            width: MediaQuery.of(context).size.width - 120,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: con2DayBefore,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            '2 Days ago',
+                            style: TextStyle(
+                                color: Color(0xff02457a),
+                                fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        width: 40,
+                      ),
+                    ],
+                  ),
                 ),
+              ),
+            ),
+            
+            Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                Container(
+                  height: min(MediaQuery.of(context).size.height / 3,
+                      MediaQuery.of(context).size.width / 1),
+                  width: min(MediaQuery.of(context).size.height / 3,
+                      MediaQuery.of(context).size.width / 1),
+                  child: FlareActor(
+                    'assets/breathing.flr',
+                    animation: widget.deviceObject.power == true &&
+                            widget.deviceObject.pause == false
+                        ? 'breath'
+                        : 'breath',
+                  ),
+                ),
+                Container(
+                  width: 300,
+                  height: 300,
+                  child: SleekCircularSlider(
+                    min: 0,
+                    max: 21,
+                    initialValue: 0,
+                    appearance: CircularSliderAppearance(
+                        animationEnabled: false,
+                        startAngle: 180,
+                        angleRange: 350,
+                        customWidths: CustomSliderWidths(
+                          handlerSize: 20,
+                          trackWidth: 20,
+                          progressBarWidth: 20,
+                        ),
+                        size:
+                            (MediaQuery.of(context).size.width / 1.5) + 50,
+                        customColors: selectorColor),
+                    onChange: (double value) {
+                      print(value);
+                      displayTime = value.floor();
+                      if (widget.deviceObject.power == false &&
+                          widget.deviceObject.clientError == false) {
+                        setState(() {
+                          widget.deviceObject.mainTime = Duration(
+                              minutes: HomePageState()
+                                  .mapValues(displayTime.toDouble())
+                                  .toInt());
+                          widget.deviceObject.time = Duration(
+                              minutes: HomePageState()
+                                  .mapValues(displayTime.toDouble())
+                                  .toInt());
+                          print([
+                            widget.deviceObject.time.inSeconds,
+                            widget.deviceObject.elapsedTime
+                          ]);
+                        });
+                      }
+                    },
+                    innerWidget: (value) {
+                      //print([widget.deviceObject.time.inSeconds,widget.deviceObject.elapsedTime]);
+                      return Container(
+                        // height: min(
+                        //     MediaQuery.of(context).size.height / 1.5,
+                        //     MediaQuery.of(context).size.width / 1.5),
+                        // width: min(MediaQuery.of(context).size.height / 1.5,
+                        //     MediaQuery.of(context).size.width / 1.5),
+                        child: Center(
+                          child: Container(
+                            height:
+                                (MediaQuery.of(context).size.width / 1.5) -
+                                    50,
+                            width:
+                                (MediaQuery.of(context).size.width / 1.5) -
+                                    50,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  '${HomePageState().getMinuets(((widget.deviceObject.time.inSeconds) - widget.deviceObject.elapsedTime).round())}'
+                                  ':${HomePageState().getSeconds(((widget.deviceObject.time.inSeconds) - widget.deviceObject.elapsedTime).round())}',
+                                  style: TextStyle(fontSize: 40),
+                                ),
+                                RaisedButton(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(18.0),
+                                  ),
+                                  color: Color(0xff02457a),
+                                  child: Text(
+                                    "Start",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 20),
+                                  ),
+                                  onPressed: () {
+                                    if (widget
+                                            .deviceObject.time.inMinutes >=
+                                        1) {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => HomePage(
+                                            widget.deviceObject,
+                                            status: 'start',
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                )
               ],
-            ))
+            ),
+              ],
+            )
           ],
         ),
       ),

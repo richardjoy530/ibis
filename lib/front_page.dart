@@ -339,6 +339,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           padding: EdgeInsets.only(top: 40),
           color: Colors.white,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -374,9 +375,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                 color: Color(0xffd6e7ee),
                                 borderRadius: BorderRadius.circular(20)),
                             child: ListTile(
-                              leading: Icon(Icons.wifi_tethering),
+                              leading: Icon(Icons.add_box),
                               title:
-                                  Text('Please Connect to your device hotspot'),
+                                  Text('Tap to add your device hotspot'),
                               onTap: () {
                                 scanIbis(context);
                               },
@@ -417,10 +418,10 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   }
 
   void checkCredentials(String ssid, String password) {
-    if (int.parse(ssid[7] + ssid[8]) > 19 &&
-        int.parse(ssid[7] + ssid[8]) < 29) {
+    if (int.parse(password[7] + password[8]) > 19 &&
+        int.parse(password[7] + password[8]) < 29) {
       prefs.setString('new', 'yes');
-    } else if (int.parse(ssid[7] + ssid[8]) > 28) {
+    } else if (int.parse(password[7] + password[8]) > 28) {
       prefs.setString('new', 'yes');
     }
   }
@@ -971,31 +972,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         builder: (context) {
           return Wrap(
             children: <Widget>[
-              Padding(
-                  padding: const EdgeInsets.fromLTRB(200.0, 10, 200, 10),
-                  child: Divider(thickness: 2, color: Colors.grey[500])),
-              //  ListTile(
-              //     leading: Icon(
-              //       Icons.settings_input_composite,
-              //       color: Color(0xff02457a),
-              //     ),
-              //     title: Text(
-              //       'Server Ip: $serverIp',
-              //     ),
-              //     subtitle: FutureBuilder(
-              //         future: WiFiForIoTPlugin.getSSID(),
-              //         initialData: "Loading..",
-              //         builder:
-              //             (BuildContext context, AsyncSnapshot<String> bssid) {
-              //           return Text("BSSID: ${bssid.data}");
-              //         }),
-              //     onTap: () {
-              //       setState(() {
-              //         WiFiForIoTPlugin.getIP().then((value) => serverIp = value);
-              //       });
-              //       Navigator.pop(context);
-              //     },
-              //   ),
+              Divider(thickness: 2, color: Colors.grey[500],indent: 2*MediaQuery.of(context).size.width/5,endIndent: 2*MediaQuery.of(context).size.width/5,),
               ListTile(
                 leading: Icon(
                   Icons.view_list,
@@ -1573,16 +1550,16 @@ class _RoomsState extends State<Rooms> {
                         },
                         decoration: InputDecoration(
                           disabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue),
+                            borderSide: BorderSide(color: Color(0xff02457a)),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue),
+                            borderSide: BorderSide(color: Color(0xff02457a)),
                           ),
                           errorBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue),
+                            borderSide: BorderSide(color: Color(0xff02457a)),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
@@ -1595,12 +1572,12 @@ class _RoomsState extends State<Rooms> {
                               borderSide: BorderSide(
                                   color: cText[index] == ''
                                       ? Colors.red
-                                      : Colors.blue)),
+                                      : Color(0xff02457a))),
                           labelStyle: TextStyle(
                               fontSize: 20,
                               color: cText[index] == 'Enter Name'
                                   ? Colors.red
-                                  : Colors.blue),
+                                  : Color(0xff02457a)),
                         ),
                       ),
                     );
@@ -1612,7 +1589,7 @@ class _RoomsState extends State<Rooms> {
               child: ListTile(
                 leading: Container(
                   decoration: ShapeDecoration(
-                      shape: CircleBorder(), color: Colors.blue),
+                      shape: CircleBorder(), color:Color(0xff02457a)),
                   child: IconButton(
                     icon: Icon(Icons.add),
                     color: Colors.white,
@@ -1634,7 +1611,7 @@ class _RoomsState extends State<Rooms> {
                 ),
                 trailing: Container(
                   decoration: ShapeDecoration(
-                      shape: CircleBorder(), color: Colors.blue),
+                      shape: CircleBorder(), color: Color(0xff02457a)),
                   child: IconButton(
                     icon: Icon(Icons.check),
                     color: Colors.white,
@@ -1663,7 +1640,7 @@ class _RoomsState extends State<Rooms> {
                             msg: 'Successfully Added',
                             gravity: ToastGravity.CENTER,
                             toastLength: Toast.LENGTH_SHORT,
-                            backgroundColor: Colors.blue,
+                            backgroundColor: Color(0xff02457a),
                             textColor: Colors.white,
                             fontSize: 16.0,
                           );
@@ -1750,16 +1727,16 @@ class _WorkersState extends State<Workers> {
                         },
                         decoration: InputDecoration(
                           disabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue),
+                            borderSide: BorderSide(color: Color(0xff02457a)),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue),
+                            borderSide: BorderSide(color: Color(0xff02457a)),
                           ),
                           errorBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue),
+                            borderSide: BorderSide(color: Color(0xff02457a)),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
@@ -1771,13 +1748,13 @@ class _WorkersState extends State<Workers> {
                               borderSide: BorderSide(
                                   color: cText[index] == ''
                                       ? Colors.red
-                                      : Colors.blue)),
+                                      : Color(0xff02457a))),
                           labelText: 'Staff Name',
                           labelStyle: TextStyle(
                               fontSize: 20,
                               color: cText[index] == 'Enter Name'
                                   ? Colors.red
-                                  : Colors.blue),
+                                  : Color(0xff02457a)),
                         ),
                       ),
                     );
@@ -1789,7 +1766,7 @@ class _WorkersState extends State<Workers> {
               child: ListTile(
                 leading: Container(
                   decoration: ShapeDecoration(
-                      shape: CircleBorder(), color: Colors.blue),
+                      shape: CircleBorder(), color: Color(0xff02457a)),
                   child: IconButton(
                     icon: Icon(Icons.add),
                     color: Colors.white,
@@ -1811,7 +1788,7 @@ class _WorkersState extends State<Workers> {
                 ),
                 trailing: Container(
                   decoration: ShapeDecoration(
-                      shape: CircleBorder(), color: Colors.blue),
+                      shape: CircleBorder(), color: Color(0xff02457a)),
                   child: IconButton(
                     icon: Icon(Icons.check),
                     color: Colors.white,
@@ -1840,7 +1817,7 @@ class _WorkersState extends State<Workers> {
                             msg: 'Successfully Added',
                             gravity: ToastGravity.CENTER,
                             toastLength: Toast.LENGTH_SHORT,
-                            backgroundColor: Colors.blue,
+                            backgroundColor: Color(0xff02457a),
                             textColor: Colors.white,
                             fontSize: 16.0,
                           );

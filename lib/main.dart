@@ -63,7 +63,6 @@ Future<void> getIpList() async {
 Future<void> notification(String message) async {
   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'your channel id', 'your channel name', 'your channel description',
-      icon: "Rave Cov",
       importance: Importance.Default,
       priority: Priority.Default,
       ticker: 'ticker');
