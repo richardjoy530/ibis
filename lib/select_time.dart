@@ -51,17 +51,13 @@ class _SelectTimeState extends State<SelectTime> {
     yesterdayController = ScrollController();
     dayBeforeYesterdayController = ScrollController();
     super.initState();
-    dropdownValueRoom = rooms[0];
-    dropdownValueStaff = workers[0];
-    room = dropdownValueRoom;
-    worker = dropdownValueStaff;
+    dropdownValueRoom = room;
+    dropdownValueStaff = worker;
     mainController.addListener(() {
       setState(() {
         pos = ((2 * mainController.offset) /
-              (mainController.position.viewportDimension * 2))
-          ;
+            (mainController.position.viewportDimension * 2));
       });
-      
     });
   }
 
@@ -102,20 +98,16 @@ class _SelectTimeState extends State<SelectTime> {
                     backgroundColor: Color(0xff02457a),
                     heroTag: 'staff1',
                     label: Text(room),
-                    icon: Icon(Icons.arrow_drop_down),
-                    onPressed: () {
-                      showRooms(context, widget.deviceObject);
-                    },
+                    icon: Icon(Icons.perm_identity),
+                    onPressed: null,
                   ),
                   FloatingActionButton.extended(
                     backgroundColor: Color(0xff02457a),
                     elevation: 4,
                     heroTag: 'room1',
                     label: Text(worker),
-                    icon: Icon(Icons.arrow_drop_down),
-                    onPressed: () {
-                      showWorkers(context, widget.deviceObject);
-                    },
+                    icon: Icon(Icons.meeting_room_rounded),
+                    onPressed: null,
                   )
                 ],
               ),

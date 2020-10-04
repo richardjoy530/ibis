@@ -87,6 +87,9 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
                                     setState(() {
                                       databaseHelper.deleteRoom(rooms[index]);
                                       rooms.removeAt(index);
+                                      if (rooms.isEmpty) {
+                                        room = "Room";
+                                      }
                                     });
                                   },
                                 ),
@@ -144,6 +147,9 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
                                   setState(() {
                                     databaseHelper.deleteWorker(workers[index]);
                                     workers.removeAt(index);
+                                    if (workers.isEmpty) {
+                                        worker = "Room";
+                                      }
                                   });
                                 },
                               ),
