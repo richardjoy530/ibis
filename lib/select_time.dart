@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:dots_indicator/dots_indicator.dart';
@@ -6,7 +5,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 import 'data.dart';
@@ -19,13 +17,6 @@ String dropdownValueStaff = rooms.length == 0 ? 'No Staff' : workers[0];
 
 List<BarChartGroupData> barYAxis = [];
 List<String> barTime = [];
-double pos = 0,todayoffset=0,yesdayoffset=0,twodayoffset=0;
-var scrollController = ScrollController();
-var todayScrollController = ScrollController();
-var yesterdayScrollController = ScrollController();
-var twoDayScrollController = ScrollController();
-
-Timer scrollTime;
 
 final selectorColor = CustomSliderColors(
   dotColor: Color(0xff02457a),
@@ -47,75 +38,43 @@ class SelectTime extends StatefulWidget {
 }
 
 class _SelectTimeState extends State<SelectTime> {
+  ScrollController mainController;
+  ScrollController todayController;
+  ScrollController yesterdayController;
+  ScrollController dayBeforeYesterdayController;
+  double pos;
   @override
   void initState() {
+    pos = 1;
+    mainController = ScrollController();
+    todayController = ScrollController();
+    yesterdayController = ScrollController();
+    dayBeforeYesterdayController = ScrollController();
     super.initState();
-    scrollTime = Timer.periodic(Duration(milliseconds: 100), (scrollbacktimer) {
-      setState(() {
-        todayoffset=(todayScrollController.offset)/((conToday.length-7)*57);
-        yesdayoffset=(yesterdayScrollController.offset)/((conYesday.length-7)*57);
-        twodayoffset=(twoDayScrollController.offset)/((con2DayBefore.length-7)*57);
-        if(todayoffset>=1)
-        {
-          todayoffset=1;
-        }
-        if(yesdayoffset>=1)
-        {
-          yesdayoffset=1;
-        }
-        if(twodayoffset>=1)
-        {
-          twodayoffset=1;
-        }
-        if(todayoffset<=0.2)
-        {
-          todayoffset=0.2;
-        }
-        if(yesdayoffset<=0.2)
-        {
-          yesdayoffset=0.2;
-        }
-        if(twodayoffset<=0.2)
-        {
-          twodayoffset=0.2;
-        }
-        if(conToday.length<7)
-        {
-          todayoffset=1;
-        }
-        if(conYesday.length<7)
-        {
-          yesdayoffset=1;
-        }
-        if(con2DayBefore.length<7)
-        {
-          twodayoffset=1;
-        }
-
-        if (scrollController.offset > 0 && scrollController.offset < 300) {
-          pos = 0;
-        }
-        if (scrollController.offset > 300 && scrollController.offset < 700) {
-          pos = 1;
-        }
-        if (scrollController.offset > 700) {
-          pos = 2;
-        }
-        if (pos > 2) {
-          pos = 0;
-        }
-      });
-    });
     dropdownValueRoom = rooms[0];
     dropdownValueStaff = workers[0];
     room = dropdownValueRoom;
     worker = dropdownValueStaff;
+    mainController.addListener(() {
+      setState(() {
+        pos = ((2 * mainController.offset) /
+              (mainController.position.viewportDimension * 2))
+          ;
+      });
+      
+    });
   }
 
   @override
   void dispose() {
+    mainController.dispose();
+    yesterdayController.dispose();
+    todayController.dispose();
+    dayBeforeYesterdayController.dispose();
+    if (widget.deviceObject.power == false) {
+      widget.deviceObject.socket.write(65);
+    }
     super.dispose();
-    scrollTime.cancel();
   }
 
   @override
@@ -123,13 +82,8 @@ class _SelectTimeState extends State<SelectTime> {
     return Scaffold(
       body: Container(
         padding: EdgeInsets.only(top: 40),
-        // decoration: BoxDecoration(
-        //   gradient: LinearGradient(
-        //       begin: Alignment.topCenter,
-        //       end: Alignment.bottomCenter,
-        //       colors: [Color(0xffffffff), Color(0xffffffff)]),
-        // ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Text(
               widget.deviceObject.name,
@@ -166,8 +120,7 @@ class _SelectTimeState extends State<SelectTime> {
                 ],
               ),
             ),
-            Expanded(
-                child: Column(
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 GestureDetector(
@@ -186,144 +139,150 @@ class _SelectTimeState extends State<SelectTime> {
                       ),
                       color: Color(0xff9ad2ec),
                     ),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      controller: scrollController,
-                      child: Row(
-                        children: <Widget>[
-                          SizedBox(
-                            width: 40,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(20.0),
-                                    topLeft: Radius.circular(20.0),
-                                  ),
-                                  color: Color(0xffbddeee),
-                                ),
-                                height: 125,
-                                width: MediaQuery.of(context).size.width - 120,
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  controller: todayScrollController,
-                                  child: Row(
-                                    children: conToday,
-                                  ),
-                                ),
+                    child: Column(
+                      children: [
+                        SingleChildScrollView(
+                          controller: mainController,
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: <Widget>[
+                              SizedBox(
+                                width: 40,
                               ),
-                            LinearPercentIndicator(
-                              lineHeight: 8,
-                              width: MediaQuery.of(context).size.width - 115,
-                              backgroundColor: Colors.grey[300],
-                              progressColor: Colors.blue,
-                              percent: todayoffset,
-                            )
-                              ,                           
-                              
-                              Text(
-                                'Today',
-                                style: TextStyle(
-                                    color: Color(0xff02457a),
-                                    fontWeight: FontWeight.bold),
-                              )
+                              Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20.0),
+                                      ),
+                                      color: Color(0xffbddeee),
+                                    ),
+                                    height: 125,
+                                    width:
+                                        MediaQuery.of(context).size.width - 120,
+                                    child: Scrollbar(
+                                      controller: todayController,
+                                      isAlwaysShown: true,
+                                      radius: Radius.circular(5),
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 5),
+                                        child: SingleChildScrollView(
+                                          controller: todayController,
+                                          scrollDirection: Axis.horizontal,
+                                          child: Row(
+                                            children: conToday,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Today',
+                                    style: TextStyle(
+                                        color: Color(0xff02457a),
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                width: 80,
+                              ),
+                              Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20.0),
+                                      ),
+                                      color: Color(0xffbddeee),
+                                    ),
+                                    height: 125,
+                                    width:
+                                        MediaQuery.of(context).size.width - 120,
+                                    child: Scrollbar(
+                                      controller: yesterdayController,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 5),
+                                        child: SingleChildScrollView(
+                                          controller: yesterdayController,
+                                          scrollDirection: Axis.horizontal,
+                                          child: Row(
+                                            children: conYesday,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Yesterday',
+                                    style: TextStyle(
+                                        color: Color(0xff02457a),
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                width: 80,
+                              ),
+                              Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20.0),
+                                      ),
+                                      color: Color(0xffbddeee),
+                                    ),
+                                    height: 125,
+                                    width:
+                                        MediaQuery.of(context).size.width - 120,
+                                    child: Scrollbar(
+                                      controller: dayBeforeYesterdayController,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 5),
+                                        child: SingleChildScrollView(
+                                          controller:
+                                              dayBeforeYesterdayController,
+                                          scrollDirection: Axis.horizontal,
+                                          child: Row(
+                                            children: con2DayBefore,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    '2 Days ago',
+                                    style: TextStyle(
+                                        color: Color(0xff02457a),
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                width: 40,
+                              ),
                             ],
                           ),
-                          SizedBox(
-                            width: 80,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20.0),
-                                  ),
-                                  color: Color(0xffbddeee),
-                                ),
-                                height: 125,
-                                width: MediaQuery.of(context).size.width - 120,
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  controller: yesterdayScrollController,
-                                  child: Row(
-                                    children: conYesday,
-                                  ),
-                                ),
-                              ),
-                              LinearPercentIndicator(
-                              lineHeight: 8,
-                              width: MediaQuery.of(context).size.width - 115,
-                              backgroundColor: Colors.grey[300],
-                              progressColor: Colors.blue,
-                              percent: yesdayoffset,
-                            ),
-                              Text(
-                                'Yesterday',
-                                style: TextStyle(
-                                    color: Color(0xff02457a),
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            width: 80,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20.0),
-                                  ),
-                                  color: Color(0xffbddeee),
-                                ),
-                                height: 125,
-                                width: MediaQuery.of(context).size.width - 120,
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  controller: twoDayScrollController,
-                                  child: Row(
-                                    children: con2DayBefore,
-                                  ),
-                                ),
-                              ),
-                              LinearPercentIndicator(
-                              lineHeight: 8,
-                              width: MediaQuery.of(context).size.width - 115,
-                              backgroundColor: Colors.grey[300],
-                              progressColor: Colors.blue,
-                              percent: twodayoffset,
-                            ),
-                              Text(
-                                '2 Days ago',
-                                style: TextStyle(
-                                    color: Color(0xff02457a),
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            width: 40,
-                          ),
-                        ],
-                      ),
+                        ),
+                        DotsIndicator(
+                          dotsCount: 3,
+                          position: pos,
+                        )
+                      ],
                     ),
                   ),
-                ),
-                SizedBox(
-                    height: 20,
-                    child: DotsIndicator(
-                      dotsCount: 3,
-                      position: pos,
-                    )),
-                SizedBox(
-                  height: 50,
                 ),
                 Stack(
                   alignment: Alignment.center,
@@ -350,8 +309,8 @@ class _SelectTimeState extends State<SelectTime> {
                         initialValue: 0,
                         appearance: CircularSliderAppearance(
                             animationEnabled: false,
-                            startAngle: 140,
-                            angleRange: 270,
+                            startAngle: 180,
+                            angleRange: 350,
                             customWidths: CustomSliderWidths(
                               handlerSize: 20,
                               trackWidth: 20,
@@ -446,17 +405,10 @@ class _SelectTimeState extends State<SelectTime> {
                   ],
                 ),
               ],
-            ))
+            )
           ],
         ),
       ),
-      // floatingActionButton: Container(
-      //   child: Padding(
-      //     padding: const EdgeInsets.fromLTRB(0.0, 100.0, 30.0, 0.0),
-      //     child: ,
-      //   ),
-      // ),
-      //floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
     );
   }
 
@@ -590,12 +542,12 @@ class _SelectTimeState extends State<SelectTime> {
                         margin: EdgeInsets.only(bottom: 30),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(
-                            Radius.circular(20.0),
+                            Radius.circular(10.0),
                           ),
                           color: Color(0xff02457a),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(10.0),
                           child: Text(
                             'Detiled Hstory',
                             style: TextStyle(color: Colors.white),

@@ -77,7 +77,7 @@ class _LodingState extends State<Loding> {
           {
             conToday.add(Container(
               margin: EdgeInsets.only(top: 25),
-              width: 45,
+              width: eachGraphSpace,
               child: BarChart(BarChartData(
                 alignment: BarChartAlignment.spaceAround,
                 maxY: 60,
@@ -146,7 +146,7 @@ class _LodingState extends State<Loding> {
           {
             conYesday.add(Container(
               margin: EdgeInsets.only(top: 25),
-              width: 45,
+              width: eachGraphSpace,
               child: BarChart(BarChartData(
                 alignment: BarChartAlignment.spaceAround,
                 maxY: 60,
@@ -215,7 +215,7 @@ class _LodingState extends State<Loding> {
           {
             con2DayBefore.add(Container(
               margin: EdgeInsets.only(top: 25),
-              width: 45,
+              width: eachGraphSpace,
               child: BarChart(BarChartData(
                 alignment: BarChartAlignment.spaceAround,
                 maxY: 60,

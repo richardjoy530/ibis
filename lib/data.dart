@@ -17,6 +17,7 @@ int doubleTapUp = 0;
 bool topHit = false;
 bool bottumHit = false;
 int maxTime = 0;
+double eachGraphSpace = 47;
 double time12am = 0,
     time3am = 0,
     time6am = 0,
@@ -162,7 +163,7 @@ class DeviceObject {
           this.motionDetected = true;
           conToday.add(Container(
             margin: EdgeInsets.only(top: 25),
-            width: 45,
+            width: eachGraphSpace,
             child: BarChart(BarChartData(
               alignment: BarChartAlignment.spaceAround,
               maxY: 60,
@@ -259,6 +260,12 @@ class DeviceObject {
               time: DateTime.now(),
             ),
           );
+          if (prefs.getString("new") == "yes") {
+                  new Timer.periodic(Duration(seconds: 40), (timer) {
+                    this.resetingheight = false;
+                    timer.cancel();
+                  });
+                }
           notification('Motion was detected');
         }
       }

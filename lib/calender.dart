@@ -29,6 +29,7 @@ double elapseTimeFunction() {
   }
 }
 
+
 class CalenderPage extends StatefulWidget {
   @override
   _CalenderPageState createState() => _CalenderPageState();
@@ -46,12 +47,12 @@ class _CalenderPageState extends State<CalenderPage> {
       if (graphDisplayTemp == 0) {
         setState(() {
           var date = DateTime.now();
-          selectedDay=[];
+          selectedDay = [];
           for (int i = 0; i < timeDataList.length; i++) {
             if (timeDataList[i].startTime.day == date.day &&
                 timeDataList[i].startTime.month == date.month &&
                 timeDataList[i].startTime.year == date.year &&
-                dropdownValue==timeDataList[i].roomName) {
+                dropdownValue == timeDataList[i].roomName) {
               selectedDay.add(Container(
                 margin: EdgeInsets.only(top: 25),
                 width: 45,
@@ -135,123 +136,159 @@ class _CalenderPageState extends State<CalenderPage> {
     super.dispose();
   }
 
+  Future<void> showRooms(context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Text(
+            'Select a Room',
+            style: TextStyle(
+                color: Color(0xff02457a), fontWeight: FontWeight.bold),
+          ),
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: List.generate(
+                rooms.length,
+                (index) {
+                  return SimpleDialogOption(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Color(0xff02457a)),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.label_outline,
+                          color: Color(0xff02457a),
+                        ),
+                        title: Text(rooms[index],
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                    onPressed: () {
+                      room = rooms[index];
+                      setState(() {
+                        dropdownValue = room;
+                        var date = defaultTime;
+                        selectedDay = [];
+                        for (int i = 0; i < timeDataList.length; i++) {
+                          if (timeDataList[i].startTime.day == date.day &&
+                              timeDataList[i].startTime.month == date.month &&
+                              timeDataList[i].startTime.year == date.year &&
+                              dropdownValue == timeDataList[i].roomName) {
+                            selectedDay.add(Container(
+                              margin: EdgeInsets.only(top: 25),
+                              width: 45,
+                              child: BarChart(BarChartData(
+                                alignment: BarChartAlignment.spaceAround,
+                                maxY: 60,
+                                groupsSpace: 40,
+                                barTouchData: BarTouchData(
+                                  enabled: true,
+                                  touchTooltipData: BarTouchTooltipData(
+                                    tooltipBgColor: Colors.transparent,
+                                    tooltipPadding: const EdgeInsets.all(0),
+                                    tooltipBottomMargin: 8,
+                                    getTooltipItem: (
+                                      BarChartGroupData group,
+                                      int groupIndex,
+                                      BarChartRodData rod,
+                                      int rodIndex,
+                                    ) {
+                                      return BarTooltipItem(
+                                        rod.y.round().toString(),
+                                        TextStyle(
+                                          color: Colors.blueGrey,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                titlesData: FlTitlesData(
+                                  show: true,
+                                  bottomTitles: SideTitles(
+                                    showTitles: true,
+                                    textStyle: TextStyle(
+                                        color: const Color(0xff7589a2),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14),
+                                    margin: 20,
+                                    getTitles: (double value) {
+                                      String dateTimeNow = timeDataList[i]
+                                          .startTime
+                                          .hour
+                                          .toString();
+                                      dateTimeNow += ':';
+                                      dateTimeNow += timeDataList[i]
+                                          .startTime
+                                          .minute
+                                          .toString();
+                                      return dateTimeNow;
+                                    },
+                                  ),
+                                  leftTitles: SideTitles(showTitles: false),
+                                ),
+                                borderData: FlBorderData(
+                                  show: false,
+                                ),
+                                barGroups: [
+                                  BarChartGroupData(x: 0, barRods: [
+                                    BarChartRodData(
+                                        y: timeDataList[i].elapsedTime / 60,
+                                        color: Colors.lightBlueAccent),
+                                  ], showingTooltipIndicators: [
+                                    0
+                                  ])
+                                ],
+                              )),
+                            ));
+                          }
+                        }
+                      });
+
+                      Navigator.pop(context);
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xff02457a),
         title: Text(
           'History',
           style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
         ),
         actions: <Widget>[
-          DropdownButton<String>(
-            value: rooms.length == 0 ? 'No rooms' : dropdownValue,
-            icon: Icon(
-              Icons.arrow_drop_down,
-              color: Colors.white,
-            ),
-            iconSize: 30,
-            elevation: 26,
-            dropdownColor: Colors.blue,
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold),
-            underline: Container(
-              height: 0,
-              color: Colors.deepPurpleAccent,
-            ),
-            onChanged: (String newValue) {
-              setState(() {
-                dropdownValue = newValue;
-                var date = defaultTime;
-                selectedDay=[];
-               for (int i = 0; i < timeDataList.length; i++) {
-            if (timeDataList[i].startTime.day == date.day &&
-                timeDataList[i].startTime.month == date.month &&
-                timeDataList[i].startTime.year == date.year &&
-                dropdownValue==timeDataList[i].roomName) {
-              selectedDay.add(Container(
-                margin: EdgeInsets.only(top: 25),
-                width: 45,
-                child: BarChart(BarChartData(
-                  alignment: BarChartAlignment.spaceAround,
-                  maxY: 60,
-                  groupsSpace: 40,
-                  barTouchData: BarTouchData(
-                    enabled: true,
-                    touchTooltipData: BarTouchTooltipData(
-                      tooltipBgColor: Colors.transparent,
-                      tooltipPadding: const EdgeInsets.all(0),
-                      tooltipBottomMargin: 8,
-                      getTooltipItem: (
-                        BarChartGroupData group,
-                        int groupIndex,
-                        BarChartRodData rod,
-                        int rodIndex,
-                      ) {
-                        return BarTooltipItem(
-                          rod.y.round().toString(),
-                          TextStyle(
-                            color: Colors.blueGrey,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  titlesData: FlTitlesData(
-                    show: true,
-                    bottomTitles: SideTitles(
-                      showTitles: true,
-                      textStyle: TextStyle(
-                          color: const Color(0xff7589a2),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14),
-                      margin: 20,
-                      getTitles: (double value) {
-                        String dateTimeNow =
-                            timeDataList[i].startTime.hour.toString();
-                        dateTimeNow += ':';
-                        dateTimeNow +=
-                            timeDataList[i].startTime.minute.toString();
-                        return dateTimeNow;
-                      },
-                    ),
-                    leftTitles: SideTitles(showTitles: false),
-                  ),
-                  borderData: FlBorderData(
-                    show: false,
-                  ),
-                  barGroups: [
-                    BarChartGroupData(x: 0, barRods: [
-                      BarChartRodData(
-                          y: timeDataList[i].elapsedTime / 60,
-                          color: Colors.lightBlueAccent),
-                    ], showingTooltipIndicators: [
-                      0
-                    ])
-                  ],
-                )),
-              ));
-            }
-          }
-              });
-            },
-            items: rooms.length == 0
-                ? <String>['No rooms']
-                    .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList()
-                : rooms.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
+          Row(
+            children: [
+              Listener(
+                  onPointerUp: (data) {
+                    showRooms(context);
+                  },
+                  child: Text(room,style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)),
+              IconButton(
+                  icon: Icon(Icons.arrow_drop_down),
+                  onPressed: () {
+                    showRooms(context);
+                  })
+            ],
           ),
         ],
       ),
@@ -289,15 +326,15 @@ class _CalenderPageState extends State<CalenderPage> {
       startingDayOfWeek: StartingDayOfWeek.sunday,
       calendarStyle: CalendarStyle(
         selectedColor: Colors.blue,
-        todayColor: Colors.lightBlue,
-        markersColor: Colors.blue,
+        todayColor: Color(0xff02457a),
+        markersColor: Color(0xff02457a),
         outsideDaysVisible: false,
       ),
       headerStyle: HeaderStyle(
         formatButtonTextStyle:
             TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
         formatButtonDecoration: BoxDecoration(
-          color: Colors.blue,
+          color: Color(0xff02457a),
           borderRadius: BorderRadius.circular(16.0),
         ),
       ),
@@ -307,15 +344,15 @@ class _CalenderPageState extends State<CalenderPage> {
           defaultTime = date;
           print('date selected');
           print(dropdownValue);
-          selectedDay=[];
+          selectedDay = [];
           for (int i = 0; i < timeDataList.length; i++) {
             if (timeDataList[i].startTime.day == date.day &&
                 timeDataList[i].startTime.month == date.month &&
                 timeDataList[i].startTime.year == date.year &&
-                dropdownValue==timeDataList[i].roomName) {
+                dropdownValue == timeDataList[i].roomName) {
               selectedDay.add(Container(
                 margin: EdgeInsets.only(top: 25),
-                width: 45,
+                width: eachGraphSpace,
                 child: BarChart(BarChartData(
                   alignment: BarChartAlignment.spaceAround,
                   maxY: 60,
