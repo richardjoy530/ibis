@@ -73,6 +73,7 @@ Future<void> notification(String message) async {
       .show(0, 'Alert', message, platformChannelSpecifics, payload: 'item x');
 }
 
+
 void connect() async {
   ServerSocket.bind('0.0.0.0', 4042)
     ..then((sock) {
