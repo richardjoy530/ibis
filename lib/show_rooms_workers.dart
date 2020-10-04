@@ -164,17 +164,23 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               FloatingActionButton.extended(
+                backgroundColor: Color(0xff02457a),
                 heroTag: 'hero1',
-                label: Text('Staff'),
-                icon: Icon(Icons.add),
+                label: Text(
+                  'Staff',
+                  style: TextStyle(fontSize: 20, color: Color(0xffffffff)),
+                ),
+                icon: Icon(Icons.add, color: Color(0xffffffff)),
                 onPressed: () {
                   FrontPageState().addWorker(context);
                 },
               ),
               FloatingActionButton.extended(
+                backgroundColor: Color(0xff02457a),
                 heroTag: 'hero2',
-                label: Text('Room'),
-                icon: Icon(Icons.add),
+                label: Text('Room',
+                    style: TextStyle(fontSize: 20, color: Color(0xffffffff))),
+                icon: Icon(Icons.add, color: Color(0xffffffff)),
                 onPressed: () {
                   FrontPageState().addRooms(context);
                 },

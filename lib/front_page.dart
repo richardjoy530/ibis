@@ -12,7 +12,6 @@ import 'package:ibis/show_history.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:qrscan/qrscan.dart' as scanner;
 
 import 'calender.dart';
 import 'data.dart';
@@ -20,23 +19,6 @@ import 'show_rooms_workers.dart';
 import 'height_page.dart';
 
 double todayTotalTime, yesdayTotalTime, dayBeforeYesTotalTime, maxYAxis;
-Future<void> scanIbis() async {
-  WiFiForIoTPlugin.setEnabled(false);
-  String cameraScanResult = await scanner.scan();
-  var data = cameraScanResult.split(',');
-  String ssid = data[1];
-  if (ssid[7] == ' ') {
-    prefs.setString('new', 'yes');
-  }
-  String password = data[3];
-  WiFiForIoTPlugin.connect(ssid,
-      password: password, joinOnce: true, security: NetworkSecurity.WPA);
-  WiFiForIoTPlugin.isConnected().then((value) => isConnected = value);
-  if (isConnected == true) {
-    prefs.setString('SSID', ssid);
-    prefs.setString('password', password);
-  }
-}
 
 Future<void> wifi() async {
   WiFiForIoTPlugin.isEnabled().then(
@@ -88,6 +70,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   Timer timer;
   Timer totalDayTime;
   TextEditingController nameController;
+  TextEditingController ssidController;
+  TextEditingController passwordController;
   ScrollController scrollController = ScrollController();
 
   @override
@@ -98,7 +82,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     maxYAxis = 20;
     connect();
     nameController = TextEditingController();
-
+    ssidController = TextEditingController();
+    passwordController = TextEditingController();
     getIpList();
 
     timer = Timer.periodic(
@@ -106,6 +91,20 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
       (callback) {
         setState(
           () {
+            if (topHit == true) {
+              flare = 'idle';
+              downArrowColor = Color(0xff5cbceb);
+              downBGColor = Color(0xff02457a);
+              upArrowColor = Color(0xff5cbceb);
+              upBGColor = Color(0xff02457a);
+            }
+            if (bottumHit == true) {
+              flare = 'idle';
+              downArrowColor = Color(0xff5cbceb);
+              downBGColor = Color(0xff02457a);
+              upArrowColor = Color(0xff5cbceb);
+              upBGColor = Color(0xff02457a);
+            }
             for (var i = 0; i < deviceObjectList.length; i++) {
               if ((deviceObjectList[i].motionDetected == true ||
                       deviceObjectList[i].clientError == true) &&
@@ -138,7 +137,13 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       deviceObjectList[i].totalDuration.inSeconds);
                   prefs.setInt('${deviceObjectList[i].ip}secondDuration',
                       deviceObjectList[i].secondDuration.inSeconds);
-
+                  notification('Disinfection succusfully completed');
+                  if (prefs.getString("new") == "yes") {
+                    new Timer.periodic(Duration(seconds: 40), (timer) {
+                      deviceObjectList[i].resetingheight = false;
+                      timer.cancel();
+                    });
+                  }
                   deviceObjectList[i].power = false;
                   deviceObjectList[i].resetingheight = true;
 
@@ -167,6 +172,76 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   deviceObjectList[i].pause = false;
                   deviceObjectList[i].flare = 'off';
                   print('state2');
+                  conToday.add(Container(
+                    margin: EdgeInsets.only(top: 25),
+                    width: eachGraphSpace,
+                    child: BarChart(BarChartData(
+                      alignment: BarChartAlignment.spaceAround,
+                      maxY: 60,
+                      groupsSpace: 40,
+                      barTouchData: BarTouchData(
+                        enabled: true,
+                        touchTooltipData: BarTouchTooltipData(
+                          tooltipBgColor: Colors.transparent,
+                          tooltipPadding: const EdgeInsets.all(0),
+                          tooltipBottomMargin: 8,
+                          getTooltipItem: (
+                            BarChartGroupData group,
+                            int groupIndex,
+                            BarChartRodData rod,
+                            int rodIndex,
+                          ) {
+                            return BarTooltipItem(
+                              rod.y.round().toString(),
+                              TextStyle(
+                                color: Colors.blueGrey,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      titlesData: FlTitlesData(
+                        show: true,
+                        bottomTitles: SideTitles(
+                          showTitles: true,
+                          textStyle: TextStyle(
+                              color: const Color(0xff7589a2),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14),
+                          margin: 20,
+                          getTitles: (double value) {
+                            String dateTimeNow =
+                                timeDataList[timeDataList.length - 1]
+                                    .startTime
+                                    .hour
+                                    .toString();
+                            dateTimeNow += ':';
+                            dateTimeNow += timeDataList[timeDataList.length - 1]
+                                .startTime
+                                .minute
+                                .toString();
+                            return dateTimeNow;
+                          },
+                        ),
+                        leftTitles: SideTitles(showTitles: false),
+                      ),
+                      borderData: FlBorderData(
+                        show: false,
+                      ),
+                      barGroups: [
+                        BarChartGroupData(x: 0, barRods: [
+                          BarChartRodData(
+                              y: timeDataList[timeDataList.length - 1]
+                                      .elapsedTime /
+                                  60,
+                              color: Colors.lightBlueAccent),
+                        ], showingTooltipIndicators: [
+                          0
+                        ])
+                      ],
+                    )),
+                  ));
 
                   deviceObjectList[i].timer.cancel();
                   deviceObjectList[i].elapsedTime = 0;
@@ -262,16 +337,10 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           padding: EdgeInsets.only(top: 40),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xffffffff), Color(0xffffffff)]),
-          ),
+          color: Colors.white,
           child: Column(
             children: <Widget>[
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 20),
@@ -299,16 +368,19 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   ? deviceObjectList.length == 0
                       ? Center(
                           child: Container(
-                            margin: EdgeInsets.fromLTRB(10, 30, 10, 30),
+                            margin: EdgeInsets.fromLTRB(
+                                10,
+                                MediaQuery.of(context).size.height / 3,
+                                10,
+                                0),
                             decoration: BoxDecoration(
                                 color: Color(0xffd6e7ee),
                                 borderRadius: BorderRadius.circular(20)),
                             child: ListTile(
-                              leading: Icon(Icons.wifi_tethering),
-                              title:
-                                  Text('Please scan your device to connect !'),
+                              leading: Icon(Icons.add_box),
+                              title: Text('Tap to add your device'),
                               onTap: () {
-                                scanIbis();
+                                scanIbis(context);
                               },
                             ),
                           ),
@@ -344,6 +416,82 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
       ),
       onWillPop: _onWillPop,
     );
+  }
+
+  void checkCredentials(String ssid, String password) {
+    if (password == "razecov@1234" || password.length <= 8) {
+      // ignore: unnecessary_statements
+      null;
+    } else if (int.parse(password[7] + password[8]) > 19 &&
+        int.parse(password[7] + password[8]) < 29) {
+      prefs.setString('new', 'yes');
+    } else if (int.parse(password[7] + password[8]) > 28) {
+      prefs.setString('new', 'yes');
+    }
+  }
+
+  Future<void> scanIbis(BuildContext context) async {
+    await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            backgroundColor: Color(0xffffffff),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            title: Center(
+              child: Text(
+                'Enter your device credentials',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Color(0xff02457a),
+                  fontWeight: FontWeight.bold,
+                  //fontSize: 24,
+                ),
+              ),
+            ),
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextField(
+                  controller: ssidController,
+                  decoration: InputDecoration(hintText: 'WiFi name'),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextField(
+                  obscureText: true,
+                  controller: passwordController,
+                  decoration: InputDecoration(hintText: 'password'),
+                ),
+              ),
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: SimpleDialogOption(
+                    child: Text('OK'),
+                    onPressed: () {
+                      if (ssidController.text != "" &&
+                          passwordController.text != "") {
+                        Navigator.pop(context);
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ],
+          );
+        });
+    WiFiForIoTPlugin.setEnabled(false);
+    String ssid = ssidController.text;
+    String password = passwordController.text;
+    WiFiForIoTPlugin.connect(ssid,
+        password: password, joinOnce: true, security: NetworkSecurity.WPA);
+    checkCredentials(ssid, password);
+    prefs.setString('SSID', ssid);
+    prefs.setString('password', password);
   }
 
   Widget fillerWidget(BuildContext context) {
@@ -498,15 +646,18 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                             ),
                             onPointerDown: (data) {
                               if (deviceObjectList[0].offline == false &&
+                                  topHit == false &&
                                   deviceObjectList[0].power == false &&
                                   (deviceObjectList[0].resetingheight ==
                                           false ||
                                       prefs.getString('new') != 'yes')) {
                                 deviceObjectList[0].socket.write('-3\r');
                                 upBGColor = upArrowColor;
+
                                 setState(() {
                                   flare = 'up';
                                 });
+                                bottumHit = false;
                                 upArrowColor = downBGColor;
                                 indicator = 1;
                                 if (deviceObjectList[0].height != 100) {
@@ -523,8 +674,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                 deviceObjectList[0].socket.write('-1\r');
                                 setState(() {
                                   flare = 'idle';
-                                });
-                                setState(() {
+                                  downArrowColor = Color(0xff5cbceb);
+                                  downBGColor = Color(0xff02457a);
                                   upArrowColor = Color(0xff5cbceb);
                                   upBGColor = Color(0xff02457a);
                                 });
@@ -557,12 +708,14 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                             ),
                             onPointerDown: (data) {
                               if (deviceObjectList[0].offline == false &&
+                                  bottumHit == false &&
                                   deviceObjectList[0].power == false &&
                                   (deviceObjectList[0].resetingheight ==
                                           false ||
                                       prefs.getString('new') != 'yes')) {
                                 downBGColor = downArrowColor;
                                 downArrowColor = upBGColor;
+                                topHit = false;
                                 setState(() {
                                   flare = 'down';
                                 });
@@ -581,11 +734,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                           false ||
                                       prefs.getString('new') != 'yes')) {
                                 deviceObjectList[0].socket.write('-1\r');
-
-                                setState(() {
+                                setState(() { 
                                   flare = 'idle';
                                   downArrowColor = Color(0xff5cbceb);
                                   downBGColor = Color(0xff02457a);
+                                  upArrowColor = Color(0xff5cbceb);
+                                  upBGColor = Color(0xff02457a);
                                 });
                                 if (timer != null) {
                                   timer.cancel();
@@ -650,33 +804,30 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               }
             },
             child: Container(
-              width: MediaQuery.of(context).size.width/2.5,
+              width: MediaQuery.of(context).size.width / 2.5,
               height: 75,
               //margin: EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
                 color: Color(0xff02457a),
                 borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                boxShadow: [
-                  BoxShadow(
-                      blurRadius: 50,
-                      spreadRadius: 2,
-                      color: Color(0xff02457a))
-                ],
+                // boxShadow: [
+                //   BoxShadow(
+                //       blurRadius: 50, spreadRadius: 2, color: Color(0xff02457a))
+                // ],
               ),
               child: Center(
-                  child: Text(
-                    deviceObjectList[0].power == false
-                        ? 'Disinfect'
-                        : deviceObjectList[0].pause == true
-                            ? 'Paused'
-                            : 'Disinfecting',
-                    style: TextStyle(
-                        fontSize: 20.0,
-                        color: Color(0xffffffff),
-                        fontWeight: FontWeight.bold),
-                  ),
+                child: Text(
+                  deviceObjectList[0].power == false
+                      ? 'Disinfect'
+                      : deviceObjectList[0].pause == true
+                          ? 'Paused'
+                          : 'Disinfecting',
+                  style: TextStyle(
+                      fontSize: 20.0,
+                      color: Color(0xffffffff),
+                      fontWeight: FontWeight.bold),
                 ),
-              
+              ),
             ),
           ),
         )
@@ -818,31 +969,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         builder: (context) {
           return Wrap(
             children: <Widget>[
-              Padding(
-                  padding: const EdgeInsets.fromLTRB(200.0, 10, 200, 10),
-                  child: Divider(thickness: 2, color: Colors.grey[500])),
-              //  ListTile(
-              //     leading: Icon(
-              //       Icons.settings_input_composite,
-              //       color: Color(0xff02457a),
-              //     ),
-              //     title: Text(
-              //       'Server Ip: $serverIp',
-              //     ),
-              //     subtitle: FutureBuilder(
-              //         future: WiFiForIoTPlugin.getSSID(),
-              //         initialData: "Loading..",
-              //         builder:
-              //             (BuildContext context, AsyncSnapshot<String> bssid) {
-              //           return Text("BSSID: ${bssid.data}");
-              //         }),
-              //     onTap: () {
-              //       setState(() {
-              //         WiFiForIoTPlugin.getIP().then((value) => serverIp = value);
-              //       });
-              //       Navigator.pop(context);
-              //     },
-              //   ),
+              Divider(
+                thickness: 2,
+                color: Colors.grey[500],
+                indent: 2 * MediaQuery.of(context).size.width / 5,
+                endIndent: 2 * MediaQuery.of(context).size.width / 5,
+              ),
               ListTile(
                 leading: Icon(
                   Icons.view_list,
@@ -858,40 +990,16 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               ),
               ListTile(
                 leading: Icon(
-                  isEnabled == true
-                      ? Icons.signal_wifi_4_bar
-                      : Icons.signal_wifi_off,
-                  color: Color(0xff02457a),
-                ),
-                title: Text(
-                  isEnabled == true ? 'Tap to disconnect' : 'Tap to connect',
-                ),
-                onTap: () {
-                  setState(() {
-                    WiFiForIoTPlugin.setEnabled(!isEnabled);
-                    isEnabled = !isEnabled;
-                    Navigator.pop(context);
-                  });
-                },
-              ),
-              ListTile(
-                leading: Icon(
                   Icons.info_outline,
                   color: Color(0xff02457a),
                 ),
                 title: Text('History'),
                 onTap: () {
+                  //Navigator.pop(context);
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => CalenderPage()),
                   );
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.scatter_plot),
-                title: Text('QR Scanner'),
-                onTap: () {
-                  scanIbis();
                 },
               ),
             ],
@@ -1444,16 +1552,16 @@ class _RoomsState extends State<Rooms> {
                         },
                         decoration: InputDecoration(
                           disabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue),
+                            borderSide: BorderSide(color: Color(0xff02457a)),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue),
+                            borderSide: BorderSide(color: Color(0xff02457a)),
                           ),
                           errorBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue),
+                            borderSide: BorderSide(color: Color(0xff02457a)),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
@@ -1466,12 +1574,12 @@ class _RoomsState extends State<Rooms> {
                               borderSide: BorderSide(
                                   color: cText[index] == ''
                                       ? Colors.red
-                                      : Colors.blue)),
+                                      : Color(0xff02457a))),
                           labelStyle: TextStyle(
                               fontSize: 20,
                               color: cText[index] == 'Enter Name'
                                   ? Colors.red
-                                  : Colors.blue),
+                                  : Color(0xff02457a)),
                         ),
                       ),
                     );
@@ -1483,7 +1591,7 @@ class _RoomsState extends State<Rooms> {
               child: ListTile(
                 leading: Container(
                   decoration: ShapeDecoration(
-                      shape: CircleBorder(), color: Colors.blue),
+                      shape: CircleBorder(), color: Color(0xff02457a)),
                   child: IconButton(
                     icon: Icon(Icons.add),
                     color: Colors.white,
@@ -1505,7 +1613,7 @@ class _RoomsState extends State<Rooms> {
                 ),
                 trailing: Container(
                   decoration: ShapeDecoration(
-                      shape: CircleBorder(), color: Colors.blue),
+                      shape: CircleBorder(), color: Color(0xff02457a)),
                   child: IconButton(
                     icon: Icon(Icons.check),
                     color: Colors.white,
@@ -1517,10 +1625,9 @@ class _RoomsState extends State<Rooms> {
                             check += 1;
                             cText[i] = 'Enter Name';
                           }
-                          if(rooms.contains(roomNames[i].text))
-                          {
-                            check+=1;
-                            cText[i]='Room already Present';
+                          if (rooms.contains(roomNames[i].text)) {
+                            check += 1;
+                            cText[i] = 'Room already Present';
                           }
                         }
                         if (check == 0) {
@@ -1535,7 +1642,7 @@ class _RoomsState extends State<Rooms> {
                             msg: 'Successfully Added',
                             gravity: ToastGravity.CENTER,
                             toastLength: Toast.LENGTH_SHORT,
-                            backgroundColor: Colors.blue,
+                            backgroundColor: Color(0xff02457a),
                             textColor: Colors.white,
                             fontSize: 16.0,
                           );
@@ -1622,16 +1729,16 @@ class _WorkersState extends State<Workers> {
                         },
                         decoration: InputDecoration(
                           disabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue),
+                            borderSide: BorderSide(color: Color(0xff02457a)),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue),
+                            borderSide: BorderSide(color: Color(0xff02457a)),
                           ),
                           errorBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.blue),
+                            borderSide: BorderSide(color: Color(0xff02457a)),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
@@ -1643,13 +1750,13 @@ class _WorkersState extends State<Workers> {
                               borderSide: BorderSide(
                                   color: cText[index] == ''
                                       ? Colors.red
-                                      : Colors.blue)),
+                                      : Color(0xff02457a))),
                           labelText: 'Staff Name',
                           labelStyle: TextStyle(
                               fontSize: 20,
                               color: cText[index] == 'Enter Name'
                                   ? Colors.red
-                                  : Colors.blue),
+                                  : Color(0xff02457a)),
                         ),
                       ),
                     );
@@ -1661,7 +1768,7 @@ class _WorkersState extends State<Workers> {
               child: ListTile(
                 leading: Container(
                   decoration: ShapeDecoration(
-                      shape: CircleBorder(), color: Colors.blue),
+                      shape: CircleBorder(), color: Color(0xff02457a)),
                   child: IconButton(
                     icon: Icon(Icons.add),
                     color: Colors.white,
@@ -1683,7 +1790,7 @@ class _WorkersState extends State<Workers> {
                 ),
                 trailing: Container(
                   decoration: ShapeDecoration(
-                      shape: CircleBorder(), color: Colors.blue),
+                      shape: CircleBorder(), color: Color(0xff02457a)),
                   child: IconButton(
                     icon: Icon(Icons.check),
                     color: Colors.white,
@@ -1695,15 +1802,14 @@ class _WorkersState extends State<Workers> {
                             check += 1;
                             cText[i] = 'Enter Name';
                           }
-                          if(workers.contains(roomNames[i].text))
-                            {
-                             check+=1;
-                             cText[i]='Name already Present';
-                            }
+                          if (workers.contains(roomNames[i].text)) {
+                            check += 1;
+                            cText[i] = 'Name already Present';
+                          }
                         }
                         if (check == 0) {
                           for (i = 0; i < nameNumber; i++) {
-                            if (roomNames[i].text.length > 0 ) {
+                            if (roomNames[i].text.length > 0) {
                               databaseHelper.insertWorker(roomNames[i].text);
                               workers.add(roomNames[i].text);
                             }
@@ -1713,7 +1819,7 @@ class _WorkersState extends State<Workers> {
                             msg: 'Successfully Added',
                             gravity: ToastGravity.CENTER,
                             toastLength: Toast.LENGTH_SHORT,
-                            backgroundColor: Colors.blue,
+                            backgroundColor: Color(0xff02457a),
                             textColor: Colors.white,
                             fontSize: 16.0,
                           );

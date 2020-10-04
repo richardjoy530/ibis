@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,11 @@ import 'package:dots_indicator/dots_indicator.dart';
 
 import 'data.dart';
 import 'loding.dart';
+import 'select_time.dart';
 
+List<Container> conToday = [];
+List<Container> conYesday = [];
+List<Container> con2DayBefore = [];
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 String dropdownValueRoom = rooms.length == 0 ? 'No rooms' : rooms[0];
@@ -76,7 +81,7 @@ void connect() async {
       print('Server Hosted');
       runZoned(() {}, onError: (e) {
         print('Server error 1: $e');
-      });
+      }); 
       serverSocket.listen((sock) {}).onData((clientSocket) {
         if (!ipList.contains(clientSocket.remoteAddress.address)) {
           //New Devices
@@ -157,6 +162,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
+        highlightColor: Color(0xff97cadb),
         fontFamily: 'BalooTamma2',
       ),
       home: Loding(),
@@ -255,29 +261,18 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return Scaffold(
       body: Container(
         padding: EdgeInsets.only(top: 40),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xffffffff), Color(0xffffffff)]),
-        ),
         child: Column(
           children: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                IconButton(
-                    icon: Icon(
-                      Icons.arrow_back_ios,
-                      color: Color(0xff02457a),
-                    ),
-                    onPressed: () {
-                      if (widget.deviceObject.power == false &&
-                          widget.deviceObject.clientError == false) {
-                        //widget.deviceObject.socket.write(65);
-                      }
-                      Navigator.pop(context);
-                    }),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.lens,
+                    color: Colors.white,
+                  ),
+                ),
                 Text(
                   widget.deviceObject.name,
                   style: TextStyle(
@@ -699,7 +694,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           child: Text(
                             'Start',
                             style: TextStyle(
-                                fontSize: 20, color: Color(0xff02457a)),
+                                fontSize: 20, color: Color(0xffffffff)),
                           )),
                       onPressed: () {
                         if (deviceObject.time.inMinutes != 0) {
@@ -707,9 +702,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         }
                       },
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                        borderRadius: BorderRadius.circular(15.0),
                       ),
-                      color: Color(0xff5cbceb),
+                      color: Color(0xff02457a),
                     ),
                   ],
                 )
@@ -738,8 +733,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         padding: const EdgeInsets.all(10.0),
                         child: Text(
                           deviceObject.pause == true ? 'Play ' : 'Pause',
-                          style: TextStyle(
-                              fontSize: 20, color: Color(0xffffffff)),
+                          style:
+                              TextStyle(fontSize: 20, color: Color(0xffffffff)),
                         ),
                       ),
                       onPressed: () {
@@ -760,6 +755,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void start(DeviceObject deviceObject) {
     // Start
     deviceObject.flare = 'on';
+    topHit = false;
     //deviceObject.temp = false;
     startTime = DateTime.now();
     deviceObject.socket.writeln(deviceObject.time.inMinutes.round());
@@ -956,6 +952,76 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     time: DateTime.now(),
                   ),
                 );
+                conToday.add(Container(
+                  margin: EdgeInsets.only(top: 25),
+                  width: eachGraphSpace,
+                  child: BarChart(BarChartData(
+                    alignment: BarChartAlignment.spaceAround,
+                    maxY: 60,
+                    groupsSpace: 40,
+                    barTouchData: BarTouchData(
+                      enabled: true,
+                      touchTooltipData: BarTouchTooltipData(
+                        tooltipBgColor: Colors.transparent,
+                        tooltipPadding: const EdgeInsets.all(0),
+                        tooltipBottomMargin: 8,
+                        getTooltipItem: (
+                          BarChartGroupData group,
+                          int groupIndex,
+                          BarChartRodData rod,
+                          int rodIndex,
+                        ) {
+                          return BarTooltipItem(
+                            rod.y.round().toString(),
+                            TextStyle(
+                              color: Colors.blueGrey,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    titlesData: FlTitlesData(
+                      show: true,
+                      bottomTitles: SideTitles(
+                        showTitles: true,
+                        textStyle: TextStyle(
+                            color: const Color(0xff7589a2),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14),
+                        margin: 20,
+                        getTitles: (double value) {
+                          String dateTimeNow =
+                              timeDataList[timeDataList.length - 1]
+                                  .startTime
+                                  .hour
+                                  .toString();
+                          dateTimeNow += ':';
+                          dateTimeNow += timeDataList[timeDataList.length - 1]
+                              .startTime
+                              .minute
+                              .toString();
+                          return dateTimeNow;
+                        },
+                      ),
+                      leftTitles: SideTitles(showTitles: false),
+                    ),
+                    borderData: FlBorderData(
+                      show: false,
+                    ),
+                    barGroups: [
+                      BarChartGroupData(x: 0, barRods: [
+                        BarChartRodData(
+                            y: timeDataList[timeDataList.length - 1]
+                                    .elapsedTime /
+                                60,
+                            color: Colors.lightBlueAccent),
+                      ], showingTooltipIndicators: [
+                        0
+                      ])
+                    ],
+                  )),
+                ));
 
                 prefs.setInt('${deviceObject.ip}totalDuration',
                     deviceObject.totalDuration.inSeconds);
@@ -968,6 +1034,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 deviceObject.pause = false;
                 deviceObject.flare = 'off';
                 print('state4');
+                if (prefs.getString("new") == "yes") {
+                  new Timer.periodic(Duration(seconds: 40), (timer) {
+                    deviceObject.resetingheight = false;
+                    timer.cancel();
+                  });
+                }
 
                 deviceObject.elapsedTime = 0;
                 deviceObject.time = Duration(minutes: 0);
@@ -977,7 +1049,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           );
           if (deviceObject.progressDegrees == 360) {
             deviceObject.progressDegrees = 0;
-            overOver(context);
+            overOver(context, deviceObject);
           }
         },
       );
@@ -1038,6 +1110,11 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 onPressed: () {
                   widget.deviceObject.motionDetected = false;
                   Navigator.pop(context);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SelectTime(widget.deviceObject)),
+                  );
                 },
               ),
             ),
@@ -1047,7 +1124,35 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  Future<void> overOver(context) async {
+  Future<void> overOver(context, DeviceObject deviceObject) async {
+    notification('Disinfection succusfully completed');
+    await showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        new Timer.periodic(Duration(seconds: 2), (timer) {
+          Navigator.pop(context);
+          timer.cancel();
+        });
+        return AlertDialog(
+          backgroundColor: Color(0xffffffff),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Center(
+            child: Text(
+              'Succusfully Completed!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Color(0xff02457a),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24),
+            ),
+          ),
+        );
+      },
+    );
+
     await showDialog(
       barrierDismissible: false,
       context: context,
@@ -1059,7 +1164,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
           title: Center(
             child: Text(
-              'Succesfully completed!',
+              'Would you like to start disinfecting again?',
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: Color(0xff02457a),
@@ -1068,21 +1173,26 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
           ),
           children: <Widget>[
-            Center(
-              child: Text(
-                'Continue disinfecting ?',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.blueGrey, fontSize: 20),
-              ),
-            ),
+            // Center(
+            //   child: Text(
+            //     'Continue disinfecting ?',
+            //     textAlign: TextAlign.center,
+            //     style: TextStyle(color: Colors.blueGrey, fontSize: 20),
+            //   ),
+            // ),
             SimpleDialogOption(
-              child: Center(child: Text('yes', textAlign: TextAlign.center)),
+              child: Center(child: Text('Yes', textAlign: TextAlign.center)),
               onPressed: () {
                 widget.deviceObject.clientError = false;
 
                 widget.deviceObject.socket.write('y\r');
                 errorRemover = true;
                 Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SelectTime(deviceObject)),
+                );
               },
             ),
             SimpleDialogOption(
@@ -1121,7 +1231,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           children: <Widget>[
             SimpleDialogOption(
               child: Center(
-                child: Text('YES'),
+                child: Text('Yes'),
               ),
               onPressed: () {
                 print('stop');
@@ -1159,6 +1269,77 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     time: DateTime.now(),
                   ),
                 );
+
+                conToday.add(Container(
+                  margin: EdgeInsets.only(top: 25),
+                  width: eachGraphSpace,
+                  child: BarChart(BarChartData(
+                    alignment: BarChartAlignment.spaceAround,
+                    maxY: 60,
+                    groupsSpace: 40,
+                    barTouchData: BarTouchData(
+                      enabled: true,
+                      touchTooltipData: BarTouchTooltipData(
+                        tooltipBgColor: Colors.transparent,
+                        tooltipPadding: const EdgeInsets.all(0),
+                        tooltipBottomMargin: 8,
+                        getTooltipItem: (
+                          BarChartGroupData group,
+                          int groupIndex,
+                          BarChartRodData rod,
+                          int rodIndex,
+                        ) {
+                          return BarTooltipItem(
+                            rod.y.round().toString(),
+                            TextStyle(
+                              color: Colors.blueGrey,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    titlesData: FlTitlesData(
+                      show: true,
+                      bottomTitles: SideTitles(
+                        showTitles: true,
+                        textStyle: TextStyle(
+                            color: const Color(0xff7589a2),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14),
+                        margin: 20,
+                        getTitles: (double value) {
+                          String dateTimeNow =
+                              timeDataList[timeDataList.length - 1]
+                                  .startTime
+                                  .hour
+                                  .toString();
+                          dateTimeNow += ':';
+                          dateTimeNow += timeDataList[timeDataList.length - 1]
+                              .startTime
+                              .minute
+                              .toString();
+                          return dateTimeNow;
+                        },
+                      ),
+                      leftTitles: SideTitles(showTitles: false),
+                    ),
+                    borderData: FlBorderData(
+                      show: false,
+                    ),
+                    barGroups: [
+                      BarChartGroupData(x: 0, barRods: [
+                        BarChartRodData(
+                            y: timeDataList[timeDataList.length - 1]
+                                    .elapsedTime /
+                                60,
+                            color: Colors.lightBlueAccent),
+                      ], showingTooltipIndicators: [
+                        0
+                      ])
+                    ],
+                  )),
+                ));
                 stopPressed = true;
                 prefs.setInt('${deviceObject.ip}totalDuration',
                     deviceObject.totalDuration.inSeconds);
@@ -1169,6 +1350,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 deviceObject.elapsedTime = 0;
                 deviceObject.flare = 'off';
                 print('state5');
+                if (prefs.getString("new") == "yes") {
+                  new Timer.periodic(Duration(seconds: 40), (timer) {
+                    deviceObject.resetingheight = false;
+                    timer.cancel();
+                  });
+                }
                 destroyAnimation(deviceObject);
                 deviceObject.resetingheight = true;
                 deviceObject.socket.write('s');
@@ -1183,7 +1370,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
             SimpleDialogOption(
               child: Center(
-                child: Text('NO'),
+                child: Text('No'),
               ),
               onPressed: () {
                 Navigator.pop(context);

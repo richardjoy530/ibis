@@ -1,17 +1,31 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
-//import 'package:table_calendar/table_calendar.dart';
-import 'main.dart' as main;
+import 'height_page.dart';
+import 'main.dart';
 
 int displayTime;
-double time12am=0,time3am=0,time6am=0,time9am=0,time12pm=0,time3pm=0,time6pm=0,time9pm=0;
+int doubleTapDown = 0;
+int doubleTapUp = 0;
+bool topHit = false;
+bool bottumHit = false;
+int maxTime = 0;
+double eachGraphSpace = 47;
+double time12am = 0,
+    time3am = 0,
+    time6am = 0,
+    time9am = 0,
+    time12pm = 0,
+    time3pm = 0,
+    time6pm = 0,
+    time9pm = 0;
 DateTime startTime;
 bool stopPressed = false;
 //CalendarController _calendarController;
@@ -114,8 +128,29 @@ class DeviceObject {
       if (String.fromCharCode(onData[0]) == 'c') {
         this.completedStatus = true;
       }
+      if (String.fromCharCode(onData[0]) == 't') {
+        flare = 'idle';
+        downArrowColor = Color(0xff5cbceb);
+        downBGColor = Color(0xff02457a);
+        upArrowColor = Color(0xff5cbceb);
+        upBGColor = Color(0xff02457a);
+        topHit = true;
+      }
+      if (String.fromCharCode(onData[0]) == 'b') {
+        flare = 'idle';
+        downArrowColor = Color(0xff5cbceb);
+        downBGColor = Color(0xff02457a);
+        upArrowColor = Color(0xff5cbceb);
+        upBGColor = Color(0xff02457a);
+        bottumHit = true;
+      }
 
       if (String.fromCharCode(onData[0]) == 'd') {
+        flare = 'idle';
+        downArrowColor = Color(0xff5cbceb);
+        downBGColor = Color(0xff02457a);
+        upArrowColor = Color(0xff5cbceb);
+        upBGColor = Color(0xff02457a);
         this.resetingheight = false;
       }
 
@@ -126,24 +161,92 @@ class DeviceObject {
           );
 
           this.motionDetected = true;
+          conToday.add(Container(
+            margin: EdgeInsets.only(top: 25),
+            width: eachGraphSpace,
+            child: BarChart(BarChartData(
+              alignment: BarChartAlignment.spaceAround,
+              maxY: 60,
+              groupsSpace: 40,
+              barTouchData: BarTouchData(
+                enabled: true,
+                touchTooltipData: BarTouchTooltipData(
+                  tooltipBgColor: Colors.transparent,
+                  tooltipPadding: const EdgeInsets.all(0),
+                  tooltipBottomMargin: 8,
+                  getTooltipItem: (
+                    BarChartGroupData group,
+                    int groupIndex,
+                    BarChartRodData rod,
+                    int rodIndex,
+                  ) {
+                    return BarTooltipItem(
+                      rod.y.round().toString(),
+                      TextStyle(
+                        color: Colors.blueGrey,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              titlesData: FlTitlesData(
+                show: true,
+                bottomTitles: SideTitles(
+                  showTitles: true,
+                  textStyle: TextStyle(
+                      color: const Color(0xff7589a2),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14),
+                  margin: 20,
+                  getTitles: (double value) {
+                    String dateTimeNow = timeDataList[timeDataList.length - 1]
+                        .startTime
+                        .hour
+                        .toString();
+                    dateTimeNow += ':';
+                    dateTimeNow += timeDataList[timeDataList.length - 1]
+                        .startTime
+                        .minute
+                        .toString();
+                    return dateTimeNow;
+                  },
+                ),
+                leftTitles: SideTitles(showTitles: false),
+              ),
+              borderData: FlBorderData(
+                show: false,
+              ),
+              barGroups: [
+                BarChartGroupData(x: 0, barRods: [
+                  BarChartRodData(
+                      y: timeDataList[timeDataList.length - 1].elapsedTime / 60,
+                      color: Colors.lightBlueAccent),
+                ], showingTooltipIndicators: [
+                  0
+                ])
+              ],
+            )),
+          ));
+
           databaseHelper.insertTimeData(
-                  TimeData(
-                      roomName: room,
-                      workerName: worker,
-                      startTime: startTime,
-                      endTime: DateTime.now(),
-                      elapsedTime: this.elapsedTime,
-                      time: this.time.inSeconds.toInt()),
-                );
-                timeDataList.add(
-                  TimeData(
-                      roomName: room,
-                      workerName: worker,
-                      startTime: startTime,
-                      endTime: DateTime.now(),
-                      elapsedTime: this.elapsedTime,
-                      time: this.time.inSeconds.toInt()),
-                );
+            TimeData(
+                roomName: room,
+                workerName: worker,
+                startTime: startTime,
+                endTime: DateTime.now(),
+                elapsedTime: this.elapsedTime,
+                time: this.time.inSeconds.toInt()),
+          );
+          timeDataList.add(
+            TimeData(
+                roomName: room,
+                workerName: worker,
+                startTime: startTime,
+                endTime: DateTime.now(),
+                elapsedTime: this.elapsedTime,
+                time: this.time.inSeconds.toInt()),
+          );
           databaseHelper.insertHistory(History(
               roomName: room,
               workerName: worker,
@@ -157,8 +260,13 @@ class DeviceObject {
               time: DateTime.now(),
             ),
           );
-
-          main.notification('Motion was detected');
+          if (prefs.getString("new") == "yes") {
+                  new Timer.periodic(Duration(seconds: 40), (timer) {
+                    this.resetingheight = false;
+                    timer.cancel();
+                  });
+                }
+          notification('Motion was detected');
         }
       }
     })

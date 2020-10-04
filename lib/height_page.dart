@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import 'data.dart';
 import 'main.dart';
+
 Color upArrowColor = Color(0xff5cbceb);
 Color upBGColor = Color(0xff02457a);
 Color downArrowColor = Color(0xff02457a);
@@ -25,8 +26,6 @@ class HeightPage extends StatefulWidget {
 }
 
 class _HeightPageState extends State<HeightPage> {
-
-
   @override
   void initState() {
     mainTick();
@@ -65,7 +64,10 @@ class _HeightPageState extends State<HeightPage> {
                         child: Container(
                           height: 100,
                           width: 100,
-                          child: Image.asset('images/up.png',color: upBGColor,),
+                          child: Image.asset(
+                            'images/up.png',
+                            color: upBGColor,
+                          ),
                         ),
                         onPointerDown: (data) {
                           widget.deviceObject.socket.write('-3\r');
@@ -88,7 +90,7 @@ class _HeightPageState extends State<HeightPage> {
                             upArrowColor = Color(0xff02457a);
                             upBGColor = Color(0xff5cbceb);
                           });
-                          if (timer!=null) {
+                          if (timer != null) {
                             timer.cancel();
                           }
                           if (indicator != 0) {
@@ -102,10 +104,13 @@ class _HeightPageState extends State<HeightPage> {
                         child: Transform.rotate(
                           angle: 3.14,
                           child: Container(
-                          height: 100,
-                          width: 100,
-                          child: Image.asset('images/up.png',color: downBGColor,),
-                        ),
+                            height: 100,
+                            width: 100,
+                            child: Image.asset(
+                              'images/up.png',
+                              color: downBGColor,
+                            ),
+                          ),
                         ),
                         onPointerDown: (data) {
                           downBGColor = downArrowColor;
@@ -128,7 +133,7 @@ class _HeightPageState extends State<HeightPage> {
                             downArrowColor = Color(0xff02457a);
                             downBGColor = Color(0xff5cbceb);
                           });
-                          if (timer!=null) {
+                          if (timer != null) {
                             timer.cancel();
                           }
                           if (indicator != 0) {
@@ -148,15 +153,19 @@ class _HeightPageState extends State<HeightPage> {
             alignment: Alignment.bottomCenter,
             child: Listener(
               child: Container(
-                margin: EdgeInsets.only(bottom: 10, left: (MediaQuery.of(context).size.width-200)/3, right: (MediaQuery.of(context).size.width-200)/3),
+                margin: EdgeInsets.only(
+                    bottom: 10,
+                    left: (MediaQuery.of(context).size.width - 200) / 3,
+                    right: (MediaQuery.of(context).size.width - 200) / 3),
                 //width: MediaQuery.of(context).size.width,
                 height: 70,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    gradient: LinearGradient(
-                        colors: [Color(0xff009ce9), Color(0xff83caec)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight)),
+                  borderRadius: BorderRadius.circular(20),
+                  // gradient: LinearGradient(
+                  //     colors: [Color(0xff009ce9), Color(0xff83caec)],
+                  //     begin: Alignment.topLeft,
+                  //     end: Alignment.bottomRight),
+                ),
                 child: Center(
                   child: Text(
                     'Confirm Height',
@@ -166,7 +175,7 @@ class _HeightPageState extends State<HeightPage> {
               ),
               onPointerUp: (pointerUp) {
                 widget.deviceObject.progressDegrees = 0;
-                
+
                 prefs.setInt('${widget.deviceObject.ip}height',
                     widget.deviceObject.height.toInt());
                 widget.deviceObject.time = Duration(minutes: 0);
@@ -177,10 +186,10 @@ class _HeightPageState extends State<HeightPage> {
 
                 if (widget.justHeight == false) {
                   if (widget.deviceObject.height.toInt() == 0) {
-                  widget.deviceObject.socket.write('5\r');
-                } else {
-                  widget.deviceObject.socket.write('5\r');
-                }
+                    widget.deviceObject.socket.write('5\r');
+                  } else {
+                    widget.deviceObject.socket.write('5\r');
+                  }
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(

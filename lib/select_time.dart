@@ -1,7 +1,9 @@
 import 'dart:math';
 
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flare_flutter/flare_actor.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
@@ -12,6 +14,9 @@ import 'show_history.dart';
 
 String dropdownValueRoom = rooms.length == 0 ? 'No rooms' : rooms[0];
 String dropdownValueStaff = rooms.length == 0 ? 'No Staff' : workers[0];
+
+List<BarChartGroupData> barYAxis = [];
+List<String> barTime = [];
 
 final selectorColor = CustomSliderColors(
   dotColor: Color(0xff02457a),
@@ -33,13 +38,43 @@ class SelectTime extends StatefulWidget {
 }
 
 class _SelectTimeState extends State<SelectTime> {
+  ScrollController mainController;
+  ScrollController todayController;
+  ScrollController yesterdayController;
+  ScrollController dayBeforeYesterdayController;
+  double pos;
   @override
   void initState() {
+    pos = 1;
+    mainController = ScrollController();
+    todayController = ScrollController();
+    yesterdayController = ScrollController();
+    dayBeforeYesterdayController = ScrollController();
     super.initState();
     dropdownValueRoom = rooms[0];
     dropdownValueStaff = workers[0];
     room = dropdownValueRoom;
     worker = dropdownValueStaff;
+    mainController.addListener(() {
+      setState(() {
+        pos = ((2 * mainController.offset) /
+              (mainController.position.viewportDimension * 2))
+          ;
+      });
+      
+    });
+  }
+
+  @override
+  void dispose() {
+    mainController.dispose();
+    yesterdayController.dispose();
+    todayController.dispose();
+    dayBeforeYesterdayController.dispose();
+    if (widget.deviceObject.power == false) {
+      widget.deviceObject.socket.write(65);
+    }
+    super.dispose();
   }
 
   @override
@@ -47,13 +82,8 @@ class _SelectTimeState extends State<SelectTime> {
     return Scaffold(
       body: Container(
         padding: EdgeInsets.only(top: 40),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xffffffff), Color(0xffffffff)]),
-        ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Text(
               widget.deviceObject.name,
@@ -74,7 +104,7 @@ class _SelectTimeState extends State<SelectTime> {
                     label: Text(room),
                     icon: Icon(Icons.arrow_drop_down),
                     onPressed: () {
-                        showRooms(context, widget.deviceObject);
+                      showRooms(context, widget.deviceObject);
                     },
                   ),
                   FloatingActionButton.extended(
@@ -84,118 +114,175 @@ class _SelectTimeState extends State<SelectTime> {
                     label: Text(worker),
                     icon: Icon(Icons.arrow_drop_down),
                     onPressed: () {
-                        showWorkers(context, widget.deviceObject);
+                      showWorkers(context, widget.deviceObject);
                     },
                   )
                 ],
               ),
             ),
-            Expanded(
-                child: Column(
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  margin: EdgeInsets.all(20),
-                  padding: EdgeInsets.only(top: 25),
-                  height: 200,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(20.0),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      graph3Days(context, deviceObjectList[0]);
+                    });
+                  },
+                  child: Container(
+                    margin: EdgeInsets.all(20),
+                    padding: EdgeInsets.only(top: 25),
+                    height: 200,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20.0),
+                      ),
+                      color: Color(0xff9ad2ec),
                     ),
-                    color: Color(0xffbddeee),
-                  ),
-                  child: GestureDetector(
-                    child: Container(
-                      height: 200,
-                      width: MediaQuery.of(context).size.width,
-                      padding: EdgeInsets.all(8.0),
-                      child: BarChart(BarChartData(
-                        alignment: BarChartAlignment.spaceAround,
-                        maxY: maxYAxis / 60,
-                        barTouchData: BarTouchData(
-                          enabled: true,
-                          touchTooltipData: BarTouchTooltipData(
-                            tooltipBgColor: Colors.transparent,
-                            tooltipPadding: const EdgeInsets.all(0),
-                            tooltipBottomMargin: 8,
-                            getTooltipItem: (
-                              BarChartGroupData group,
-                              int groupIndex,
-                              BarChartRodData rod,
-                              int rodIndex,
-                            ) {
-                              return BarTooltipItem(
-                                rod.y.round().toString(),
-                                TextStyle(
-                                  color: Colors.blueGrey,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              );
-                            },
+                    child: Column(
+                      children: [
+                        SingleChildScrollView(
+                          controller: mainController,
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: <Widget>[
+                              SizedBox(
+                                width: 40,
+                              ),
+                              Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20.0),
+                                      ),
+                                      color: Color(0xffbddeee),
+                                    ),
+                                    height: 125,
+                                    width:
+                                        MediaQuery.of(context).size.width - 120,
+                                    child: Scrollbar(
+                                      controller: todayController,
+                                      isAlwaysShown: true,
+                                      radius: Radius.circular(5),
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 5),
+                                        child: SingleChildScrollView(
+                                          controller: todayController,
+                                          scrollDirection: Axis.horizontal,
+                                          child: Row(
+                                            children: conToday,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Today',
+                                    style: TextStyle(
+                                        color: Color(0xff02457a),
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                width: 80,
+                              ),
+                              Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20.0),
+                                      ),
+                                      color: Color(0xffbddeee),
+                                    ),
+                                    height: 125,
+                                    width:
+                                        MediaQuery.of(context).size.width - 120,
+                                    child: Scrollbar(
+                                      controller: yesterdayController,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 5),
+                                        child: SingleChildScrollView(
+                                          controller: yesterdayController,
+                                          scrollDirection: Axis.horizontal,
+                                          child: Row(
+                                            children: conYesday,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Yesterday',
+                                    style: TextStyle(
+                                        color: Color(0xff02457a),
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                width: 80,
+                              ),
+                              Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20.0),
+                                      ),
+                                      color: Color(0xffbddeee),
+                                    ),
+                                    height: 125,
+                                    width:
+                                        MediaQuery.of(context).size.width - 120,
+                                    child: Scrollbar(
+                                      controller: dayBeforeYesterdayController,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 5),
+                                        child: SingleChildScrollView(
+                                          controller:
+                                              dayBeforeYesterdayController,
+                                          scrollDirection: Axis.horizontal,
+                                          child: Row(
+                                            children: con2DayBefore,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    '2 Days ago',
+                                    style: TextStyle(
+                                        color: Color(0xff02457a),
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                width: 40,
+                              ),
+                            ],
                           ),
                         ),
-                        titlesData: FlTitlesData(
-                          show: true,
-                          bottomTitles: SideTitles(
-                            showTitles: true,
-                            textStyle: TextStyle(
-                                color: const Color(0xff7589a2),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14),
-                            margin: 20,
-                            getTitles: (double value) {
-                              switch (value.toInt()) {
-                                case 0:
-                                  return '2 Days ago';
-                                case 1:
-                                  return 'Yesterday';
-                                case 2:
-                                  return 'Today';
-
-                                default:
-                                  return '';
-                              }
-                            },
-                          ),
-                          leftTitles: SideTitles(showTitles: false),
-                        ),
-                        borderData: FlBorderData(
-                          show: false,
-                        ),
-                        barGroups: [
-                          BarChartGroupData(x: 0, barRods: [
-                            BarChartRodData(
-                                y: dayBeforeYesTotalTime / 60,
-                                color: Colors.lightBlueAccent)
-                          ], showingTooltipIndicators: [
-                            0
-                          ]),
-                          BarChartGroupData(x: 1, barRods: [
-                            BarChartRodData(
-                                y: yesdayTotalTime / 60,
-                                color: Colors.lightBlueAccent)
-                          ], showingTooltipIndicators: [
-                            0
-                          ]),
-                          BarChartGroupData(x: 2, barRods: [
-                            BarChartRodData(
-                                y: todayTotalTime / 60,
-                                color: Colors.lightBlueAccent)
-                          ], showingTooltipIndicators: [
-                            0
-                          ]),
-                        ],
-                      )),
+                        DotsIndicator(
+                          dotsCount: 3,
+                          position: pos,
+                        )
+                      ],
                     ),
-                    onTap: () {
-                      setState(() {
-                        graph3Days(context, deviceObjectList[0]);
-                      });
-                    },
                   ),
-                ),
-                SizedBox(
-                  height: 50,
                 ),
                 Stack(
                   alignment: Alignment.center,
@@ -222,8 +309,8 @@ class _SelectTimeState extends State<SelectTime> {
                         initialValue: 0,
                         appearance: CircularSliderAppearance(
                             animationEnabled: false,
-                            startAngle: 140,
-                            angleRange: 270,
+                            startAngle: 180,
+                            angleRange: 350,
                             customWidths: CustomSliderWidths(
                               handlerSize: 20,
                               trackWidth: 20,
@@ -318,17 +405,10 @@ class _SelectTimeState extends State<SelectTime> {
                   ],
                 ),
               ],
-            ))
+            )
           ],
         ),
       ),
-      // floatingActionButton: Container(
-      //   child: Padding(
-      //     padding: const EdgeInsets.fromLTRB(0.0, 100.0, 30.0, 0.0),
-      //     child: ,
-      //   ),
-      // ),
-      //floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
     );
   }
 
@@ -370,7 +450,7 @@ class _SelectTimeState extends State<SelectTime> {
                     ),
                     onPressed: () {
                       setState(() {
-                      room = rooms[index];
+                        room = rooms[index];
                       });
                       Navigator.pop(context);
                     },
@@ -449,8 +529,8 @@ class _SelectTimeState extends State<SelectTime> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    RaisedButton(
-                      onPressed: () {
+                    Listener(
+                      onPointerUp: (pointerUpEvent) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -458,11 +538,22 @@ class _SelectTimeState extends State<SelectTime> {
                           ),
                         );
                       },
-                      child: Text(
-                        'Detiled Hstory',
-                        style: TextStyle(color: Colors.white),
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 30),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10.0),
+                          ),
+                          color: Color(0xff02457a),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Text(
+                            'Detiled Hstory',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
                       ),
-                      color: Colors.lightBlue,
                     ),
                     BarChart(BarChartData(
                       alignment: BarChartAlignment.spaceAround,
