@@ -368,11 +368,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   ? deviceObjectList.length == 0
                       ? Center(
                           child: Container(
-                            margin: EdgeInsets.fromLTRB(
-                                10,
-                                MediaQuery.of(context).size.height / 3,
-                                10,
-                                0),
+                            margin: EdgeInsets.fromLTRB(10,
+                                MediaQuery.of(context).size.height / 3, 10, 0),
                             decoration: BoxDecoration(
                                 color: Color(0xffd6e7ee),
                                 borderRadius: BorderRadius.circular(20)),
@@ -578,23 +575,24 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     backgroundColor: Color(0xff02457a),
                     heroTag: 'hero1',
                     label: Text(
-                      'Staff',
+                      worker,
                       style: TextStyle(fontSize: 20, color: Color(0xffffffff)),
                     ),
-                    icon: Icon(Icons.add, color: Color(0xffffffff)),
+                    icon: Icon(Icons.perm_identity, color: Color(0xffffffff)),
                     onPressed: () {
-                      addWorker(context);
+                      showWorkers(context, deviceObjectList[0]);
                     },
                   ),
                   FloatingActionButton.extended(
                     backgroundColor: Color(0xff02457a),
                     heroTag: 'hero2',
-                    label: Text('Room',
+                    label: Text(room,
                         style:
                             TextStyle(fontSize: 20, color: Color(0xffffffff))),
-                    icon: Icon(Icons.add, color: Color(0xffffffff)),
+                    icon: Icon(Icons.meeting_room_rounded,
+                        color: Color(0xffffffff)),
                     onPressed: () {
-                      addRooms(context);
+                      showRooms(context, deviceObjectList[0]);
                     },
                   )
                 ],
@@ -734,7 +732,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                           false ||
                                       prefs.getString('new') != 'yes')) {
                                 deviceObjectList[0].socket.write('-1\r');
-                                setState(() { 
+                                setState(() {
                                   flare = 'idle';
                                   downArrowColor = Color(0xff5cbceb);
                                   downBGColor = Color(0xff02457a);
@@ -878,7 +876,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       ),
                       child: ListTile(
                         leading: Icon(
-                          Icons.label_outline,
+                          Icons.meeting_room_rounded,
                           color: Color(0xff02457a),
                         ),
                         title: Text(rooms[index],
@@ -888,14 +886,30 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       ),
                     ),
                     onPressed: () {
+                      setState(() {
                       room = rooms[index];
+                      });
                       Navigator.pop(context);
-                      showWorkers(context, deviceObject);
                     },
                   );
                 },
               ),
             ),
+            Center(
+              child: RaisedButton(
+                  child: Text(
+                    "Add Rooms",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  color: Color(0xff02457a),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    addRooms(context);
+                  }),
+            )
           ],
         );
       },
@@ -924,12 +938,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   return SimpleDialogOption(
                     child: Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.blue),
+                        border: Border.all(color: Color(0xff02457a)),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: ListTile(
                         leading: Icon(
-                          Icons.label_outline,
+                          Icons.perm_identity,
                           color: Color(0xff02457a),
                         ),
                         title: Text(workers[index],
@@ -940,18 +954,30 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     ),
                     onPressed: () {
                       deviceObject.clientError = false;
+                      setState(() {
                       worker = workers[index];
-                      deviceObject.socket.write('5\r');
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SelectTime(deviceObject)),
-                      );
+                      });
+                      Navigator.pop(context);
                     },
                   );
                 },
               ),
             ),
+            Center(
+              child: RaisedButton(
+                  child: Text(
+                    "Add Staffs",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  color: Color(0xff02457a),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    addWorker(context);
+                  }),
+            )
           ],
         );
       },
