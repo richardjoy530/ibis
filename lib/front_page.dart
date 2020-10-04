@@ -482,6 +482,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           );
         });
     WiFiForIoTPlugin.setEnabled(false);
+    WiFiForIoTPlugin.setEnabled(true);
     String ssid = ssidController.text;
     String password = passwordController.text;
     WiFiForIoTPlugin.connect(ssid,
