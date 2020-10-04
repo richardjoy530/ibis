@@ -341,7 +341,6 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           child: Column(
             children: <Widget>[
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 20),
@@ -365,54 +364,52 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   )
                 ],
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  serverOnline == true
-                      ? deviceObjectList.length == 0
-                          ? Center(
-                              child: Container(
-                                margin: EdgeInsets.fromLTRB(10, MediaQuery.of(context).size.height/3, 10, 0),
-                                decoration: BoxDecoration(
-                                    color: Color(0xffd6e7ee),
-                                    borderRadius: BorderRadius.circular(20)),
-                                child: ListTile(
-                                  leading: Icon(Icons.add_box),
-                                  title:
-                                      Text('Tap to add your device'),
-                                  onTap: () {
-                                    scanIbis(context);
-                                  },
-                                ),
-                              ),
-                            )
-                          : Expanded(child: fillerWidget(context))
-                      : Align(
-                          alignment: Alignment.center,
-                          child: AlertDialog(
-                            backgroundColor: Color(0xffffffff),
-                            shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20.0))),
-                            title: Text(
-                              'Server is Offline',
-                              style: TextStyle(
-                                  color: Color(0xff02457a),
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            content: IconButton(
-                              icon: Icon(
-                                Icons.refresh,
-                                color: Color(0xff019ae6),
-                              ),
-                              onPressed: () {
-                                connect();
+              serverOnline == true
+                  ? deviceObjectList.length == 0
+                      ? Center(
+                          child: Container(
+                            margin: EdgeInsets.fromLTRB(
+                                10,
+                                MediaQuery.of(context).size.height / 3,
+                                10,
+                                0),
+                            decoration: BoxDecoration(
+                                color: Color(0xffd6e7ee),
+                                borderRadius: BorderRadius.circular(20)),
+                            child: ListTile(
+                              leading: Icon(Icons.add_box),
+                              title: Text('Tap to add your device'),
+                              onTap: () {
+                                scanIbis(context);
                               },
                             ),
                           ),
+                        )
+                      : Expanded(child: fillerWidget(context))
+                  : Align(
+                      alignment: Alignment.center,
+                      child: AlertDialog(
+                        backgroundColor: Color(0xffffffff),
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20.0))),
+                        title: Text(
+                          'Server is Offline',
+                          style: TextStyle(
+                              color: Color(0xff02457a),
+                              fontWeight: FontWeight.bold),
                         ),
-                ],
-              ),
+                        content: IconButton(
+                          icon: Icon(
+                            Icons.refresh,
+                            color: Color(0xff019ae6),
+                          ),
+                          onPressed: () {
+                            connect();
+                          },
+                        ),
+                      ),
+                    ),
             ],
           ),
         ),
@@ -422,7 +419,10 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   }
 
   void checkCredentials(String ssid, String password) {
-    if (int.parse(password[7] + password[8]) > 19 &&
+    if (password == "razecov@1234" || password.length <= 8) {
+      // ignore: unnecessary_statements
+      null;
+    } else if (int.parse(password[7] + password[8]) > 19 &&
         int.parse(password[7] + password[8]) < 29) {
       prefs.setString('new', 'yes');
     } else if (int.parse(password[7] + password[8]) > 28) {
@@ -432,7 +432,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 
   Future<void> scanIbis(BuildContext context) async {
     await showDialog(
-        barrierDismissible: true,
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(
@@ -457,19 +457,14 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 child: TextField(
                   controller: ssidController,
                   decoration: InputDecoration(hintText: 'WiFi name'),
-                  onSubmitted: (name) {
-                    Navigator.pop(context);
-                  },
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: TextField(
+                  obscureText: true,
                   controller: passwordController,
                   decoration: InputDecoration(hintText: 'password'),
-                  onSubmitted: (name) {
-                    Navigator.pop(context);
-                  },
                 ),
               ),
               Center(
@@ -491,9 +486,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         });
     WiFiForIoTPlugin.setEnabled(false);
     String ssid = ssidController.text;
-    ssidController.text = "";
     String password = passwordController.text;
-    passwordController.text = "";
     WiFiForIoTPlugin.connect(ssid,
         password: password, joinOnce: true, security: NetworkSecurity.WPA);
     checkCredentials(ssid, password);
@@ -741,7 +734,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                           false ||
                                       prefs.getString('new') != 'yes')) {
                                 deviceObjectList[0].socket.write('-1\r');
-                                setState(() {
+                                setState(() { 
                                   flare = 'idle';
                                   downArrowColor = Color(0xff5cbceb);
                                   downBGColor = Color(0xff02457a);
@@ -976,7 +969,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         builder: (context) {
           return Wrap(
             children: <Widget>[
-              Divider(thickness: 2, color: Colors.grey[500],indent: 2*MediaQuery.of(context).size.width/5,endIndent: 2*MediaQuery.of(context).size.width/5,),
+              Divider(
+                thickness: 2,
+                color: Colors.grey[500],
+                indent: 2 * MediaQuery.of(context).size.width / 5,
+                endIndent: 2 * MediaQuery.of(context).size.width / 5,
+              ),
               ListTile(
                 leading: Icon(
                   Icons.view_list,
@@ -1593,7 +1591,7 @@ class _RoomsState extends State<Rooms> {
               child: ListTile(
                 leading: Container(
                   decoration: ShapeDecoration(
-                      shape: CircleBorder(), color:Color(0xff02457a)),
+                      shape: CircleBorder(), color: Color(0xff02457a)),
                   child: IconButton(
                     icon: Icon(Icons.add),
                     color: Colors.white,

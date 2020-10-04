@@ -81,7 +81,7 @@ void connect() async {
       print('Server Hosted');
       runZoned(() {}, onError: (e) {
         print('Server error 1: $e');
-      });
+      }); 
       serverSocket.listen((sock) {}).onData((clientSocket) {
         if (!ipList.contains(clientSocket.remoteAddress.address)) {
           //New Devices
