@@ -28,7 +28,6 @@ class _LodingState extends State<Loding> {
       },
     );
     wifi();
-    redirect();
     super.initState();
   }
 
@@ -46,7 +45,7 @@ class _LodingState extends State<Loding> {
     databaseHelper.getWorkerMapList().then((value) {
       for (var map in value) {
         workers.add(map['workerName']);
-          worker = workers[0];
+        worker = workers[0];
       }
     });
     databaseHelper.getHistoryMapList().then((value) {
@@ -279,10 +278,12 @@ class _LodingState extends State<Loding> {
         }
       }
     });
+    redirect();
   }
 
   void redirect() {
     Future.delayed(Duration(seconds: 2), () {
+      print(["selected room and worker", room, worker]);
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => FrontPage()));
     });

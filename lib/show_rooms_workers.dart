@@ -76,7 +76,7 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(10.0))),
                               child: ListTile(
-                                leading: Icon(Icons.crop_portrait,
+                                leading: Icon(Icons.meeting_room_rounded,
                                     color: Color(0xff02457a)),
                                 title: Text('${rooms[index]}',
                                     style: TextStyle(color: Color(0xff02457a))),
@@ -88,7 +88,7 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
                                       databaseHelper.deleteRoom(rooms[index]);
                                       rooms.removeAt(index);
                                       if (rooms.isEmpty) {
-                                        room = "Room";
+                                        room = null;
                                       }
                                     });
                                   },
@@ -134,22 +134,26 @@ class _ShowRoomsStaffsState extends State<ShowRoomsStaffs> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10.0))),
                             child: ListTile(
-                              leading:
-                                  Icon(Icons.person, color: Color(0xff02457a)),
+                              leading: Icon(
+                                Icons.person,
+                                color: Color(0xff02457a),
+                              ),
                               title: Text(
                                 '${workers[index]}',
                                 style: TextStyle(color: Color(0xff02457a)),
                               ),
                               trailing: IconButton(
-                                icon: Icon(Icons.delete,
-                                    color: Color(0xff02457a)),
+                                icon: Icon(
+                                  Icons.delete,
+                                  color: Color(0xff02457a),
+                                ),
                                 onPressed: () {
                                   setState(() {
                                     databaseHelper.deleteWorker(workers[index]);
                                     workers.removeAt(index);
                                     if (workers.isEmpty) {
-                                        worker = "Room";
-                                      }
+                                      worker = null;
+                                    }
                                   });
                                 },
                               ),

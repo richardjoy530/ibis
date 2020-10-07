@@ -22,8 +22,6 @@ List<Container> conYesday = [];
 List<Container> con2DayBefore = [];
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
-String dropdownValueRoom = rooms.length == 0 ? 'No rooms' : rooms[0];
-String dropdownValueStaff = rooms.length == 0 ? 'No Staff' : workers[0];
 
 final customColor = CustomSliderColors(
   progressBarColor: Color(0xffd6e7ee),
@@ -73,7 +71,6 @@ Future<void> notification(String message) async {
       .show(0, 'Alert', message, platformChannelSpecifics, payload: 'item x');
 }
 
-
 void connect() async {
   ServerSocket.bind('0.0.0.0', 4042)
     ..then((sock) {
@@ -82,7 +79,7 @@ void connect() async {
       print('Server Hosted');
       runZoned(() {}, onError: (e) {
         print('Server error 1: $e');
-      }); 
+      });
       serverSocket.listen((sock) {}).onData((clientSocket) {
         if (!ipList.contains(clientSocket.remoteAddress.address)) {
           //New Devices
@@ -187,8 +184,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Timer animationTimer;
   @override
   void initState() {
-    room = dropdownValueRoom;
-    worker = dropdownValueStaff;
     errorRemover = false;
     connectionError = true;
     stopPressed = false;
