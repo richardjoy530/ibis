@@ -297,6 +297,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         }
       });
     });
+    load();
     super.initState();
   }
 
@@ -308,20 +309,45 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  load() {
+    var old = prefs.getString('old');
+    if (old == null) {
+      Future.delayed(Duration(seconds: 1)).then((value) => scanIbis(context));
+    }
+  }
+
   Future<bool> _onWillPop() async {
     return (await showDialog(
           context: context,
-          builder: (context) => new AlertDialog(
-            title: new Text('Are you sure?'),
-            content: new Text('Do you want to exit the App'),
+          builder: (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18.0),
+            ),
+            title: Text('Are you sure?',textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Color(0xff02457a),
+                  fontWeight: FontWeight.bold,
+                  //fontSize: 24,
+                ),),
+            content: Text('Do you want to exit the App?'),
             actions: <Widget>[
-              new FlatButton(
+              FlatButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: new Text('No'),
+                child: Text('No',textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Color(0xff02457a),
+                  fontWeight: FontWeight.bold,
+                  //fontSize: 24,
+                ),),
               ),
-              new FlatButton(
+              FlatButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: new Text('Yes'),
+                child: Text('Yes',textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Color(0xff02457a),
+                  fontWeight: FontWeight.bold,
+                  //fontSize: 24,
+                ),),
               ),
             ],
           ),
@@ -368,18 +394,18 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   ? deviceObjectList.length == 0
                       ? Center(
                           child: Container(
-                            margin: EdgeInsets.fromLTRB(
-                                10,
-                                MediaQuery.of(context).size.height / 3,
-                                10,
-                                0),
-                            decoration: BoxDecoration(
-                                color: Color(0xffd6e7ee),
-                                borderRadius: BorderRadius.circular(20)),
-                            child: ListTile(
-                              leading: Icon(Icons.add_box),
-                              title: Text('Tap to add your device'),
-                              onTap: () {
+                            margin: EdgeInsets.fromLTRB(10,
+                                MediaQuery.of(context).size.height / 3, 10, 0),
+                            child: FloatingActionButton.extended(
+                              backgroundColor: Color(0xff02457a),
+                              label: Text(
+                                "Add device",
+                                style: TextStyle(
+                                    fontSize: 20, color: Color(0xffffffff)),
+                              ),
+                              icon: Icon(Icons.add_circle_outline_outlined,
+                                  color: Color(0xffffffff)),
+                              onPressed: () {
                                 scanIbis(context);
                               },
                             ),
@@ -485,6 +511,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           );
         });
     WiFiForIoTPlugin.setEnabled(false);
+    WiFiForIoTPlugin.setEnabled(true);
     String ssid = ssidController.text;
     String password = passwordController.text;
     WiFiForIoTPlugin.connect(ssid,
@@ -492,6 +519,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     checkCredentials(ssid, password);
     prefs.setString('SSID', ssid);
     prefs.setString('password', password);
+    prefs.setString('old', '1');
   }
 
   Widget fillerWidget(BuildContext context) {
@@ -578,23 +606,36 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     backgroundColor: Color(0xff02457a),
                     heroTag: 'hero1',
                     label: Text(
-                      'Staff',
-                      style: TextStyle(fontSize: 20, color: Color(0xffffffff)),
+                      "Staff",
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Color(0xffffffff),
+                      ),
                     ),
-                    icon: Icon(Icons.add, color: Color(0xffffffff)),
+                    icon: Icon(
+                      Icons.perm_identity,
+                      color: Color(0xffffffff),
+                    ),
                     onPressed: () {
-                      addWorker(context);
+                      showWorkers(context, deviceObjectList[0]);
                     },
                   ),
                   FloatingActionButton.extended(
                     backgroundColor: Color(0xff02457a),
                     heroTag: 'hero2',
-                    label: Text('Room',
-                        style:
-                            TextStyle(fontSize: 20, color: Color(0xffffffff))),
-                    icon: Icon(Icons.add, color: Color(0xffffffff)),
+                    label: Text(
+                      "Room",
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Color(0xffffffff),
+                      ),
+                    ),
+                    icon: Icon(
+                      Icons.meeting_room_rounded,
+                      color: Color(0xffffffff),
+                    ),
                     onPressed: () {
-                      addRooms(context);
+                      showRooms(context, deviceObjectList[0]);
                     },
                   )
                 ],
@@ -607,7 +648,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               //         .width /
               //     2.5,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(20.0),
+                ),
                 //color: Color(0xffbddeee),
               ),
               child: Row(
@@ -734,7 +777,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                           false ||
                                       prefs.getString('new') != 'yes')) {
                                 deviceObjectList[0].socket.write('-1\r');
-                                setState(() { 
+                                setState(() {
                                   flare = 'idle';
                                   downArrowColor = Color(0xff5cbceb);
                                   downBGColor = Color(0xff02457a);
@@ -788,6 +831,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     if (workers.length != 0) {
                       deviceObjectList[0].clientError = false;
                       deviceObjectList[0].socket.write('5\r');
+                      if (worker == null) {
+                        worker = workers[0];
+                      }
+                      if (room == null) {
+                        room = rooms[0];
+                      }
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -878,7 +927,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       ),
                       child: ListTile(
                         leading: Icon(
-                          Icons.label_outline,
+                          Icons.meeting_room_rounded,
                           color: Color(0xff02457a),
                         ),
                         title: Text(rooms[index],
@@ -888,14 +937,31 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       ),
                     ),
                     onPressed: () {
-                      room = rooms[index];
+                      setState(() {
+                        room = rooms[index];
+                        print(["selected room", room]);
+                      });
                       Navigator.pop(context);
-                      showWorkers(context, deviceObject);
                     },
                   );
                 },
               ),
             ),
+            Center(
+              child: RaisedButton(
+                  child: Text(
+                    "Add Rooms",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  color: Color(0xff02457a),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    addRooms(context);
+                  }),
+            )
           ],
         );
       },
@@ -924,12 +990,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   return SimpleDialogOption(
                     child: Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.blue),
+                        border: Border.all(color: Color(0xff02457a)),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: ListTile(
                         leading: Icon(
-                          Icons.label_outline,
+                          Icons.perm_identity,
                           color: Color(0xff02457a),
                         ),
                         title: Text(workers[index],
@@ -940,18 +1006,31 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     ),
                     onPressed: () {
                       deviceObject.clientError = false;
-                      worker = workers[index];
-                      deviceObject.socket.write('5\r');
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SelectTime(deviceObject)),
-                      );
+                      setState(() {
+                        worker = workers[index];
+                        print(["selected worker", worker]);
+                      });
+                      Navigator.pop(context);
                     },
                   );
                 },
               ),
             ),
+            Center(
+              child: RaisedButton(
+                  child: Text(
+                    "Add Staffs",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  color: Color(0xff02457a),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    addWorker(context);
+                  }),
+            )
           ],
         );
       },
@@ -1640,11 +1719,6 @@ class _RoomsState extends State<Rooms> {
                           nameNumber = 1;
                           Fluttertoast.showToast(
                             msg: 'Successfully Added',
-                            gravity: ToastGravity.CENTER,
-                            toastLength: Toast.LENGTH_SHORT,
-                            backgroundColor: Color(0xff02457a),
-                            textColor: Colors.white,
-                            fontSize: 16.0,
                           );
                           Navigator.pop(context);
                         }
@@ -1817,11 +1891,6 @@ class _WorkersState extends State<Workers> {
                           nameNumber = 1;
                           Fluttertoast.showToast(
                             msg: 'Successfully Added',
-                            gravity: ToastGravity.CENTER,
-                            toastLength: Toast.LENGTH_SHORT,
-                            backgroundColor: Color(0xff02457a),
-                            textColor: Colors.white,
-                            fontSize: 16.0,
                           );
                           Navigator.pop(context);
                         }
