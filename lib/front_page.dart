@@ -927,7 +927,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       ),
                       child: ListTile(
                         leading: Icon(
-                          Icons.meeting_room_rounded,
+                          rooms[index]==room?Icons.check:Icons.meeting_room_rounded,
                           color: Color(0xff02457a),
                         ),
                         title: Text(rooms[index],
@@ -995,7 +995,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       ),
                       child: ListTile(
                         leading: Icon(
-                          Icons.perm_identity,
+                          workers[index]==worker?Icons.check:Icons.perm_identity,
                           color: Color(0xff02457a),
                         ),
                         title: Text(workers[index],

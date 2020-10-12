@@ -97,36 +97,36 @@ class _SelectTimeState extends State<SelectTime> {
                 ],
               ),
             ),
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  graph3Days(context, deviceObjectList[0]);
-                });
-              },
-              child: Container(
-                margin: EdgeInsets.all(20),
-                padding: EdgeInsets.only(top: 25),
-                height: 200,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20.0),
-                  ),
-                  color: Color(0xff9ad2ec),
+            Container(
+              margin: EdgeInsets.all(20),
+              padding: EdgeInsets.only(top: 25),
+              height: 200,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(20.0),
                 ),
-                child: Column(
-                  children: [
-                    SingleChildScrollView(
-                      controller: mainController,
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: <Widget>[
-                          SizedBox(
-                            width: 40,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Container(
+                color: Color(0xff9ad2ec),
+              ),
+              child: Column(
+                children: [
+                  SingleChildScrollView(
+                    controller: mainController,
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: <Widget>[
+                        SizedBox(
+                          width: 40,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  graphTDays(context, deviceObjectList[0]);
+                                });
+                              },
+                              child: Container(
                                 padding: EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.all(
@@ -139,21 +139,28 @@ class _SelectTimeState extends State<SelectTime> {
                                 child: TodayGraph(
                                     todayController: todayController),
                               ),
-                              Text(
-                                'Today',
-                                style: TextStyle(
-                                    color: Color(0xff02457a),
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            width: 80,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Container(
+                            ),
+                            Text(
+                              'Today',
+                              style: TextStyle(
+                                  color: Color(0xff02457a),
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          width: 80,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  graphYDays(context, deviceObjectList[0]);
+                                });
+                              },
+                              child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(20.0),
@@ -165,21 +172,29 @@ class _SelectTimeState extends State<SelectTime> {
                                 child: YesterdayGraph(
                                     yesterdayController: yesterdayController),
                               ),
-                              Text(
-                                'Yesterday',
-                                style: TextStyle(
-                                    color: Color(0xff02457a),
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            width: 80,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Container(
+                            ),
+                            Text(
+                              'Yesterday',
+                              style: TextStyle(
+                                  color: Color(0xff02457a),
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          width: 80,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            GestureDetector(
+                              onTap: ()
+                              {
+                                setState(() {
+                                  graph2Days(context, deviceObjectList[0]);
+                                });
+                              },
+                                                          child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(20.0),
@@ -192,26 +207,26 @@ class _SelectTimeState extends State<SelectTime> {
                                     dayBeforeYesterdayController:
                                         dayBeforeYesterdayController),
                               ),
-                              Text(
-                                '2 Days ago',
-                                style: TextStyle(
-                                    color: Color(0xff02457a),
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            width: 40,
-                          ),
-                        ],
-                      ),
+                            ),
+                            Text(
+                              '2 Days ago',
+                              style: TextStyle(
+                                  color: Color(0xff02457a),
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          width: 40,
+                        ),
+                      ],
                     ),
-                    DotsIndicator(
-                      dotsCount: 3,
-                      position: pos,
-                    )
-                  ],
-                ),
+                  ),
+                  DotsIndicator(
+                    dotsCount: 3,
+                    position: pos,
+                  )
+                ],
               ),
             ),
             Stack(
@@ -438,7 +453,7 @@ class _SelectTimeState extends State<SelectTime> {
     );
   }
 
-  Future<void> graph3Days(context, DeviceObject deviceObject) async {
+  Future<void> graphTDays(context, DeviceObject deviceObject) async {
     await showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -458,6 +473,56 @@ class _SelectTimeState extends State<SelectTime> {
                 height: 125,
                 width: MediaQuery.of(context).size.width - 120,
                 child: TodayGraph(todayController: ScrollController()),
+              ),
+            ],
+          );
+        });
+  }
+  Future<void> graphYDays(context, DeviceObject deviceObject) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            backgroundColor: Color(0xffffffff),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20.0),
+                  ),
+                  color: Color(0xffbddeee),
+                ),
+                height: 125,
+                width: MediaQuery.of(context).size.width - 120,
+                child: YesterdayGraph(yesterdayController: ScrollController()),
+              ),
+            ],
+          );
+        });
+  }
+  Future<void> graph2Days(context, DeviceObject deviceObject) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            backgroundColor: Color(0xffffffff),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20.0),
+                  ),
+                  color: Color(0xffbddeee),
+                ),
+                height: 125,
+                width: MediaQuery.of(context).size.width - 120,
+                child: TwoDaysAgoGraph(dayBeforeYesterdayController: ScrollController()),
               ),
             ],
           );
