@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 import 'data.dart';
+import 'front_page.dart';
 import 'main.dart';
+import 'show_history.dart';
 
 List<BarChartGroupData> barYAxis = [];
 List<String> barTime = [];
@@ -438,7 +440,131 @@ class _SelectTimeState extends State<SelectTime> {
     );
   }
 
-  Future<void> graph3Days(context, DeviceObject deviceObject) async {
+    Future<void> graph3Days(context, DeviceObject deviceObject) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            backgroundColor: Color(0xffffffff),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            children: <Widget>[
+              Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Listener(
+                      onPointerUp: (pointerUpEvent) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ShowHistory(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 30),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10.0),
+                          ),
+                          color: Color(0xff02457a),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Text(
+                            'Detiled Hstory',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ),
+                    BarChart(BarChartData(
+                      alignment: BarChartAlignment.spaceAround,
+                      maxY: maxYAxis / 60,
+                      barTouchData: BarTouchData(
+                        enabled: true,
+                        touchTooltipData: BarTouchTooltipData(
+                          tooltipBgColor: Colors.transparent,
+                          tooltipPadding: const EdgeInsets.all(0),
+                          tooltipBottomMargin: 8,
+                          getTooltipItem: (
+                            BarChartGroupData group,
+                            int groupIndex,
+                            BarChartRodData rod,
+                            int rodIndex,
+                          ) {
+                            return BarTooltipItem(
+                              rod.y.round().toString(),
+                              TextStyle(
+                                color: Colors.blueGrey,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      titlesData: FlTitlesData(
+                        show: true,
+                        bottomTitles: SideTitles(
+                          showTitles: true,
+                          textStyle: TextStyle(
+                              color: const Color(0xff7589a2),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14),
+                          margin: 20,
+                          getTitles: (double value) {
+                            switch (value.toInt()) {
+                              case 0:
+                                return 'DBY';
+                              case 1:
+                                return 'Yes';
+                              case 2:
+                                return 'Tod';
+
+                              default:
+                                return '';
+                            }
+                          },
+                        ),
+                        leftTitles: SideTitles(showTitles: false),
+                      ),
+                      borderData: FlBorderData(
+                        show: false,
+                      ),
+                      barGroups: [
+                        BarChartGroupData(x: 0, barRods: [
+                          BarChartRodData(
+                              y: dayBeforeYesTotalTime / 60,
+                              color: Colors.lightBlueAccent)
+                        ], showingTooltipIndicators: [
+                          0
+                        ]),
+                        BarChartGroupData(x: 1, barRods: [
+                          BarChartRodData(
+                              y: yesdayTotalTime / 60,
+                              color: Colors.lightBlueAccent)
+                        ], showingTooltipIndicators: [
+                          0
+                        ]),
+                        BarChartGroupData(x: 2, barRods: [
+                          BarChartRodData(
+                              y: todayTotalTime / 60,
+                              color: Colors.lightBlueAccent)
+                        ], showingTooltipIndicators: [
+                          0
+                        ]),
+                      ],
+                    )),
+                  ],
+                ),
+              )
+            ],
+          );
+        });
+  }
+  
+  Future<void> grap0Days(context, DeviceObject deviceObject) async {
     await showDialog(
         context: context,
         builder: (BuildContext context) {
