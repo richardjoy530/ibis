@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:ui';
+import 'dart:io';
 
 import 'package:fl_chart/fl_chart.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:downloads_path_provider/downloads_path_provider.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -12,6 +15,7 @@ import 'package:ibis/show_history.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:excel/excel.dart';
 
 import 'calender.dart';
 import 'data.dart';
@@ -323,31 +327,40 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(18.0),
             ),
-            title: Text('Are you sure?',textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Color(0xff02457a),
-                  fontWeight: FontWeight.bold,
-                  //fontSize: 24,
-                ),),
+            title: Text(
+              'Are you sure?',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Color(0xff02457a),
+                fontWeight: FontWeight.bold,
+                //fontSize: 24,
+              ),
+            ),
             content: Text('Do you want to exit the App?'),
             actions: <Widget>[
               FlatButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: Text('No',textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Color(0xff02457a),
-                  fontWeight: FontWeight.bold,
-                  //fontSize: 24,
-                ),),
+                child: Text(
+                  'No',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Color(0xff02457a),
+                    fontWeight: FontWeight.bold,
+                    //fontSize: 24,
+                  ),
+                ),
               ),
               FlatButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: Text('Yes',textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Color(0xff02457a),
-                  fontWeight: FontWeight.bold,
-                  //fontSize: 24,
-                ),),
+                child: Text(
+                  'Yes',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Color(0xff02457a),
+                    fontWeight: FontWeight.bold,
+                    //fontSize: 24,
+                  ),
+                ),
               ),
             ],
           ),
@@ -927,7 +940,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       ),
                       child: ListTile(
                         leading: Icon(
-                          rooms[index]==room?Icons.check:Icons.meeting_room_rounded,
+                          rooms[index] == room
+                              ? Icons.check
+                              : Icons.meeting_room_rounded,
                           color: Color(0xff02457a),
                         ),
                         title: Text(rooms[index],
@@ -995,7 +1010,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       ),
                       child: ListTile(
                         leading: Icon(
-                          workers[index]==worker?Icons.check:Icons.perm_identity,
+                          workers[index] == worker
+                              ? Icons.check
+                              : Icons.perm_identity,
                           color: Color(0xff02457a),
                         ),
                         title: Text(workers[index],
@@ -1081,6 +1098,67 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   );
                 },
               ),
+              ListTile(
+                leading:
+                    Icon(Icons.import_export_sharp, color: Color(0xff02457a)),
+                title: Text('Export'),
+                onTap: () async{
+                  var permissionResult = Permission.storage;
+                  if (await permissionResult.isGranted) {
+                    // code of read or write file in external storage (SD card)
+                    var excel = Excel.createExcel();
+                  List rowData = [];
+                  Sheet sheetObject = excel['ibis'];
+                  for (int i = 0; i < timeDataList.length; i++) {
+                    exportRooms.add(timeDataList[i].roomName);
+                    exportWorkers.add(timeDataList[i].workerName);
+                    exportStartTime.add(timeDataList[i].startTime);
+                    exportEndTime.add(timeDataList[i].endTime);
+                    exportElapseTime.add(timeDataList[i].elapsedTime);
+                    exportTime.add(timeDataList[i].time);
+                  }
+                  
+                  for (int j = 0; j < historyList.length; j++) {
+                    exportState.add(historyList[j].state);
+                    exportTimeNow.add(historyList[j].time);
+                  }
+
+                  for (int i = 0; i < timeDataList.length; i++) {
+                    rowData.add(exportRooms[i]);
+                    rowData.add(exportWorkers[i]);
+                    rowData.add(exportStartTime[i]);
+                    rowData.add(exportEndTime[i]);
+                    rowData.add(exportElapseTime[i]);
+                    rowData.add(exportTime[i]);
+                    rowData.add(exportState[i]);
+                    rowData.add(exportTimeNow[i]);
+                    sheetObject.insertRowIterables(rowData, i);
+                    rowData.removeRange(0, rowData.length);
+                  }
+
+                  DownloadsPathProvider.downloadsDirectory.then((value) {                     
+                    List<String> path1=value.toString().split("'");                    
+                    String path2=path1[1].trim();
+                    String path=path2 + '/ibis.xlsx';
+                    print(path);
+                    excel.encode().then((onValue) {                      
+                      File('$path')
+                        ..createSync(recursive: true)
+                        ..writeAsBytesSync(onValue);
+                    });
+                    Fluttertoast.showToast(
+                      msg: "Succesfully exported to $path",
+                      gravity: ToastGravity.SNACKBAR,
+                      toastLength: Toast.LENGTH_LONG,
+                    );
+                  });
+                  }
+                  else
+                  {
+                    permissionResult.request();
+                  }
+                },
+              )
             ],
           );
         });
