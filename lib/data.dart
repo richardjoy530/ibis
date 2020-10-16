@@ -34,7 +34,7 @@ SharedPreferences prefs;
 String deviceName;
 int deviceHeight;
 List<String> exportRooms=[],exportWorkers=[],exportState=[];
-List<DateTime> exportStartTime=[],exportEndTime=[],exportTimeNow=[];
+List<String> exportStartTime=[],exportEndTime=[],exportTimeNow=[];
 List<int> exportElapseTime=[],exportTime=[];
 DatabaseHelper databaseHelper;
 String room;

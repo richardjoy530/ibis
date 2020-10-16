@@ -1100,61 +1100,72 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               ),
               ListTile(
                 leading:
-                    Icon(Icons.import_export_sharp, color: Color(0xff02457a)),
+                    Icon(Icons.file_download, 
+                    color: Color(0xff02457a)),
                 title: Text('Export'),
-                onTap: () async{
+                onTap: () async {
                   var permissionResult = Permission.storage;
                   if (await permissionResult.isGranted) {
                     // code of read or write file in external storage (SD card)
                     var excel = Excel.createExcel();
-                  List rowData = [];
-                  Sheet sheetObject = excel['ibis'];
-                  for (int i = 0; i < timeDataList.length; i++) {
-                    exportRooms.add(timeDataList[i].roomName);
-                    exportWorkers.add(timeDataList[i].workerName);
-                    exportStartTime.add(timeDataList[i].startTime);
-                    exportEndTime.add(timeDataList[i].endTime);
-                    exportElapseTime.add(timeDataList[i].elapsedTime);
-                    exportTime.add(timeDataList[i].time);
-                  }
-                  
-                  for (int j = 0; j < historyList.length; j++) {
-                    exportState.add(historyList[j].state);
-                    exportTimeNow.add(historyList[j].time);
-                  }
+                    List rowData = [];
+                    Sheet sheetObject = excel['Sheet1'];
+                    for (int i = 0; i < timeDataList.length; i++) {
+                      exportRooms.add(timeDataList[i].roomName);
+                      exportWorkers.add(timeDataList[i].workerName);
+                      exportStartTime.add(timeDataList[i].startTime.toString());
+                      exportEndTime.add(timeDataList[i].endTime.toString());
+                      exportElapseTime.add(timeDataList[i].elapsedTime);
+                      exportTime.add(timeDataList[i].time);
+                    }
 
-                  for (int i = 0; i < timeDataList.length; i++) {
-                    rowData.add(exportRooms[i]);
-                    rowData.add(exportWorkers[i]);
-                    rowData.add(exportStartTime[i]);
-                    rowData.add(exportEndTime[i]);
-                    rowData.add(exportElapseTime[i]);
-                    rowData.add(exportTime[i]);
-                    rowData.add(exportState[i]);
-                    rowData.add(exportTimeNow[i]);
-                    sheetObject.insertRowIterables(rowData, i);
-                    rowData.removeRange(0, rowData.length);
-                  }
+                    for (int j = 0; j < historyList.length; j++) {
+                      exportState.add(historyList[j].state);
+                      exportTimeNow.add(historyList[j].time.toString());
+                    }
 
-                  DownloadsPathProvider.downloadsDirectory.then((value) {                     
-                    List<String> path1=value.toString().split("'");                    
-                    String path2=path1[1].trim();
-                    String path=path2 + '/ibis.xlsx';
-                    print(path);
-                    excel.encode().then((onValue) {                      
-                      File('$path')
-                        ..createSync(recursive: true)
-                        ..writeAsBytesSync(onValue);
+                    for (int i = 0; i < timeDataList.length; i++) {
+                      if (i == 0) {
+                        rowData.add("ROOM");
+                        rowData.add("WORKER");
+                        rowData.add("START TIME");
+                        rowData.add("END TIME");
+                        rowData.add("RUNNING TIME");
+                        rowData.add("SET TIME");
+                        rowData.add("STATE");
+                        rowData.add("TIME");
+                        sheetObject.insertRowIterables(rowData, i);
+                        rowData.removeRange(0, rowData.length);
+                      }
+                      rowData.add(exportRooms[i]);
+                      rowData.add(exportWorkers[i]);
+                      rowData.add(exportStartTime[i]);
+                      rowData.add(exportEndTime[i]);
+                      rowData.add(exportElapseTime[i]);
+                      rowData.add(exportTime[i]);
+                      rowData.add(exportState[i]);
+                      rowData.add(exportTimeNow[i]);
+                      sheetObject.insertRowIterables(rowData, i+1);
+                      rowData.removeRange(0, rowData.length);
+                    }
+
+                    DownloadsPathProvider.downloadsDirectory.then((value) {
+                      List<String> path1 = value.toString().split("'");
+                      String path2 = path1[1].trim();
+                      String path = path2 + '/ibis.xlsx';
+                      print(path);
+                      excel.encode().then((onValue) {
+                        File('$path')
+                          ..createSync(recursive: true)
+                          ..writeAsBytesSync(onValue);
+                      });
+                      Fluttertoast.showToast(
+                        msg: "Succesfully exported to $path",
+                        gravity: ToastGravity.SNACKBAR,
+                        toastLength: Toast.LENGTH_LONG,
+                      );
                     });
-                    Fluttertoast.showToast(
-                      msg: "Succesfully exported to $path",
-                      gravity: ToastGravity.SNACKBAR,
-                      toastLength: Toast.LENGTH_LONG,
-                    );
-                  });
-                  }
-                  else
-                  {
+                  } else {
                     permissionResult.request();
                   }
                 },
