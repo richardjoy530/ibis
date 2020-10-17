@@ -904,14 +904,40 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        return SimpleDialog(
+        new Timer.periodic(Duration(seconds: 2), (timer) {
+          Navigator.pop(context);
+          timer.cancel();
+        });
+        return AlertDialog(
           backgroundColor: Color(0xffffffff),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
           title: Center(
             child: Text(
-              'Succesfully completed!',
+              'Succusfully Completed!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Color(0xff02457a),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24),
+            ),
+          ),
+        );
+      },
+    );
+    await showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          backgroundColor: Color(0xffffffff),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Center(
+             child: Text(
+              'Would you like to start disinfecting again?',
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: Color(0xff02457a),
@@ -920,15 +946,15 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
           ),
           children: <Widget>[
-            Center(
-              child: Text(
-                'Continue disinfecting ?',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.blueGrey, fontSize: 20),
-              ),
-            ),
+            // Center(
+            //   child: Text(
+            //     'Continue disinfecting ?',
+            //     textAlign: TextAlign.center,
+            //     style: TextStyle(color: Colors.blueGrey, fontSize: 20),
+            //   ),
+            // ),
             SimpleDialogOption(
-              child: Center(child: Text('yes', textAlign: TextAlign.center)),
+              child: Center(child: Text('Yes', textAlign: TextAlign.center)),
               onPressed: () {
                 widget.deviceObject.clientError = false;
 

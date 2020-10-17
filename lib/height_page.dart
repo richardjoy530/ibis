@@ -7,6 +7,11 @@ import 'package:flutter/material.dart';
 import 'data.dart';
 import 'main.dart';
 
+Color upArrowColor = Color(0xff5cbceb);
+Color upBGColor = Color(0xff02457a);
+Color downArrowColor = Color(0xff02457a);
+Color downBGColor = Color(0xff02457a);
+
 class HeightPage extends StatefulWidget {
   final DeviceObject deviceObject;
   final bool justHeight;
@@ -16,11 +21,6 @@ class HeightPage extends StatefulWidget {
 }
 
 class _HeightPageState extends State<HeightPage> {
-  Color upArrowColor = Color(0xff02457a);
-  Color upBGColor = Color(0xff5cbceb);
-  Color downArrowColor = Color(0xffd6e7ee);
-  Color downBGColor = Color(0xff5cbceb);
-
   Timer mainTimer;
   Timer timer;
   int indicator = 0;
@@ -65,30 +65,36 @@ class _HeightPageState extends State<HeightPage> {
                         child: Container(
                           height: 100,
                           width: 100,
-                          child: Image.asset('images/up.png',color: upBGColor,),
+                          child: Image.asset(
+                            'images/up.png',
+                            color: upBGColor,
+                          ),
                         ),
                         onPointerDown: (data) {
-                          widget.deviceObject.socket.write('-3\r');
-                          upBGColor = upArrowColor;
-                          setState(() {
-                            flare = 'up';
-                          });
-                          upArrowColor = downBGColor;
-                          indicator = 1;
-                          if (widget.deviceObject.height != 100) {
-                            tick();
+                          if (topHit == false) {
+                            bottumHit = false;
+                            widget.deviceObject.socket.write('-3\r');
+                            upBGColor = upArrowColor;
+                            setState(() {
+                              flare = 'up';
+                            });
+                            upArrowColor = downBGColor;
+                            indicator = 1;
+                            if (widget.deviceObject.height != 100) {
+                              tick();
+                            }
                           }
                         },
                         onPointerUp: (data) {
-                          widget.deviceObject.socket.write('-1\r');
                           setState(() {
                             flare = 'idle';
+                            downArrowColor = Color(0xff5cbceb);
+                            downBGColor = Color(0xff02457a);
+                            upArrowColor = Color(0xff5cbceb);
+                            upBGColor = Color(0xff02457a);
                           });
-                          setState(() {
-                            upArrowColor = Color(0xff02457a);
-                            upBGColor = Color(0xff5cbceb);
-                          });
-                          if (timer!=null) {
+                          widget.deviceObject.socket.write('-1\r');
+                          if (timer != null) {
                             timer.cancel();
                           }
                           if (indicator != 0) {
@@ -102,33 +108,41 @@ class _HeightPageState extends State<HeightPage> {
                         child: Transform.rotate(
                           angle: 3.14,
                           child: Container(
-                          height: 100,
-                          width: 100,
-                          child: Image.asset('images/up.png',color: downBGColor,),
-                        ),
+                            height: 100,
+                            width: 100,
+                            child: Image.asset(
+                              'images/up.png',
+                              color: downBGColor,
+                            ),
+                          ),
                         ),
                         onPointerDown: (data) {
-                          downBGColor = downArrowColor;
-                          downArrowColor = upBGColor;
-                          setState(() {
-                            flare = 'down';
-                          });
-
-                          indicator = -1;
-                          widget.deviceObject.socket.write('-2\r');
-                          if (widget.deviceObject.height != 0) {
-                            tick();
+                          if (bottumHit == false) {
+                            downBGColor = downArrowColor;
+                            downArrowColor = upBGColor;
+                            topHit = false;
+                            downBGColor = downArrowColor;
+                            downArrowColor = upBGColor;
+                            setState(() {
+                              flare = 'down';
+                            });
+                            indicator = -1;
+                            widget.deviceObject.socket.write('-2\r');
+                            if (widget.deviceObject.height != 0) {
+                              tick();
+                            }
                           }
                         },
                         onPointerUp: (data) {
-                          widget.deviceObject.socket.write('-1\r');
-
                           setState(() {
                             flare = 'idle';
-                            downArrowColor = Color(0xff02457a);
-                            downBGColor = Color(0xff5cbceb);
+                            downArrowColor = Color(0xff5cbceb);
+                            downBGColor = Color(0xff02457a);
+                            upArrowColor = Color(0xff5cbceb);
+                            upBGColor = Color(0xff02457a);
                           });
-                          if (timer!=null) {
+                          widget.deviceObject.socket.write('-1\r');
+                          if (timer != null) {
                             timer.cancel();
                           }
                           if (indicator != 0) {
@@ -148,7 +162,10 @@ class _HeightPageState extends State<HeightPage> {
             alignment: Alignment.bottomCenter,
             child: Listener(
               child: Container(
-                margin: EdgeInsets.only(bottom: 10, left: (MediaQuery.of(context).size.width-200)/3, right: (MediaQuery.of(context).size.width-200)/3),
+                margin: EdgeInsets.only(
+                    bottom: 10,
+                    left: (MediaQuery.of(context).size.width - 200) / 3,
+                    right: (MediaQuery.of(context).size.width - 200) / 3),
                 //width: MediaQuery.of(context).size.width,
                 height: 70,
                 decoration: BoxDecoration(
@@ -166,7 +183,7 @@ class _HeightPageState extends State<HeightPage> {
               ),
               onPointerUp: (pointerUp) {
                 widget.deviceObject.progressDegrees = 0;
-                
+
                 prefs.setInt('${widget.deviceObject.ip}height',
                     widget.deviceObject.height.toInt());
                 widget.deviceObject.time = Duration(minutes: 0);
@@ -177,10 +194,10 @@ class _HeightPageState extends State<HeightPage> {
 
                 if (widget.justHeight == false) {
                   if (widget.deviceObject.height.toInt() == 0) {
-                  widget.deviceObject.socket.write('5\r');
-                } else {
-                  widget.deviceObject.socket.write('5\r');
-                }
+                    widget.deviceObject.socket.write('5\r');
+                  } else {
+                    widget.deviceObject.socket.write('5\r');
+                  }
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(

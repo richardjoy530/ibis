@@ -8,10 +8,20 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 //import 'package:table_calendar/table_calendar.dart';
+import 'height_page.dart';
 import 'main.dart' as main;
 
 int displayTime;
-double time12am=0,time3am=0,time6am=0,time9am=0,time12pm=0,time3pm=0,time6pm=0,time9pm=0;
+bool topHit = false;
+bool bottumHit = false;
+double time12am = 0,
+    time3am = 0,
+    time6am = 0,
+    time9am = 0,
+    time12pm = 0,
+    time3pm = 0,
+    time6pm = 0,
+    time9pm = 0;
 DateTime startTime;
 bool stopPressed = false;
 //CalendarController _calendarController;
@@ -49,6 +59,7 @@ class DeviceObject {
   bool temp;
   bool completedStatus;
   int elapsedTime;
+  bool resetingheight;
   Duration mainTime;
   bool offline;
   String flare;
@@ -76,6 +87,7 @@ class DeviceObject {
     this.elapsedTime = 0,
     this.ip,
     this.offline,
+    this.resetingheight = false,
     this.name,
     this.socket,
     this.radialProgressAnimationController,
@@ -112,6 +124,31 @@ class DeviceObject {
       if (String.fromCharCode(onData[0]) == 'c') {
         this.completedStatus = true;
       }
+      if (String.fromCharCode(onData[0]) == 't') {
+        flare = 'idle';
+        downArrowColor = Color(0xff5cbceb);
+        downBGColor = Color(0xff02457a);
+        upArrowColor = Color(0xff5cbceb);
+        upBGColor = Color(0xff02457a);
+        topHit = true;
+      }
+      if (String.fromCharCode(onData[0]) == 'b') {
+        flare = 'idle';
+        downArrowColor = Color(0xff5cbceb);
+        downBGColor = Color(0xff02457a);
+        upArrowColor = Color(0xff5cbceb);
+        upBGColor = Color(0xff02457a);
+        bottumHit = true;
+      }
+
+      if (String.fromCharCode(onData[0]) == 'd') {
+        flare = 'idle';
+        downArrowColor = Color(0xff5cbceb);
+        downBGColor = Color(0xff02457a);
+        upArrowColor = Color(0xff5cbceb);
+        upBGColor = Color(0xff02457a);
+        this.resetingheight = false;
+      }
 
       if (this.offline == false) {
         if (onData[0] == 50) {
@@ -121,23 +158,23 @@ class DeviceObject {
 
           this.motionDetected = true;
           databaseHelper.insertTimeData(
-                  TimeData(
-                      roomName: room,
-                      workerName: worker,
-                      startTime: startTime,
-                      endTime: DateTime.now(),
-                      elapsedTime: this.elapsedTime,
-                      time: this.time.inSeconds.toInt()),
-                );
-                timeDataList.add(
-                  TimeData(
-                      roomName: room,
-                      workerName: worker,
-                      startTime: startTime,
-                      endTime: DateTime.now(),
-                      elapsedTime: this.elapsedTime,
-                      time: this.time.inSeconds.toInt()),
-                );
+            TimeData(
+                roomName: room,
+                workerName: worker,
+                startTime: startTime,
+                endTime: DateTime.now(),
+                elapsedTime: this.elapsedTime,
+                time: this.time.inSeconds.toInt()),
+          );
+          timeDataList.add(
+            TimeData(
+                roomName: room,
+                workerName: worker,
+                startTime: startTime,
+                endTime: DateTime.now(),
+                elapsedTime: this.elapsedTime,
+                time: this.time.inSeconds.toInt()),
+          );
           databaseHelper.insertHistory(History(
               roomName: room,
               workerName: worker,
