@@ -11,7 +11,6 @@ import 'package:wifi_iot/wifi_iot.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
-import 'calender.dart';
 import 'data.dart';
 import 'show_rooms_workers.dart';
 
@@ -693,44 +692,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                           builder: (context) => ShowRoomsStaffs()));
                 },
               ),
-              ListTile(
-                leading: Icon(
-                  isEnabled == true
-                      ? Icons.signal_wifi_4_bar
-                      : Icons.signal_wifi_off,
-                  color: Color(0xff02457a),
-                ),
-                title: Text(
-                  isEnabled == true ? 'Tap to disconnect' : 'Tap to connect',
-                ),
-                onTap: () {
-                  setState(() {
-                    WiFiForIoTPlugin.setEnabled(!isEnabled);
-                    isEnabled = !isEnabled;
-                    Navigator.pop(context);
-                  });
-                },
-              ),
-              ListTile(
-                leading: Icon(
-                  Icons.info_outline,
-                  color: Color(0xff02457a),
-                ),
-                title: Text('History'),
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => CalenderPage()),
-                  );
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.scatter_plot),
-                title: Text('QR Scanner'),
-                onTap: () {
-                  scanIbis();
-                },
-              ),
+              
             ],
           );
         });

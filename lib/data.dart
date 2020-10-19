@@ -126,27 +126,21 @@ class DeviceObject {
       }
       if (String.fromCharCode(onData[0]) == 't') {
         flare = 'idle';
-        downArrowColor = Color(0xff5cbceb);
-        downBGColor = Color(0xff02457a);
-        upArrowColor = Color(0xff5cbceb);
-        upBGColor = Color(0xff02457a);
+        downArrowColor = darkBlue;
+        upArrowColor = darkBlue;
         topHit = true;
       }
       if (String.fromCharCode(onData[0]) == 'b') {
         flare = 'idle';
-        downArrowColor = Color(0xff5cbceb);
-        downBGColor = Color(0xff02457a);
-        upArrowColor = Color(0xff5cbceb);
-        upBGColor = Color(0xff02457a);
+        downArrowColor = darkBlue;
+        upArrowColor = darkBlue;
         bottumHit = true;
       }
 
       if (String.fromCharCode(onData[0]) == 'd') {
         flare = 'idle';
-        downArrowColor = Color(0xff5cbceb);
-        downBGColor = Color(0xff02457a);
-        upArrowColor = Color(0xff5cbceb);
-        upBGColor = Color(0xff02457a);
+        downArrowColor = darkBlue;
+        upArrowColor = darkBlue;
         this.resetingheight = false;
       }
 

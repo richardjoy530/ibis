@@ -7,10 +7,10 @@ import 'package:flutter/material.dart';
 import 'data.dart';
 import 'main.dart';
 
-Color upArrowColor = Color(0xff5cbceb);
-Color upBGColor = Color(0xff02457a);
+Color lightBlue = Color(0xff5cbceb);
+Color upArrowColor = Color(0xff02457a);
+Color darkBlue = Color(0xff02457a);
 Color downArrowColor = Color(0xff02457a);
-Color downBGColor = Color(0xff02457a);
 
 class HeightPage extends StatefulWidget {
   final DeviceObject deviceObject;
@@ -67,18 +67,18 @@ class _HeightPageState extends State<HeightPage> {
                           width: 100,
                           child: Image.asset(
                             'images/up.png',
-                            color: upBGColor,
+                            color: upArrowColor,
                           ),
                         ),
                         onPointerDown: (data) {
                           if (topHit == false) {
                             bottumHit = false;
                             widget.deviceObject.socket.write('-3\r');
-                            upBGColor = upArrowColor;
                             setState(() {
+                              upArrowColor = lightBlue;
+                              downArrowColor = darkBlue;
                               flare = 'up';
                             });
-                            upArrowColor = downBGColor;
                             indicator = 1;
                             if (widget.deviceObject.height != 100) {
                               tick();
@@ -88,10 +88,8 @@ class _HeightPageState extends State<HeightPage> {
                         onPointerUp: (data) {
                           setState(() {
                             flare = 'idle';
-                            downArrowColor = Color(0xff5cbceb);
-                            downBGColor = Color(0xff02457a);
-                            upArrowColor = Color(0xff5cbceb);
-                            upBGColor = Color(0xff02457a);
+                             downArrowColor = darkBlue;
+                            upArrowColor = darkBlue;
                           });
                           widget.deviceObject.socket.write('-1\r');
                           if (timer != null) {
@@ -110,20 +108,16 @@ class _HeightPageState extends State<HeightPage> {
                           child: Container(
                             height: 100,
                             width: 100,
-                            child: Image.asset(
-                              'images/up.png',
-                              color: downBGColor,
-                            ),
+                            child: Image.asset('images/up.png',
+                                color: downArrowColor),
                           ),
                         ),
                         onPointerDown: (data) {
                           if (bottumHit == false) {
-                            downBGColor = downArrowColor;
-                            downArrowColor = upBGColor;
                             topHit = false;
-                            downBGColor = downArrowColor;
-                            downArrowColor = upBGColor;
                             setState(() {
+                              downArrowColor = lightBlue;
+                              upArrowColor = darkBlue;
                               flare = 'down';
                             });
                             indicator = -1;
@@ -136,10 +130,8 @@ class _HeightPageState extends State<HeightPage> {
                         onPointerUp: (data) {
                           setState(() {
                             flare = 'idle';
-                            downArrowColor = Color(0xff5cbceb);
-                            downBGColor = Color(0xff02457a);
-                            upArrowColor = Color(0xff5cbceb);
-                            upBGColor = Color(0xff02457a);
+                            downArrowColor = darkBlue;
+                            upArrowColor = darkBlue;
                           });
                           widget.deviceObject.socket.write('-1\r');
                           if (timer != null) {
