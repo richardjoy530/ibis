@@ -948,6 +948,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     time: DateTime.now(),
                   ),
                 );
+                
                 conToday.add(Container(
                   margin: EdgeInsets.only(top: 25),
                   width: eachGraphSpace,
@@ -987,13 +988,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             fontSize: 14),
                         margin: 20,
                         getTitles: (double value) {
-                          String dateTimeNow =
-                              timeDataList[timeDataList.length - 1]
-                                  .startTime
-                                  .hour
-                                  .toString();
+                          String dateTimeNow = timeDataList[timeDataList.length-1]
+                              .startTime
+                              .hour
+                              .toString();
                           dateTimeNow += ':';
-                          dateTimeNow += timeDataList[timeDataList.length - 1]
+                          dateTimeNow += timeDataList[timeDataList.length-1]
                               .startTime
                               .minute
                               .toString();
@@ -1008,9 +1008,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     barGroups: [
                       BarChartGroupData(x: 0, barRods: [
                         BarChartRodData(
-                            y: timeDataList[timeDataList.length - 1]
-                                    .elapsedTime /
-                                60,
+                            y: timeDataList[timeDataList.length-1].elapsedTime / 60,
                             color: Colors.lightBlueAccent),
                       ], showingTooltipIndicators: [
                         0
@@ -1265,7 +1263,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     time: DateTime.now(),
                   ),
                 );
-
+                for(int k=0;k<timeDataList.length;k++)
+                {
+                  print(timeDataList[k].startTime);
+                }
                 conToday.add(Container(
                   margin: EdgeInsets.only(top: 25),
                   width: eachGraphSpace,
@@ -1306,12 +1307,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         margin: 20,
                         getTitles: (double value) {
                           String dateTimeNow =
-                              timeDataList[timeDataList.length - 1]
+                              timeDataList[timeDataList.length-1]
                                   .startTime
                                   .hour
                                   .toString();
                           dateTimeNow += ':';
-                          dateTimeNow += timeDataList[timeDataList.length - 1]
+                          dateTimeNow += timeDataList[timeDataList.length-1]
                               .startTime
                               .minute
                               .toString();

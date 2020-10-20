@@ -44,7 +44,7 @@ class _CalenderPageState extends State<CalenderPage> {
     super.initState();
     graphDisplayTemp = 0;
     graphTempTimer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (graphDisplayTemp == 0) {
+      if (graphDisplayTemp == 0 ) {
         setState(() {
           var date = DateTime.now();
           selectedDay = [];
@@ -311,7 +311,7 @@ class _CalenderPageState extends State<CalenderPage> {
                   onPointerUp: (data) {
                     showRooms(context);
                   },
-                  child: Text(room,style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)),
+                  child: timeDataList.length>0?Text(room,style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),):Text('No Room',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)),
               IconButton(
                   icon: Icon(Icons.arrow_drop_down),
                   onPressed: () {
