@@ -1410,8 +1410,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 
                
                   for (int j = 0,k=0; j < timeDataList.length; j++) {
+                    print("${timeDataList[k].elapsedTime},${timeDataList[k].time}");
                     if (timeDataList[j].startTime.day == DateTime.now().day) {
-                      print("inside loop 2");                      
+                      //print("inside loop 2");                      
                       conToday[k] = Container(
                         margin: EdgeInsets.only(top: 25),
                         width: eachGraphSpace,

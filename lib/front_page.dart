@@ -1110,13 +1110,22 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     var excel = Excel.createExcel();
                     List rowData = [];
                     Sheet sheetObject = excel['Sheet1'];
+                    exportRooms.removeRange(0, exportRooms.length);
+                    exportWorkers.removeRange(0, exportWorkers.length);
+                    exportStartTime.removeRange(0, exportStartTime.length);
+                    exportEndTime.removeRange(0, exportEndTime.length);
+                    exportElapseTime.removeRange(0, exportElapseTime.length);
+                    exportTime.removeRange(0, exportTime.length);
+                    exportState.removeRange(0, exportState.length);
+                    exportTimeNow.removeRange(0, exportTimeNow.length);
                     for (int i = 0; i < timeDataList.length; i++) {
+                    
                       exportRooms.add(timeDataList[i].roomName);
                       exportWorkers.add(timeDataList[i].workerName);
                       exportStartTime.add(timeDataList[i].startTime.toString());
                       exportEndTime.add(timeDataList[i].endTime.toString());
-                      exportElapseTime.add(timeDataList[i].elapsedTime);
-                      exportTime.add(timeDataList[i].time);
+                      exportElapseTime.add(timeDataList[i].elapsedTime.toString());
+                      exportTime.add(timeDataList[i].time.toString());
                     }
 
                     for (int j = 0; j < historyList.length; j++) {
@@ -1130,8 +1139,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                         rowData.add("WORKER");
                         rowData.add("START TIME");
                         rowData.add("END TIME");
-                        rowData.add("RUNNING TIME");
-                        rowData.add("SET TIME");
+                        rowData.add("RUNNING TIME (Sec)");
+                        rowData.add("SET TIME (Sec)");
                         rowData.add("STATE");
                         rowData.add("TIME");
                         sheetObject.insertRowIterables(rowData, i);

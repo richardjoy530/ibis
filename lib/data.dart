@@ -35,7 +35,7 @@ String deviceName;
 int deviceHeight;
 List<String> exportRooms=[],exportWorkers=[],exportState=[];
 List<String> exportStartTime=[],exportEndTime=[],exportTimeNow=[];
-List<int> exportElapseTime=[],exportTime=[];
+List<String> exportElapseTime=[],exportTime=[];
 DatabaseHelper databaseHelper;
 String room;
 String worker;
