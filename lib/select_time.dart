@@ -461,18 +461,22 @@ class _SelectTimeState extends State<SelectTime> {
             backgroundColor: Color(0xffffffff),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                title: Text("Today"),
             children: <Widget>[
-              Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20.0),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10.0,0,10,0),
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(20.0),
+                    ),
+                    color: Color(0xffbddeee),
                   ),
-                  color: Color(0xffbddeee),
+                  height: 125,
+                  width: MediaQuery.of(context).size.width - 120,
+                  child: TodayGraph(todayController: ScrollController()),
                 ),
-                height: 125,
-                width: MediaQuery.of(context).size.width - 120,
-                child: TodayGraph(todayController: ScrollController()),
               ),
             ],
           );
@@ -486,18 +490,22 @@ class _SelectTimeState extends State<SelectTime> {
             backgroundColor: Color(0xffffffff),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                title: Text("Yesderday"),
             children: <Widget>[
-              Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20.0),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10.0,0,10,0),
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(20.0),
+                    ),
+                    color: Color(0xffbddeee),
                   ),
-                  color: Color(0xffbddeee),
+                  height: 125,
+                  width: MediaQuery.of(context).size.width - 120,
+                  child: YesterdayGraph(yesterdayController: ScrollController()),
                 ),
-                height: 125,
-                width: MediaQuery.of(context).size.width - 120,
-                child: YesterdayGraph(yesterdayController: ScrollController()),
               ),
             ],
           );
@@ -511,18 +519,22 @@ class _SelectTimeState extends State<SelectTime> {
             backgroundColor: Color(0xffffffff),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                title: Text("2 Days Before"),
             children: <Widget>[
-              Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20.0),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10.0,0,10,0),
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(20.0),
+                    ),
+                    color: Color(0xffbddeee),
                   ),
-                  color: Color(0xffbddeee),
+                  height: 125,
+                  width: MediaQuery.of(context).size.width - 120,
+                  child: TwoDaysAgoGraph(dayBeforeYesterdayController: ScrollController()),
                 ),
-                height: 125,
-                width: MediaQuery.of(context).size.width - 120,
-                child: TwoDaysAgoGraph(dayBeforeYesterdayController: ScrollController()),
               ),
             ],
           );
