@@ -1,26 +1,22 @@
 package com.ibismedical.razecov
-import android.os.Build
-import android.os.Bundle
+import android.os.Environment
 import androidx.annotation.NonNull
-import androidx.annotation.RequiresApi
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugins.GeneratedPluginRegistrant
 
 class MainActivity: FlutterActivity() {
-    private val channel = "com.ibismedical.razecov/ibismedical"
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        MethodChannel(flutterEngine?.dartExecutor,channel).setMethodCallHandler{ MethodCall, result->
-            if (MethodCall.method=="test"){
-                result.success("Test")
-            }
-        }
-    }
-
+    private val channel = "ibis"
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
-        GeneratedPluginRegistrant.registerWith(flutterEngine)
+    super.configureFlutterEngine(flutterEngine)
+    MethodChannel(flutterEngine.dartExecutor.binaryMessenger, channel).setMethodCallHandler { call, result ->
+      if(call.method == "getDownloadsDirectory"){
+          result.success(getDownloadsDirectory())
+      }
+    }
+  }
+
+    private fun getDownloadsDirectory(): String? {
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
     }
 }
