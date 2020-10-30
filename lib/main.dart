@@ -239,11 +239,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void dispose() {
     destroyAnimation(widget.deviceObject);
     mainTimer.cancel();
-    if (widget.deviceObject.power == false &&
-        widget.deviceObject.clientError == false &&
-        stopPressed == false) {
-      widget.deviceObject.socket.write(65);
-    }
     animationTimer.cancel();
     connectionError = false;
     super.dispose();
@@ -1251,7 +1246,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               child: Center(child: Text('Yes', textAlign: TextAlign.center)),
               onPressed: () {
                 widget.deviceObject.clientError = false;
-
                 widget.deviceObject.socket.write('y\r');
                 errorRemover = true;
                 Navigator.pop(context);
