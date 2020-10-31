@@ -412,7 +412,7 @@ class DatabaseHelper {
       'workerName': timeData.workerName,
       'roomName': timeData.roomName,
       'startTime': timeData.startTime.toIso8601String(),
-      'endTime': timeData.startTime.toIso8601String(),
+      'endTime': timeData.endTime.toIso8601String(),
       'time': timeData.elapsedTime,
       'elapsedTime': timeData.elapsedTime
     });
