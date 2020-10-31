@@ -27,7 +27,9 @@ final selectorColor = CustomSliderColors(
 
 class SelectTime extends StatefulWidget {
   final DeviceObject deviceObject;
+
   SelectTime(this.deviceObject);
+
   @override
   _SelectTimeState createState() => _SelectTimeState();
 }
@@ -38,6 +40,7 @@ class _SelectTimeState extends State<SelectTime> {
   ScrollController yesterdayController;
   ScrollController dayBeforeYesterdayController;
   double pos;
+
   @override
   void initState() {
     pos = 1;
@@ -188,13 +191,12 @@ class _SelectTimeState extends State<SelectTime> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             GestureDetector(
-                              onTap: ()
-                              {
+                              onTap: () {
                                 setState(() {
                                   graph2Days(context, deviceObjectList[0]);
                                 });
                               },
-                                                          child: Container(
+                              child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(20.0),
@@ -461,10 +463,10 @@ class _SelectTimeState extends State<SelectTime> {
             backgroundColor: Color(0xffffffff),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                title: Text("Today"),
+            title: Text("Today"),
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.fromLTRB(10.0,0,10,0),
+                padding: const EdgeInsets.fromLTRB(10.0, 0, 10, 0),
                 child: Container(
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
@@ -482,6 +484,7 @@ class _SelectTimeState extends State<SelectTime> {
           );
         });
   }
+
   Future<void> graphYDays(context, DeviceObject deviceObject) async {
     await showDialog(
         context: context,
@@ -490,10 +493,10 @@ class _SelectTimeState extends State<SelectTime> {
             backgroundColor: Color(0xffffffff),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                title: Text("Yesderday"),
+            title: Text("Yesderday"),
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.fromLTRB(10.0,0,10,0),
+                padding: const EdgeInsets.fromLTRB(10.0, 0, 10, 0),
                 child: Container(
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
@@ -504,13 +507,15 @@ class _SelectTimeState extends State<SelectTime> {
                   ),
                   height: 125,
                   width: MediaQuery.of(context).size.width - 120,
-                  child: YesterdayGraph(yesterdayController: ScrollController()),
+                  child:
+                      YesterdayGraph(yesterdayController: ScrollController()),
                 ),
               ),
             ],
           );
         });
   }
+
   Future<void> graph2Days(context, DeviceObject deviceObject) async {
     await showDialog(
         context: context,
@@ -519,10 +524,10 @@ class _SelectTimeState extends State<SelectTime> {
             backgroundColor: Color(0xffffffff),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                title: Text("2 Days Before"),
+            title: Text("2 Days Before"),
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.fromLTRB(10.0,0,10,0),
+                padding: const EdgeInsets.fromLTRB(10.0, 0, 10, 0),
                 child: Container(
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
@@ -533,7 +538,8 @@ class _SelectTimeState extends State<SelectTime> {
                   ),
                   height: 125,
                   width: MediaQuery.of(context).size.width - 120,
-                  child: TwoDaysAgoGraph(dayBeforeYesterdayController: ScrollController()),
+                  child: TwoDaysAgoGraph(
+                      dayBeforeYesterdayController: ScrollController()),
                 ),
               ),
             ],

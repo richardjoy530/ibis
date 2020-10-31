@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
@@ -1116,18 +1117,18 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     exportTime.removeRange(0, exportTime.length);
                     exportState.removeRange(0, exportState.length);
                     exportTimeNow.removeRange(0, exportTimeNow.length);
+                    var f = new NumberFormat("00", "en_US");
                     for (int i = 0; i < timeDataList.length; i++) {
                       exportRooms.add(timeDataList[i].roomName);
                       exportWorkers.add(timeDataList[i].workerName);
                       exportStartTime.add(
-                          "${timeDataList[i].startTime.day.toString()}/${timeDataList[i].startTime.month.toString()}/${timeDataList[i].startTime.year.toString()} ${timeDataList[i].startTime.hour.toString()}:${timeDataList[i].startTime.minute.toString()}");
+                          "${timeDataList[i].startTime.day}/${timeDataList[i].startTime.month}/${timeDataList[i].startTime.year} ${f.format(timeDataList[i].startTime.hour)}:${f.format(timeDataList[i].startTime.minute)}:${f.format(timeDataList[i].startTime.second)}");
                       exportEndTime.add(
-                          "${timeDataList[i].endTime.day.toString()}/${timeDataList[i].endTime.month.toString()}/${timeDataList[i].endTime.year.toString()} ${timeDataList[i].endTime.hour.toString()}:${timeDataList[i].endTime.minute.toString()}");
+                          "${timeDataList[i].endTime.day}/${timeDataList[i].endTime.month}/${timeDataList[i].endTime.year} ${f.format(timeDataList[i].endTime.hour)}:${f.format(timeDataList[i].endTime.minute)}:${f.format(timeDataList[i].endTime.second)}");
                       exportElapseTime.add(
-                          "${timeDataList[i].elapsedTime / 60}:${timeDataList[i].elapsedTime % 60}");
+                          "${f.format((timeDataList[i].elapsedTime / 60).floor())}:${f.format(timeDataList[i].elapsedTime % 60)}");
                       exportTime.add(timeDataList[i].time.toString());
                     }
-                    print(5 % 2);
                     for (int j = 0; j < historyList.length; j++) {
                       exportState.add(historyList[j].state);
                       exportTimeNow.add(historyList[j].time.toString());
@@ -1135,13 +1136,13 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 
                     for (int i = 0; i < timeDataList.length; i++) {
                       if (i == 0) {
-                        rowData.add("ROOM");
-                        rowData.add("WORKER");
-                        rowData.add("START TIME");
-                        rowData.add("END TIME");
-                        rowData.add("RUNNING TIME (Sec)");
+                        rowData.add("Room");
+                        rowData.add("Staff");
+                        rowData.add("Start Time");
+                        rowData.add("End Time");
+                        rowData.add("Running Time (Min)");
                         // rowData.add("SET TIME (Sec)");
-                        // rowData.add("STATE");
+                        rowData.add("State");
                         // rowData.add("TIME");
                         sheetObject.insertRowIterables(rowData, i);
                         rowData.removeRange(0, rowData.length);
@@ -1152,7 +1153,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       rowData.add(exportEndTime[i]);
                       rowData.add(exportElapseTime[i]);
                       // rowData.add(exportTime[i]);
-                      // rowData.add(exportState[i]);
+                      rowData.add(exportState[i]);
                       // rowData.add(exportTimeNow[i]);
                       sheetObject.insertRowIterables(rowData, i + 1);
                       rowData.removeRange(0, rowData.length);
@@ -1670,6 +1671,7 @@ class Rooms extends StatefulWidget {
 class _RoomsState extends State<Rooms> {
   List<String> cText = [];
   List<TextEditingController> roomNames = [];
+
   @override
   void initState() {
     nameNumber = 1;
@@ -1842,6 +1844,7 @@ class Workers extends StatefulWidget {
 class _WorkersState extends State<Workers> {
   List<String> cText = [];
   List<TextEditingController> roomNames = [];
+
   @override
   void initState() {
     nameNumber = 1;
