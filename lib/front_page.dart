@@ -65,7 +65,7 @@ Future<void> wifi() async {
 
   serverIp = await WiFiForIoTPlugin.getIP();
 }
-
+bool credChecked=false;
 class FrontPage extends StatefulWidget {
   @override
   FrontPageState createState() => FrontPageState();
@@ -116,7 +116,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   deviceObjectList[i].power == true) {
                 deviceObjectList[i].power = false;
                 deviceObjectList[i].pause = false;
-                deviceObjectList[i].resetingheight = true;
+                // deviceObjectList[i].resetingheight = true;
 
                 prefs.setInt('${deviceObjectList[i].ip}totalDuration',
                     deviceObjectList[i].totalDuration.inSeconds);
@@ -317,55 +317,32 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   load() {
     var old = prefs.getString('old');
     if (old == null) {
+      credChecked=false;
       Future.delayed(Duration(seconds: 1)).then((value) => scanIbis(context));
+    }
+    else{
+      credChecked=true;
     }
   }
 
   Future<bool> _onWillPop() async {
     return (await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18.0),
-            ),
-            title: Text(
-              'Are you sure?',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Color(0xff02457a),
-                fontWeight: FontWeight.bold,
-                //fontSize: 24,
-              ),
-            ),
-            content: Text('Do you want to exit the App?'),
-            actions: <Widget>[
-              FlatButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text(
-                  'No',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xff02457a),
-                    fontWeight: FontWeight.bold,
-                    //fontSize: 24,
-                  ),
-                ),
-              ),
-              FlatButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: Text(
-                  'Yes',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xff02457a),
-                    fontWeight: FontWeight.bold,
-                    //fontSize: 24,
-                  ),
-                ),
-              ),
-            ],
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('Are you sure?'),
+        content: new Text('Do you want to exit the App'),
+        actions: <Widget>[
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: new Text('No'),
           ),
-        )) ??
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: new Text('Yes'),
+          ),
+        ],
+      ),
+    )) ??
         false;
   }
 
@@ -515,6 +492,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     onPressed: () {
                       if (ssidController.text != "" &&
                           passwordController.text != "") {
+                        credChecked=true;
                         Navigator.pop(context);
                       }
                     },
@@ -537,7 +515,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   }
 
   Widget fillerWidget(BuildContext context) {
-    if (deviceObjectList[0].name == 'Device') {
+    if (deviceObjectList[0].name == 'Device'&&credChecked) {
       deviceObjectList[0].name = '';
       nameIt(context, deviceObjectList[0]);
     }
@@ -940,12 +918,16 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: ListTile(
-                        leading: Icon(
-                          rooms[index] == room
-                              ? Icons.check
-                              : Icons.meeting_room_rounded,
-                          color: Color(0xff02457a),
-                        ),
+                        leading: Radio(
+                            value: rooms[index],
+                            groupValue: room,
+                            onChanged: (newValue) {
+                              setState(() {
+                                room = newValue;
+                                print(["selected worker", room]);
+                                Navigator.pop(context);
+                              });
+                            }),
                         title: Text(rooms[index],
                             style: TextStyle(
                                 color: Colors.black,
@@ -955,7 +937,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     onPressed: () {
                       setState(() {
                         room = rooms[index];
-                        print(["selected room", room]);
+                        print(["selected room ", room]);
                       });
                       Navigator.pop(context);
                     },
@@ -1010,12 +992,16 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: ListTile(
-                        leading: Icon(
-                          workers[index] == worker
-                              ? Icons.check
-                              : Icons.perm_identity,
-                          color: Color(0xff02457a),
-                        ),
+                        leading: Radio(
+                            value: workers[index],
+                            groupValue: worker,
+                            onChanged: (newValue) {
+                              setState(() {
+                                worker = newValue;
+                                print(["selected worker", worker]);
+                                Navigator.pop(context);
+                              });
+                            }),
                         title: Text(workers[index],
                             style: TextStyle(
                                 color: Colors.black,
@@ -1026,7 +1012,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       deviceObject.clientError = false;
                       setState(() {
                         worker = workers[index];
-                        print(["selected worker", worker]);
+                        print(["selected worker index", workers[index]]);
                       });
                       Navigator.pop(context);
                     },

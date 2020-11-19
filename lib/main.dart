@@ -899,7 +899,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 errorRemover = false;
                 deviceObject.flare = 'off';
                 print('state3');
-                deviceObject.resetingheight = true;
+                // deviceObject.resetingheight = true;
                 deviceObject.elapsedTime = 0;
                 deviceObject.radialProgressAnimationController.stop();
                 deviceObject.timer.cancel();
@@ -1491,7 +1491,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   });
                 }
                 destroyAnimation(deviceObject);
-                deviceObject.resetingheight = true;
+                deviceObject.resetingheight = true;//
                 deviceObject.socket.write('s');
                 deviceObject.power = false;
                 deviceObject.time = Duration(minutes: 0);

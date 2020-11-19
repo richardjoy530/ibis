@@ -73,9 +73,8 @@ class _SelectTimeState extends State<SelectTime> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.only(top: 20),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -85,7 +84,7 @@ class _SelectTimeState extends State<SelectTime> {
                   FloatingActionButton.extended(
                     backgroundColor: Color(0xff02457a),
                     heroTag: 'staff1',
-                    label: Text(worker),
+                    label: Text(worker.length>7?"${worker.substring(0,6)}...":worker),
                     icon: Icon(Icons.perm_identity),
                     onPressed: null,
                   ),
@@ -93,7 +92,7 @@ class _SelectTimeState extends State<SelectTime> {
                     backgroundColor: Color(0xff02457a),
                     elevation: 4,
                     heroTag: 'room1',
-                    label: Text(room),
+                    label: Text(room.length>7?"${room.substring(0,6)}...":room),
                     icon: Icon(Icons.meeting_room_rounded),
                     onPressed: null,
                   )
@@ -101,7 +100,7 @@ class _SelectTimeState extends State<SelectTime> {
               ),
             ),
             Container(
-              margin: EdgeInsets.all(20),
+              margin: EdgeInsets.symmetric(horizontal:20),
               padding: EdgeInsets.only(top: 25),
               height: 200,
               decoration: BoxDecoration(
