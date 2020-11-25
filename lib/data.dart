@@ -33,6 +33,9 @@ bool connectionError = false;
 SharedPreferences prefs;
 String deviceName;
 int deviceHeight;
+List<String> exportRooms=[],exportWorkers=[],exportState=[];
+List<String> exportStartTime=[],exportEndTime=[],exportTimeNow=[];
+List<String> exportElapseTime=[],exportTime=[];
 DatabaseHelper databaseHelper;
 String room;
 String worker;
@@ -409,7 +412,7 @@ class DatabaseHelper {
       'workerName': timeData.workerName,
       'roomName': timeData.roomName,
       'startTime': timeData.startTime.toIso8601String(),
-      'endTime': timeData.startTime.toIso8601String(),
+      'endTime': timeData.endTime.toIso8601String(),
       'time': timeData.elapsedTime,
       'elapsedTime': timeData.elapsedTime
     });

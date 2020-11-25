@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:dots_indicator/dots_indicator.dart';
@@ -8,9 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 import 'data.dart';
-import 'front_page.dart';
 import 'main.dart';
-import 'show_history.dart';
 
 List<BarChartGroupData> barYAxis = [];
 List<String> barTime = [];
@@ -29,7 +28,9 @@ final selectorColor = CustomSliderColors(
 
 class SelectTime extends StatefulWidget {
   final DeviceObject deviceObject;
+
   SelectTime(this.deviceObject);
+
   @override
   _SelectTimeState createState() => _SelectTimeState();
 }
@@ -40,6 +41,7 @@ class _SelectTimeState extends State<SelectTime> {
   ScrollController yesterdayController;
   ScrollController dayBeforeYesterdayController;
   double pos;
+
   @override
   void initState() {
     pos = 1;
@@ -72,9 +74,8 @@ class _SelectTimeState extends State<SelectTime> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.only(top: 20),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -84,7 +85,9 @@ class _SelectTimeState extends State<SelectTime> {
                   FloatingActionButton.extended(
                     backgroundColor: Color(0xff02457a),
                     heroTag: 'staff1',
-                    label: Text(worker),
+                    label: Text(worker.length > 7
+                        ? "${worker.substring(0, 6)}..."
+                        : worker),
                     icon: Icon(Icons.perm_identity),
                     onPressed: null,
                   ),
@@ -92,43 +95,44 @@ class _SelectTimeState extends State<SelectTime> {
                     backgroundColor: Color(0xff02457a),
                     elevation: 4,
                     heroTag: 'room1',
-                    label: Text(room),
+                    label: Text(
+                        room.length > 7 ? "${room.substring(0, 6)}..." : room),
                     icon: Icon(Icons.meeting_room_rounded),
                     onPressed: null,
                   )
                 ],
               ),
             ),
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  graph3Days(context, deviceObjectList[0]);
-                });
-              },
-              child: Container(
-                margin: EdgeInsets.all(20),
-                padding: EdgeInsets.only(top: 25),
-                height: 200,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20.0),
-                  ),
-                  color: Color(0xff9ad2ec),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.only(top: 25),
+              height: 200,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(20.0),
                 ),
-                child: Column(
-                  children: [
-                    SingleChildScrollView(
-                      controller: mainController,
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: <Widget>[
-                          SizedBox(
-                            width: 40,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Container(
+                color: Color(0xff9ad2ec),
+              ),
+              child: Column(
+                children: [
+                  SingleChildScrollView(
+                    controller: mainController,
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: <Widget>[
+                        SizedBox(
+                          width: 40,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  graphTDays(context, deviceObjectList[0]);
+                                });
+                              },
+                              child: Container(
                                 padding: EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.all(
@@ -141,21 +145,28 @@ class _SelectTimeState extends State<SelectTime> {
                                 child: TodayGraph(
                                     todayController: todayController),
                               ),
-                              Text(
-                                'Today',
-                                style: TextStyle(
-                                    color: Color(0xff02457a),
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            width: 80,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Container(
+                            ),
+                            Text(
+                              'Today',
+                              style: TextStyle(
+                                  color: Color(0xff02457a),
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          width: 80,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  graphYDays(context, deviceObjectList[0]);
+                                });
+                              },
+                              child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(20.0),
@@ -167,21 +178,28 @@ class _SelectTimeState extends State<SelectTime> {
                                 child: YesterdayGraph(
                                     yesterdayController: yesterdayController),
                               ),
-                              Text(
-                                'Yesterday',
-                                style: TextStyle(
-                                    color: Color(0xff02457a),
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            width: 80,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Container(
+                            ),
+                            Text(
+                              'Yesterday',
+                              style: TextStyle(
+                                  color: Color(0xff02457a),
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          width: 80,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  graph2Days(context, deviceObjectList[0]);
+                                });
+                              },
+                              child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(20.0),
@@ -194,26 +212,26 @@ class _SelectTimeState extends State<SelectTime> {
                                     dayBeforeYesterdayController:
                                         dayBeforeYesterdayController),
                               ),
-                              Text(
-                                '2 Days ago',
-                                style: TextStyle(
-                                    color: Color(0xff02457a),
-                                    fontWeight: FontWeight.bold),
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            width: 40,
-                          ),
-                        ],
-                      ),
+                            ),
+                            Text(
+                              '2 Days ago',
+                              style: TextStyle(
+                                  color: Color(0xff02457a),
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          width: 40,
+                        ),
+                      ],
                     ),
-                    DotsIndicator(
-                      dotsCount: 3,
-                      position: pos,
-                    )
-                  ],
-                ),
+                  ),
+                  DotsIndicator(
+                    dotsCount: 3,
+                    position: pos,
+                  )
+                ],
               ),
             ),
             Stack(
@@ -305,9 +323,53 @@ class _SelectTimeState extends State<SelectTime> {
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 20),
                                   ),
-                                  onPressed: () {
+                                  onPressed: () async {
                                     if (widget.deviceObject.time.inMinutes >=
                                         1) {
+                                      widget.deviceObject.socket.writeln(widget
+                                          .deviceObject.time.inMinutes
+                                          .round());
+                                      await showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (context) {
+                                          Timer.periodic(
+                                              Duration(seconds: 10), (timer) {
+                                              Navigator.pop(context);
+                                              timer.cancel();
+                                          });
+                                          return AlertDialog(
+                                            backgroundColor: Color(0xffffffff),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                              BorderRadius.circular(10),
+                                            ),
+                                            title: Center(
+                                              child: Text(
+                                                'The device is setting up',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Color(0xff02457a),
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 24),
+                                              ),
+                                            ),
+                                            content: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                              children: [
+                                                Text(
+                                                  'Please wait...',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    color: Color(0xff02457a),
+                                                  ),
+                                                ),
+                                                CircularProgressIndicator()
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      );
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
@@ -440,7 +502,7 @@ class _SelectTimeState extends State<SelectTime> {
     );
   }
 
-    Future<void> graph3Days(context, DeviceObject deviceObject) async {
+  Future<void> graphTDays(context, DeviceObject deviceObject) async {
     await showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -448,123 +510,29 @@ class _SelectTimeState extends State<SelectTime> {
             backgroundColor: Color(0xffffffff),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: Text("Today"),
             children: <Widget>[
-              Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Listener(
-                      onPointerUp: (pointerUpEvent) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ShowHistory(),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(bottom: 30),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10.0),
-                          ),
-                          color: Color(0xff02457a),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Text(
-                            'Detiled Hstory',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10.0, 0, 10, 0),
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(20.0),
                     ),
-                    BarChart(BarChartData(
-                      alignment: BarChartAlignment.spaceAround,
-                      maxY: maxYAxis / 60,
-                      barTouchData: BarTouchData(
-                        enabled: true,
-                        touchTooltipData: BarTouchTooltipData(
-                          tooltipBgColor: Colors.transparent,
-                          tooltipPadding: const EdgeInsets.all(0),
-                          tooltipBottomMargin: 8,
-                          getTooltipItem: (
-                            BarChartGroupData group,
-                            int groupIndex,
-                            BarChartRodData rod,
-                            int rodIndex,
-                          ) {
-                            return BarTooltipItem(
-                              rod.y.round().toString(),
-                              TextStyle(
-                                color: Colors.blueGrey,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      titlesData: FlTitlesData(
-                        show: true,
-                        bottomTitles: SideTitles(
-                          showTitles: true,
-                          textStyle: TextStyle(
-                              color: const Color(0xff7589a2),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14),
-                          margin: 20,
-                          getTitles: (double value) {
-                            switch (value.toInt()) {
-                              case 0:
-                                return 'DBY';
-                              case 1:
-                                return 'Yes';
-                              case 2:
-                                return 'Tod';
-
-                              default:
-                                return '';
-                            }
-                          },
-                        ),
-                        leftTitles: SideTitles(showTitles: false),
-                      ),
-                      borderData: FlBorderData(
-                        show: false,
-                      ),
-                      barGroups: [
-                        BarChartGroupData(x: 0, barRods: [
-                          BarChartRodData(
-                              y: dayBeforeYesTotalTime / 60,
-                              color: Colors.lightBlueAccent)
-                        ], showingTooltipIndicators: [
-                          0
-                        ]),
-                        BarChartGroupData(x: 1, barRods: [
-                          BarChartRodData(
-                              y: yesdayTotalTime / 60,
-                              color: Colors.lightBlueAccent)
-                        ], showingTooltipIndicators: [
-                          0
-                        ]),
-                        BarChartGroupData(x: 2, barRods: [
-                          BarChartRodData(
-                              y: todayTotalTime / 60,
-                              color: Colors.lightBlueAccent)
-                        ], showingTooltipIndicators: [
-                          0
-                        ]),
-                      ],
-                    )),
-                  ],
+                    color: Color(0xffbddeee),
+                  ),
+                  height: 125,
+                  width: MediaQuery.of(context).size.width - 120,
+                  child: TodayGraph(todayController: ScrollController()),
                 ),
-              )
+              ),
             ],
           );
         });
   }
-  
-  Future<void> grap0Days(context, DeviceObject deviceObject) async {
+
+  Future<void> graphYDays(context, DeviceObject deviceObject) async {
     await showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -572,18 +540,54 @@ class _SelectTimeState extends State<SelectTime> {
             backgroundColor: Color(0xffffffff),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: Text("Yesderday"),
             children: <Widget>[
-              Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20.0),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10.0, 0, 10, 0),
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(20.0),
+                    ),
+                    color: Color(0xffbddeee),
                   ),
-                  color: Color(0xffbddeee),
+                  height: 125,
+                  width: MediaQuery.of(context).size.width - 120,
+                  child:
+                      YesterdayGraph(yesterdayController: ScrollController()),
                 ),
-                height: 125,
-                width: MediaQuery.of(context).size.width - 120,
-                child: TodayGraph(todayController: ScrollController()),
+              ),
+            ],
+          );
+        });
+  }
+
+  Future<void> graph2Days(context, DeviceObject deviceObject) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            backgroundColor: Color(0xffffffff),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: Text("2 Days Before"),
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10.0, 0, 10, 0),
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(20.0),
+                    ),
+                    color: Color(0xffbddeee),
+                  ),
+                  height: 125,
+                  width: MediaQuery.of(context).size.width - 120,
+                  child: TwoDaysAgoGraph(
+                      dayBeforeYesterdayController: ScrollController()),
+                ),
               ),
             ],
           );

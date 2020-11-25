@@ -1,7 +1,11 @@
 import 'dart:async';
 import 'dart:ui';
+import 'dart:io';
 
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -12,6 +16,7 @@ import 'package:ibis/show_history.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:excel/excel.dart';
 
 import 'calender.dart';
 import 'data.dart';
@@ -60,7 +65,7 @@ Future<void> wifi() async {
 
   serverIp = await WiFiForIoTPlugin.getIP();
 }
-
+bool credChecked=false;
 class FrontPage extends StatefulWidget {
   @override
   FrontPageState createState() => FrontPageState();
@@ -111,7 +116,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   deviceObjectList[i].power == true) {
                 deviceObjectList[i].power = false;
                 deviceObjectList[i].pause = false;
-                deviceObjectList[i].resetingheight = true;
+                // deviceObjectList[i].resetingheight = true;
 
                 prefs.setInt('${deviceObjectList[i].ip}totalDuration',
                     deviceObjectList[i].totalDuration.inSeconds);
@@ -312,46 +317,32 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   load() {
     var old = prefs.getString('old');
     if (old == null) {
+      credChecked=false;
       Future.delayed(Duration(seconds: 1)).then((value) => scanIbis(context));
+    }
+    else{
+      credChecked=true;
     }
   }
 
   Future<bool> _onWillPop() async {
     return (await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18.0),
-            ),
-            title: Text('Are you sure?',textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Color(0xff02457a),
-                  fontWeight: FontWeight.bold,
-                  //fontSize: 24,
-                ),),
-            content: Text('Do you want to exit the App?'),
-            actions: <Widget>[
-              FlatButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text('No',textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Color(0xff02457a),
-                  fontWeight: FontWeight.bold,
-                  //fontSize: 24,
-                ),),
-              ),
-              FlatButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: Text('Yes',textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Color(0xff02457a),
-                  fontWeight: FontWeight.bold,
-                  //fontSize: 24,
-                ),),
-              ),
-            ],
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('Are you sure?'),
+        content: new Text('Do you want to exit the App'),
+        actions: <Widget>[
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: new Text('No'),
           ),
-        )) ??
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: new Text('Yes'),
+          ),
+        ],
+      ),
+    )) ??
         false;
   }
 
@@ -501,6 +492,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     onPressed: () {
                       if (ssidController.text != "" &&
                           passwordController.text != "") {
+                        credChecked=true;
                         Navigator.pop(context);
                       }
                     },
@@ -523,7 +515,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
   }
 
   Widget fillerWidget(BuildContext context) {
-    if (deviceObjectList[0].name == 'Device') {
+    if (deviceObjectList[0].name == 'Device'&&credChecked) {
       deviceObjectList[0].name = '';
       nameIt(context, deviceObjectList[0]);
     }
@@ -926,10 +918,16 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: ListTile(
-                        leading: Icon(
-                          Icons.meeting_room_rounded,
-                          color: Color(0xff02457a),
-                        ),
+                        leading: Radio(
+                            value: rooms[index],
+                            groupValue: room,
+                            onChanged: (newValue) {
+                              setState(() {
+                                room = newValue;
+                                print(["selected worker", room]);
+                                Navigator.pop(context);
+                              });
+                            }),
                         title: Text(rooms[index],
                             style: TextStyle(
                                 color: Colors.black,
@@ -939,7 +937,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     onPressed: () {
                       setState(() {
                         room = rooms[index];
-                        print(["selected room", room]);
+                        print(["selected room ", room]);
                       });
                       Navigator.pop(context);
                     },
@@ -994,10 +992,16 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: ListTile(
-                        leading: Icon(
-                          Icons.perm_identity,
-                          color: Color(0xff02457a),
-                        ),
+                        leading: Radio(
+                            value: workers[index],
+                            groupValue: worker,
+                            onChanged: (newValue) {
+                              setState(() {
+                                worker = newValue;
+                                print(["selected worker", worker]);
+                                Navigator.pop(context);
+                              });
+                            }),
                         title: Text(workers[index],
                             style: TextStyle(
                                 color: Colors.black,
@@ -1008,7 +1012,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       deviceObject.clientError = false;
                       setState(() {
                         worker = workers[index];
-                        print(["selected worker", worker]);
+                        print(["selected worker index", workers[index]]);
                       });
                       Navigator.pop(context);
                     },
@@ -1081,6 +1085,88 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   );
                 },
               ),
+              ListTile(
+                leading: Icon(Icons.file_download, color: Color(0xff02457a)),
+                title: Text('Export'),
+                onTap: () async {
+                  var permissionResult = Permission.storage;
+                  if (await permissionResult.isGranted) {
+                    // code of read or write file in external storage (SD card)
+                    var excel = Excel.createExcel();
+                    List rowData = [];
+                    Sheet sheetObject = excel['Sheet1'];
+                    exportRooms.removeRange(0, exportRooms.length);
+                    exportWorkers.removeRange(0, exportWorkers.length);
+                    exportStartTime.removeRange(0, exportStartTime.length);
+                    exportEndTime.removeRange(0, exportEndTime.length);
+                    exportElapseTime.removeRange(0, exportElapseTime.length);
+                    exportTime.removeRange(0, exportTime.length);
+                    exportState.removeRange(0, exportState.length);
+                    exportTimeNow.removeRange(0, exportTimeNow.length);
+                    var f = new NumberFormat("00", "en_US");
+                    for (int i = 0; i < timeDataList.length; i++) {
+                      exportRooms.add(timeDataList[i].roomName);
+                      exportWorkers.add(timeDataList[i].workerName);
+                      exportStartTime.add(
+                          "${timeDataList[i].startTime.day}/${timeDataList[i].startTime.month}/${timeDataList[i].startTime.year} ${f.format(timeDataList[i].startTime.hour)}:${f.format(timeDataList[i].startTime.minute)}:${f.format(timeDataList[i].startTime.second)}");
+                      exportEndTime.add(
+                          "${timeDataList[i].endTime.day}/${timeDataList[i].endTime.month}/${timeDataList[i].endTime.year} ${f.format(timeDataList[i].endTime.hour)}:${f.format(timeDataList[i].endTime.minute)}:${f.format(timeDataList[i].endTime.second)}");
+                      exportElapseTime.add(
+                          "${f.format((timeDataList[i].elapsedTime / 60).floor())}:${f.format(timeDataList[i].elapsedTime % 60)}");
+                      exportTime.add(timeDataList[i].time.toString());
+                    }
+                    for (int j = 0; j < historyList.length; j++) {
+                      exportState.add(historyList[j].state);
+                      exportTimeNow.add(historyList[j].time.toString());
+                    }
+
+                    for (int i = 0; i < timeDataList.length; i++) {
+                      if (i == 0) {
+                        rowData.add("Room");
+                        rowData.add("Staff");
+                        rowData.add("Start Time");
+                        rowData.add("End Time");
+                        rowData.add("Running Time (Min)");
+                        // rowData.add("SET TIME (Sec)");
+                        rowData.add("State");
+                        // rowData.add("TIME");
+                        sheetObject.insertRowIterables(rowData, i);
+                        rowData.removeRange(0, rowData.length);
+                      }
+                      rowData.add(exportRooms[i]);
+                      rowData.add(exportWorkers[i]);
+                      rowData.add(exportStartTime[i]);
+                      rowData.add(exportEndTime[i]);
+                      rowData.add(exportElapseTime[i]);
+                      // rowData.add(exportTime[i]);
+                      rowData.add(exportState[i]);
+                      // rowData.add(exportTimeNow[i]);
+                      sheetObject.insertRowIterables(rowData, i + 1);
+                      rowData.removeRange(0, rowData.length);
+                    }
+                    const MethodChannel _channel = const MethodChannel('ibis');
+                    await _channel
+                        .invokeMethod('getDownloadsDirectory')
+                        .then((value) {
+                      print(value);
+                      String path = value + '/ibis.xlsx';
+                      print(path);
+                      excel.encode().then((onValue) {
+                        File('$path')
+                          ..createSync(recursive: true)
+                          ..writeAsBytesSync(onValue);
+                      });
+                      Fluttertoast.showToast(
+                        msg: "Succesfully exported to $path",
+                        gravity: ToastGravity.SNACKBAR,
+                        toastLength: Toast.LENGTH_LONG,
+                      );
+                    });
+                  } else {
+                    permissionResult.request();
+                  }
+                },
+              )
             ],
           );
         });
@@ -1571,6 +1657,7 @@ class Rooms extends StatefulWidget {
 class _RoomsState extends State<Rooms> {
   List<String> cText = [];
   List<TextEditingController> roomNames = [];
+
   @override
   void initState() {
     nameNumber = 1;
@@ -1743,6 +1830,7 @@ class Workers extends StatefulWidget {
 class _WorkersState extends State<Workers> {
   List<String> cText = [];
   List<TextEditingController> roomNames = [];
+
   @override
   void initState() {
     nameNumber = 1;
