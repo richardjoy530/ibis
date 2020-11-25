@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:dots_indicator/dots_indicator.dart';
@@ -84,7 +85,9 @@ class _SelectTimeState extends State<SelectTime> {
                   FloatingActionButton.extended(
                     backgroundColor: Color(0xff02457a),
                     heroTag: 'staff1',
-                    label: Text(worker.length>7?"${worker.substring(0,6)}...":worker),
+                    label: Text(worker.length > 7
+                        ? "${worker.substring(0, 6)}..."
+                        : worker),
                     icon: Icon(Icons.perm_identity),
                     onPressed: null,
                   ),
@@ -92,7 +95,8 @@ class _SelectTimeState extends State<SelectTime> {
                     backgroundColor: Color(0xff02457a),
                     elevation: 4,
                     heroTag: 'room1',
-                    label: Text(room.length>7?"${room.substring(0,6)}...":room),
+                    label: Text(
+                        room.length > 7 ? "${room.substring(0, 6)}..." : room),
                     icon: Icon(Icons.meeting_room_rounded),
                     onPressed: null,
                   )
@@ -100,7 +104,7 @@ class _SelectTimeState extends State<SelectTime> {
               ),
             ),
             Container(
-              margin: EdgeInsets.symmetric(horizontal:20),
+              margin: EdgeInsets.symmetric(horizontal: 20),
               padding: EdgeInsets.only(top: 25),
               height: 200,
               decoration: BoxDecoration(
@@ -319,9 +323,53 @@ class _SelectTimeState extends State<SelectTime> {
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 20),
                                   ),
-                                  onPressed: () {
+                                  onPressed: () async {
                                     if (widget.deviceObject.time.inMinutes >=
                                         1) {
+                                      widget.deviceObject.socket.writeln(widget
+                                          .deviceObject.time.inMinutes
+                                          .round());
+                                      await showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (context) {
+                                          Timer.periodic(
+                                              Duration(seconds: 10), (timer) {
+                                              Navigator.pop(context);
+                                              timer.cancel();
+                                          });
+                                          return AlertDialog(
+                                            backgroundColor: Color(0xffffffff),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                              BorderRadius.circular(10),
+                                            ),
+                                            title: Center(
+                                              child: Text(
+                                                'The device is setting up',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Color(0xff02457a),
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 24),
+                                              ),
+                                            ),
+                                            content: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                              children: [
+                                                Text(
+                                                  'Please wait...',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    color: Color(0xff02457a),
+                                                  ),
+                                                ),
+                                                CircularProgressIndicator()
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      );
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(

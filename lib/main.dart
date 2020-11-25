@@ -749,7 +749,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     topHit = false;
     //deviceObject.temp = false;
     startTime = DateTime.now();
-    deviceObject.socket.writeln(deviceObject.time.inMinutes.round());
     deviceObject.elapsedTime = 0;
     deviceObject.progressDegrees = 0;
     deviceObject.power = true;
@@ -1187,7 +1186,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> overOver(context, DeviceObject deviceObject) async {
-    notification('Disinfection succusfully completed');
+    notification('Disinfection successfully completed');
     await showDialog(
       barrierDismissible: false,
       context: context,
@@ -1203,7 +1202,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
           title: Center(
             child: Text(
-              'Succusfully Completed!',
+              'Successfully Completed!',
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: Color(0xff02457a),
@@ -1401,12 +1400,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ],
                   )),
                 ));
-                
-               
+
+
                   for (int j = 0,k=0; j < timeDataList.length; j++) {
                     print("${timeDataList[k].elapsedTime},${timeDataList[k].time}");
                     if (timeDataList[j].startTime.day == DateTime.now().day) {
-                      //print("inside loop 2");                      
+                      //print("inside loop 2");
                       conToday[k] = Container(
                         margin: EdgeInsets.only(top: 25),
                         width: eachGraphSpace,
@@ -1473,7 +1472,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       k++;
                     }
                   }
-                
+
                 stopPressed = true;
                 prefs.setInt('${deviceObject.ip}totalDuration',
                     deviceObject.totalDuration.inSeconds);
