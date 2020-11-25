@@ -333,41 +333,8 @@ class _SelectTimeState extends State<SelectTime> {
                                         barrierDismissible: false,
                                         context: context,
                                         builder: (context) {
-                                          Timer.periodic(
-                                              Duration(seconds: 10), (timer) {
-                                              Navigator.pop(context);
-                                              timer.cancel();
-                                          });
-                                          return AlertDialog(
-                                            backgroundColor: Color(0xffffffff),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                              BorderRadius.circular(10),
-                                            ),
-                                            title: Center(
-                                              child: Text(
-                                                'The device is setting up',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    color: Color(0xff02457a),
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 24),
-                                              ),
-                                            ),
-                                            content: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                              children: [
-                                                Text(
-                                                  'Please wait...',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    color: Color(0xff02457a),
-                                                  ),
-                                                ),
-                                                CircularProgressIndicator()
-                                              ],
-                                            ),
-                                          );
+
+                                          return TenSeconds();
                                         },
                                       );
                                       Navigator.pushReplacement(
@@ -594,6 +561,91 @@ class _SelectTimeState extends State<SelectTime> {
         });
   }
 }
+
+class TenSeconds extends StatefulWidget {
+  @override
+  _TenSecondsState createState() => _TenSecondsState();
+}
+
+class _TenSecondsState extends State<TenSeconds> {
+  int temp=10;
+  @override
+  void initState() {
+    // TODO: implement initState
+    Timer.periodic(
+        Duration(seconds: 1), (timer) {
+      if(temp<1)
+      {
+        Navigator.pop(context);
+        timer.cancel();
+      }
+      setState(() {
+        temp--;
+      });
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+
+  }
+  @override
+  Widget build(BuildContext context) {
+    return StatefulBuilder(
+        builder: (context, snapshot) {
+          return SimpleDialog(
+            backgroundColor: Color(0xffffffff),
+            shape: RoundedRectangleBorder(
+              borderRadius:
+              BorderRadius.circular(10),
+            ),
+            title: Center(
+              child: Text(
+                'The device is setting up',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Color(0xff02457a),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24),
+              ),
+            ),
+            children: [
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Please wait...',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Color(0xff02457a),
+                      ),
+                    ),
+                    Stack(
+                        alignment: Alignment.center,
+                        children:[
+                          Center(
+                            child: CircularProgressIndicator(
+                            ),
+                          ),
+                          Text("$temp"),
+                        ]
+                    )
+                  ],
+                ),
+              ),
+
+            ],
+
+          );
+        }
+    );
+  }
+}
+
 
 class TwoDaysAgoGraph extends StatelessWidget {
   const TwoDaysAgoGraph({
