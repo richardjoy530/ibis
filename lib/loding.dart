@@ -9,12 +9,12 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'main.dart';
 
-class Loding extends StatefulWidget {
+class Loading extends StatefulWidget {
   @override
-  _LodingState createState() => _LodingState();
+  _LoadingState createState() => _LoadingState();
 }
 
-class _LodingState extends State<Loding> {
+class _LoadingState extends State<Loading> {
   @override
   void initState() {
     load();

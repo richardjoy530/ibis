@@ -269,7 +269,6 @@ class _SelectTimeState extends State<SelectTime> {
                         size: (MediaQuery.of(context).size.width / 1.5) + 50,
                         customColors: selectorColor),
                     onChange: (double value) {
-                      print(value);
                       displayTime = value.floor();
                       if (widget.deviceObject.power == false &&
                           widget.deviceObject.clientError == false) {
@@ -290,13 +289,7 @@ class _SelectTimeState extends State<SelectTime> {
                       }
                     },
                     innerWidget: (value) {
-                      //print([widget.deviceObject.time.inSeconds,widget.deviceObject.elapsedTime]);
                       return Container(
-                        // height: min(
-                        //     MediaQuery.of(context).size.height / 1.5,
-                        //     MediaQuery.of(context).size.width / 1.5),
-                        // width: min(MediaQuery.of(context).size.height / 1.5,
-                        //     MediaQuery.of(context).size.width / 1.5),
                         child: Center(
                           child: Container(
                             height:
@@ -333,41 +326,7 @@ class _SelectTimeState extends State<SelectTime> {
                                         barrierDismissible: false,
                                         context: context,
                                         builder: (context) {
-                                          Timer.periodic(
-                                              Duration(seconds: 10), (timer) {
-                                              Navigator.pop(context);
-                                              timer.cancel();
-                                          });
-                                          return AlertDialog(
-                                            backgroundColor: Color(0xffffffff),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                              BorderRadius.circular(10),
-                                            ),
-                                            title: Center(
-                                              child: Text(
-                                                'The device is setting up',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    color: Color(0xff02457a),
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 24),
-                                              ),
-                                            ),
-                                            content: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                              children: [
-                                                Text(
-                                                  'Please wait...',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    color: Color(0xff02457a),
-                                                  ),
-                                                ),
-                                                CircularProgressIndicator()
-                                              ],
-                                            ),
-                                          );
+                                          return TenSeconds();
                                         },
                                       );
                                       Navigator.pushReplacement(
@@ -592,6 +551,90 @@ class _SelectTimeState extends State<SelectTime> {
             ],
           );
         });
+  }
+}
+
+class TenSeconds extends StatefulWidget {
+  @override
+  _TenSecondsState createState() => _TenSecondsState();
+}
+
+class _TenSecondsState extends State<TenSeconds> {
+  int temp=20;
+  @override
+  void initState() {
+    Timer.periodic(
+        Duration(seconds: 1), (timer) {
+      if(temp<=1)
+      {
+        Navigator.pop(context);
+        timer.cancel();
+      }
+      setState(() {
+        temp--;
+      });
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return StatefulBuilder(
+        builder: (context, snapshot) {
+          return SimpleDialog(
+            backgroundColor: Color(0xffffffff),
+            shape: RoundedRectangleBorder(
+              borderRadius:
+              BorderRadius.circular(10),
+            ),
+            title: Center(
+              child: Text(
+                'The device is setting up',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Color(0xff02457a),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24),
+              ),
+            ),
+            children: [
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Please wait...   ',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xff02457a),
+                        ),
+                      ),
+                    ),
+                    Stack(
+                        alignment: Alignment.center,
+                        children:[
+                          Center(
+                            child: CircularProgressIndicator(
+                            ),
+                          ),
+                          Text("$temp"),
+                        ]
+                    )
+                  ],
+                ),
+              ),
+
+            ],
+
+          );
+        }
+    );
   }
 }
 
