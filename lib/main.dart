@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,7 +12,6 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:wifi_iot/wifi_iot.dart';
-import 'package:dots_indicator/dots_indicator.dart';
 
 import 'data.dart';
 import 'loding.dart';
@@ -37,6 +37,7 @@ var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
 var initializationSettingsIOS = IOSInitializationSettings();
 var initializationSettings = InitializationSettings(
     initializationSettingsAndroid, initializationSettingsIOS);
+
 void main() {
   return runApp(MyApp());
 }
@@ -163,7 +164,7 @@ class MyApp extends StatelessWidget {
         highlightColor: Color(0xff97cadb),
         fontFamily: 'BalooTamma2',
       ),
-      home: Loding(),
+      home: Loading(),
     );
   }
 }
@@ -171,7 +172,9 @@ class MyApp extends StatelessWidget {
 class HomePage extends StatefulWidget {
   final DeviceObject deviceObject;
   final String status;
+
   HomePage(this.deviceObject, {this.status = "null"});
+
   @override
   HomePageState createState() => HomePageState();
 }
@@ -182,12 +185,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool play = false;
   bool errorRemover = false;
   Timer animationTimer;
+
   @override
   void initState() {
     errorRemover = false;
     connectionError = true;
     stopPressed = false;
-
     temp = 1;
     mainTick();
     if (widget.deviceObject.power == true) {
@@ -636,14 +639,14 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             errorRemover == true &&
                             isConnected == true &&
                             widget.deviceObject.clientError == false) {
-                          setState(() {
-                            deviceObject.mainTime = Duration(
-                                minutes:
-                                    mapValues(displayTime.toDouble()).toInt());
-                            deviceObject.time = Duration(
-                                minutes:
-                                    mapValues(displayTime.toDouble()).toInt());
-                          });
+                          // setState(() {
+                          //   deviceObject.mainTime = Duration(
+                          //       minutes:
+                          //           mapValues(displayTime.toDouble()).toInt());
+                          //   deviceObject.time = Duration(
+                          //       minutes:
+                          //           mapValues(displayTime.toDouble()).toInt());
+                          // });
                         }
                         errorRemover = true;
                       },
@@ -749,6 +752,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     topHit = false;
     //deviceObject.temp = false;
     startTime = DateTime.now();
+    deviceObject.startTime = DateTime.now();
+    deviceObject.remainingTime = deviceObject.time;
     deviceObject.elapsedTime = 0;
     deviceObject.progressDegrees = 0;
     deviceObject.power = true;
@@ -777,15 +782,35 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       databaseHelper.insertHistory(History(
           roomName: room,
           workerName: worker,
-          state: 'Paused',
+          state: 'Paused by operator',
           time: DateTime.now()));
       historyList.add(
         History(
           roomName: room,
           workerName: worker,
-          state: 'Paused',
+          state: 'Paused by operator',
           time: DateTime.now(),
         ),
+      );
+      databaseHelper.insertTimeData(
+        TimeData(
+            roomName: room,
+            workerName: worker,
+            startTime: deviceObject.startTime,
+            status: 'Paused by operator',
+            endTime: DateTime.now(),
+            elapsedTime: deviceObject.elapsedTime,
+            time: deviceObject.remainingTime.inSeconds.toInt()),
+      );
+      timeDataList.add(
+        TimeData(
+            roomName: room,
+            workerName: worker,
+            status: 'Paused by operator',
+            startTime: deviceObject.startTime,
+            endTime: DateTime.now(),
+            elapsedTime: deviceObject.elapsedTime,
+            time: deviceObject.remainingTime.inSeconds.toInt()),
       );
 
       prefs.setInt('${deviceObject.ip}totalDuration',
@@ -797,6 +822,142 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       deviceObject.timer.cancel();
       deviceObject.socket.write('h');
       deviceObject.radialProgressAnimationController.stop();
+      conToday.add(Container(
+        margin: EdgeInsets.only(top: 25),
+        width: eachGraphSpace,
+        child: BarChart(BarChartData(
+          alignment: BarChartAlignment.spaceAround,
+          maxY: 60,
+          groupsSpace: 40,
+          barTouchData: BarTouchData(
+            enabled: true,
+            touchTooltipData: BarTouchTooltipData(
+              tooltipBgColor: Colors.transparent,
+              tooltipPadding: const EdgeInsets.all(0),
+              tooltipBottomMargin: 8,
+              getTooltipItem: (
+                BarChartGroupData group,
+                int groupIndex,
+                BarChartRodData rod,
+                int rodIndex,
+              ) {
+                return BarTooltipItem(
+                  rod.y.round().toString(),
+                  TextStyle(
+                    color: Colors.blueGrey,
+                    fontWeight: FontWeight.bold,
+                  ),
+                );
+              },
+            ),
+          ),
+          titlesData: FlTitlesData(
+            show: true,
+            bottomTitles: SideTitles(
+              showTitles: true,
+              textStyle: TextStyle(
+                  color: const Color(0xff7589a2),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14),
+              margin: 20,
+              getTitles: (double value) {
+                String dateTimeNow = timeDataList[timeDataList.length - 1]
+                    .startTime
+                    .hour
+                    .toString();
+                dateTimeNow += ':';
+                dateTimeNow += timeDataList[timeDataList.length - 1]
+                    .startTime
+                    .minute
+                    .toString();
+                return dateTimeNow;
+              },
+            ),
+            leftTitles: SideTitles(showTitles: false),
+          ),
+          borderData: FlBorderData(
+            show: false,
+          ),
+          barGroups: [
+            BarChartGroupData(x: 0, barRods: [
+              BarChartRodData(
+                  y: timeDataList[timeDataList.length - 1].elapsedTime / 60,
+                  color: Colors.lightBlueAccent),
+            ], showingTooltipIndicators: [
+              0
+            ])
+          ],
+        )),
+      ));
+      for (int j = 0, k = 0; j < timeDataList.length; j++) {
+        print("${timeDataList[k].elapsedTime},${timeDataList[k].time}");
+        if (timeDataList[j].startTime.day == DateTime.now().day) {
+          //print("inside loop 2");
+          conToday[k] = Container(
+            margin: EdgeInsets.only(top: 25),
+            width: eachGraphSpace,
+            child: BarChart(BarChartData(
+              alignment: BarChartAlignment.spaceAround,
+              maxY: 60,
+              groupsSpace: 40,
+              barTouchData: BarTouchData(
+                enabled: true,
+                touchTooltipData: BarTouchTooltipData(
+                  tooltipBgColor: Colors.transparent,
+                  tooltipPadding: const EdgeInsets.all(0),
+                  tooltipBottomMargin: 8,
+                  getTooltipItem: (
+                    BarChartGroupData group,
+                    int groupIndex,
+                    BarChartRodData rod,
+                    int rodIndex,
+                  ) {
+                    return BarTooltipItem(
+                      rod.y.round().toString(),
+                      TextStyle(
+                        color: Colors.blueGrey,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              titlesData: FlTitlesData(
+                show: true,
+                bottomTitles: SideTitles(
+                  showTitles: true,
+                  textStyle: TextStyle(
+                      color: const Color(0xff7589a2),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14),
+                  margin: 20,
+                  getTitles: (double value) {
+                    String dateTimeNow =
+                        timeDataList[j].startTime.hour.toString();
+                    dateTimeNow += ':';
+                    dateTimeNow += timeDataList[j].startTime.minute.toString();
+                    return dateTimeNow;
+                  },
+                ),
+                leftTitles: SideTitles(showTitles: false),
+              ),
+              borderData: FlBorderData(
+                show: false,
+              ),
+              barGroups: [
+                BarChartGroupData(x: 0, barRods: [
+                  BarChartRodData(
+                      y: timeDataList[j].elapsedTime / 60,
+                      color: Colors.lightBlueAccent),
+                ], showingTooltipIndicators: [
+                  0
+                ])
+              ],
+            )),
+          );
+          k++;
+        }
+      }
     } else {
       //Play
       databaseHelper.insertHistory(History(
@@ -813,6 +974,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ),
       );
 
+      deviceObject.remainingTime = Duration(
+          seconds: deviceObject.time.inSeconds - deviceObject.elapsedTime);
+      deviceObject.startTime = DateTime.now();
       deviceObject.pause = false;
       startTimer(deviceObject);
       deviceObject.flare = 'play';
@@ -912,19 +1076,21 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   TimeData(
                       roomName: room,
                       workerName: worker,
-                      startTime: startTime,
+                      startTime: deviceObject.startTime,
+                      status: 'Finished',
                       endTime: DateTime.now(),
                       elapsedTime: deviceObject.elapsedTime,
-                      time: deviceObject.time.inSeconds.toInt()),
+                      time: deviceObject.remainingTime.inSeconds.toInt()),
                 );
                 timeDataList.add(
                   TimeData(
                       roomName: room,
+                      status: 'Finished',
                       workerName: worker,
-                      startTime: startTime,
+                      startTime: deviceObject.startTime,
                       endTime: DateTime.now(),
                       elapsedTime: deviceObject.elapsedTime,
-                      time: deviceObject.time.inSeconds.toInt()),
+                      time: deviceObject.remainingTime.inSeconds.toInt()),
                 );
                 databaseHelper.insertHistory(
                   History(
@@ -1014,75 +1180,75 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   )),
                 ));
 
-                  for (int j = 0,k=0; j < timeDataList.length; j++) {
-                    if (timeDataList[j].startTime.day == DateTime.now().day) {
-                      print("inside loop 2");                      
-                      conToday[k] = Container(
-                        margin: EdgeInsets.only(top: 25),
-                        width: eachGraphSpace,
-                        child: BarChart(BarChartData(
-                          alignment: BarChartAlignment.spaceAround,
-                          maxY: 60,
-                          groupsSpace: 40,
-                          barTouchData: BarTouchData(
-                            enabled: true,
-                            touchTooltipData: BarTouchTooltipData(
-                              tooltipBgColor: Colors.transparent,
-                              tooltipPadding: const EdgeInsets.all(0),
-                              tooltipBottomMargin: 8,
-                              getTooltipItem: (
-                                BarChartGroupData group,
-                                int groupIndex,
-                                BarChartRodData rod,
-                                int rodIndex,
-                              ) {
-                                return BarTooltipItem(
-                                  rod.y.round().toString(),
-                                  TextStyle(
-                                    color: Colors.blueGrey,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                          titlesData: FlTitlesData(
-                            show: true,
-                            bottomTitles: SideTitles(
-                              showTitles: true,
-                              textStyle: TextStyle(
-                                  color: const Color(0xff7589a2),
+                for (int j = 0, k = 0; j < timeDataList.length; j++) {
+                  if (timeDataList[j].startTime.day == DateTime.now().day) {
+                    print("inside loop 2");
+                    conToday[k] = Container(
+                      margin: EdgeInsets.only(top: 25),
+                      width: eachGraphSpace,
+                      child: BarChart(BarChartData(
+                        alignment: BarChartAlignment.spaceAround,
+                        maxY: 60,
+                        groupsSpace: 40,
+                        barTouchData: BarTouchData(
+                          enabled: true,
+                          touchTooltipData: BarTouchTooltipData(
+                            tooltipBgColor: Colors.transparent,
+                            tooltipPadding: const EdgeInsets.all(0),
+                            tooltipBottomMargin: 8,
+                            getTooltipItem: (
+                              BarChartGroupData group,
+                              int groupIndex,
+                              BarChartRodData rod,
+                              int rodIndex,
+                            ) {
+                              return BarTooltipItem(
+                                rod.y.round().toString(),
+                                TextStyle(
+                                  color: Colors.blueGrey,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 14),
-                              margin: 20,
-                              getTitles: (double value) {
-                                String dateTimeNow =
-                                    timeDataList[j].startTime.hour.toString();
-                                dateTimeNow += ':';
-                                dateTimeNow +=
-                                    timeDataList[j].startTime.minute.toString();
-                                return dateTimeNow;
-                              },
-                            ),
-                            leftTitles: SideTitles(showTitles: false),
+                                ),
+                              );
+                            },
                           ),
-                          borderData: FlBorderData(
-                            show: false,
+                        ),
+                        titlesData: FlTitlesData(
+                          show: true,
+                          bottomTitles: SideTitles(
+                            showTitles: true,
+                            textStyle: TextStyle(
+                                color: const Color(0xff7589a2),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14),
+                            margin: 20,
+                            getTitles: (double value) {
+                              String dateTimeNow =
+                                  timeDataList[j].startTime.hour.toString();
+                              dateTimeNow += ':';
+                              dateTimeNow +=
+                                  timeDataList[j].startTime.minute.toString();
+                              return dateTimeNow;
+                            },
                           ),
-                          barGroups: [
-                            BarChartGroupData(x: 0, barRods: [
-                              BarChartRodData(
-                                  y: timeDataList[j].elapsedTime / 60,
-                                  color: Colors.lightBlueAccent),
-                            ], showingTooltipIndicators: [
-                              0
-                            ])
-                          ],
-                        )),
-                      );
-                      k++;
-                    }
+                          leftTitles: SideTitles(showTitles: false),
+                        ),
+                        borderData: FlBorderData(
+                          show: false,
+                        ),
+                        barGroups: [
+                          BarChartGroupData(x: 0, barRods: [
+                            BarChartRodData(
+                                y: timeDataList[j].elapsedTime / 60,
+                                color: Colors.lightBlueAccent),
+                          ], showingTooltipIndicators: [
+                            0
+                          ])
+                        ],
+                      )),
+                    );
+                    k++;
                   }
+                }
 
                 prefs.setInt('${deviceObject.ip}totalDuration',
                     deviceObject.totalDuration.inSeconds);
@@ -1095,13 +1261,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 deviceObject.pause = false;
                 deviceObject.flare = 'off';
                 print('state4');
-                if (prefs.getString("new") == "yes") {
-                  new Timer.periodic(Duration(seconds: 40), (timer) {
-                    deviceObject.resetingheight = false;
-                    timer.cancel();
-                  });
-                }
-
+                    deviceObject.resettingHeight = false;
                 deviceObject.elapsedTime = 0;
                 deviceObject.time = Duration(minutes: 0);
                 deviceObject.mainTime = Duration(minutes: 0);
@@ -1259,7 +1419,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               child: Center(child: Text('No')),
               onPressed: () {
                 widget.deviceObject.clientError = false;
-                widget.deviceObject.resetingheight = true;
+                widget.deviceObject.resettingHeight = true;
                 widget.deviceObject.socket.write('n\r');
                 Navigator.pop(context);
                 Navigator.pop(context);
@@ -1299,19 +1459,21 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   TimeData(
                       roomName: room,
                       workerName: worker,
-                      startTime: startTime,
+                      startTime: deviceObject.startTime,
+                      status: "Stopped by operator",
                       endTime: DateTime.now(),
                       elapsedTime: deviceObject.elapsedTime,
-                      time: deviceObject.time.inSeconds.toInt()),
+                      time: deviceObject.remainingTime.inSeconds.toInt()),
                 );
                 timeDataList.add(
                   TimeData(
                       roomName: room,
                       workerName: worker,
-                      startTime: startTime,
+                      status: "Stopped by operator",
+                      startTime: deviceObject.startTime,
                       endTime: DateTime.now(),
                       elapsedTime: deviceObject.elapsedTime,
-                      time: deviceObject.time.inSeconds.toInt()),
+                      time: deviceObject.remainingTime.inSeconds.toInt()),
                 );
                 databaseHelper.insertHistory(
                   History(
@@ -1401,77 +1563,77 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   )),
                 ));
 
-
-                  for (int j = 0,k=0; j < timeDataList.length; j++) {
-                    print("${timeDataList[k].elapsedTime},${timeDataList[k].time}");
-                    if (timeDataList[j].startTime.day == DateTime.now().day) {
-                      //print("inside loop 2");
-                      conToday[k] = Container(
-                        margin: EdgeInsets.only(top: 25),
-                        width: eachGraphSpace,
-                        child: BarChart(BarChartData(
-                          alignment: BarChartAlignment.spaceAround,
-                          maxY: 60,
-                          groupsSpace: 40,
-                          barTouchData: BarTouchData(
-                            enabled: true,
-                            touchTooltipData: BarTouchTooltipData(
-                              tooltipBgColor: Colors.transparent,
-                              tooltipPadding: const EdgeInsets.all(0),
-                              tooltipBottomMargin: 8,
-                              getTooltipItem: (
-                                BarChartGroupData group,
-                                int groupIndex,
-                                BarChartRodData rod,
-                                int rodIndex,
-                              ) {
-                                return BarTooltipItem(
-                                  rod.y.round().toString(),
-                                  TextStyle(
-                                    color: Colors.blueGrey,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                          titlesData: FlTitlesData(
-                            show: true,
-                            bottomTitles: SideTitles(
-                              showTitles: true,
-                              textStyle: TextStyle(
-                                  color: const Color(0xff7589a2),
+                for (int j = 0, k = 0; j < timeDataList.length; j++) {
+                  print(
+                      "${timeDataList[k].elapsedTime},${timeDataList[k].time}");
+                  if (timeDataList[j].startTime.day == DateTime.now().day) {
+                    //print("inside loop 2");
+                    conToday[k] = Container(
+                      margin: EdgeInsets.only(top: 25),
+                      width: eachGraphSpace,
+                      child: BarChart(BarChartData(
+                        alignment: BarChartAlignment.spaceAround,
+                        maxY: 60,
+                        groupsSpace: 40,
+                        barTouchData: BarTouchData(
+                          enabled: true,
+                          touchTooltipData: BarTouchTooltipData(
+                            tooltipBgColor: Colors.transparent,
+                            tooltipPadding: const EdgeInsets.all(0),
+                            tooltipBottomMargin: 8,
+                            getTooltipItem: (
+                              BarChartGroupData group,
+                              int groupIndex,
+                              BarChartRodData rod,
+                              int rodIndex,
+                            ) {
+                              return BarTooltipItem(
+                                rod.y.round().toString(),
+                                TextStyle(
+                                  color: Colors.blueGrey,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 14),
-                              margin: 20,
-                              getTitles: (double value) {
-                                String dateTimeNow =
-                                    timeDataList[j].startTime.hour.toString();
-                                dateTimeNow += ':';
-                                dateTimeNow +=
-                                    timeDataList[j].startTime.minute.toString();
-                                return dateTimeNow;
-                              },
-                            ),
-                            leftTitles: SideTitles(showTitles: false),
+                                ),
+                              );
+                            },
                           ),
-                          borderData: FlBorderData(
-                            show: false,
+                        ),
+                        titlesData: FlTitlesData(
+                          show: true,
+                          bottomTitles: SideTitles(
+                            showTitles: true,
+                            textStyle: TextStyle(
+                                color: const Color(0xff7589a2),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14),
+                            margin: 20,
+                            getTitles: (double value) {
+                              String dateTimeNow =
+                                  timeDataList[j].startTime.hour.toString();
+                              dateTimeNow += ':';
+                              dateTimeNow +=
+                                  timeDataList[j].startTime.minute.toString();
+                              return dateTimeNow;
+                            },
                           ),
-                          barGroups: [
-                            BarChartGroupData(x: 0, barRods: [
-                              BarChartRodData(
-                                  y: timeDataList[j].elapsedTime / 60,
-                                  color: Colors.lightBlueAccent),
-                            ], showingTooltipIndicators: [
-                              0
-                            ])
-                          ],
-                        )),
-                      );
-                      k++;
-                    }
+                          leftTitles: SideTitles(showTitles: false),
+                        ),
+                        borderData: FlBorderData(
+                          show: false,
+                        ),
+                        barGroups: [
+                          BarChartGroupData(x: 0, barRods: [
+                            BarChartRodData(
+                                y: timeDataList[j].elapsedTime / 60,
+                                color: Colors.lightBlueAccent),
+                          ], showingTooltipIndicators: [
+                            0
+                          ])
+                        ],
+                      )),
+                    );
+                    k++;
                   }
+                }
 
                 stopPressed = true;
                 prefs.setInt('${deviceObject.ip}totalDuration',
@@ -1485,12 +1647,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 print('state5');
                 if (prefs.getString("new") == "yes") {
                   new Timer.periodic(Duration(seconds: 40), (timer) {
-                    deviceObject.resetingheight = false;
+                    deviceObject.resettingHeight = false;
                     timer.cancel();
                   });
                 }
                 destroyAnimation(deviceObject);
-                deviceObject.resetingheight = true;//
+                deviceObject.resettingHeight = true; //
                 deviceObject.socket.write('s');
                 deviceObject.power = false;
                 deviceObject.time = Duration(minutes: 0);

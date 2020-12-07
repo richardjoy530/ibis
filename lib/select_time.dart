@@ -269,7 +269,6 @@ class _SelectTimeState extends State<SelectTime> {
                         size: (MediaQuery.of(context).size.width / 1.5) + 50,
                         customColors: selectorColor),
                     onChange: (double value) {
-                      print(value);
                       displayTime = value.floor();
                       if (widget.deviceObject.power == false &&
                           widget.deviceObject.clientError == false) {
@@ -290,13 +289,7 @@ class _SelectTimeState extends State<SelectTime> {
                       }
                     },
                     innerWidget: (value) {
-                      //print([widget.deviceObject.time.inSeconds,widget.deviceObject.elapsedTime]);
                       return Container(
-                        // height: min(
-                        //     MediaQuery.of(context).size.height / 1.5,
-                        //     MediaQuery.of(context).size.width / 1.5),
-                        // width: min(MediaQuery.of(context).size.height / 1.5,
-                        //     MediaQuery.of(context).size.width / 1.5),
                         child: Center(
                           child: Container(
                             height:
@@ -333,7 +326,6 @@ class _SelectTimeState extends State<SelectTime> {
                                         barrierDismissible: false,
                                         context: context,
                                         builder: (context) {
-
                                           return TenSeconds();
                                         },
                                       );
@@ -568,13 +560,12 @@ class TenSeconds extends StatefulWidget {
 }
 
 class _TenSecondsState extends State<TenSeconds> {
-  int temp=10;
+  int temp=20;
   @override
   void initState() {
-    // TODO: implement initState
     Timer.periodic(
         Duration(seconds: 1), (timer) {
-      if(temp<1)
+      if(temp<=1)
       {
         Navigator.pop(context);
         timer.cancel();
@@ -588,9 +579,7 @@ class _TenSecondsState extends State<TenSeconds> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
-
   }
   @override
   Widget build(BuildContext context) {
@@ -617,11 +606,14 @@ class _TenSecondsState extends State<TenSeconds> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'Please wait...',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color(0xff02457a),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Please wait...   ',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xff02457a),
+                        ),
                       ),
                     ),
                     Stack(
@@ -645,7 +637,6 @@ class _TenSecondsState extends State<TenSeconds> {
     );
   }
 }
-
 
 class TwoDaysAgoGraph extends StatelessWidget {
   const TwoDaysAgoGraph({

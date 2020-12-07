@@ -63,7 +63,9 @@ List<TextEditingController> roomNames = [];
 final List<bool> isSelected = [false];
 
 class DeviceObject {
-  bool resetingheight = false;
+  Duration remainingTime;
+  DateTime startTime;
+  bool resettingHeight = false;
   bool temp;
   bool completedStatus;
   int elapsedTime;
@@ -89,7 +91,7 @@ class DeviceObject {
   double height;
   String earlyMotionDetectionTime;
   DeviceObject({
-    this.resetingheight = false,
+    this.resettingHeight = false,
     this.temp,
     this.flare = 'off',
     this.elapsedTime = 0,
@@ -154,7 +156,7 @@ class DeviceObject {
         downBGColor = Color(0xff02457a);
         upArrowColor = Color(0xff5cbceb);
         upBGColor = Color(0xff02457a);
-        this.resetingheight = false;
+        this.resettingHeight = false;
       }
 
       if (this.offline == false) {
@@ -235,20 +237,22 @@ class DeviceObject {
           databaseHelper.insertTimeData(
             TimeData(
                 roomName: room,
+                status: 'Motion Detected',
                 workerName: worker,
-                startTime: startTime,
+                startTime: this.startTime,
                 endTime: DateTime.now(),
                 elapsedTime: this.elapsedTime,
-                time: this.time.inSeconds.toInt()),
+                time: this.remainingTime.inSeconds.toInt()),
           );
           timeDataList.add(
             TimeData(
                 roomName: room,
+                status: 'Motion Detected',
                 workerName: worker,
-                startTime: startTime,
+                startTime: this.startTime,
                 endTime: DateTime.now(),
                 elapsedTime: this.elapsedTime,
-                time: this.time.inSeconds.toInt()),
+                time: this.remainingTime.inSeconds.toInt()),
           );
           databaseHelper.insertHistory(History(
               roomName: room,
@@ -263,12 +267,9 @@ class DeviceObject {
               time: DateTime.now(),
             ),
           );
-          if (prefs.getString("new") == "yes") {
-                  new Timer.periodic(Duration(seconds: 40), (timer) {
-                    this.resetingheight = false;
-                    timer.cancel();
-                  });
-                }
+
+                    this.resettingHeight = false;
+
           notification('Motion was detected');
         }
       }
@@ -330,11 +331,13 @@ class TimeData {
   String workerName;
   int elapsedTime;
   int time;
+  String status;
   TimeData(
       {this.startTime,
       this.elapsedTime,
       this.endTime,
       this.time,
+      this.status,
       this.roomName,
       this.workerName});
 }
@@ -373,7 +376,7 @@ class DatabaseHelper {
 
   void _createDb(Database db, int newVersion) async {
     await db.execute(
-        'CREATE TABLE TimeData (id INTEGER PRIMARY KEY AUTOINCREMENT , roomName TEXT, workerName TEXT, startTime TEXT, endTime TEXT, elapsedTime INTEGER, time INTEGER)');
+        'CREATE TABLE TimeData (id INTEGER PRIMARY KEY AUTOINCREMENT , roomName TEXT, workerName TEXT, status TEXT, startTime TEXT, endTime TEXT, elapsedTime INTEGER, time INTEGER)');
     await db.execute(
         'CREATE TABLE Rooms (id INTEGER PRIMARY KEY AUTOINCREMENT , roomName TEXT)');
     await db.execute(
@@ -411,6 +414,7 @@ class DatabaseHelper {
     var result = await db.insert('TimeData', {
       'workerName': timeData.workerName,
       'roomName': timeData.roomName,
+      'status': timeData.status,
       'startTime': timeData.startTime.toIso8601String(),
       'endTime': timeData.endTime.toIso8601String(),
       'time': timeData.elapsedTime,
