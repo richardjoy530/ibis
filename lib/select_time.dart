@@ -322,13 +322,13 @@ class _SelectTimeState extends State<SelectTime> {
                                       widget.deviceObject.socket.writeln(widget
                                           .deviceObject.time.inMinutes
                                           .round());
-                                      await showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (context) {
-                                          return TenSeconds();
-                                        },
-                                      );
+                                      // await showDialog(
+                                      //   barrierDismissible: false,
+                                      //   context: context,
+                                      //   builder: (context) {
+                                      //     return TenSeconds();
+                                      //   },
+                                      // );
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
