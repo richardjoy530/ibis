@@ -268,7 +268,7 @@ class DeviceObject {
             ),
           );
 
-                    this.resettingHeight = false;
+          this.resettingHeight = false;
 
           notification('Motion was detected');
         }

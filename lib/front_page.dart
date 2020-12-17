@@ -323,7 +323,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         }
       });
     });
-    load();
+    // load();
     super.initState();
   }
 
@@ -421,14 +421,14 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   child: FloatingActionButton.extended(
                     backgroundColor: Color(0xff02457a),
                     label: Text(
-                      "Add device",
+                      "Please connect your device",
                       style: TextStyle(
                           fontSize: 20, color: Color(0xffffffff)),
                     ),
-                    icon: Icon(Icons.add_circle_outline_outlined,
+                    icon: Icon(Icons.wifi_tethering_rounded,
                         color: Color(0xffffffff)),
                     onPressed: () {
-                      scanIbis(context);
+                      // scanIbis(context);
                     },
                   ),
                 ),
@@ -1214,7 +1214,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                           ..writeAsBytesSync(onValue);
                       });
                       Fluttertoast.showToast(
-                        msg: "Succesfully exported to $path",
+                        msg: "Successfully exported to $path",
                         gravity: ToastGravity.SNACKBAR,
                         toastLength: Toast.LENGTH_LONG,
                       );

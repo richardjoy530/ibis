@@ -1261,7 +1261,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 deviceObject.pause = false;
                 deviceObject.flare = 'off';
                 print('state4');
-                    deviceObject.resettingHeight = false;
+                deviceObject.resettingHeight = false;
                 deviceObject.elapsedTime = 0;
                 deviceObject.time = Duration(minutes: 0);
                 deviceObject.mainTime = Duration(minutes: 0);
@@ -1645,12 +1645,12 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 deviceObject.elapsedTime = 0;
                 deviceObject.flare = 'off';
                 print('state5');
-                if (prefs.getString("new") == "yes") {
-                  new Timer.periodic(Duration(seconds: 40), (timer) {
-                    deviceObject.resettingHeight = false;
-                    timer.cancel();
-                  });
-                }
+                // if (prefs.getString("new") == "yes") {
+                //   new Timer.periodic(Duration(seconds: 40), (timer) {
+                //     deviceObject.resettingHeight = false;
+                //     timer.cancel();
+                //   });
+                // }
                 destroyAnimation(deviceObject);
                 deviceObject.resettingHeight = true; //
                 deviceObject.socket.write('s');
