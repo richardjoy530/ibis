@@ -1,67 +1,67 @@
 import 'dart:async';
-import 'dart:ui';
 import 'dart:io';
+import 'dart:ui';
 
+import 'package:excel/excel.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ibis/height_page.dart';
 import 'package:ibis/main.dart';
 import 'package:ibis/select_time.dart';
 import 'package:ibis/show_history.dart';
+import 'package:intl/intl.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:wifi_iot/wifi_iot.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:excel/excel.dart';
 
 import 'calender.dart';
 import 'data.dart';
-import 'show_rooms_workers.dart';
 import 'height_page.dart';
+import 'show_rooms_workers.dart';
 
 double todayTotalTime, yesdayTotalTime, dayBeforeYesTotalTime, maxYAxis;
 
 Future<void> wifi() async {
-  WiFiForIoTPlugin.isEnabled().then(
-        (val) {
-      if (val != null) {
-        isEnabled = val;
-        print('Wifi Status:$isEnabled');
-        if (isEnabled == false) {
-          WiFiForIoTPlugin.setEnabled(true);
-          print('Wifi turned on');
-        }
-      }
-    },
-  );
-  WiFiForIoTPlugin.isConnected().then(
-        (val) {
-      if (val != null) {
-        isConnected = val;
-        print('Connected:$isConnected');
-      }
-      if (val == true) {
-        WiFiForIoTPlugin.disconnect();
-        WiFiForIoTPlugin.connect(prefs.getString('SSID') ?? '',
-            password: prefs.getString('password') ?? '',
-            joinOnce: true,
-            security: NetworkSecurity.WPA);
-      }
-      if (val != true) {
-        WiFiForIoTPlugin.connect(prefs.getString('SSID') ?? '',
-            password: prefs.getString('password') ?? '',
-            joinOnce: true,
-            security: NetworkSecurity.WPA)
-            .then(
-              (value) {},
-        );
-      }
-    },
-  );
+  // WiFiForIoTPlugin.isEnabled().then(
+  //   (val) {
+  //     if (val != null) {
+  //       isEnabled = val;
+  //       print('Wifi Status:$isEnabled');
+  //       if (isEnabled == false) {
+  //         WiFiForIoTPlugin.setEnabled(true);
+  //         print('Wifi turned on');
+  //       }
+  //     }
+  //   },
+  // );
+  // WiFiForIoTPlugin.isConnected().then(
+  //   (val) {
+  //     if (val != null) {
+  //       isConnected = val;
+  //       print('Connected:$isConnected');
+  //     }
+  //     if (val == true) {
+  //       WiFiForIoTPlugin.disconnect();
+  //       WiFiForIoTPlugin.connect(prefs.getString('SSID') ?? '',
+  //           password: prefs.getString('password') ?? '',
+  //           joinOnce: true,
+  //           security: NetworkSecurity.WPA);
+  //     }
+  //     if (val != true) {
+  //       WiFiForIoTPlugin.connect(prefs.getString('SSID') ?? '',
+  //               password: prefs.getString('password') ?? '',
+  //               joinOnce: true,
+  //               security: NetworkSecurity.WPA)
+  //           .then(
+  //         (value) {},
+  //       );
+  //     }
+  //   },
+  // );
 
   serverIp = await WiFiForIoTPlugin.getIP();
 }
@@ -95,9 +95,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
 
     timer = Timer.periodic(
       Duration(milliseconds: 100),
-          (callback) {
+      (callback) {
         setState(
-              () {
+          () {
             if (topHit == true) {
               flare = 'idle';
               downArrowColor = Color(0xff5cbceb);
@@ -114,7 +114,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             }
             for (var i = 0; i < deviceObjectList.length; i++) {
               if ((deviceObjectList[i].motionDetected == true ||
-                  deviceObjectList[i].clientError == true) &&
+                      deviceObjectList[i].clientError == true) &&
                   deviceObjectList[i].power == true) {
                 deviceObjectList[i].power = false;
                 deviceObjectList[i].pause = false;
@@ -168,7 +168,9 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                         startTime: deviceObjectList[i].startTime,
                         endTime: DateTime.now(),
                         elapsedTime: deviceObjectList[i].elapsedTime,
-                        time: deviceObjectList[i].remainingTime.inSeconds
+                        time: deviceObjectList[i]
+                            .remainingTime
+                            .inSeconds
                             .toInt()),
                   );
                   deviceObjectList[i].linearProgressBarValue = 0.0;
@@ -189,10 +191,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                           tooltipBgColor: Colors.transparent,
                           tooltipPadding: const EdgeInsets.all(0),
                           tooltipBottomMargin: 8,
-                          getTooltipItem: (BarChartGroupData group,
-                              int groupIndex,
-                              BarChartRodData rod,
-                              int rodIndex,) {
+                          getTooltipItem: (
+                            BarChartGroupData group,
+                            int groupIndex,
+                            BarChartRodData rod,
+                            int rodIndex,
+                          ) {
                             return BarTooltipItem(
                               rod.y.round().toString(),
                               TextStyle(
@@ -214,10 +218,10 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                           margin: 20,
                           getTitles: (double value) {
                             String dateTimeNow =
-                            timeDataList[timeDataList.length - 1]
-                                .startTime
-                                .hour
-                                .toString();
+                                timeDataList[timeDataList.length - 1]
+                                    .startTime
+                                    .hour
+                                    .toString();
                             dateTimeNow += ':';
                             dateTimeNow += timeDataList[timeDataList.length - 1]
                                 .startTime
@@ -235,7 +239,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                         BarChartGroupData(x: 0, barRods: [
                           BarChartRodData(
                               y: timeDataList[timeDataList.length - 1]
-                                  .elapsedTime /
+                                      .elapsedTime /
                                   60,
                               color: Colors.lightBlueAccent),
                         ], showingTooltipIndicators: [
@@ -264,49 +268,25 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
       maxYAxis = 20;
       setState(() {
         for (int i = 0; i < timeDataList.length; i++) {
-          if (timeDataList[i].startTime.day == DateTime
-              .now()
-              .day &&
-              timeDataList[i].startTime.month == DateTime
-                  .now()
-                  .month &&
-              timeDataList[i].startTime.year == DateTime
-                  .now()
-                  .year) {
+          if (timeDataList[i].startTime.day == DateTime.now().day &&
+              timeDataList[i].startTime.month == DateTime.now().month &&
+              timeDataList[i].startTime.year == DateTime.now().year) {
             todayTotalTime += timeDataList[i].elapsedTime.toDouble();
           }
           if (timeDataList[i].startTime.day ==
-              DateTime
-                  .now()
-                  .subtract(Duration(days: 1))
-                  .day &&
+                  DateTime.now().subtract(Duration(days: 1)).day &&
               timeDataList[i].startTime.month ==
-                  DateTime
-                      .now()
-                      .subtract(Duration(days: 1))
-                      .month &&
+                  DateTime.now().subtract(Duration(days: 1)).month &&
               timeDataList[i].startTime.year ==
-                  DateTime
-                      .now()
-                      .subtract(Duration(days: 1))
-                      .year) {
+                  DateTime.now().subtract(Duration(days: 1)).year) {
             yesdayTotalTime += timeDataList[i].elapsedTime.toDouble();
           }
           if (timeDataList[i].startTime.day ==
-              DateTime
-                  .now()
-                  .subtract(Duration(days: 2))
-                  .day &&
+                  DateTime.now().subtract(Duration(days: 2)).day &&
               timeDataList[i].startTime.month ==
-                  DateTime
-                      .now()
-                      .subtract(Duration(days: 2))
-                      .month &&
+                  DateTime.now().subtract(Duration(days: 2)).month &&
               timeDataList[i].startTime.year ==
-                  DateTime
-                      .now()
-                      .subtract(Duration(days: 2))
-                      .year) {
+                  DateTime.now().subtract(Duration(days: 2)).year) {
             dayBeforeYesTotalTime += timeDataList[i].elapsedTime.toDouble();
           }
           if (todayTotalTime > yesdayTotalTime) {
@@ -340,31 +320,29 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     if (old == null) {
       credChecked = false;
       Future.delayed(Duration(seconds: 1)).then((value) => scanIbis(context));
-    }
-    else {
+    } else {
       credChecked = true;
     }
   }
 
   Future<bool> _onWillPop() async {
     return (await showDialog(
-      context: context,
-      builder: (context) =>
-      new AlertDialog(
-        title: new Text('Are you sure?'),
-        content: new Text('Do you want to exit the App'),
-        actions: <Widget>[
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: new Text('No'),
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Are you sure?'),
+            content: new Text('Do you want to exit the App'),
+            actions: <Widget>[
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: new Text('No'),
+              ),
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: new Text('Yes'),
+              ),
+            ],
           ),
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: new Text('Yes'),
-          ),
-        ],
-      ),
-    )) ??
+        )) ??
         false;
   }
 
@@ -373,14 +351,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
     return WillPopScope(
       child: Scaffold(
         body: Container(
-          height: MediaQuery
-              .of(context)
-              .size
-              .height,
-          width: MediaQuery
-              .of(context)
-              .size
-              .width,
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
           padding: EdgeInsets.only(top: 40),
           color: Colors.white,
           child: Column(
@@ -411,53 +383,50 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               ),
               serverOnline == true
                   ? deviceObjectList.length == 0
-                  ? Center(
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(10,
-                      MediaQuery
-                          .of(context)
-                          .size
-                          .height / 3, 10, 0),
-                  child: FloatingActionButton.extended(
-                    backgroundColor: Color(0xff02457a),
-                    label: Text(
-                      "Please connect your device",
-                      style: TextStyle(
-                          fontSize: 20, color: Color(0xffffffff)),
-                    ),
-                    icon: Icon(Icons.wifi_tethering_rounded,
-                        color: Color(0xffffffff)),
-                    onPressed: () {
-                      // scanIbis(context);
-                    },
-                  ),
-                ),
-              )
-                  : Expanded(child: fillerWidget(context))
+                      ? Center(
+                          child: Container(
+                            margin: EdgeInsets.fromLTRB(10,
+                                MediaQuery.of(context).size.height / 3, 10, 0),
+                            child: FloatingActionButton.extended(
+                              backgroundColor: Color(0xff02457a),
+                              label: Text(
+                                "Please connect your device",
+                                style: TextStyle(
+                                    fontSize: 20, color: Color(0xffffffff)),
+                              ),
+                              icon: Icon(Icons.wifi_tethering_rounded,
+                                  color: Color(0xffffffff)),
+                              onPressed: () {
+                                // scanIbis(context);
+                              },
+                            ),
+                          ),
+                        )
+                      : Expanded(child: fillerWidget(context))
                   : Align(
-                alignment: Alignment.center,
-                child: AlertDialog(
-                  backgroundColor: Color(0xffffffff),
-                  shape: RoundedRectangleBorder(
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(20.0))),
-                  title: Text(
-                    'Server is Offline',
-                    style: TextStyle(
-                        color: Color(0xff02457a),
-                        fontWeight: FontWeight.bold),
-                  ),
-                  content: IconButton(
-                    icon: Icon(
-                      Icons.refresh,
-                      color: Color(0xff019ae6),
+                      alignment: Alignment.center,
+                      child: AlertDialog(
+                        backgroundColor: Color(0xffffffff),
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20.0))),
+                        title: Text(
+                          'Close the app from background',
+                          style: TextStyle(
+                              color: Color(0xff02457a),
+                              fontWeight: FontWeight.bold),
+                        ),
+                        content: IconButton(
+                          icon: Icon(
+                            Icons.refresh,
+                            color: Color(0xff019ae6),
+                          ),
+                          onPressed: () {
+                            connect();
+                          },
+                        ),
+                      ),
                     ),
-                    onPressed: () {
-                      connect();
-                    },
-                  ),
-                ),
-              ),
             ],
           ),
         ),
@@ -577,37 +546,37 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
             ),
             trailing: deviceObjectList[0].motionDetected == true
                 ? Icon(
-              Icons.warning,
-              color: Color(0xff02457a),
-            )
+                    Icons.warning,
+                    color: Color(0xff02457a),
+                  )
                 : IconButton(
-              icon: Icon(Icons.more_vert, color: Color(0xff02457a)),
-              onPressed: () {
-                info(context, deviceObjectList[0]);
-              },
-            ),
+                    icon: Icon(Icons.more_vert, color: Color(0xff02457a)),
+                    onPressed: () {
+                      info(context, deviceObjectList[0]);
+                    },
+                  ),
             title: Text(
               '${deviceObjectList[0].name}',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             subtitle: deviceObjectList[0].power == false
                 ? Text(deviceObjectList[0].offline == true
-                ? 'Device not Connected'
-                : deviceObjectList[0].motionDetected == false
-                ? (deviceObjectList[0].resettingHeight == false ||
-                prefs.getString('new') != 'yes')
-                ? 'Device Connected'
-                : 'Resetting height...'
-                : 'Motion Detected')
+                    ? 'Device not Connected'
+                    : deviceObjectList[0].motionDetected == false
+                        ? (deviceObjectList[0].resettingHeight == false ||
+                                prefs.getString('new') != 'yes')
+                            ? 'Device Connected'
+                            : 'Resetting height...'
+                        : 'Motion Detected')
                 : LinearPercentIndicator(
-              lineHeight: 5.0,
-              animation: false,
-              animationDuration: 0,
-              backgroundColor: Color(0xff9ad2ec),
-              percent: deviceObjectList[0].linearProgressBarValue,
-              linearStrokeCap: LinearStrokeCap.roundAll,
-              progressColor: Color(0xff019ae6),
-            ),
+                    lineHeight: 5.0,
+                    animation: false,
+                    animationDuration: 0,
+                    backgroundColor: Color(0xff9ad2ec),
+                    percent: deviceObjectList[0].linearProgressBarValue,
+                    linearStrokeCap: LinearStrokeCap.roundAll,
+                    progressColor: Color(0xff019ae6),
+                  ),
             onTap: () {},
             onLongPress: () {
               setName(
@@ -680,26 +649,21 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Container(
-                    //height: 160,
-                      width: (MediaQuery
-                          .of(context)
-                          .size
-                          .width / 2.5) / 2.1,
+                      //height: 160,
+                      width: (MediaQuery.of(context).size.width / 2.5) / 2.1,
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: FlareActor(
                           'assets/lift.flr',
                           animation:
-                          deviceObjectList[0].resettingHeight == false? flare
-                              : 'down',
+                              deviceObjectList[0].resettingHeight == false
+                                  ? flare
+                                  : 'down',
                         ),
                       )),
                   Container(
                     //height: 170,
-                    width: (MediaQuery
-                        .of(context)
-                        .size
-                        .width / 2.5) / 2.1,
+                    width: (MediaQuery.of(context).size.width / 2.5) / 2.1,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
@@ -719,7 +683,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                   topHit == false &&
                                   deviceObjectList[0].power == false &&
                                   deviceObjectList[0].resettingHeight ==
-                                      false ) {
+                                      false) {
                                 deviceObjectList[0].socket.write('-3\r');
                                 upBGColor = upArrowColor;
 
@@ -738,7 +702,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                               if (deviceObjectList[0].offline == false &&
                                   deviceObjectList[0].power == false &&
                                   deviceObjectList[0].resettingHeight ==
-                                      false ) {
+                                      false) {
                                 deviceObjectList[0].socket.write('-1\r');
                                 setState(() {
                                   flare = 'idle';
@@ -779,7 +743,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                                   bottumHit == false &&
                                   deviceObjectList[0].power == false &&
                                   deviceObjectList[0].resettingHeight ==
-                                      false ) {
+                                      false) {
                                 downBGColor = downArrowColor;
                                 downArrowColor = upBGColor;
                                 topHit = false;
@@ -798,7 +762,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                               if (deviceObjectList[0].offline == false &&
                                   deviceObjectList[0].power == false &&
                                   deviceObjectList[0].resettingHeight ==
-                                      false ) {
+                                      false) {
                                 deviceObjectList[0].socket.write('-1\r');
                                 setState(() {
                                   flare = 'idle';
@@ -831,19 +795,18 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         Container(
           child: Listener(
             onPointerDown:
-            // ignore: non_constant_identifier_names
+                // ignore: non_constant_identifier_names
                 (PointerDownEvent) {
               if (deviceObjectList[0].offline == false &&
-                  deviceObjectList[0].resettingHeight == false ) {
+                  deviceObjectList[0].resettingHeight == false) {
                 if (deviceObjectList[0].power == true) {
                   deviceObjectList[0].clientError = false;
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          HomePage(
-                            deviceObjectList[0],
-                          ),
+                      builder: (context) => HomePage(
+                        deviceObjectList[0],
+                      ),
                     ),
                   );
                 } else {
@@ -876,10 +839,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               }
             },
             child: Container(
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width / 2.5,
+              width: MediaQuery.of(context).size.width / 2.5,
               height: 75,
               //margin: EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
@@ -895,8 +855,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   deviceObjectList[0].power == false
                       ? 'Disinfect'
                       : deviceObjectList[0].pause == true
-                      ? 'Paused'
-                      : 'Disinfecting',
+                          ? 'Paused'
+                          : 'Disinfecting',
                   style: TextStyle(
                       fontSize: 20.0,
                       color: Color(0xffffffff),
@@ -944,7 +904,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(
                 rooms.length,
-                    (index) {
+                (index) {
                   return SimpleDialogOption(
                     child: Container(
                       decoration: BoxDecoration(
@@ -1018,7 +978,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(
                 workers.length,
-                    (index) {
+                (index) {
                   return SimpleDialogOption(
                     child: Container(
                       decoration: BoxDecoration(
@@ -1089,14 +1049,8 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               Divider(
                 thickness: 2,
                 color: Colors.grey[500],
-                indent: 2 * MediaQuery
-                    .of(context)
-                    .size
-                    .width / 5,
-                endIndent: 2 * MediaQuery
-                    .of(context)
-                    .size
-                    .width / 5,
+                indent: 2 * MediaQuery.of(context).size.width / 5,
+                endIndent: 2 * MediaQuery.of(context).size.width / 5,
               ),
               ListTile(
                 leading: Icon(
@@ -1126,6 +1080,17 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                 },
               ),
               ListTile(
+                leading: Icon(
+                  Icons.power_off,
+                  color: Color(0xff02457a),
+                ),
+                title: Text('Shutdown'),
+                onTap: () {
+                  if (deviceObjectList.isNotEmpty)
+                    deviceObjectList[0].socket.write('e\r');
+                },
+              ),
+              ListTile(
                 leading: Icon(Icons.file_download, color: Color(0xff02457a)),
                 title: Text('Export'),
                 onTap: () async {
@@ -1145,31 +1110,20 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     exportTimeNow.removeRange(0, exportTimeNow.length);
                     var f = new NumberFormat("00", "en_US");
                     for (int i = 0; i < timeDataList.length; i++) {
-                      var elapsedTime = (-timeDataList[i].startTime
+                      var elapsedTime = (-timeDataList[i]
+                          .startTime
                           .difference(timeDataList[i].endTime)
                           .inSeconds);
                       exportRooms.add(timeDataList[i].roomName);
                       exportWorkers.add(timeDataList[i].workerName);
                       exportStartTime.add(
-                          "${timeDataList[i].startTime.day}/${timeDataList[i]
-                              .startTime.month}/${timeDataList[i].startTime
-                              .year} ${f.format(
-                              timeDataList[i].startTime.hour)}:${f.format(
-                              timeDataList[i].startTime.minute)}:${f.format(
-                              timeDataList[i].startTime.second)}");
+                          "${timeDataList[i].startTime.day}/${timeDataList[i].startTime.month}/${timeDataList[i].startTime.year} ${f.format(timeDataList[i].startTime.hour)}:${f.format(timeDataList[i].startTime.minute)}:${f.format(timeDataList[i].startTime.second)}");
                       exportEndTime.add(
-                          "${timeDataList[i].endTime.day}/${timeDataList[i]
-                              .endTime.month}/${timeDataList[i].endTime
-                              .year} ${f.format(
-                              timeDataList[i].endTime.hour)}:${f.format(
-                              timeDataList[i].endTime.minute)}:${f.format(
-                              timeDataList[i].endTime.second)}");
+                          "${timeDataList[i].endTime.day}/${timeDataList[i].endTime.month}/${timeDataList[i].endTime.year} ${f.format(timeDataList[i].endTime.hour)}:${f.format(timeDataList[i].endTime.minute)}:${f.format(timeDataList[i].endTime.second)}");
                       exportElapseTime.add(
-                          "${f.format((elapsedTime / 60).floor())}:${f.format(
-                              elapsedTime % 60)}");
+                          "${f.format((elapsedTime / 60).floor())}:${f.format(elapsedTime % 60)}");
                       exportTime.add(
-                          "${f.format((timeDataList[i].time / 60).floor())}:${f
-                              .format(timeDataList[i].time % 60)}");
+                          "${f.format((timeDataList[i].time / 60).floor())}:${f.format(timeDataList[i].time % 60)}");
                       exportState.add(timeDataList[i].status);
                     }
                     for (int j = 0; j < historyList.length; j++) {
@@ -1236,7 +1190,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           return SimpleDialog(
             backgroundColor: Color(0xffffffff),
             shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             children: <Widget>[
               Align(
                 alignment: Alignment.center,
@@ -1251,10 +1205,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                    "${deviceObject.totalDuration.inDays} Days, ${deviceObject
-                        .totalDuration.inHours.remainder(
-                        24)} Hours, ${deviceObject.totalDuration.inMinutes
-                        .remainder(60)} Minutes"),
+                    "${deviceObject.totalDuration.inDays} Days, ${deviceObject.totalDuration.inHours.remainder(24)} Hours, ${deviceObject.totalDuration.inMinutes.remainder(60)} Minutes"),
               ),
               Center(
                 child: Text(
@@ -1275,15 +1226,13 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                           fontSize: 15)),
                   lineHeight: 5.0,
                   trailing: Text(
-                      "${(100 -
-                          ((deviceObject.secondDuration.inHours / 9000) * 100))
-                          .floor()}%"),
+                      "${(100 - ((deviceObject.secondDuration.inHours / 9000) * 100)).floor()}%"),
                   percent: 1 - deviceObject.secondDuration.inHours / 9000,
                   backgroundColor: Colors.grey[300],
                   progressColor: deviceObject.secondDuration.inHours / 9000 > .5
                       ? deviceObject.secondDuration.inHours / 9000 > .2
-                      ? Colors.red
-                      : Colors.orange
+                          ? Colors.red
+                          : Colors.orange
                       : Colors.green,
                   curve: Curves.bounceInOut,
                 ),
@@ -1297,16 +1246,14 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                           fontWeight: FontWeight.bold,
                           fontSize: 15)),
                   trailing: Text(
-                      "${(100 -
-                          ((deviceObject.totalDuration.inHours / 9000) * 100))
-                          .floor()}%"),
+                      "${(100 - ((deviceObject.totalDuration.inHours / 9000) * 100)).floor()}%"),
                   lineHeight: 5.0,
                   percent: 1 - (deviceObject.totalDuration.inHours) / 9000,
                   backgroundColor: Colors.grey[300],
                   progressColor: deviceObject.totalDuration.inHours / 9000 > .5
                       ? deviceObject.totalDuration.inHours / 9000 > .8
-                      ? Colors.red
-                      : Colors.orange
+                          ? Colors.red
+                          : Colors.orange
                       : Colors.green,
                 ),
               ),
@@ -1322,7 +1269,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
           return SimpleDialog(
             backgroundColor: Color(0xffffffff),
             shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             children: <Widget>[
               Container(
                 child: Column(
@@ -1352,10 +1299,12 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                           tooltipBgColor: Colors.transparent,
                           tooltipPadding: const EdgeInsets.all(0),
                           tooltipBottomMargin: 8,
-                          getTooltipItem: (BarChartGroupData group,
-                              int groupIndex,
-                              BarChartRodData rod,
-                              int rodIndex,) {
+                          getTooltipItem: (
+                            BarChartGroupData group,
+                            int groupIndex,
+                            BarChartRodData rod,
+                            int rodIndex,
+                          ) {
                             return BarTooltipItem(
                               rod.y.round().toString(),
                               TextStyle(
@@ -1477,7 +1426,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         builder: (BuildContext context) {
           return SimpleDialog(
             shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             titlePadding: EdgeInsets.all(25),
             title: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -1606,7 +1555,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         builder: (BuildContext context) {
           return SimpleDialog(
             shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             titlePadding: EdgeInsets.all(25),
             title: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -1666,15 +1615,15 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
         });
   }
 
-  Future<void> earlyMotionDetection(BuildContext context,
-      DeviceObject deviceObject) async {
+  Future<void> earlyMotionDetection(
+      BuildContext context, DeviceObject deviceObject) async {
     Future.delayed(Duration(milliseconds: 300), () {
       showingMotion(context, deviceObject);
     });
   }
 
-  Future<void> completedPop(BuildContext context,
-      DeviceObject deviceObject) async {
+  Future<void> completedPop(
+      BuildContext context, DeviceObject deviceObject) async {
     Future.delayed(Duration(milliseconds: 300), () {
       overOver(context, deviceObject);
     });
@@ -1760,15 +1709,9 @@ class _RoomsState extends State<Rooms> {
           children: <Widget>[
             SimpleDialogOption(
               child: Container(
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height /
+                height: MediaQuery.of(context).size.height /
                     (7 - nameNumber + screenLengthConstant),
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width * 0.7,
+                width: MediaQuery.of(context).size.width * 0.7,
                 child: ListView.builder(
                   itemCount: nameNumber,
                   itemBuilder: (context, index) {
@@ -1803,7 +1746,7 @@ class _RoomsState extends State<Rooms> {
                           labelText: 'Room Name',
                           counterText: cText[index],
                           counterStyle:
-                          TextStyle(color: Colors.red, fontSize: 15),
+                              TextStyle(color: Colors.red, fontSize: 15),
                           border: OutlineInputBorder(
                               borderSide: BorderSide(
                                   color: cText[index] == ''
@@ -1831,7 +1774,7 @@ class _RoomsState extends State<Rooms> {
                     color: Colors.white,
                     onPressed: () {
                       setState(
-                            () {
+                        () {
                           cText.add('');
                           roomNames.add(TextEditingController());
                           nameNumber += 1;
@@ -1853,8 +1796,7 @@ class _RoomsState extends State<Rooms> {
                     color: Colors.white,
                     onPressed: () {
                       setState(() {
-                        int check = 0,
-                            i;
+                        int check = 0, i;
                         for (i = 0; i < nameNumber; i++) {
                           if (roomNames[i].text.length < 1) {
                             check += 1;
@@ -1940,15 +1882,9 @@ class _WorkersState extends State<Workers> {
           children: <Widget>[
             SimpleDialogOption(
               child: Container(
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height /
+                height: MediaQuery.of(context).size.height /
                     (7 - nameNumber + screenLengthConstant),
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width * 0.7,
+                width: MediaQuery.of(context).size.width * 0.7,
                 child: ListView.builder(
                   itemCount: nameNumber,
                   itemBuilder: (context, index) {
@@ -1982,7 +1918,7 @@ class _WorkersState extends State<Workers> {
                           ),
                           counterText: cText[index],
                           counterStyle:
-                          TextStyle(color: Colors.red, fontSize: 15),
+                              TextStyle(color: Colors.red, fontSize: 15),
                           border: OutlineInputBorder(
                               borderSide: BorderSide(
                                   color: cText[index] == ''
@@ -2011,7 +1947,7 @@ class _WorkersState extends State<Workers> {
                     color: Colors.white,
                     onPressed: () {
                       setState(
-                            () {
+                        () {
                           cText.add('');
                           roomNames.add(TextEditingController());
                           nameNumber += 1;
@@ -2033,8 +1969,7 @@ class _WorkersState extends State<Workers> {
                     color: Colors.white,
                     onPressed: () {
                       setState(() {
-                        int check = 0,
-                            i;
+                        int check = 0, i;
                         for (i = 0; i < nameNumber; i++) {
                           if (roomNames[i].text.length < 1) {
                             check += 1;

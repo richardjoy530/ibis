@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'data.dart';
 import 'package:intl/intl.dart';
+
+import 'data.dart';
 
 class ShowHistory extends StatefulWidget {
   @override
@@ -58,7 +59,8 @@ class _ShowHistoryState extends State<ShowHistory> {
                                       fontSize: 25, color: Colors.white))),
                           onTap: () {},
                           title: Text(
-                            historyList[(historyList.length-1)-index].roomName,
+                            historyList[(historyList.length - 1) - index]
+                                .roomName,
                             style: TextStyle(
                                 fontSize: 20,
                                 color: Colors.black,
@@ -68,12 +70,13 @@ class _ShowHistoryState extends State<ShowHistory> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                'Staff: ${historyList[(historyList.length-1)-index].workerName}',
+                                'Staff: ${historyList[(historyList.length - 1) - index].workerName}',
                                 style: TextStyle(
                                     color: Color(0xff02457a), fontSize: 15),
                               ),
                               Text(
-                                historyList[(historyList.length-1)-index].state,
+                                historyList[(historyList.length - 1) - index]
+                                    .state,
                                 style: TextStyle(
                                     color: Color(0xff02457a), fontSize: 15),
                               ),
@@ -83,7 +86,7 @@ class _ShowHistoryState extends State<ShowHistory> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               Text(
-                                '${historyList[(historyList.length-1)-index].time.day}- ${mapMonth(historyList[(historyList.length-1)-index].time.month)} - ${historyList[(historyList.length-1)-index].time.hour > 12 ? historyList[(historyList.length-1)-index].time.hour - 12 : historyList[(historyList.length-1)-index].time.hour}:${NumberFormat("00", "en_US").format(historyList[(historyList.length-1)-index].time.minute)} ${historyList[(historyList.length-1)-index].time.hour > 12 ? 'PM' : 'AM'}',
+                                '${historyList[(historyList.length - 1) - index].time.day}- ${mapMonth(historyList[(historyList.length - 1) - index].time.month)} - ${historyList[(historyList.length - 1) - index].time.hour > 12 ? historyList[(historyList.length - 1) - index].time.hour - 12 : historyList[(historyList.length - 1) - index].time.hour}:${NumberFormat("00", "en_US").format(historyList[(historyList.length - 1) - index].time.minute)} ${historyList[(historyList.length - 1) - index].time.hour > 12 ? 'PM' : 'AM'}',
                                 style: TextStyle(
                                     color: Color(0xff02457a),
                                     fontWeight: FontWeight.bold),
@@ -132,6 +135,5 @@ String mapMonth(int month) {
     case 12:
       return 'Dec';
   }
-        return '';
-
+  return '';
 }

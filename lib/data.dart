@@ -33,9 +33,9 @@ bool connectionError = false;
 SharedPreferences prefs;
 String deviceName;
 int deviceHeight;
-List<String> exportRooms=[],exportWorkers=[],exportState=[];
-List<String> exportStartTime=[],exportEndTime=[],exportTimeNow=[];
-List<String> exportElapseTime=[],exportTime=[];
+List<String> exportRooms = [], exportWorkers = [], exportState = [];
+List<String> exportStartTime = [], exportEndTime = [], exportTimeNow = [];
+List<String> exportElapseTime = [], exportTime = [];
 DatabaseHelper databaseHelper;
 String room;
 String worker;
@@ -90,6 +90,7 @@ class DeviceObject {
   bool earlyMotionDetection;
   double height;
   String earlyMotionDetectionTime;
+
   DeviceObject({
     this.resettingHeight = false,
     this.temp,
@@ -117,6 +118,7 @@ class DeviceObject {
     this.earlyMotionDetectionTime = '',
     this.completedStatus = false,
   });
+
   void run() {
     socket.listen((onData) {
       print([socket.remotePort, onData]);
@@ -321,6 +323,7 @@ class History {
   String workerName;
   String state;
   DateTime time;
+
   History({this.roomName, this.state, this.time, this.workerName});
 }
 
@@ -332,6 +335,7 @@ class TimeData {
   int elapsedTime;
   int time;
   String status;
+
   TimeData(
       {this.startTime,
       this.elapsedTime,
