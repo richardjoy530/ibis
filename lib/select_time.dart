@@ -322,13 +322,13 @@ class _SelectTimeState extends State<SelectTime> {
                                       widget.deviceObject.socket.writeln(widget
                                           .deviceObject.time.inMinutes
                                           .round());
-                                      // await showDialog(
-                                      //   barrierDismissible: false,
-                                      //   context: context,
-                                      //   builder: (context) {
-                                      //     return TenSeconds();
-                                      //   },
-                                      // );
+                                      await showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (context) {
+                                          return TenSeconds();
+                                        },
+                                      );
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
@@ -560,13 +560,12 @@ class TenSeconds extends StatefulWidget {
 }
 
 class _TenSecondsState extends State<TenSeconds> {
-  int temp=20;
+  int temp = 20;
+
   @override
   void initState() {
-    Timer.periodic(
-        Duration(seconds: 1), (timer) {
-      if(temp<=1)
-      {
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      if (temp <= 1) {
         Navigator.pop(context);
         timer.cancel();
       }
@@ -581,60 +580,52 @@ class _TenSecondsState extends State<TenSeconds> {
   void dispose() {
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
-    return StatefulBuilder(
-        builder: (context, snapshot) {
-          return SimpleDialog(
-            backgroundColor: Color(0xffffffff),
-            shape: RoundedRectangleBorder(
-              borderRadius:
-              BorderRadius.circular(10),
-            ),
-            title: Center(
-              child: Text(
-                'The device is setting up',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Color(0xff02457a),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24),
-              ),
-            ),
-            children: [
-              Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Please wait...   ',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color(0xff02457a),
-                        ),
-                      ),
+    return StatefulBuilder(builder: (context, snapshot) {
+      return SimpleDialog(
+        backgroundColor: Color(0xffffffff),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        title: Center(
+          child: Text(
+            'The device is setting up',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Color(0xff02457a),
+                fontWeight: FontWeight.bold,
+                fontSize: 24),
+          ),
+        ),
+        children: [
+          Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Please wait...   ',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xff02457a),
                     ),
-                    Stack(
-                        alignment: Alignment.center,
-                        children:[
-                          Center(
-                            child: CircularProgressIndicator(
-                            ),
-                          ),
-                          Text("$temp"),
-                        ]
-                    )
-                  ],
+                  ),
                 ),
-              ),
-
-            ],
-
-          );
-        }
-    );
+                Stack(alignment: Alignment.center, children: [
+                  Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  Text("$temp"),
+                ])
+              ],
+            ),
+          ),
+        ],
+      );
+    });
   }
 }
 

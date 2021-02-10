@@ -8,6 +8,7 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
@@ -84,6 +85,7 @@ void connect() async {
       serverSocket.listen((sock) {}).onData((clientSocket) {
         if (!ipList.contains(clientSocket.remoteAddress.address)) {
           //New Devices
+
           deviceObjectList.add(DeviceObject(
               totalDuration: Duration(seconds: 0),
               secondDuration: Duration(seconds: 0),
@@ -93,6 +95,12 @@ void connect() async {
               name: 'Device',
               mainTime: Duration(minutes: 0),
               time: Duration(minutes: 0)));
+
+          // Fluttertoast.showToast(
+          //   msg: clientSocket.remoteAddress.address + " New Device ",
+          //   gravity: ToastGravity.CENTER,
+          //   toastLength: Toast.LENGTH_SHORT,
+          // );
 
           DeviceObject temp = deviceObjectList.singleWhere(
               (element) => element.ip == clientSocket.remoteAddress.address);
@@ -115,6 +123,11 @@ void connect() async {
             'Not in ipList'
           ]);
         } else {
+          // Fluttertoast.showToast(
+          //   msg: clientSocket.remoteAddress.address + " Previous Device ",
+          //   gravity: ToastGravity.CENTER,
+          //   toastLength: Toast.LENGTH_SHORT,
+          // );
           //Registered Devices
           DeviceObject temp = deviceObjectList.singleWhere(
               (element) => element.ip == clientSocket.remoteAddress.address);

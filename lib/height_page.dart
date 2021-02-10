@@ -20,7 +20,9 @@ String flare = 'idle';
 class HeightPage extends StatefulWidget {
   final DeviceObject deviceObject;
   final bool justHeight;
+
   HeightPage(this.deviceObject, {this.justHeight = false});
+
   @override
   _HeightPageState createState() => _HeightPageState();
 }

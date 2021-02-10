@@ -10,6 +10,7 @@ int graphDisplayTemp = 0;
 List<Container> selectedDay = [];
 DateTime defaultTime = DateTime.now();
 String dropdownValue = rooms.length == 0 ? 'No rooms' : rooms[0];
+
 double elapseTimeFunction() {
   if (timeDataList.length != 0) {
     var max = timeDataList[0];
@@ -29,7 +30,6 @@ double elapseTimeFunction() {
   }
 }
 
-
 class CalenderPage extends StatefulWidget {
   @override
   _CalenderPageState createState() => _CalenderPageState();
@@ -44,7 +44,7 @@ class _CalenderPageState extends State<CalenderPage> {
     super.initState();
     graphDisplayTemp = 0;
     graphTempTimer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (graphDisplayTemp == 0 ) {
+      if (graphDisplayTemp == 0) {
         setState(() {
           var date = DateTime.now();
           selectedDay = [];
@@ -136,33 +136,33 @@ class _CalenderPageState extends State<CalenderPage> {
     super.dispose();
   }
 
-  Future<void> showHistoryGraph(context) async{
-    await showDialog(context: context,
-    builder: (BuildContext context)
-    {
-      return SimpleDialog(
-         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          title: Text(
-            'Selected Day Graph',
-            style: TextStyle(
-                color: Color(0xff02457a), fontWeight: FontWeight.bold),
-          ),
-          children: [
-            Container(
-                height: MediaQuery.of(context).size.height / 2,
-                width: MediaQuery.of(context).size.width / 1,
-                padding: EdgeInsets.all(8.0),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: selectedDay,
-                  ),
-                ))
-          ],
-      );
-    });
+  Future<void> showHistoryGraph(context) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            title: Text(
+              'Selected Day Graph',
+              style: TextStyle(
+                  color: Color(0xff02457a), fontWeight: FontWeight.bold),
+            ),
+            children: [
+              Container(
+                  height: MediaQuery.of(context).size.height / 2,
+                  width: MediaQuery.of(context).size.width / 1,
+                  padding: EdgeInsets.all(8.0),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: selectedDay,
+                    ),
+                  ))
+            ],
+          );
+        });
   }
 
   Future<void> showRooms(context) async {
@@ -311,7 +311,17 @@ class _CalenderPageState extends State<CalenderPage> {
                   onPointerUp: (data) {
                     showRooms(context);
                   },
-                  child: timeDataList.length>0?Text(room,style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),):Text('No Room',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)),
+                  child: timeDataList.length > 0
+                      ? Text(
+                          room,
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        )
+                      : Text(
+                          'No Room',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        )),
               IconButton(
                   icon: Icon(Icons.arrow_drop_down),
                   onPressed: () {
@@ -332,7 +342,6 @@ class _CalenderPageState extends State<CalenderPage> {
             padding: const EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 0.0),
             child: _buildTableCalendar(),
           ),
-          
         ],
       ),
     );
