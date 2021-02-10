@@ -65,6 +65,7 @@ class _LoadingState extends State<Loading> {
         timeDataList.add(TimeData(
             roomName: map['roomName'],
             workerName: map['workerName'],
+            status: map['status'],
             startTime: DateTime.parse(map['startTime']),
             endTime: DateTime.parse(map['endTime']),
             time: map['time'],

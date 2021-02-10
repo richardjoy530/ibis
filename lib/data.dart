@@ -421,7 +421,7 @@ class DatabaseHelper {
       'status': timeData.status,
       'startTime': timeData.startTime.toIso8601String(),
       'endTime': timeData.endTime.toIso8601String(),
-      'time': timeData.elapsedTime,
+      'time': timeData.time,
       'elapsedTime': timeData.elapsedTime
     });
     return result;

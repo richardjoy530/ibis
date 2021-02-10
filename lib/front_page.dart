@@ -1100,14 +1100,14 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                     var excel = Excel.createExcel();
                     List rowData = [];
                     Sheet sheetObject = excel['Sheet1'];
-                    exportRooms.removeRange(0, exportRooms.length);
-                    exportWorkers.removeRange(0, exportWorkers.length);
-                    exportStartTime.removeRange(0, exportStartTime.length);
-                    exportEndTime.removeRange(0, exportEndTime.length);
-                    exportElapseTime.removeRange(0, exportElapseTime.length);
-                    exportTime.removeRange(0, exportTime.length);
-                    exportState.removeRange(0, exportState.length);
-                    exportTimeNow.removeRange(0, exportTimeNow.length);
+                    exportRooms.clear();
+                    exportWorkers.clear();
+                    exportStartTime.clear();
+                    exportEndTime.clear();
+                    exportElapseTime.clear();
+                    exportTime.clear();
+                    exportState.clear();
+                    exportTimeNow.clear();
                     var f = new NumberFormat("00", "en_US");
                     for (int i = 0; i < timeDataList.length; i++) {
                       var elapsedTime = (-timeDataList[i]
@@ -1142,7 +1142,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                         rowData.add("Status");
                         // rowData.add("TIME");
                         sheetObject.insertRowIterables(rowData, i);
-                        rowData.removeRange(0, rowData.length);
+                        rowData.clear();
                       }
                       rowData.add(exportRooms[i]);
                       rowData.add(exportWorkers[i]);
@@ -1153,7 +1153,7 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                       rowData.add(exportState[i]);
                       // rowData.add(exportTimeNow[i]);
                       sheetObject.insertRowIterables(rowData, i + 1);
-                      rowData.removeRange(0, rowData.length);
+                      rowData.clear();
                     }
                     const MethodChannel _channel = const MethodChannel('ibis');
                     await _channel
