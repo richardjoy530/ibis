@@ -1079,17 +1079,17 @@ class FrontPageState extends State<FrontPage> with TickerProviderStateMixin {
                   );
                 },
               ),
-              ListTile(
-                leading: Icon(
-                  Icons.power_off,
-                  color: Color(0xff02457a),
-                ),
-                title: Text('Shutdown'),
-                onTap: () {
-                  if (deviceObjectList.isNotEmpty)
-                    deviceObjectList[0].socket.write('e\r');
-                },
-              ),
+              // ListTile(
+              //   leading: Icon(
+              //     Icons.power_off,
+              //     color: Color(0xff02457a),
+              //   ),
+              //   title: Text('Shutdown'),
+              //   onTap: () {
+              //     if (deviceObjectList.isNotEmpty)
+              //       deviceObjectList[0].socket.write('e\r');
+              //   },
+              // ),
               ListTile(
                 leading: Icon(Icons.file_download, color: Color(0xff02457a)),
                 title: Text('Export'),
