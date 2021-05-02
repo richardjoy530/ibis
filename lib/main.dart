@@ -1274,7 +1274,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 deviceObject.pause = false;
                 deviceObject.flare = 'off';
                 print('state4');
-                deviceObject.resettingHeight = false;
                 deviceObject.elapsedTime = 0;
                 deviceObject.time = Duration(minutes: 0);
                 deviceObject.mainTime = Duration(minutes: 0);
@@ -1432,7 +1431,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               child: Center(child: Text('No')),
               onPressed: () {
                 widget.deviceObject.clientError = false;
-                widget.deviceObject.resettingHeight = true;
                 widget.deviceObject.socket.write('n\r');
                 Navigator.pop(context);
                 Navigator.pop(context);
@@ -1665,7 +1663,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 //   });
                 // }
                 destroyAnimation(deviceObject);
-                deviceObject.resettingHeight = true; //
                 deviceObject.socket.write('s');
                 deviceObject.power = false;
                 deviceObject.time = Duration(minutes: 0);

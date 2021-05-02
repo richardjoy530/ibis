@@ -65,7 +65,6 @@ final List<bool> isSelected = [false];
 class DeviceObject {
   Duration remainingTime;
   DateTime startTime;
-  bool resettingHeight = false;
   bool temp;
   bool completedStatus;
   int elapsedTime;
@@ -92,7 +91,6 @@ class DeviceObject {
   String earlyMotionDetectionTime;
 
   DeviceObject({
-    this.resettingHeight = false,
     this.temp,
     this.flare = 'off',
     this.elapsedTime = 0,
@@ -158,7 +156,6 @@ class DeviceObject {
         downBGColor = Color(0xff02457a);
         upArrowColor = Color(0xff5cbceb);
         upBGColor = Color(0xff02457a);
-        this.resettingHeight = false;
       }
 
       if (this.offline == false) {
@@ -270,7 +267,6 @@ class DeviceObject {
             ),
           );
 
-          this.resettingHeight = false;
 
           notification('Motion was detected');
         }

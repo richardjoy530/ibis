@@ -316,19 +316,12 @@ class _SelectTimeState extends State<SelectTime> {
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 20),
                                   ),
-                                  onPressed: () async {
+                                  onPressed: () {
                                     if (widget.deviceObject.time.inMinutes >=
                                         1) {
                                       widget.deviceObject.socket.writeln(widget
                                           .deviceObject.time.inMinutes
                                           .round());
-                                      await showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (context) {
-                                          return TenSeconds();
-                                        },
-                                      );
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
